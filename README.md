@@ -10,14 +10,15 @@ This branch contains samples for connecting your Power Virtual Agents bot to a c
 To use the samples, clone this GitHub repository using Git.
 
 ```bash
-    git clone https://github.com/Microsoft/BotBuilder-Samples.git
-    cd BotBuilder-Samples
+    git clone https://github.com/microsoft/PowerVirtualAgentsSamples.git
+    cd PowerVirtualAgentsSamples
 ```
+
 
 | Sample Name           | Description                                                                    | .NET CORE   |
 |-----------------------|--------------------------------------------------------------------------------|-------------|
-|1.BotConnectorApp | Demonstrates how to connect your bot to a custom app for example mobile-device app   | [View][cs#1]|
-|2.RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#2] |
+|BotConnectorApp | Demonstrates how to connect your bot to a custom app for example mobile-device app   | [View][cs#1]|
+|RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#2] |
 
 [cs#1]:./BotConnectorApp
 [cs#2]:./RelayBotSample
