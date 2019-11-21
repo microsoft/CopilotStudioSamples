@@ -23,7 +23,7 @@ To use the samples, clone this GitHub repository using Git.
 
 
 [cs#1]:./BotConnectorApp
-[cs#1]:./BuildYourOwnCanvasSamples
+[cs#2]:./BuildYourOwnCanvasSamples
 [cs#3]:./RelayBotSample
 
 
