@@ -18,10 +18,13 @@ To use the samples, clone this GitHub repository using Git.
 | Sample Name           | Description                                                                    | .NET CORE   |
 |-----------------------|--------------------------------------------------------------------------------|-------------|
 |BotConnectorApp | Demonstrates how to connect your bot to a custom app for example mobile-device app   | [View][cs#1]|
-|RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#2] |
+|BuildYourOwnCanvasSamples | Demonstrates how to connect your bot to a custom canvas with various functionality | [View][cs#2] |
+|RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#3] |
+
 
 [cs#1]:./BotConnectorApp
-[cs#2]:./RelayBotSample
+[cs#1]:./BuildYourOwnCanvasSamples
+[cs#3]:./RelayBotSample
 
 
 ## Contributing

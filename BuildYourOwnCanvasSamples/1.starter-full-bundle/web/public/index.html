@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="/images/BotServices.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <title>Web Chat Upload to Azure Storage Demo</title>
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <script
+      src="https://unpkg.com/@azure/storage-blob@10.3.0/browser/azure-storage.blob.min.js"
+      integrity="sha384-fsfhtLyVQo3L3Bh73qgQoRR328xEeXnRGdoi53kjo1uectCfAHFfavrBBN2Nkbdf"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- This styling is for Web Chat demonstration purposes -->
+    <!-- It is recommended that stlye is moved to seperate file for organization in larger projects -->
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+      }
+
+      .css-o3xlyv {
+        background-color: #F2F7FF;
+        font-family: Segoe UI;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        border: none;
+        border-radius: 4px;
+      }
+
+      .css-mhj5i1:not(.from-user){
+        border: none;
+      }
+      
+      .css-mhj5i1.from-user{
+        border: none;
+      }
+
+      .from-user .css-o3xlyv {
+        background-color:  #F3F2F1;
+      }
+
+      .main{
+        margin: 18px;
+        border-radius: 4px;
+      }
+      .css-eycyw2{
+        background-image: url(/images/cloud-background.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+      }
+      .css-eycyw2 .main {
+        border-top: none;
+      }
+
+      .css-63zi5w{
+        background-color: #F2F7FF; 
+      }
+
+      #webchat {
+        position: fixed;
+        height: calc(100% - 50px);
+        width: 100%;
+        top: 50px;
+        overflow: hidden;
+      }
+
+      #heading {
+        background-image: url(/images/cloud-background.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        height: 50px;
+        width: 100%;
+        overflow: hidden;
+        position: fixed;
+      }
+      
+      h1{
+        font-size: 14px;
+        font-family: Segoe UI;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 20px;
+        color: #F3F2F1;
+        letter-spacing: 0.005em;
+        display: table-cell;
+        vertical-align: middle;
+        padding: 13px 0px 0px 20px;
+      }
+      
+      #chatwindow {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        position: fixed;
+      }
+
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="chatwindow">
+      <div id="heading">
+        <h1><img src="/images/robot-create-illustration.svg"> Contoso Flight Booker</h1>
+      </div>
+      <div id="webchat">
+      </div>
+    </div>
+    <script>
+      // This is a helper function for fetching JSON resources.
+      async function fetchJSON(url, options = {}) {
+        const res = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            accept: 'application/json'
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch JSON due to ${res.status}`);
+        }
+
+        return await res.json();
+      }
+
+      (async function main() {
+        // This is for obtaining Direct Line token from the bot.
+
+        const { token } = await fetchJSON('/api/directline/token');
+
+        // Triggers bot with initial message, in order to have greeting message render on load.
+        const store = WebChat.createStore({}, ({ dispatch }) => next => action => {
+          const { type } = action;
+          if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
+            dispatch({
+              type: 'WEB_CHAT/SEND_EVENT',
+              payload: {
+                name: 'startConversation',
+                type: 'event',
+                value: {text: "hello"}
+              }
+            });
+          }
+          return next(action);
+        });
+
+        // Makes connection to V2 Engine through direct line, with the defined actions and parameters
+        WebChat.renderWebChat(
+          {
+            directLine: WebChat.createDirectLine({ token }),
+            store,
+            styleOptions: {
+              backgroundColor: 'rgba(255, 255, 255, .8)'
+            }
+          },
+          document.getElementById('webchat')
+        );
+        
+
+      })().catch(err => console.error(err));
+    </script>
+    <div id="root"></div>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="final_loader_000" width="800" height="800">
+  <style>
+    @keyframes circleAnimation{0%{transform:rotate(0deg);stroke-dasharray:1600,0}16%{stroke-dasharray:1600,1100}90%,to{transform:rotate(630deg);stroke-dasharray:1600,0}}@keyframes rotateAnimation{0%,24.9%{transform:rotate(0deg)}25%,49.9%{transform:rotate(90deg)}50%,74.9%{transform:rotate(180deg)}75%,99.9%{transform:rotate(270deg)}}@keyframes squareAnimation{0%{transform:rotate(0deg)}36%,50%{transform:rotate(180deg)}86%,to{transform:rotate(360deg)}}#metaCircle{animation:6s infinite rotateAnimation}#circle{transform-origin:0 0!important;animation:1.5s cubic-bezier(.4,0,.2,1) infinite circleAnimation}#square{transform-origin:-200.3125px 1.59375px!important;animation:3s cubic-bezier(.72,.03,.33,1) infinite squareAnimation}
+  </style>
+  <g id="OUTER" transform="translate(402 402) scale(.9932)">
+    <g id="metaCircle">
+      <path id="circle" fill="none" stroke="#525252" stroke-dasharray="1600 0" stroke-dashoffset="760" stroke-width="36" d="M0-358.45c197.97 0 358.45 160.48 358.45 358.45S197.97 358.45 0 358.45-358.45 197.97-358.45 0-197.97-358.45 0-358.45z"/>
+    </g>
+  </g>
+  <g id="INNER" transform="matrix(-3.12 0 0 -3.12 -223.54 406.55)">
+    <g id="square">
+      <path fill="none" stroke="#525252" stroke-linejoin="round" stroke-width="12" d="M-120.63-76.94l-159.37.06v157l159.38-.06v-157z"/>
+      <g stroke="#525252" stroke-linecap="round" stroke-width="12">
+        <path d="M -272.5,76.3 L -201.3,-74.9">
+          <animate attributeName="d" begin="0.3s" dur="3.0s" keyTimes="0; 0.10; 0.2; 0.5; 0.60; 0.7; 1" repeatCount="indefinite" values="M -272.5,76.3 L -201.3,-74.9; M -272.5,76.3 L -272.5,-74.9; M -201.3,76.3 L -272.5,-74.9; M -201.3,76.3 L -272.5,-74.9; M -272.5,76.3 L -272.5,-74.9; M -272.5,76.3 L -201.3,-74.9; M -272.5,76.3 L -201.3,-74.9;"/>
+        </path>
+        <path d="M -130.0,76.3 L -201.3,-74.9">
+          <animate attributeName="d" begin="0.3s" dur="3.0s" keyTimes="0; 0.10; 0.2; 0.5; 0.60; 0.7; 1" repeatCount="indefinite" values="M -130.0,76.3 L -201.3,-74.9; M -130.0,76.3 L -130.0,-74.9; M -201.3,76.3 L -130.0,-74.9; M -201.3,76.3 L -130.0,-74.9; M -130.0,76.3 L -130.0,-74.9; M -130.0,76.3 L -201.3,-74.9; M -130.0,76.3 L -201.3,-74.9;"/>
+        </path>
+      </g>
+    </g>
+  </g>
+</svg>
