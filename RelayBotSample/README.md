@@ -18,7 +18,7 @@ This bot has been created based on [Bot Framework](https://dev.botframework.com)
 - Clone the repository
 
     ```bash
-    git clone https://github.com/microsoft/PowerVirtualAgentsSample.git
+    git clone https://github.com/microsoft/PowerVirtualAgentsSamples.git
     ```
 
 - In a terminal, navigate to `BYOBSample/`
