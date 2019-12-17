@@ -3,9 +3,6 @@
 # Aggregates all code into a single Docker image for export
 FROM node:12
 
-# Copy the bot code to /var/bot/
-ADD bot/ /var/build/bot/
-
 # Copy the web server code to /var/web/
 ADD web/ /var/build/web/
 
@@ -13,10 +10,6 @@ ADD web/ /var/build/web/
 # Adopted from https://github.com/Azure-App-Service/node/blob/master/10.14/sshd_config
 ADD init.sh /var/build/
 ADD sshd_config /var/build/
-
-# Doing a fresh "npm install" on build to make sure the image is reproducible
-WORKDIR /var/build/bot/
-RUN npm ci
 
 # Doing a fresh "npm install" on build to make sure the image is reproducible
 WORKDIR /var/build/web/

@@ -6,4 +6,4 @@ service ssh start
 # /usr/sbin/sshd
 
 # Start both bot server and web server
-./node_modules/.bin/concurrently --kill-others --names "bot,web" "node bot" "node web"
+./node_modules/.bin/concurrently --kill-others --names "web" "node web"
