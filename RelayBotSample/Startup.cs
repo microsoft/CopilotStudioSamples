@@ -58,6 +58,8 @@ namespace Microsoft.PowerVirtualAgents.Samples.RelayBotSample
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
+            app.UseWebSockets();
+
             app.UseMvc();
         }
     }

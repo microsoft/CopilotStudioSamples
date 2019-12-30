@@ -24,6 +24,7 @@ namespace Microsoft.PowerVirtualAgents.Samples.RelayBotSample.Controllers
             Bot = bot;
         }
 
+        [HttpGet]
         [HttpPost]
         public async Task PostAsync()
         {
