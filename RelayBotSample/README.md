@@ -4,6 +4,13 @@ Sample of connecting Bot Framework v4 bot to a Power Virtual Agent bot.
 
 This bot has been created based on [Bot Framework](https://dev.botframework.com), it shows how to create an Azure Bot Service bot that connects to Power Virtual Agents bot
 
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FPowerVirtualAgentsSamples%2Fmaster%2FRelayBotSample%2FDeploymentTemplates%2Ftemplate-with-new-rg.json" target="_blank">
+<img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.png"/>
+</a>
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FPowerVirtualAgentsSamples%2Fmaster%2FRelayBotSample%2FDeploymentTemplates%2Ftemplate-with-new-rg.json" target="_blank">
+<img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.png"/>
+</a>
+
 ## Prerequisites
 
 - [.NET Core SDK](https://dotnet.microsoft.com/download) version 2.1
