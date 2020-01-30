@@ -13,7 +13,8 @@ process.env = {
   'AZURE_STORAGE_ACCOUNT_KEY',
   'AZURE_STORAGE_ACCOUNT_NAME',
   'AZURE_STORAGE_CONTAINER_NAME',
-  'DIRECT_LINE_SECRET'
+  'BOT_ID',
+  'BOT_TENANT_ID'
 ].forEach(name => {
   if (!process.env[name]) {
     throw new Error(`Environment variable ${name} must be set.`);

@@ -9,7 +9,8 @@ process.env = {
 
 // Checks for required environment variables.
 [
-  'DIRECT_LINE_SECRET'
+  'BOT_ID',
+  'BOT_TENANT_ID'
 ].forEach(name => {
   if (!process.env[name]) {
     throw new Error(`Environment variable ${name} must be set.`);
