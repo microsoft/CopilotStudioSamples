@@ -27,10 +27,12 @@ namespace Microsoft.PVA.Handoff
                 // Read transcript from attachment
                 if (handoffInitiateActivity.Attachments?.Any() == true)
                 {
-                    Attachment transcriptAttachment = handoffInitiateActivity.Attachments.FirstOrDefault(a => string.Equals(a.Name.ToLowerInvariant(), TranscriptAttachmentName, System.StringComparison.Ordinal));
+                    Attachment transcriptAttachment = handoffInitiateActivity.Attachments.FirstOrDefault(
+                        a => string.Equals(a.Name.ToLowerInvariant(), TranscriptAttachmentName, System.StringComparison.Ordinal));
                     if (transcriptAttachment != null)
                     {
-                        Transcript transcript = JsonConvert.DeserializeObject<Transcript>(transcriptAttachment.Content.ToString());
+                        Transcript transcript = JsonConvert.DeserializeObject<Transcript>(
+                            transcriptAttachment.Content.ToString());
                     }
                 }
 
