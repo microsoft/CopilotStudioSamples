@@ -40,6 +40,7 @@ namespace Microsoft.PVA.Handoff
                 HandoffContext context = JsonConvert.DeserializeObject<HandoffContext>(handoffInitiateActivity.Value.ToString());
 
                 // Connect to Agent Hub
+                // <YOUR CUSTOM ADAPTER CODE GOES HERE>
             }
         }
     }
