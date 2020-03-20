@@ -32,7 +32,7 @@ To host this demo, you will need to clone the code and run locally.
 
 ## Prepare and run the code
 
-1. Under `web` folder, run the following
+1. Run the following
    1. `npm install`
    1. `npm start`
 1. Browse to http://localhost:5000/ to start the demo
@@ -40,7 +40,7 @@ To host this demo, you will need to clone the code and run locally.
 
 # Code
 
--  `/web/` is the REST API for distributing Direct Line tokens
+-  THis is the REST API for distributing Direct Line tokens
    -  `GET /api/directline/token` will generate a new Direct Line token for the React app
    -  During development-time, it will also serve the bot server via `/api/messages/`
       -  To enable this feature, add `PROXY_BOT_URL=http://localhost:3978` to `/web/.env`
@@ -61,7 +61,7 @@ The `.env` file hold the environment variable critical to run the service. These
 
 To ease the setup of this sample, here is the template of `.env` files.
 
-### `/web/.env`
+### `.env`
 
 ```
 BOT_ID=21wejwl2-2j34-dse3-12df-1123rgted34
