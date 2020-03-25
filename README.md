@@ -4,6 +4,7 @@
 ## Overview
 
 This branch contains samples for connecting your Power Virtual Agents bot to a custom app or to existing [Azure Bot Service channels](/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0). 
+The ConnectToEngagementHub sample contains code for handing off conversations seamlessly and contextually to an Engagement hub.
 
 ## Samples list
 
@@ -20,11 +21,13 @@ To use the samples, clone this GitHub repository using Git.
 |BotConnectorApp | Demonstrates how to connect your bot to a custom app for example mobile-device app   | [View][cs#1]|
 |BuildYourOwnCanvasSamples | Demonstrates how to connect your bot to a custom canvas with various functionality | [View][cs#2] |
 |RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#3] |
+|ConnectToEngagementHub | Demonstrates how to detect a handoff activity during a bot conversation and read conversation context | [View][cs#4] |
 
 
 [cs#1]:./BotConnectorApp
 [cs#2]:./BuildYourOwnCanvasSamples
 [cs#3]:./RelayBotSample
+[cs#4]:./ConnectToEngagementHub
 
 
 ## Contributing
