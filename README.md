@@ -4,6 +4,7 @@
 ## Overview
 
 This branch contains samples for connecting your Power Virtual Agents bot to a custom app or to existing [Azure Bot Service channels](/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0). 
+The ConnectToEngagementHub sample shows how the handoff activity can be detected and its context used to connect to an engagement hub.
 
 ## Samples list
 
