@@ -25,4 +25,4 @@ This sample shows the minimum code required for a Power Virtual Agent client to 
 - Conversation context and transcript can then be used to write a custom adapter (based on engagement hub APIs) to transfer the chat to a live agent.
 
 ## Further reading
-- [Configure hand-off to any generic engagement hub](https://review.docs.microsoft.com/en-us/power-virtual-agents/configure-generic-handoff)
+- [Configure hand-off to any generic engagement hub](https://go.microsoft.com/fwlink/?linkid=2104701)
