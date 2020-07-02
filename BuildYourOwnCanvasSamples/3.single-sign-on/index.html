@@ -192,10 +192,14 @@ async function fetchJSON(url, options = {}) {
 
 (async function main() {
 
-      // Add your BOT ID below 
-      var BOT_ID = "<BOT ID>";
-      var theURL = "https://bots.ppe.customercareintelligence.net/api/botmanagement/v1/directline/directlinetoken?botId=" + BOT_ID;
+    // Add your BOT ID below 
+    var BOT_ID = "<BOT ID>";
+    var theURL = "https://powerva.microsoft.com/api/botmanagement/v1/directline/directlinetoken?botId=" + BOT_ID;
 
+	var userId = clientApplication.account?.accountIdentifier != null ? 
+					("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64) 
+					: (Math.random().toString() + Date.now().toString()).substr(0,64);
+					
    const { token } = await fetchJSON(theURL);
    const directLine = window.WebChat.createDirectLine({ token });
    const store = WebChat.createStore({}, ({ dispatch }) => next => action => {
@@ -227,7 +231,7 @@ async function fetchJSON(url, options = {}) {
 		  token
 		},
 		"from": {
-		  id: clientApplication.account.accountIdentifier,
+		  id: userId,
 		  name: clientApplication.account.name,
 		  role: "user"
 		}
@@ -267,7 +271,8 @@ async function fetchJSON(url, options = {}) {
 	      window.WebChat.renderWebChat(
 		  {
 		      directLine: directLine,
-	  store,
+			  store,
+			  userID:userId,
 		      styleOptions
 		  },
 		  document.getElementById('webchat')
