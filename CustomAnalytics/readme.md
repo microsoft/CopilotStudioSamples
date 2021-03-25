@@ -11,13 +11,13 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
 - PVA_Analytics_Export.json - this is the template for a PowerBI DataFlow
 - PVA_Dashboard.pbit - Power BI template file
 
-## Installation
+# Installation
 
-# Installation requirements
+## Installation requirements
 - One or more Power Virtual Agents bots
 - A Power BI account
 
-# Installation steps
+## Installation steps
 1. Edit the DataFlow template
    1. FInd the server url associated with your Dataverse environment (it will look like https://yourservice.crm.dynamics.com)
    2. Open the file 'PVA Analytics_Export.json' in a text editor
@@ -36,13 +36,22 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
    3. The report should pull through the data and render it
    4. You can now save the report to share through the Power BI portal
 
-# TBD Connecting Azure Data Lake Storage for data archival
-TBD
+## TBD Connecting Azure Data Lake Storage for data archival
+Using Azure Data Lake Storage v2, DataVerse can archive the data used in this report, to support datasets greater than 30 days. This pattern is in developement.
 
-## Using the report
+# Using the report
 The report is based on what is shared through the Power Virtual Agents portal, but with some important differences:
 
 - The report includes all bots in your environment
 - The report includes a date filter - and can support a range of dates greater than the 30 days supported natively in Dataverse
 - The report includes all trace data emitted with the bot, allowing users to build reports on data import to them
 - The report can be shared with users and business decision makers without access to Power Virtual Agents
+
+# Troubleshooting
+There are a few places where the pipeline may break - troublshooting can normally isolate the problem using these steps:
+
+1. Ensure that data is being pulled in to your DataFlow correctly. Open the DataFlow for editing (select 'edit entities'), and on each of the tables, select refresh to ensure that data is being populated.
+2. Ensure that your Power BI report is connecting to DataFlows. If an error happens when you first pull in data, select 'Transform data' in the navigation menu to open Power Query
+   1. Refresh each table in the 'Raw Data' folder - these correspond to the data in the DataFlow.
+   2. If this fails also, test you have permissions to the DataFlow. An easy way to do this is to open the 'bot' query at the top of the query list, and select 'Source' at the top of the 'Applied steps' control. This lists all the DataFlows you have access to.
+3. If both of the steps above succeed, but you still have errors, please raise an issue in this repo.
