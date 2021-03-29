@@ -1,1 +1,497 @@
-{"name":"PVA_Analytics_Export1","description":"","version":"1.0","culture":"en-US","modifiedTime":"2021-03-17T15:53:39.3636332+00:00","pbi:mashup":{"fastCombine":false,"allowNativeQueries":false,"queriesMetadata":{"botcomponent":{"queryId":"d1c02c27-4fc7-47e3-a623-155fb9c6152d","queryName":"botcomponent","loadEnabled":true},"bot":{"queryId":"8dc931c2-0ac3-4755-ae25-61caf7c91d10","queryName":"bot","loadEnabled":true},"conversationtranscript":{"queryId":"48645ace-1a69-4f7b-b342-b0beaddf201b","queryName":"conversationtranscript","loadEnabled":true}},"document":"section Section1;\r\nshared botcomponent = let\r\n  Source = Cds.Entities(\"**Your server url here**\", null),\r\n  #\"Navigation 1\" = Source{[Group = \"entities\"]}[Data],\r\n  #\"Navigation 2\" = #\"Navigation 1\"{[EntitySetName = \"botcomponents\"]}[Data]\r\nin\r\n  #\"Navigation 2\";\r\nshared bot = let\r\n  Source = Cds.Entities(\"**Your server url here**\", null),\r\n  #\"Navigation 1\" = Source{[Group = \"entities\"]}[Data],\r\n  #\"Navigation 2\" = #\"Navigation 1\"{[EntitySetName = \"bots\"]}[Data]\r\nin\r\n  #\"Navigation 2\";\r\nshared conversationtranscript = let\r\n  Source = Cds.Entities(\"**Your server url here**\", null),\r\n  #\"Navigation 1\" = Source{[Group = \"entities\"]}[Data],\r\n  #\"Navigation 2\" = #\"Navigation 1\"{[EntitySetName = \"conversationtranscripts\"]}[Data]\r\nin\r\n  #\"Navigation 2\";\r\n"},"annotations":[{"name":"pbi:QueryGroups","value":"[]"}],"entities":[{"$type":"LocalEntity","name":"botcomponent","description":"","pbi:refreshPolicy":{"$type":"FullRefreshPolicy","location":"botcomponent.csv"},"attributes":[{"name":"botcomponentid","dataType":"string"},{"name":"category","dataType":"string"},{"name":"componentidunique","dataType":"string"},{"name":"componentstate","dataType":"int64"},{"name":"componentstate_display","dataType":"string"},{"name":"componenttype","dataType":"int64"},{"name":"componenttype_display","dataType":"string"},{"name":"content","dataType":"string"},{"name":"createdby","dataType":"string"},{"name":"createdon","dataType":"dateTimeOffset"},{"name":"createdonbehalfby","dataType":"string"},{"name":"data","dataType":"string"},{"name":"description","dataType":"string"},{"name":"importsequencenumber","dataType":"int64"},{"name":"ismanaged","dataType":"boolean"},{"name":"language","dataType":"int64"},{"name":"language_display","dataType":"string"},{"name":"modifiedby","dataType":"string"},{"name":"modifiedon","dataType":"dateTimeOffset"},{"name":"modifiedonbehalfby","dataType":"string"},{"name":"name","dataType":"string"},{"name":"overriddencreatedon","dataType":"dateTimeOffset"},{"name":"overwritetime","dataType":"dateTimeOffset"},{"name":"ownerid","dataType":"string"},{"name":"owningbusinessunit","dataType":"string"},{"name":"owningteam","dataType":"string"},{"name":"owninguser","dataType":"string"},{"name":"parentbotcomponentid","dataType":"string"},{"name":"schemaname","dataType":"string"},{"name":"solutionid","dataType":"string"},{"name":"statecode","dataType":"int64"},{"name":"statecode_display","dataType":"string"},{"name":"statuscode","dataType":"int64"},{"name":"statuscode_display","dataType":"string"},{"name":"timezoneruleversionnumber","dataType":"int64"},{"name":"utcconversiontimezonecode","dataType":"int64"},{"name":"versionnumber","dataType":"int64"}],"partitions":[]},{"$type":"LocalEntity","name":"bot","description":"","pbi:refreshPolicy":{"$type":"FullRefreshPolicy","location":"bot.csv"},"attributes":[{"name":"accesscontrolpolicy","dataType":"int64"},{"name":"accesscontrolpolicy_display","dataType":"string"},{"name":"applicationmanifestinformation","dataType":"string"},{"name":"authenticationmode","dataType":"int64"},{"name":"authenticationmode_display","dataType":"string"},{"name":"authenticationtrigger","dataType":"int64"},{"name":"authenticationtrigger_display","dataType":"string"},{"name":"authorizedsecuritygroupids","dataType":"string"},{"name":"botid","dataType":"string"},{"name":"componentidunique","dataType":"string"},{"name":"componentstate","dataType":"int64"},{"name":"componentstate_display","dataType":"string"},{"name":"configuration","dataType":"string"},{"name":"createdby","dataType":"string"},{"name":"createdon","dataType":"dateTimeOffset"},{"name":"createdonbehalfby","dataType":"string"},{"name":"iconbase64","dataType":"string"},{"name":"importsequencenumber","dataType":"int64"},{"name":"ismanaged","dataType":"boolean"},{"name":"language","dataType":"int64"},{"name":"language_display","dataType":"string"},{"name":"modifiedby","dataType":"string"},{"name":"modifiedon","dataType":"dateTimeOffset"},{"name":"modifiedonbehalfby","dataType":"string"},{"name":"name","dataType":"string"},{"name":"overriddencreatedon","dataType":"dateTimeOffset"},{"name":"overwritetime","dataType":"dateTimeOffset"},{"name":"ownerid","dataType":"string"},{"name":"owningbusinessunit","dataType":"string"},{"name":"owningteam","dataType":"string"},{"name":"owninguser","dataType":"string"},{"name":"publishedby","dataType":"string"},{"name":"publishedon","dataType":"dateTimeOffset"},{"name":"schemaname","dataType":"string"},{"name":"solutionid","dataType":"string"},{"name":"statecode","dataType":"int64"},{"name":"statecode_display","dataType":"string"},{"name":"statuscode","dataType":"int64"},{"name":"statuscode_display","dataType":"string"},{"name":"timezoneruleversionnumber","dataType":"int64"},{"name":"utcconversiontimezonecode","dataType":"int64"},{"name":"versionnumber","dataType":"int64"}],"partitions":[]},{"$type":"LocalEntity","name":"conversationtranscript","description":"","pbi:refreshPolicy":{"$type":"FullRefreshPolicy","location":"conversationtranscript.csv"},"attributes":[{"name":"bot_conversationtranscriptid","dataType":"string"},{"name":"content","dataType":"string"},{"name":"conversationstarttime","dataType":"dateTimeOffset"},{"name":"conversationtranscriptid","dataType":"string"},{"name":"createdby","dataType":"string"},{"name":"createdon","dataType":"dateTimeOffset"},{"name":"createdonbehalfby","dataType":"string"},{"name":"importsequencenumber","dataType":"int64"},{"name":"metadata","dataType":"string"},{"name":"modifiedby","dataType":"string"},{"name":"modifiedon","dataType":"dateTimeOffset"},{"name":"modifiedonbehalfby","dataType":"string"},{"name":"name","dataType":"string"},{"name":"overriddencreatedon","dataType":"dateTimeOffset"},{"name":"ownerid","dataType":"string"},{"name":"owningbusinessunit","dataType":"string"},{"name":"owningteam","dataType":"string"},{"name":"owninguser","dataType":"string"},{"name":"schematype","dataType":"string"},{"name":"schemaversion","dataType":"string"},{"name":"statecode","dataType":"int64"},{"name":"statecode_display","dataType":"string"},{"name":"statuscode","dataType":"int64"},{"name":"statuscode_display","dataType":"string"},{"name":"timezoneruleversionnumber","dataType":"int64"},{"name":"utcconversiontimezonecode","dataType":"int64"},{"name":"versionnumber","dataType":"int64"}],"partitions":[]}]}
+{
+    "name": "PVA_Analytics_Export",
+    "description": "",
+    "version": "1.0",
+    "culture": "en-US",
+    "modifiedTime": "2021-03-17T15:53:39.3636332+00:00",
+    "pbi:mashup": {
+        "fastCombine": false,
+        "allowNativeQueries": false,
+        "queriesMetadata": {
+            "botcomponent": {
+                "queryId": "d1c02c27-4fc7-47e3-a623-155fb9c6152d",
+                "queryName": "botcomponent",
+                "loadEnabled": true
+            },
+            "bot": {
+                "queryId": "8dc931c2-0ac3-4755-ae25-61caf7c91d10",
+                "queryName": "bot",
+                "loadEnabled": true
+            },
+            "conversationtranscript": {
+                "queryId": "48645ace-1a69-4f7b-b342-b0beaddf201b",
+                "queryName": "conversationtranscript",
+                "loadEnabled": true
+            }
+        },
+        "document": "section Section1;\r\nshared botcomponent = let\r\n  Source = Cds.Entities(\"**Your server url here**\", null),\r\n  #\"Navigation 1\" = Source{[Group = \"entities\"]}[Data],\r\n  #\"Navigation 2\" = #\"Navigation 1\"{[EntitySetName = \"botcomponents\"]}[Data]\r\nin\r\n  #\"Navigation 2\";\r\nshared bot = let\r\n  Source = Cds.Entities(\"**Your server url here**\", null),\r\n  #\"Navigation 1\" = Source{[Group = \"entities\"]}[Data],\r\n  #\"Navigation 2\" = #\"Navigation 1\"{[EntitySetName = \"bots\"]}[Data]\r\nin\r\n  #\"Navigation 2\";\r\nshared conversationtranscript = let\r\n  Source = Cds.Entities(\"**Your server url here**\", null),\r\n  #\"Navigation 1\" = Source{[Group = \"entities\"]}[Data],\r\n  #\"Navigation 2\" = #\"Navigation 1\"{[EntitySetName = \"conversationtranscripts\"]}[Data]\r\nin\r\n  #\"Navigation 2\";\r\n"
+    },
+    "annotations": [
+        {
+            "name": "pbi:QueryGroups",
+            "value": "[]"
+        }
+    ],
+    "entities": [
+        {
+            "$type": "LocalEntity",
+            "name": "botcomponent",
+            "description": "",
+            "pbi:refreshPolicy": {
+                "$type": "FullRefreshPolicy",
+                "location": "botcomponent.csv"
+            },
+            "attributes": [
+                {
+                    "name": "botcomponentid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "category",
+                    "dataType": "string"
+                },
+                {
+                    "name": "componentidunique",
+                    "dataType": "string"
+                },
+                {
+                    "name": "componentstate",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "componentstate_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "componenttype",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "componenttype_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "content",
+                    "dataType": "string"
+                },
+                {
+                    "name": "createdby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "createdon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "createdonbehalfby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "data",
+                    "dataType": "string"
+                },
+                {
+                    "name": "description",
+                    "dataType": "string"
+                },
+                {
+                    "name": "importsequencenumber",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "ismanaged",
+                    "dataType": "boolean"
+                },
+                {
+                    "name": "language",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "language_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "modifiedby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "modifiedon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "modifiedonbehalfby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "name",
+                    "dataType": "string"
+                },
+                {
+                    "name": "overriddencreatedon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "overwritetime",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "ownerid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owningbusinessunit",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owningteam",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owninguser",
+                    "dataType": "string"
+                },
+                {
+                    "name": "parentbotcomponentid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "schemaname",
+                    "dataType": "string"
+                },
+                {
+                    "name": "solutionid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "statecode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "statecode_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "statuscode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "statuscode_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "timezoneruleversionnumber",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "utcconversiontimezonecode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "versionnumber",
+                    "dataType": "int64"
+                }
+            ],
+            "partitions": []
+        },
+        {
+            "$type": "LocalEntity",
+            "name": "bot",
+            "description": "",
+            "pbi:refreshPolicy": {
+                "$type": "FullRefreshPolicy",
+                "location": "bot.csv"
+            },
+            "attributes": [
+                {
+                    "name": "accesscontrolpolicy",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "accesscontrolpolicy_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "applicationmanifestinformation",
+                    "dataType": "string"
+                },
+                {
+                    "name": "authenticationmode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "authenticationmode_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "authenticationtrigger",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "authenticationtrigger_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "authorizedsecuritygroupids",
+                    "dataType": "string"
+                },
+                {
+                    "name": "botid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "componentidunique",
+                    "dataType": "string"
+                },
+                {
+                    "name": "componentstate",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "componentstate_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "configuration",
+                    "dataType": "string"
+                },
+                {
+                    "name": "createdby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "createdon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "createdonbehalfby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "iconbase64",
+                    "dataType": "string"
+                },
+                {
+                    "name": "importsequencenumber",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "ismanaged",
+                    "dataType": "boolean"
+                },
+                {
+                    "name": "language",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "language_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "modifiedby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "modifiedon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "modifiedonbehalfby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "name",
+                    "dataType": "string"
+                },
+                {
+                    "name": "overriddencreatedon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "overwritetime",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "ownerid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owningbusinessunit",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owningteam",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owninguser",
+                    "dataType": "string"
+                },
+                {
+                    "name": "publishedby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "publishedon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "schemaname",
+                    "dataType": "string"
+                },
+                {
+                    "name": "solutionid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "statecode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "statecode_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "statuscode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "statuscode_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "timezoneruleversionnumber",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "utcconversiontimezonecode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "versionnumber",
+                    "dataType": "int64"
+                }
+            ],
+            "partitions": []
+        },
+        {
+            "$type": "LocalEntity",
+            "name": "conversationtranscript",
+            "description": "",
+            "pbi:refreshPolicy": {
+                "$type": "FullRefreshPolicy",
+                "location": "conversationtranscript.csv"
+            },
+            "attributes": [
+                {
+                    "name": "bot_conversationtranscriptid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "content",
+                    "dataType": "string"
+                },
+                {
+                    "name": "conversationstarttime",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "conversationtranscriptid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "createdby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "createdon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "createdonbehalfby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "importsequencenumber",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "metadata",
+                    "dataType": "string"
+                },
+                {
+                    "name": "modifiedby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "modifiedon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "modifiedonbehalfby",
+                    "dataType": "string"
+                },
+                {
+                    "name": "name",
+                    "dataType": "string"
+                },
+                {
+                    "name": "overriddencreatedon",
+                    "dataType": "dateTimeOffset"
+                },
+                {
+                    "name": "ownerid",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owningbusinessunit",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owningteam",
+                    "dataType": "string"
+                },
+                {
+                    "name": "owninguser",
+                    "dataType": "string"
+                },
+                {
+                    "name": "schematype",
+                    "dataType": "string"
+                },
+                {
+                    "name": "schemaversion",
+                    "dataType": "string"
+                },
+                {
+                    "name": "statecode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "statecode_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "statuscode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "statuscode_display",
+                    "dataType": "string"
+                },
+                {
+                    "name": "timezoneruleversionnumber",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "utcconversiontimezonecode",
+                    "dataType": "int64"
+                },
+                {
+                    "name": "versionnumber",
+                    "dataType": "int64"
+                }
+            ],
+            "partitions": []
+        }
+    ]
+}
