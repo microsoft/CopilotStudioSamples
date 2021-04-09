@@ -2,7 +2,7 @@
 
 This solution allows customers to create a Power BI dashboard for their Power Virtual Agents chatbots
 
-![Custom Analytics example screenshot](img/PVA_Analytics.png=1000x)
+<img src="img/PVA_Analytics.png" width="797" alt="Custom Analytics example screenshot">
 
 ## Solution components
 
