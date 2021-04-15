@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientWebApp", "ClientWebApp\ClientWebApp.csproj", "{49B7961D-51EF-4B31-B6E6-D44A61F8DE3E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecryptSkillBot", "EchoSkillBot\DecryptSkillBot.csproj", "{2815C1E6-ED4F-4070-9131-2931CD36F8B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecryptSkillBot", "DecryptSkillBot\DecryptSkillBot.csproj", "{2815C1E6-ED4F-4070-9131-2931CD36F8B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
