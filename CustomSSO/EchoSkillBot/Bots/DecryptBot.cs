@@ -11,7 +11,6 @@ namespace DecryptSkillBot.Bots
 {
     public class DecryptBot : ActivityHandler
     {
-        
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
 
@@ -25,7 +24,7 @@ namespace DecryptSkillBot.Bots
             if (activity.Value != null)
             {
                 tokenEncrypted = JsonConvert.DeserializeObject<TokenEncrypted>(JsonConvert.SerializeObject(activity.Value));
-            }
+            }        
 
             // this is the variable for the object you return back to PVA
             var userId = new UserId();
@@ -54,5 +53,4 @@ namespace DecryptSkillBot.Bots
             // Perform cleanup of resources if needed.
             return Task.CompletedTask;
         }
-    }
 }

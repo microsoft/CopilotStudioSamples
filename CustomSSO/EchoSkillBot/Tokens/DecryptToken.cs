@@ -1,5 +1,4 @@
-﻿using DecryptSkillBot.Tokens;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -18,7 +17,7 @@ namespace DecryptSkillBot
             // throw an exception or return an error string as needed
             if (!ValidateCurrentToken(token.token))
             {
-                userId = string.Empty;
+                userId = String.Empty;
             }
             else
             {
@@ -63,8 +62,7 @@ namespace DecryptSkillBot
 
         private static string GetPublicKey()
         {
-            PublicKeyValidator publicKeyValidator = new PublicKeyValidator();
-
+            keyUrl = 
         }
     }
 }

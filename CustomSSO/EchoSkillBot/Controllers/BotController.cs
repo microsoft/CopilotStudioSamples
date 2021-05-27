@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
 
 namespace DecryptSkillBot.Controllers
 {
@@ -19,15 +17,11 @@ namespace DecryptSkillBot.Controllers
     {
         private readonly IBotFrameworkHttpAdapter _adapter;
         private readonly IBot _bot;
-        private IConfiguration _config;
-        private IMemoryCache _memoryCache;
 
-        public BotController(IBotFrameworkHttpAdapter adapter, IBot bot, IConfiguration config, IMemoryCache memoryCache)
+        public BotController(IBotFrameworkHttpAdapter adapter, IBot bot)
         {
             _adapter = adapter;
             _bot = bot;
-            _config = config;
-            _memoryCache = memoryCache;
         }
 
         [HttpPost]
