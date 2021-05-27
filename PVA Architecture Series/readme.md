@@ -2,7 +2,7 @@
 
 <img src="img/PVA_Arch_Title.png" width="797" alt="Architecture series title page">
 
-Supplementary materials for the Power Virtual Agents Architecture series. View the series: https://www.youtube.com/playlist?list=PLi9EhCY4z99W2QOTgbwhFZEjpqc8YZDVH
+Supplementary materials for the Power Virtual Agents Architecture series. View the series: <https://www.youtube.com/playlist?list=PLi9EhCY4z99W2QOTgbwhFZEjpqc8YZDVH>
 
 ## File
 
@@ -11,4 +11,4 @@ Supplementary materials for the Power Virtual Agents Architecture series. View t
 
 ## Installation
 
-To set up ya bot using the solution example above, you will need to have access to a Power Platform Environment (a Trial or Sandbox environment is fine). To import, please follow the documented instructions: https://docs.microsoft.com/en-us/power-virtual-agents/authoring-export-import-bots#export-and-import-bots
+To set up ya bot using the solution example above, you will need to have access to a Power Platform Environment (a Trial or Sandbox environment is fine). To import, please follow the documented instructions: <https://docs.microsoft.com/en-us/power-virtual-agents/authoring-export-import-bots#export-and-import-bots>
