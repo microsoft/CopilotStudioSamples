@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Contoso Sample Web Chat</title>
+    <!-- This styling is for the canvas demonstration purposes. It is recommended
+    that style is moved to separate file for organization in larger projects -->
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-family: Segoe UI;
+            line-height: 20px;
+            color: whitesmoke;
+            display: table-cell;
+            padding: 13px 0px 0px 20px;
+        }
+
+        .heading {
+            background-color: grey;
+            height: 50px;
+        }
+
+        .main {
+            margin: 18px;
+            border-radius: 4px;
+        }
+
+        div[role="form"] {
+            background-color: mediumpurple;
+        }
+
+        #webchat {
+            position: fixed;
+            height: calc(100% - 50px);
+            width: 100%;
+            top: 50px;
+            overflow: hidden;
+        }
+
+    </style>
+</head>
+<body>
+    <div>
+        <div class="heading">
+
+            <!-- Change the h1 text to change the bot name -->
+            <h1>Matt Bot</h1>
+
+        </div>
+        <div id="webchat" role="main"></div>
+    </div>
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <script>
+            const styleOptions = {
+               // Add styleOptions to customize web chat canvas
+                hideUploadButton: true,
+                sendBoxButtonColor: 'red',
+                botAvatarImage: 'https://maxcdn.icons8.com/Share/icon/ios7/Industry/bot1600.png'
+            };
+
+            const styleSet = window.WebChat.createStyleSet({
+                bubbleBackground: 'rgba(0, 0, 255, .1)',
+                bubbleFromUserBackground: 'rgba(0, 255, 0, .1)'
+            });
+
+            styleSet.textContent = Object.assign(
+                {},
+                styleSet.textContent,
+                {
+                fontFamily: '\'Comic Sans MS\', \'Arial\', sans-serif',
+                            fontWeight: 'bold'
+                        }
+                 );
+
+            // Add your BOT ID below
+            var BOT_ID = "097b7cbb-0604-459c-8e42-de03daa68596";
+
+            var theURL = "https://powerva.microsoft.com/api/botmanagement/v1/directline/directlinetoken?botId=" + BOT_ID;
+
+            //Set this variable to the encrypted token string. In real use, the token will need to extracted from the users store/cookie
+            var theToken = "ABC123";
+
+            const store = window.WebChat.createStore(
+                {},
+                // This code sends the encryted token to PVA. Set the varToken value to the encryted Token the user holds.
+                   ({ dispatch }) => next => action => {
+                       if (action.type === "DIRECT_LINE/CONNECT_FULFILLED") {
+                            dispatch({
+                                type: 'WEB_CHAT/SEND_EVENT',
+                                payload: {
+                                    name: 'pvaSetContext',
+                                    value: {
+                                        "tokenValue": "" + theToken + ""
+                                    }
+                                }
+                            });
+                     }
+                     return next(action);
+                  }
+               );
+               fetch(theURL)
+                    .then(response => response.json())
+                    .then(conversationInfo => {
+                        window.WebChat.renderWebChat(
+                            {
+                                directLine: window.WebChat.createDirectLine({
+                                    token: conversationInfo.token,
+                                }),
+                                store: store,
+                                styleOptions: styleOptions
+                            },
+                            document.getElementById('webchat')
+                        );
+                    })
+                    .catch(err => console.error("An error occurred: " + err));
+    </script>
+    <style>
+
+    </style>
+</body>
+</html>
