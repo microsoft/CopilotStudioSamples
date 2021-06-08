@@ -2,7 +2,7 @@
 
 <img src="img/PVA_Arch_Title.png" width="797" alt="Architecture series title page">
 
-Supplementary materials for the Power Virtual Agents Architecture series. View the series: <https://www.youtube.com/playlist?list=PLi9EhCY4z99W2QOTgbwhFZEjpqc8YZDVH>
+Supplementary materials for the Power Virtual Agents Architecture series. View the series: <https://aka.ms/pvaarchitectureseries>
 
 ## File
 
