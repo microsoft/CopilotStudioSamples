@@ -1,4 +1,4 @@
-Employee FAQ PVA Template
+# Employee FAQ PVA Template
 
 ## Overview
 
@@ -73,7 +73,7 @@ Now, import the template solution:
 1. In the Power Apps app, select the **Build** tab to see your list of teams on the side panel. 
    
 
-   ![Build Tab](Images\Build-Tab)
+   ![Build Tab](Images/Build-Tab)
    
 
 2. Select the team you choose in the previous step from the list. The app you just created will appear in the main section of the window, this may take a few minutes to update.
@@ -81,13 +81,13 @@ Now, import the template solution:
 3. Select **See all**.
    
 
-   ![See All](Images\See-All)
+   ![See All](Images/See-All)
    
 
 4. On the top menu bar, select **Import**, then select **Browse** in the pane that appears.
 
 
-   ![Import](Images\Import)
+   ![Import](Images/Import)
 
 5. Select the template solution you downloaded, and then **Next**.
 
@@ -96,7 +96,7 @@ Now, import the template solution:
 7. If you have connections, select them, if you do not then add them. You will need to add Microsoft Teams, Office and Dataverse connection.
 
 
-   ![Connections](Images\Connections)
+   ![Connections](Images/Connections)
 
 8. Select **Import**.
 
@@ -117,20 +117,20 @@ We need to update our Power Automate Flows, validate the bot is working and add 
 1. In the Power Apps app, select the **Build** tab to see your list of teams on the side panel.
    
 
-    ![Build Tab](Images\Build-Tab)
+    ![Build Tab](Images/Build-Tab)
    
 
 2. Select the team you choose in the previous step from the list, then select **See all** to view the solution overview.
 
 
-   ![See All Imported](Images\Imported-See-All)
+   ![See All Imported](Images/Imported-See-All)
 
    
 
 3. Select **Cloud flows** on the side panel.
    
 
-   ![Cloud Flows](Images\Cloud-Flows)
+   ![Cloud Flows](Images/Cloud-Flows)
    
 
 4. Select the **FAQ Bot - Request** flow to open it.
@@ -182,7 +182,7 @@ While we are setting the Canvas application up, it is important to note that you
 3. Select **Add to Teams**.
 
 
-   ![Add to Teams](Images\Add to Teams)
+   ![Add to Teams](Images/Add to Teams)
 
 4. Select **Add to Teams** on the side menu that opens.
 

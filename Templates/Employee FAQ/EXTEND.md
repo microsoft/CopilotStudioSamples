@@ -24,7 +24,7 @@ The data model structure for logging feedback is structured around basic core pr
 
  
 
-![image-20210616103757883](C:\Users\junwin\Documents\GitHub\PowerVirtualAgentsSamples\Templates\Employee FAQ\Images\Data-Model)
+![Data Model](Images/Data-Model)
 
 The first part of gathering feedback is from a **Survey Response**. A **Survey Response** has core information, including the name of the person who the survey was related to, the channel it was originally obtained on, and when the response was created.
 
