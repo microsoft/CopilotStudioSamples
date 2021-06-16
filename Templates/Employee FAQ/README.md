@@ -75,7 +75,6 @@ Now, import the template solution:
 
    ![Build Tab](Images/Build-Tab)
    
-
 2. Select the team you choose in the previous step from the list. The app you just created will appear in the main section of the window, this may take a few minutes to update.
 
 3. Select **See all**.
@@ -83,7 +82,6 @@ Now, import the template solution:
 
    ![See All](Images/See-All)
    
-
 4. On the top menu bar, select **Import**, then select **Browse** in the pane that appears.
 
 
@@ -118,7 +116,7 @@ We need to update our Power Automate Flows, validate the bot is working and add 
    
 
     ![Build Tab](Images/Build-Tab)
-   
+
 
 2. Select the team you choose in the previous step from the list, then select **See all** to view the solution overview.
 
@@ -132,7 +130,6 @@ We need to update our Power Automate Flows, validate the bot is working and add 
 
    ![Cloud Flows](Images/Cloud-Flows)
    
-
 4. Select the **FAQ Bot - Request** flow to open it.
    1. Select **Edit**.
    2. Open the action **Convert time zone - Select Your Timezone** and set the **destination time zone** to your timezone.
@@ -180,9 +177,10 @@ While we are setting the Canvas application up, it is important to note that you
 2. Select the three dots next to the app name (...).
 
 3. Select **Add to Teams**.
+   
 
+   ![Add to Teams](Images/Add-to-Teams)
 
-   ![Add to Teams](Images/Add to Teams)
 
 4. Select **Add to Teams** on the side menu that opens.
 
