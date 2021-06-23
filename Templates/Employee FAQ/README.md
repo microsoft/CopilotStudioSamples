@@ -2,13 +2,9 @@
 
 ## Overview
 
-The Employee FAQ [Power Virtual Agents](https://powervirtualagents.microsoft.com/) template is designed to allow organizations or departments easily create a bot to handle their employee’s common questions by adding content that matches the business’s needs. Whether it’s HR, IT or other internal employee functions, the Employee FAQ bot template is a great place to start. 
+Bots are great at helping your employees to self serve HR, IT or any other internal employee functions by providing automated responses and taking meaningful actions.  This increases employee's efficiency and saves your organization cost and time.  
 
-Bots are great at providing automated responses to save your organization cost and time and help your employees, and when it can’t help, it needs a way to escalate to human agents. The Employee FAQ template is a Power Virtual Agents template that can be easily customized and extended to suite your needs. It comes with a built-in capability to log an employee’s escalation request, notify a human agent, and allow them to quickly respond to the employee - all within [Microsoft Teams](https://www.microsoft.com/microsoft-teams/group-chat-software). 
-
-Finally, the Employee FAQ template obtains feedback from the employee on the bot’s performance so you can continuously improve the bot.
-
-
+Bots have limitations and when a bot can’t help, it needs a way to connect employee with human subject matter experts. The Employee FAQ bot template is built with [Power Virtual Agents](https://powervirtualagents.microsoft.com/) that comes with a built-in capability to log an employee’s escalation request, notify a human expert, and allow them to quickly respond to the employee - all within [Microsoft Teams](https://www.microsoft.com/microsoft-teams/group-chat-software). It also obtains employee feedback so you can make improvements to the bot over time.  Being built on top of Power Virtual Agents, it can be easily customized and extended to suit your needs with no develeper and data science background required. 
 
 ## Features
 
@@ -18,10 +14,10 @@ The template supports the following features:
 
 #### Power Virtual Agents bot
 
-- Lessons Topics
-- Escalation requests (allow users to make requests with a **Title** and **Description** then post the request to a team for human support with an adaptive card)
+- Lessons Topics to illustrate how to build topics for your bot in Power Virtual Agents
+- Escalation requests (allow users to make requests with a **Title** and **Description** then post the request to a team in Microsoft Teams for human support with an adaptive card)
 - Instant chat links from the request adaptive card to talk to the user that has made a request
-- Resolve requests directly in teams via the adaptive card
+- Resolve requests directly in team channel via the adaptive card
 - Status (provide the status of requests for both **all** and **active** requests)
 - Feedback (receive and display feedback to a teams channel with adaptive cards)
 
@@ -29,8 +25,8 @@ The template supports the following features:
 
 #### Power Automate flows
 
-- Receives and stores information into Microsoft Dataverse
-- Posts adaptive cards to teams
+- Receives and stores information into Microsoft Dataverse database
+- Posts adaptive cards to in to Microsoft Teams teams
 - Receives information from adaptive cards
 
 
@@ -61,10 +57,10 @@ To install and use the Employee FAQ template you will need a Microsoft Teams acc
 First, add the required apps to Teams, and create your Power Apps app:
 
 1. Download the Employee FAQ template solution.
-2. Add the [Power Virtual Agents app in Microsoft Teams](https://docs.microsoft.com/power-virtual-agents/teams/authoring-first-bot-teams#add-the-power-virtual-agents-app-in-microsoft-teams).
-3. Add the **Power Apps** app in Microsoft Teams, and open it.
-4. Go to the **Build** tab and select **Create+** at the bottom of the list of teams.
-5. Select the team you want to use, and create an application. When prompted, name the application **Demo** and select **Save** 
+2. Add the [Power Virtual Agents app in Microsoft Teams](https://teams.microsoft.com/l/app/1850b8bb-76ac-411c-9637-08f7d1812d35?source=store-copy-link), you can search for it directly in Microsoft Teams app store.
+3. Add the [Power Apps app in Microsoft Teams](https://teams.microsoft.com/l/app/a6b63365-31a4-4f43-92ec-710b71557af9?source=store-copy-link), and open it.
+4. It will open the app in **Home** tab and select **Start now**.
+5. Select the team you want to use, and create an application. When prompted, name the application **Demo** and select **Save**.  *If this is the first time you are creating an app in the team, it will take a few seconds to setup a Dataverse database before you are prompted to name the application*
 
  
 
@@ -104,9 +100,9 @@ You have now imported the solution and your can go to the **Build** tab in Power
 
 
 
-## Set up your Power Virtual Agents bot
+## Set up and validate Employee FAQ
 
-We need to update our Power Automate Flows, validate the bot is working and add our Employee FAQ Admin application to a teams channel.
+We need to update Power Automate Flows, validate the Employee FAQ bot is working and add our Employee FAQ Admin application to a teams channel.  Once this section is completed, the Employee FAQ bot's escalation flow will be up and running and ready to be added with your organization's content.
 
 
 
@@ -130,17 +126,17 @@ We need to update our Power Automate Flows, validate the bot is working and add 
 
    ![Cloud Flows](Images/Cloud-Flows)
    
-4. Select the **FAQ Bot - Request** flow to open it.
+4. Select the **FAQ Bot - Request** flow to open it.  This flow takes employee's escalation request and notify human expert in a team channel.
    1. Select **Edit**.
    2. Open the action **Convert time zone - Select Your Timezone** and set the **destination time zone** to your timezone.
    3. Open the action **Post adaptive card in a chat or channel - Select Team and Channel**.
    4. Change the **Team** and **Channel** to your desired team and channel for the feedback information adaptive card to be posted to.
    5. Expand the condition action.
-   6.  Open the action **Convert time zone - Select Your Timezone - Resolved** and set the **destination time zone** to your timezone.
+   6. Open the action **Convert time zone - Select Your Timezone - Resolved** and set the **destination time zone** to your timezone.
    7. Select **Save**.
    8. Select the back arrow ←.
 
-5. Select the **FAQ Bot - Feedback** flow to open it.
+5. Select the **FAQ Bot - Feedback** flow to open it.  This flow takes employee's feedback and post into a team channel for human expert to review
    1. Select **Edit**.
    2. Open the action **Convert time zone - Select Your Timezone** and set the **destination time zone** to your timezone.
    3. Open the action **Post adaptive card in a chat or channel - Select Team and Channel**.
@@ -151,27 +147,24 @@ We need to update our Power Automate Flows, validate the bot is working and add 
 
 #### Bot Validation
 
-1. Open the *Power Virtual Agents* Teams application.
-2. Select *Chatbots*.
+1. Open the **Power Virtual Agents** Teams application.
+2. Select **Chatbots**.
 3. Select your team.
 4. Select your chat bot.
-5. Select *Publish* on the left menu.
-6. Select *Open the bot*
-7. Select *Add*
+5. Select **Publish** on the left menu.
+6. Select **Open the bot**
+7. Select **Add** to add the bot into Microsoft Teams for yourself
 8. You will now be taken to a chat window with your bot. Here you can try trigger phrases to ensure that the bot is functioning correctly. We have listed several phases you should consider trying below:
    1. Hello
    2. Talk to agent
    3. What is the status of my request
    4. Leave review
-
+9. For **Talk to agent** and **Leave review**, make sure to check the bot posts request and feedback to the team and channel you configured earlier.  _Note that you won't be able to deep link to yourself from the request adaptive card if you are the same person requesting it._
 
 
 #### Set up Power App Teams tab
-
-While we are setting the Canvas application up, it is important to note that you can also use the bot session performance in the PVA analytics.
-
+You can review the bot's performance in Power Virtual Agents built-in [Analytics]() dashboard.  In addition to the dashboard, Employee FAQ also comes with a Canvas app to allow experts to review the verbal feedback from employees. 
  
-
 1. Select **Apps**.
 
 2. Select the three dots next to the app name (...).
@@ -193,5 +186,5 @@ While we are setting the Canvas application up, it is important to note that you
 8. Select **Save**.
 
  
-
-You have now fully set up the Employee FAQ template.
+## Next step
+You have now fully set up the Employee FAQ template.  The next step is to go to **Power Virtual Agents** Teams application to add FAQ content for the bot to answer your organization's questions.   [Extension documentation](https://github.com/Flow-Joe/PowerVirtualAgentsSamples/blob/master/Templates/Employee%20FAQ/EXTEND.md) 
