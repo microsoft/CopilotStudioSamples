@@ -164,7 +164,7 @@ We need to update Power Automate Flows, validate the Employee FAQ bot is working
 
 #### Set up Power App Teams tab
 You can review the bot's performance in Power Virtual Agents built-in [Analytics]() dashboard.  In addition to the dashboard, Employee FAQ also comes with a Canvas app to allow experts to review the verbal feedback from employees. 
- 
+
 1. Select **Apps**.
 
 2. Select the three dots next to the app name (...).
@@ -184,7 +184,16 @@ You can review the bot's performance in Power Virtual Agents built-in [Analytics
 7. Select **Set Up a Tab**.
 
 8. Select **Save**.
+   
 
- 
+
 ## Next step
-You have now fully set up the Employee FAQ template.  The next step is to go to **Power Virtual Agents** Teams application to add FAQ content for the bot to answer your organization's questions.   [Extension documentation](https://github.com/Flow-Joe/PowerVirtualAgentsSamples/blob/master/Templates/Employee%20FAQ/EXTEND.md) 
+You have now fully set up the Employee FAQ template.  The next step is to go to **Power Virtual Agents** Teams application to add FAQ content for the bot to answer your organization's questions. [Extension documentation](https://github.com/Flow-Joe/PowerVirtualAgentsSamples/blob/master/Templates/Employee%20FAQ/EXTEND.md) 
+
+
+
+## Errors
+
+Error code: 2012
+
+This is an error for either importing Power Automate Flow problems or that the Flows have been changed/renamed. If you are experiencing this error, ensure that the Power Automate Flows are turned on. If the problem persists either reimport the solution or, if you have made changes, delete and then re-add the Flows to the PVA topics.
