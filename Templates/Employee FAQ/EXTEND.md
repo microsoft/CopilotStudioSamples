@@ -5,19 +5,6 @@
 Now that you have the Employee FAQ set up, you can easily customize and extend it to fit your business needs without needing to be a developer or data scientist. This file is designed to help you begin that journey
 
 
-## Adding bot content in Power Virtual Agents
-
-The Employee FAQ template can easily be extended in [Power Virtual Agents](https://teams.microsoft.com/l/app/1850b8bb-76ac-411c-9637-08f7d1812d35?source=store-copy-link) Teams application by adding new [topics](https://docs.microsoft.com/power-virtual-agents/teams/authoring-fundamentals-teams), [messages](https://docs.microsoft.com/power-virtual-agents/teams/authoring-create-edit-topics-teams#create-a-topic), [questions](https://docs.microsoft.com/power-virtual-agents/teams/authoring-create-edit-topics-teams#ask-a-question), [actions](https://docs.microsoft.com/power-virtual-agents/teams/advanced-flow-teams) and more. 
-
-As a starting point, we suggest looking at the greeting system topic, customizing it to provide a personal greeting that represents your company and how you want your users to start using the bot. There are also [four lessons provided](https://docs.microsoft.com/power-virtual-agents/authoring-template-topics) with the template to get you started on familiarizing yourself with Power Virtual Agents. Once you have gone through these lessons, you can freely edit the topics or simply create new topics to handle any additional areas you wish to include. You can also quickly and easily add new topics with the built-in [topic suggestion feature](https://docs.microsoft.com/power-virtual-agents/teams/advanced-create-topics-from-web-teams).  
-
-Reach out to the [PVA Community](https://powerusers.microsoft.com/t5/Power-Virtual-Agents-Community/ct-p/PVACommunity) for help and ideas from our community members. 
-
-## Making the bot available to employees
-Once you are satisifed with the bot's content, it's time to make it available to employees.  You can easily make the bot available in Microsoft Teams app store by following the steps to [share the bot with your organization](https://docs.microsoft.com/en-us/power-virtual-agents/teams/publication-add-bot-to-microsoft-teams-teams#share-the-bot-with-your-organization).  We recommend to partner with your IT admin to also pre-pin the bot on the left rail so employees can easily discover the bot in Microsoft Teams without needing to manually install it.  Learn more about best practice guidance to [partner with admin to roll out bot in Microsoft Teams](https://powervirtualagents.microsoft.com/blog/partner-with-admin-to-roll-out-bot-in-microsoft-teams/).
-
-Alternatively, you can also directly [share the bot's installation link](https://docs.microsoft.com/power-virtual-agents/teams/publication-add-bot-to-microsoft-teams-teams#install-a-bot-as-an-app-in-microsoft-teams) with others in the organization without going through the admin approval process.  Make sure you change the bot's [access](https://docs.microsoft.com/power-virtual-agents/teams/configuration-security-teams) to fit your target audience so they have permission to install the bot.
-
 
 ## Extending employee feedback content
 The data model structure for logging feedback is structured around basic core principles for gathering feedback. It’s aimed at providing customers with a basic toolset for logging and reporting on that feedback, and giving the capability to extend it. 

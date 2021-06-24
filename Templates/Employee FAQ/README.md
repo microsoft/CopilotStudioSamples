@@ -148,29 +148,50 @@ We need to update Power Automate Flows, validate the Employee FAQ bot is working
 #### Bot Validation
 
 1. Open the **Power Virtual Agents** Teams application.
+
 2. Select **Chatbots**.
+
+   ![image-20210624085406534](Images/Chatbots-Tab)
+
 3. Select your team.
+
 4. Select your chat bot.
+
 5. Select **Publish** on the left menu.
+
+   ![image-20210624085529455](Images/Publish)
+
 6. Select **Open the bot**
+
+   ![image-20210624091613705](Images/Open-The-Bot)
+
 7. Select **Add** to add the bot into Microsoft Teams for yourself
+   ![image-20210624091730109](Images/Add-Bot)
+
 8. You will now be taken to a chat window with your bot. Here you can try trigger phrases to ensure that the bot is functioning correctly. We have listed several phases you should consider trying below:
    1. Hello
    2. Talk to agent
    3. What is the status of my request
    4. Leave review
+
 9. For **Talk to agent** and **Leave review**, make sure to check the bot posts request and feedback to the team and channel you configured earlier.  _Note that you won't be able to deep link to yourself from the request adaptive card if you are the same person requesting it._
 
 
 #### Set up Power App Teams tab
 You can review the bot's performance in Power Virtual Agents built-in [Analytics]() dashboard.  In addition to the dashboard, Employee FAQ also comes with a Canvas app to allow experts to review the verbal feedback from employees. 
 
-1. Select **Apps**.
+1. Open the **Power Apps** app.
 
-2. Select the three dots next to the app name (...).
+2. Select your team
 
-3. Select **Add to Teams**.
-   
+3. Select **See All**.
+
+   ![See All](Images/See-All)
+
+4. Select the three dots next to the app name (...).
+
+5. Select **Add to Teams**.
+
 
    ![Add to Teams](Images/Add-to-Teams)
 
@@ -179,17 +200,44 @@ You can review the bot's performance in Power Virtual Agents built-in [Analytics
 
 5. Select the dropdown arrow and select **Add to a team**.
 
+   ![image-20210624093848351](Images/Admin-App)
+
 6. Search for your team.
+
+   ![image-20210624094149397](Images/Search-For-Your-Team)
 
 7. Select **Set Up a Tab**.
 
 8. Select **Save**.
-   
+
+   ![image-20210624094322060](Images/Save-Button)
+
+9. Open your team
+
+10. Select the Employee FAQ tab
+
+    ![image-20210624085246459](Images/Power-App-Tab)
 
 
-## Next step
+## Next steps
 You have now fully set up the Employee FAQ template.  The next step is to go to **Power Virtual Agents** Teams application to add FAQ content for the bot to answer your organization's questions. [Extension documentation](https://github.com/Flow-Joe/PowerVirtualAgentsSamples/blob/master/Templates/Employee%20FAQ/EXTEND.md) 
 
+
+
+#### Adding bot content in Power Virtual Agents
+
+The Employee FAQ template can easily be extended in [Power Virtual Agents](https://teams.microsoft.com/l/app/1850b8bb-76ac-411c-9637-08f7d1812d35?source=store-copy-link) Teams application by adding new [topics](https://docs.microsoft.com/power-virtual-agents/teams/authoring-fundamentals-teams), [messages](https://docs.microsoft.com/power-virtual-agents/teams/authoring-create-edit-topics-teams#create-a-topic), [questions](https://docs.microsoft.com/power-virtual-agents/teams/authoring-create-edit-topics-teams#ask-a-question), [actions](https://docs.microsoft.com/power-virtual-agents/teams/advanced-flow-teams) and more. 
+
+As a starting point, we suggest looking at the greeting system topic, customizing it to provide a personal greeting that represents your company and how you want your users to start using the bot. There are also [four lessons provided](https://docs.microsoft.com/power-virtual-agents/authoring-template-topics) with the template to get you started on familiarizing yourself with Power Virtual Agents. Once you have gone through these lessons, you can freely edit the topics or simply create new topics to handle any additional areas you wish to include. You can also quickly and easily add new topics with the built-in [topic suggestion feature](https://docs.microsoft.com/power-virtual-agents/teams/advanced-create-topics-from-web-teams).  
+
+Reach out to the [PVA Community](https://powerusers.microsoft.com/t5/Power-Virtual-Agents-Community/ct-p/PVACommunity) for help and ideas from our community members. 
+
+
+#### Making the bot available to employees
+
+Once you are satisfied with the bot's content, it's time to make it available to employees.  You can easily make the bot available in Microsoft Teams app store by following the steps to [share the bot with your organization](https://docs.microsoft.com/en-us/power-virtual-agents/teams/publication-add-bot-to-microsoft-teams-teams#share-the-bot-with-your-organization).  We recommend to partner with your IT admin to also pre-pin the bot on the left rail so employees can easily discover the bot in Microsoft Teams without needing to manually install it.  Learn more about best practice guidance to [partner with admin to roll out bot in Microsoft Teams](https://powervirtualagents.microsoft.com/blog/partner-with-admin-to-roll-out-bot-in-microsoft-teams/).
+
+Alternatively, you can also directly [share the bot's installation link](https://docs.microsoft.com/power-virtual-agents/teams/publication-add-bot-to-microsoft-teams-teams#install-a-bot-as-an-app-in-microsoft-teams) with others in the organization without going through the admin approval process.  Make sure you change the bot's [access](https://docs.microsoft.com/power-virtual-agents/teams/configuration-security-teams) to fit your target audience so they have permission to install the bot.
 
 
 ## Errors
