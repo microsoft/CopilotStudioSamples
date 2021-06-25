@@ -1,7 +1,3 @@
----
-typora-copy-images-to: Images
----
-
 # Employee FAQ PVA Template
 
 ## Overview
