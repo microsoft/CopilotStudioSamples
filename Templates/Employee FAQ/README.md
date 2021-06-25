@@ -150,19 +150,19 @@ We need to update Power Automate Flows, validate the Employee FAQ bot is working
    
    2. Open the action **Convert time zone - Select Your Timezone** and set the **destination time zone** to your timezone.
    
-      ![image-20210625081751477](Images/Convert-Timezone.png)
+      ![image-20210625083852787](Images/Convert-Timezone)
    
    3. Open the action **Post adaptive card in a chat or channel - Select Team and Channel**.
    
    4. Change the **Team** and **Channel** to your desired team and channel for the feedback information adaptive card to be posted to.
    
-      ![image-20210625081950991](Images/Post-Adaptive-Cards.png)
+      ![image-20210625084000793](Images/Post-Adaptive-Cards-To-Channel)
    
    5. Expand the condition action.
    
    6. Open the action **Convert time zone - Select Your Timezone - Resolved** and set the **destination time zone** to your timezone.
    
-      ![image-20210625082226694](C:\Users\junwin\Documents\GitHub\PowerVirtualAgentsSamples\Templates\Employee FAQ\Images\Convert-Timezone-Resolved)
+      ![image-20210625082226694](Images/Convert-Timezone-Resolved)
    
    7. Select **Save**.
    
@@ -173,13 +173,13 @@ We need to update Power Automate Flows, validate the Employee FAQ bot is working
    
    2. Open the action **Convert time zone - Select Your Timezone** and set the **destination time zone** to your timezone.
    
-      ![image-20210625081751477](Images/Convert-Timezone.png)
+      ![image-20210625083852787](Images/Convert-Timezone)
    
    3. Open the action **Post adaptive card in a chat or channel - Select Team and Channel**.
    
    4. Change the **Team** and **Channel** to your desired team and channel for the feedback information adaptive card to be posted to.
    
-      ![image-20210625081950991](Images/Post-Adaptive-Cards.png)
+      ![image-20210625084000793](Images/Post-Adaptive-Cards-To-Channel)
    
    5. Select **Save**.
 
@@ -215,7 +215,6 @@ We need to update Power Automate Flows, validate the Employee FAQ bot is working
    4. Leave review
 
 9. For **Talk to agent** and **Leave review**, make sure to check the bot posts request and feedback to the team and channel you configured earlier.  _Note that you won't be able to deep link to yourself from the request adaptive card if you are the same person requesting it._
-   
 
 
 #### Set up Power App Teams tab
