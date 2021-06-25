@@ -1,10 +1,15 @@
+---
+typora-copy-images-to: Images
+---
+
 # Employee FAQ PVA Template
 
 ## Overview
 
 Bots are great at helping your employees to self serve HR, IT or any other internal employee functions by providing automated responses and taking meaningful actions.  This increases employee's efficiency and saves your organization cost and time.  
 
-Bots have limitations and when a bot can’t help, it needs a way to connect employee with human subject matter experts. The Employee FAQ bot template is built with [Power Virtual Agents](https://powervirtualagents.microsoft.com/) that comes with a built-in capability to log an employee’s escalation request, notify a human expert, and allow them to quickly respond to the employee - all within [Microsoft Teams](https://www.microsoft.com/microsoft-teams/group-chat-software). It also obtains employee feedback so you can make improvements to the bot over time.  Being built on top of Power Virtual Agents, it can be easily customized and extended to suit your needs with no develeper and data science background required. 
+Bots have limitations and when a bot can’t help, it needs a way to connect employee with human subject matter experts. The Employee FAQ bot template is built with [Power Virtual Agents](https://powervirtualagents.microsoft.com/) that comes with a built-in capability to log an employee’s escalation request, notify a human expert, and allow them to quickly respond to the employee - all within [Microsoft Teams](https://www.microsoft.com/microsoft-teams/group-chat-software). It also obtains employee feedback so you can make improvements to the bot over time.  Being built on top of Power Virtual Agents, it can be easily customized and extended to suit your needs with no developer and data science background required. 
+
 
 ## Features
 
@@ -35,6 +40,24 @@ The template supports the following features:
 
 - View and filter requests
 - View and filter feedback
+
+
+
+#### Language Support
+
+Each language has its own solution file in the **Solutions** folder. The supported languages are listed below:
+
+
+- Chinese Simplified
+- Chinese Traditional
+- Dutch
+- English
+- French
+- German
+- Indonesian
+- Japanese
+- Portuguese (Brazilian)
+- Spanish
 
 
 
@@ -128,19 +151,40 @@ We need to update Power Automate Flows, validate the Employee FAQ bot is working
    
 4. Select the **FAQ Bot - Request** flow to open it.  This flow takes employee's escalation request and notify human expert in a team channel.
    1. Select **Edit**.
+   
    2. Open the action **Convert time zone - Select Your Timezone** and set the **destination time zone** to your timezone.
+   
+      ![image-20210625081751477](Images/Convert-Timezone.png)
+   
    3. Open the action **Post adaptive card in a chat or channel - Select Team and Channel**.
+   
    4. Change the **Team** and **Channel** to your desired team and channel for the feedback information adaptive card to be posted to.
+   
+      ![image-20210625081950991](Images/Post-Adaptive-Cards.png)
+   
    5. Expand the condition action.
+   
    6. Open the action **Convert time zone - Select Your Timezone - Resolved** and set the **destination time zone** to your timezone.
+   
+      ![image-20210625082226694](C:\Users\junwin\Documents\GitHub\PowerVirtualAgentsSamples\Templates\Employee FAQ\Images\Convert-Timezone-Resolved)
+   
    7. Select **Save**.
+   
    8. Select the back arrow ←.
-
+   
 5. Select the **FAQ Bot - Feedback** flow to open it.  This flow takes employee's feedback and post into a team channel for human expert to review
    1. Select **Edit**.
+   
    2. Open the action **Convert time zone - Select Your Timezone** and set the **destination time zone** to your timezone.
+   
+      ![image-20210625081751477](Images/Convert-Timezone.png)
+   
    3. Open the action **Post adaptive card in a chat or channel - Select Team and Channel**.
+   
    4. Change the **Team** and **Channel** to your desired team and channel for the feedback information adaptive card to be posted to.
+   
+      ![image-20210625081950991](Images/Post-Adaptive-Cards.png)
+   
    5. Select **Save**.
 
 
@@ -175,6 +219,7 @@ We need to update Power Automate Flows, validate the Employee FAQ bot is working
    4. Leave review
 
 9. For **Talk to agent** and **Leave review**, make sure to check the bot posts request and feedback to the team and channel you configured earlier.  _Note that you won't be able to deep link to yourself from the request adaptive card if you are the same person requesting it._
+   
 
 
 #### Set up Power App Teams tab
@@ -217,6 +262,8 @@ You can review the bot's performance in Power Virtual Agents built-in [Analytics
 10. Select the Employee FAQ tab
 
     ![image-20210624085246459](Images/Power-App-Tab)
+    
+    
 
 
 ## Next steps
@@ -238,6 +285,7 @@ Reach out to the [PVA Community](https://powerusers.microsoft.com/t5/Power-Virtu
 Once you are satisfied with the bot's content, it's time to make it available to employees.  You can easily make the bot available in Microsoft Teams app store by following the steps to [share the bot with your organization](https://docs.microsoft.com/en-us/power-virtual-agents/teams/publication-add-bot-to-microsoft-teams-teams#share-the-bot-with-your-organization).  We recommend to partner with your IT admin to also pre-pin the bot on the left rail so employees can easily discover the bot in Microsoft Teams without needing to manually install it.  Learn more about best practice guidance to [partner with admin to roll out bot in Microsoft Teams](https://powervirtualagents.microsoft.com/blog/partner-with-admin-to-roll-out-bot-in-microsoft-teams/).
 
 Alternatively, you can also directly [share the bot's installation link](https://docs.microsoft.com/power-virtual-agents/teams/publication-add-bot-to-microsoft-teams-teams#install-a-bot-as-an-app-in-microsoft-teams) with others in the organization without going through the admin approval process.  Make sure you change the bot's [access](https://docs.microsoft.com/power-virtual-agents/teams/configuration-security-teams) to fit your target audience so they have permission to install the bot.
+
 
 
 ## Errors
