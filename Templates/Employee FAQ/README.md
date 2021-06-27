@@ -206,8 +206,9 @@ We need to update Power Automate Flows, validate the Employee FAQ bot is working
    ![image-20210624091613705](Images/Open-The-Bot)
 
 7. Select **Add** to add the bot into Microsoft Teams for yourself
+   
    ![image-20210624091730109](Images/Add-Bot)
-
+   
 8. You will now be taken to a chat window with your bot. Here you can try trigger phrases to ensure that the bot is functioning correctly. We have listed several phases you should consider trying below:
    1. Hello
    2. Talk to agent
@@ -258,6 +259,12 @@ You can review the bot's performance in Power Virtual Agents built-in [Analytics
 
     ![image-20210624085246459](Images/Power-App-Tab)
     
+11. Once selected you will see the Employee FAQ Admin Canvas App. You will be able to view requests and feedback.
+
+    ![image-20210627145421913](Images/Employee-App)
+
+    
+
     
 
 
