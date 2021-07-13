@@ -1,6 +1,6 @@
 # Custom analytics solution for Power Virtual Agents
 
-This solution allows customers to create a Power BI dashboard for their Power Virtual Agents chatbots
+This solution allows customers to create a Power BI dashboard for their Power Virtual Agents chatbots, and includes pre-created screens to show all-up performance, customer satisfaction, topics and transcripts.
 
 <img src="img/PVA_Analytics.png" width="797" alt="Custom Analytics example screenshot">
 
@@ -9,6 +9,7 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
 - Microsoft Dataverse
 - Microsoft Power BI DataFlows
 - Microsoft Power BI Desktop
+- Chat Transcripts control for Power BI - available at <https://github.com/iMicknl/powerbi-botframework-chat-transcripts>
 - (Optional) Azure Data Lake Storage v2
 
 ## Solution files
@@ -26,11 +27,11 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
 ### Installation steps
 
 1. Edit the DataFlow template
-   1. FInd the server url associated with your Dataverse environment (it will look like https://yourservice.crm.dynamics.com)
+   1. FInd the server url associated with your Dataverse environment (it will look like <https://yourservice.crm.dynamics.com>)
    2. Open the file 'PVA Analytics_Export.json' in a text editor
    3. Perform a find and replace on the file - swapping the placeholder "**Your server url here**" with your Datverse URL
 2. Create the DataFlow from the template
-   1. Log in to Power BI at http://powerbi.com
+   1. Log in to Power BI at <http://powerbi.com>
    2. Select the Workspace you wish to deploy the DataFlow to  - or create a new one if you wish (the template defaults to 'PVA_Analytics')
    3. Select New - DataFlow
    4. Select Import Model
