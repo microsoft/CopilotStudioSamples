@@ -29,7 +29,7 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
 
 1. **Edit the DataFlow template**
    1. [Find your Dataverse environment URL](https://docs.microsoft.com/en-us/powerapps/maker/data-platform/data-platform-powerbi-connector#find-your-dataverse-environment-url), the URL will be in the format: https://yourenvironmentid.crm.dynamics.com/. Make sure you remove the trailing / from the URL.
-   2. Open the file [PVA Analytics_Export.json](PVA Analytics_Export.json?plain=1) in a text editor, e.g. Visual Studio Code.
+   2. Download the file [PVA Analytics_Export.json](PVA_Analytics_Export.json?plain=1) and open it in a text editor, e.g. Visual Studio Code.
    3. Perform a find and replace on the file - swapping the placeholder `**Your server url here**` with your Dataverse environment URL.
 
 2. **Create the DataFlow from the template**
@@ -43,7 +43,7 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
    7. If you want to refresh the content periodically, go to Settings -> Scheduled refresh and select the preferred period.
    
 3. **Create your Power BI report**
-   1. Open the file [PVA_Dashboard.pbit](PVA_Dashboard.pbit)
+   1. Download the file [PVA_Dashboard.pbit](PVA_Dashboard.pbit?plain=1)
    2. Enter the parameters you are prompted for. These are:
       1. The name of the Power BI workspace
       2. The name of the DataFlow you created
