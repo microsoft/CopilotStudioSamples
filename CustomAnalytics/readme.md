@@ -23,26 +23,32 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
 
 - One or more Power Virtual Agents bots
 - A Power BI account
+- [Power BI Desktop](https://powerbi.microsoft.com/en-us/downloads/)
 
 ### Installation steps
 
-1. Edit the DataFlow template
-   1. FInd the server url associated with your Dataverse environment (it will look like <https://yourservice.crm.dynamics.com>)
-   2. Open the file 'PVA Analytics_Export.json' in a text editor
-   3. Perform a find and replace on the file - swapping the placeholder "**Your server url here**" with your Datverse URL
-2. Create the DataFlow from the template
+1. **Edit the DataFlow template**
+   1. [Find your Dataverse environment URL](https://docs.microsoft.com/en-us/powerapps/maker/data-platform/data-platform-powerbi-connector#find-your-dataverse-environment-url), the URL will be in the format: https://yourenvironmentid.crm.dynamics.com/. Make sure you remove the trailing / from the URL.
+   2. Download the file [PVA Analytics_Export.json](PVA_Analytics_Export.json?plain=1) and open it in a text editor, e.g. Visual Studio Code.
+   3. Perform a find and replace on the file - swapping the placeholder `**Your server url here**` with your Dataverse environment URL.
+
+2. **Create the DataFlow from the template**
    1. Log in to Power BI at <http://powerbi.com>
-   2. Select the Workspace you wish to deploy the DataFlow to  - or create a new one if you wish (the template defaults to 'PVA_Analytics')
-   3. Select New - DataFlow
+   2. Select the Workspace you wish to deploy the DataFlow to or create a new workspace. Please note that you cannot use 'My Workspace' for this purpose. 
+   3. Select New > DataFlow
    4. Select Import Model
    5. Select the edited file 'PVA Analytics_Export.json'. Your DataFlow job should now be ready - test refreshing the data.
-3. Create your PowerBI report
-   1. Open the file PVA_Dashboard.pbit
+   (the template defaults to 'PVA_Analytics' as DataFlow name).
+   6. If Power BI prompts for credentials, go to Settings -> Data source credentials and select organizational account. You can now login with an Azure Active Directory account that has access to the Dataverse environment.
+   7. If you want to refresh the content periodically, go to Settings -> Scheduled refresh and select the preferred period.
+   
+3. **Create your Power BI report**
+   1. Download the file [PVA_Dashboard.pbit](PVA_Dashboard.pbit?plain=1)
    2. Enter the parameters you are prompted for. These are:
-      1. The name of the PowerBI workspace
+      1. The name of the Power BI workspace
       2. The name of the DataFlow you created
-   3. The report should pull through the data and render it
-   4. You can now save the report to share through the Power BI portal
+   3. The report should pull in the data and render it
+   4. You can now [publish the report from Power BI Desktop](https://docs.microsoft.com/en-us/power-bi/create-reports/desktop-upload-desktop-files) so that other users can access it.
 
 ## TBD Connecting Azure Data Lake Storage for data archival
 
