@@ -50,7 +50,7 @@ If your Bot has significant numbers of monthly sessions, using this version of t
 
 ## Connecting Azure Data Lake Storage for data archival
 
-Please follow the instructions in the main [readme] (../readme.md) for details of setting this up. Instead of consuming the DataFlow containing the ConversationTranscript records (stored in Azure Data Lake) in the Power BI report, it should be consumed in the PVA Analytics_Export_Transform DataFlow (change the source of ConversationTranscript from Dataverse to point the Azure Data Lake DataFlow).
+Please follow the instructions in the main [readme](../readme.md) for details of setting this up. Instead of consuming the DataFlow containing the ConversationTranscript records (stored in Azure Data Lake) in the Power BI report, it should be consumed in the PVA Analytics_Export_Transform DataFlow (change the source of ConversationTranscript from Dataverse to point the Azure Data Lake DataFlow).
 
 ## Troubleshooting
 
