@@ -1,6 +1,6 @@
 # Custom analytics solution for Power Virtual Agents
 
-This solution allows customers to create a Power BI dashboard for their Power Virtual Agents chatbots, and includes pre-created screens to show all-up performance, customer satisfaction, topics and transcripts.
+This solution allows customers to create a Power BI dashboard for their Power Virtual Agents chatbots, and includes pre-created screens to show all-up performance, customer satisfaction, topics and transcripts. There are two versions of the solution, the base report found here (most users should start with this), and a version using [Power BI DataFlows](DataFlowVersion/readme.md) for additional scalability with large datasets.
 
 <img src="img/PVA_Analytics.png" width="797" alt="Custom Analytics example screenshot">
 
@@ -9,7 +9,6 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
 - Microsoft Dataverse
 - Microsoft Power BI Desktop
 - Chat Transcripts control for Power BI - available at <https://github.com/iMicknl/powerbi-botframework-chat-transcripts> - many thanks to Mick Vleeshouwer
-- (Optional) Microsoft Power BI DataFlows
 - (Optional) Azure Data Lake Storage v2
 
 ## Solution files
@@ -73,4 +72,4 @@ The report is based on what is shared through the Power Virtual Agents portal, b
 ## Troubleshooting
 
 1. Ensure you have permission to access the TDS endpoint in Dataverse. Empty data tables may indicate a permissions problem.
-2. Please raise issues in the repo for other problems.
+2. Please raise issues in the repo for other
