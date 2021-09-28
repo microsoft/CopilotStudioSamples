@@ -21,15 +21,16 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
 
 - One or more Power Virtual Agents bots
 - A Power BI account
+- [Power BI Desktop](https://powerbi.microsoft.com/en-us/downloads/)
 
 ### Installation steps
 
 1. Create your PowerBI report
    1. Open the file PVA_Dashboard.pbit
-   2. Enter the parameter you are prompted for. These are:
+   2. Enter the parameter you are prompted for. This is:
       1. The URI of you Dataverse instance (e.g. mydataverse.crm.dynamics.com - note the removal of 'https://' and the trailing slash)
    3. The report should pull through the data and render it
-   4. You can now save the report to share through the Power BI portal
+   4. You can now save the report to share through the Power BI portal.
 
 ## Connecting Azure Data Lake Storage for data archival
 
