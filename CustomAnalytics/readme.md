@@ -28,7 +28,7 @@ This solution allows customers to create a Power BI dashboard for their Power Vi
 1. Create your PowerBI report
    1. Open the file PVA_Dashboard.pbit
    2. Enter the parameter you are prompted for. This is:
-      1. The URI of you Dataverse instance (e.g. mydataverse.crm.dynamics.com - note the removal of 'https://' and the trailing slash)
+      1. [The URI of you Dataverse instance](https://docs.microsoft.com/en-us/powerapps/maker/data-platform/data-platform-powerbi-connector#find-your-dataverse-environment-url) (e.g. mydataverse.crm.dynamics.com - note the removal of 'https://' and the trailing slash)
    3. The report should pull through the data and render it
    4. You can now save the report to share through the Power BI portal.
 
