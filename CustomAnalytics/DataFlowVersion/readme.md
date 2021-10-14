@@ -76,8 +76,6 @@ Required - using Azure Synapse Link allows us to export significant telemetry fr
    4. Select Import Model
    5. Select the edited file 'PVA Analytics_Export_Transform.json'. Your DataFlow job should now be ready - test refreshing the data.
    6. You should be prompted for credentials, if not go to Settings -> Data source credentials and select organizational account. You can now login with an Azure Active Directory account that has access to the Dataverse environment.
-   7. Whilst in Settings for your DataFlow, be sure to select 'Enhanced compute engine settings' and select 'On'.
-   8. You will likely want to refresh the content periodically, go to Settings -> Scheduled refresh and select the preferred period.
 
 4. Add the Dataflow 1a version of conversationtranscript to Dataflow 2 (chaining them together)
    1. Edit Dataflow 2 - select 'Edit tables'.
@@ -86,6 +84,7 @@ Required - using Azure Synapse Link allows us to export significant telemetry fr
    4. You should now return to the Power Query editor. We need to change each reference to conversationtranscript to point to the new table we just imported. Select the original conversationtranscript table - and then look at the Applied Steps window on the right of the screen. Delete any steps after 'Source'. Select the source step, and replace any value with the name of the conversationtranscript table from Dataflow 1a. This effectively makes the source of conversationtranscript in Dataflow 2 to be conversationtranscript from Dataflow 1a.
 
 5. Note that managing the data in your DataLake will require additional attention, outside the scope of these steps.
+6. You will likely want to refresh the content periodically, go to Settings -> Scheduled refresh and select the preferred period - you should ensure that the 2 dataflows that need refesh (1a and 2) refesh in that order.
 
 #### Set up the report
 
