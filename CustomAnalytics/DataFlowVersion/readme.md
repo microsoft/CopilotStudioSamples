@@ -56,6 +56,13 @@ Required - using Azure Synapse Link allows us to export significant telemetry fr
    1. Open your Power BI Workspace - New - Dataflow
    2. Select 'Attach a Common Data Model' folder
    3. Browse you Azure Data Lake container, and paste the URL of your 'model.json' file that describes your data.
+   4. At present - there is a bug in Dataflows that causes the error "The credentials provided for the PowerBI source are invalid". The PBI team is aware of this and working on a fix, but in the interim, we need to apply a small workaround, which involves creating another Dataflow - we will call this **Dataflow 1a** that sits in between 1 & 2 (these steps will be removed when the bug is fixed):
+      1. Open your Power BI Workspace - New - Dataflow
+      2. Select 'Link tables from other dataflows'
+      3. Log in and select Dataflow 1 - conversationtranscript
+      4. In the PowerQuery editor, select the conversationtranscript table, and de-select 'Enable Load'
+      5. Rename the conversationtranscript table to conversationtranscript_adls
+      6. Create a new blank query, name it conversationtranscript, and in the source action for the query, set it to conversationtranscript_adls
 
 2. Edit the DataFlow template
    1. [Find your Dataverse environment URL](https://docs.microsoft.com/en-us/powerapps/maker/data-platform/data-platform-powerbi-connector#find-your-dataverse-environment-url), the URL will be in the format: https://yourenvironmentid.crm.dynamics.com/. You will just need the 'yourenvironmentid' part of the URL
@@ -72,11 +79,11 @@ Required - using Azure Synapse Link allows us to export significant telemetry fr
    7. Whilst in Settings for your DataFlow, be sure to select 'Enhanced compute engine settings' and select 'On'.
    8. You will likely want to refresh the content periodically, go to Settings -> Scheduled refresh and select the preferred period.
 
-4. Add the Dataflow 1 version of conversationtranscript to Dataflow 2 (chaining them together)
+4. Add the Dataflow 1a version of conversationtranscript to Dataflow 2 (chaining them together)
    1. Edit Dataflow 2 - select 'Edit tables'.
    2. You should now be in the Power Query editor. Select Get data - more... - Power Platform - Power BI Dataflows.
-   3. Sign in, and then select the conversationtranscript table from Dataflow 1.
-   4. You should now return to the Power Query editor. We need to change each reference to conversationtranscript to point to the new table we just imported. Select the original conversationtranscript table - and then look at the Applied Steps window on the right of the screen. Delete any steps after 'Source'. Select the source step, and replace any value with the name of the conversationtranscript table from Dataflow 1. This effectively makes the source of conversationtranscript in Dataflow 2 to be conversationtranscript from Dataflow 1.
+   3. Sign in, and then select the conversationtranscript table from Dataflow 1a.
+   4. You should now return to the Power Query editor. We need to change each reference to conversationtranscript to point to the new table we just imported. Select the original conversationtranscript table - and then look at the Applied Steps window on the right of the screen. Delete any steps after 'Source'. Select the source step, and replace any value with the name of the conversationtranscript table from Dataflow 1a. This effectively makes the source of conversationtranscript in Dataflow 2 to be conversationtranscript from Dataflow 1a.
 
 5. Note that managing the data in your DataLake will require additional attention, outside the scope of these steps.
 
@@ -94,8 +101,9 @@ Required - using Azure Synapse Link allows us to export significant telemetry fr
 
 There are a few places where the pipeline may break - troublshooting can normally isolate the problem using these steps:
 
-1. Ensure that data is being pulled in to your DataFlow correctly. Open the DataFlow for editing (select 'edit entities'), and on each of the tables, select refresh to ensure that data is being populated.
-2. Ensure that your Power BI report is connecting to DataFlows. If an error happens when you first pull in data, select 'Transform data' in the navigation menu to open Power Query
+1. The Common Data Model Dataflow option is only available on V2 Power BI workspaces. Please upgrade your workspace if you do not see this option.
+2. Ensure that data is being pulled in to your DataFlow correctly. Open the DataFlow for editing (select 'edit entities'), and on each of the tables, select refresh to ensure that data is being populated.
+3. Ensure that your Power BI report is connecting to DataFlows. If an error happens when you first pull in data, select 'Transform data' in the navigation menu to open Power Query
    1. Refresh each table in the 'Raw Data' folder - these correspond to the data in the DataFlow.
    2. If this fails also, test you have permissions to the DataFlow. An easy way to do this is to open the 'bot' query at the top of the query list, and select 'Source' at the top of the 'Applied steps' control. This lists all the DataFlows you have access to.
-3. If both of the steps above succeed, but you still have errors, please raise an issue in this repo.
+4. If both of the steps above succeed, but you still have errors, please raise an issue in this repo.
