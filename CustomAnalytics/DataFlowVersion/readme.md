@@ -98,7 +98,7 @@ Required - using Azure Synapse Link allows us to export significant telemetry fr
 
 ## Troubleshooting
 
-There are a few places where the pipeline may break - troublshooting can normally isolate the problem using these steps:
+There are a few places where the pipeline may break - troubleshooting can normally isolate the problem using these steps:
 
 1. The Common Data Model Dataflow option is only available on V2 Power BI workspaces. Please upgrade your workspace if you do not see this option.
 2. Ensure that data is being pulled in to your DataFlow correctly. Open the DataFlow for editing (select 'edit entities'), and on each of the tables, select refresh to ensure that data is being populated.
