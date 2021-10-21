@@ -39,7 +39,7 @@ Data in the conversationtranscript table is streamed using Azure Synapse Link fr
 
 #### Connecting Azure Data Lake Storage for data archival
 
-Required - using Azure Synapse Link allows us to export significant telemetry from Dataverse, and has the additional benefit of allowing storage of telemetry longer than it is stored in your Dataverse instance (default 30 days)Steps for configuring this are as follows:
+Required - using Azure Synapse Link allows us to export significant telemetry from Dataverse, and has the additional benefit of allowing storage of telemetry longer than it is stored in your Dataverse instance (default 30 days). Steps for configuring this are as follows:
 
 > Important - always test this process on a development environment before applying to your production system.
 
