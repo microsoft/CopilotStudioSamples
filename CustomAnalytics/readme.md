@@ -1,4 +1,4 @@
-# Custom analytics solution for Power Virtual Agents
+# Custom analytics solution for Power Virtual Agents Analytics
 
 This solution allows customers to create a Power BI dashboard for their Power Virtual Agents chatbots, and includes pre-created screens to show all-up performance, customer satisfaction, topics and transcripts. There are two versions of the solution, the base report found here (most users should start with this), and a [high scale version](DataFlowVersion/readme.md), using Power BI Dataflows, for large bots.
 
