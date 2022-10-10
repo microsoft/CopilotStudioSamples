@@ -17,10 +17,6 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
 
         public string BotName { get; set; }
 
-        public string BotId { get; set; }
-
-        public string TenantId { get; set; }
-
         public string TokenEndPoint { get; set; }
 
         /// <summary>
@@ -34,7 +30,6 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
             {
                 httpRequest.Method = HttpMethod.Get;
                 UriBuilder uriBuilder = new UriBuilder(TokenEndPoint);
-                uriBuilder.Query = $"botId={BotId}&tenantId={TenantId}";
                 httpRequest.RequestUri = uriBuilder.Uri;
                 using (var response = await s_httpClient.SendAsync(httpRequest))
                 {
