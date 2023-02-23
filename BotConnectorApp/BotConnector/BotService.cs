@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Rest.Serialization;
@@ -34,7 +34,6 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
             {
                 httpRequest.Method = HttpMethod.Get;
                 UriBuilder uriBuilder = new UriBuilder(TokenEndPoint);
-                uriBuilder.Query = $"botId={BotId}&tenantId={TenantId}";
                 httpRequest.RequestUri = uriBuilder.Uri;
                 using (var response = await s_httpClient.SendAsync(httpRequest))
                 {
@@ -44,6 +43,30 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
             }
 
             return token;
+        }
+
+        /// <summary>
+        /// Get directline from RegionalChannelSettings PowerPlatform Api
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetRegionalChannelSettingsDirectline()
+        {
+            string directline = string.Empty;
+            string environmentEndPoint = TokenEndPoint.Substring(0,TokenEndPoint.IndexOf("/powervirtualagents/"));
+            string apiVersion = TokenEndPoint.Substring(TokenEndPoint.IndexOf("api-version")).Split("=")[1];
+            var regionalChannelSettingsURL = $"{environmentEndPoint}/powervirtualagents/regionalchannelsettings?api-version={apiVersion}";
+            using (var httpRequest = new HttpRequestMessage())
+            {
+                httpRequest.Method = HttpMethod.Get;
+                UriBuilder uriBuilder = new UriBuilder(regionalChannelSettingsURL);
+                httpRequest.RequestUri = uriBuilder.Uri;
+                using (var response = await s_httpClient.SendAsync(httpRequest))
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    directline = SafeJsonConvert.DeserializeObject<RegionalChannelSettingsDirectLine>(responseString).ChannelUrlsById["directline"].ToString();
+                }
+            }
+            return directline;
         }
     }
 }
