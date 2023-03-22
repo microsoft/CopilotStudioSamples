@@ -1,0 +1,49 @@
+{
+    "list_of_conversations": [
+        {
+            "activities": [
+                {
+                    "id": "KQSAWjAIYsv8YZI864YcGT-us|0000000",
+                    "type": "message",
+                    "timestamp": 1675268142,
+                    "from": {
+                        "id": "06f22724-9df4-942a-db09-f4bbb9004bb0",
+                        "role": 1
+                    },
+                    "channelId": "directline",
+                    "text": "vitamins",
+                    "attachments": []
+                },             
+                {
+                    "id": null,
+                    "type": "message",
+                    "timestamp": 1675268142,
+                    "from": {
+                        "id": "06f22724-9df4-942a-db09-f4bbb9004bb0",
+                        "role": 0
+                    },
+                    "channelId": "directline",
+                    "attachments": [
+                        {
+                            "contentType": "application/vnd.microsoft.card.adaptive",
+                            "content": {"type":"AdaptiveCard","body":[{"type":"ColumnSet","columns":[{"type":"Column","items":[{"type":"Image","url":"https://i.imgur.com/CNmYsD2.jpeg"}],"width":"auto"}]},{"type":"TextBlock","size":"medium","weight":"bolder","text":"CVS Health Vitamin D Softgels 2000IU","wrap":true},{"type":"TextBlock","size":"medium","weight":"bolder","text":"$9.99","wrap":true},{"type":"TextBlock","text":"Vitamin D is an essential nutrient that works with Calcium to help develop strong bones and teeth.* This high-potency Vitamin D supplement also assists in maintaining a healthy immune system.* These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.","wrap":true},{"type":"Container","items":[{"type":"ActionSet","actions":[{"type":"Action.Submit","title":"Buy","style":"positive","data":{"id":"_qkQW8dJlUeLVi7ZMEzYVw","action":"buy_1"}}]}]}],"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","version":"1.3"}
+                        },
+                        {
+                            "contentType": "application/vnd.microsoft.card.adaptive",
+                            "content": {"type":"AdaptiveCard","body":[{"type":"ColumnSet","columns":[{"type":"Column","items":[{"type":"Image","url":"https://i.imgur.com/CQjvhfu.jpeg"}],"width":"auto"}]},{"type":"TextBlock","size":"medium","weight":"bolder","text":"CVS Health Vitamin B12 Tablets 1000mcg","wrap":true},{"type":"TextBlock","size":"medium","weight":"bolder","text":"$11.79","wrap":true},{"type":"TextBlock","text":"Vitamin B12 supports healthy blood cells and nervous system health.* It is also involved in energy metabolism by converting food into energy.*These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.","wrap":true},{"type":"Container","items":[{"type":"ActionSet","actions":[{"type":"Action.Submit","title":"Buy","style":"positive","data":{"id":"_qkQW8dJlUeLVi7ZMEzYVw","action":"buy_2"}}]}]}],"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","version":"1.3"}
+                        },
+                        {
+                            "contentType": "application/vnd.microsoft.card.adaptive",
+                            "content": {"type":"AdaptiveCard","body":[{"type":"ColumnSet","columns":[{"type":"Column","items":[{"type":"Image","url":"https://i.imgur.com/0uCIfXd.jpeg"}],"width":"auto"}]},{"type":"TextBlock","size":"medium","weight":"bolder","text":"CVS Health Vitamin C Caplets 1000mg","wrap":true},{"type":"TextBlock","size":"medium","weight":"bolder","text":"$14.99","wrap":true},{"type":"TextBlock","text":"Vitamin C is an essential nutrient that provides antioxidant and immune system health support. Vitamin C is also involved in collagen formation, which is important for healthy skin and connective tissue.\r\nDisclaimer: These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure or prevent any disease.","wrap":true},{"type":"Container","items":[{"type":"ActionSet","actions":[{"type":"Action.Submit","title":"Buy","style":"positive","data":{"id":"_qkQW8dJlUeLVi7ZMEzYVw","action":"buy_3"}}]}]}],"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","version":"1.3"}
+                        },
+                        {
+                            "contentType": "application/vnd.microsoft.card.adaptive",
+                            "content": {"type":"AdaptiveCard","body":[{"type":"ColumnSet","columns":[{"type":"Column","items":[{"type":"Image","url":"https://i.imgur.com/uxPY1SM.jpeg"}],"width":"auto"}]},{"type":"TextBlock","size":"medium","weight":"bolder","text":"Nature Made Vitamin D3 + K2 Softgels, 30 CT","wrap":true},{"type":"TextBlock","size":"medium","weight":"bolder","text":"$16.79","wrap":true},{"type":"TextBlock","text":"Nature Made Vitamin D3 + K2 Softgels are dietary supplements that combine Vitamin D 5000 IU (125 mcg) with Vitamin K2 100 mcg to support strong, healthy bones. Sourced from high-quality ingredients, this gluten free Vitamin D3 supplement contains no synthetic dyes and no artificial flavors.","wrap":true},{"type":"Container","items":[{"type":"ActionSet","actions":[{"type":"Action.Submit","title":"Buy","style":"positive","data":{"id":"_qkQW8dJlUeLVi7ZMEzYVw","action":"buy_4"}}]}]}],"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","version":"1.3"}
+                        }
+                    ],
+                    "replyToId": "KQSAWjAIYsv8YZI864YcGT-us|0000005"
+                }
+            ]
+        }
+    ]
+}
