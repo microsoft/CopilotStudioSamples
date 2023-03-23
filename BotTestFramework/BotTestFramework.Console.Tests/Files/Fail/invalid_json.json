@@ -1,0 +1,20 @@
+{
+  "Activities": [
+    {
+      "ValueType": null,
+      "Id": null,
+      "Type": "message",
+      "Timestamp": 1675095193,
+      "From": {
+      },
+      "ChannelId": null,
+      "Value": null,
+      "TextFormat": null,
+      "Text": "hi bot",
+      "Attachments": null,
+      "ReplyToId": null,
+      "SuggestedActions": null,
+      "LineNumber": 0
+    }
+  ]
+}
