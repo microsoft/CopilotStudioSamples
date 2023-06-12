@@ -73,7 +73,7 @@ namespace BotTestFramework.Console.Helpers.DirectLine
                     _watermark = response?.Watermark;
                     result = response?.Activities?.Where(x =>
                         x.Type == ActivityTypes.Message &&
-                        string.Equals(x.From.Id, _options.BotId, StringComparison.InvariantCulture)).ToList();
+                        x.From.Name != null).ToList();
 
                     if (result != null && result.Any())
                     {
