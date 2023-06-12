@@ -49,6 +49,10 @@ namespace BotTestFramework.Console.Tests
             {
                 new Activity()
                 {
+                    From = new ChannelAccount()
+                    {
+                        Id = Guid.NewGuid().ToString()
+                    },
                     Type = "message",
                     Text = "Hello!",
                     Conversation = new ConversationAccount() { Id = Guid.NewGuid().ToString() }
@@ -59,18 +63,30 @@ namespace BotTestFramework.Console.Tests
             {
                 new Activity()
                 {
+                    From = new ChannelAccount()
+                    {
+                        Id = Guid.NewGuid().ToString()
+                    },
                     Type = "message",
                     Text = "Hello!",
                     Conversation = new ConversationAccount() { Id = Guid.NewGuid().ToString() }
                 },
                 new Activity()
                 {
+                    From = new ChannelAccount()
+                    {
+                        Id = Guid.NewGuid().ToString()
+                    },
                     Type = "message",
                     Text = "Hello!",
                     Conversation = new ConversationAccount() { Id = Guid.NewGuid().ToString() }
                 },
                 new Activity()
                 {
+                    From = new ChannelAccount()
+                    {
+                        Id = Guid.NewGuid().ToString()
+                    },
                     Type = "message",
                     Text = "Hello!",
                     Conversation = new ConversationAccount() { Id = Guid.NewGuid().ToString() }
@@ -81,6 +97,10 @@ namespace BotTestFramework.Console.Tests
             {
                 new Activity()
                 {
+                    From = new ChannelAccount()
+                    {
+                        Id = Guid.NewGuid().ToString()
+                    },
                     Type = "trace",
                     Text = "To clarify, did you mean:",
                     SuggestedActions = new SuggestedActions()
@@ -106,6 +126,10 @@ namespace BotTestFramework.Console.Tests
             {
                 new Activity()
                 {
+                    From = new ChannelAccount()
+                    {
+                        Id = Guid.NewGuid().ToString()
+                    },
                     Type = "message",
                     Attachments = new List<Attachment>()
                     {

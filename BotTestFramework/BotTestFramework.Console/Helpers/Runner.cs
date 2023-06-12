@@ -401,7 +401,7 @@ namespace BotTestFramework.Console
 
                                 var csvRecord = new LogCSV()
                                 {
-                                    BotId = options.BotId,
+                                    BotId = receivedActivity.From.Id,
                                     ConversationId = receivedActivity.Conversation.Id,
                                     SessionDate = DateTime.Now.ToString(),
                                     UserUtterance = userUtterance,
