@@ -1,4 +1,4 @@
-# Bot Test Framework
+# PVA Test Framework
 
 ## Overview
 This solution will be able to run tests against a PVA Bot using Direct Line channel and validate that the bot works as expected for the following scenarios:

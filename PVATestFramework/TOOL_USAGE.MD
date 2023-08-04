@@ -28,11 +28,11 @@ This can be useful for ensuring that the bot is behaving properly after some cha
 *Note: For more information on how to get the token endpoint parameter, go to [this](./TOOL_USAGE.MD#how-to-get-the-pva-token-endpoint) section.*
 
 - Usage:
-  BotTestFramework.Console test [options]
+  PVATestFramework test [options]
 
 - Options:
 
-  --tokenEndpoint <tokenEndpoint> (REQUIRED) The PVA token endpoint that will be used to generate a token to connecto to the Direct Line channel.
+  --tokenEndpoint <tokenEndpoint> (REQUIRED) The PVA token endpoint that will be used to generate a token to connect to the Direct Line channel.
 
   --path <path> (REQUIRED) The file or folder to be used as a source to run the test.
 
@@ -48,7 +48,7 @@ This can be useful for ensuring that the bot is behaving properly after some cha
 
 Example:
 ```
-.\BotTestFramework.Console.exe test --tokenEndpoint ${TOKENENDPOINT} --path ${PATH}
+.\PVATestFramework.exe test --tokenEndpoint ${TOKENENDPOINT} --path ${PATH}
 ```
 
 ## How to run a Scale test
@@ -57,7 +57,7 @@ A scale test can be used to test load on the bot, this combined with Azure analy
 *Note: For more information on how to get the token endpoint parameter, go to [this](./TOOL_USAGE.MD#how-to-get-the-pva-token-endpoint) section.*
 
 - Usage:
-  BotTestFramework.Console testScale [options]
+  PVATestFramework testScale [options]
 - Options:
 
   --tokenEndpoint <tokenEndpoint> (REQUIRED) The PVA token endpoint that will be used to generate a token to connecto to the Direct Line channel.
@@ -80,13 +80,13 @@ A scale test can be used to test load on the bot, this combined with Azure analy
 
 ### Example:
 ```
-.\BotTestFramework.Console.exe testScale --tokenEndpoint ${TOKENENDPOINT} --path ${PATH} --maxAttempts ${MAXATTEMPTS}
+.\PVATestFramework.exe testScale --tokenEndpoint ${TOKENENDPOINT} --path ${PATH} --maxAttempts ${MAXATTEMPTS}
 ```
 
 ## How to download a file from dataverse
 Downloading a chat transcript from dataverse can be useful to test with information of certain days/weeks or simply obtain the last n conversation transcripts for testing purposes.
 - Usage:
-  BotTestFramework.Console getFromDV [options]
+  PVATestFramework getFromDV [options]
 - Options:
   --interval <LastNDays|LastNTranscripts|LastNWeeks> (REQUIRED) The interval range to be used to get data from Dataverse.
 
@@ -115,7 +115,7 @@ To be able to execute this feature, the minimum role required is the Service rea
 
 ### Example:
 ```
-.\BotTestFramework.Console.exe getFromDV --interval {INTERVAL} --value ${VALUE} --path ${PATH} --tenantId ${TENANTID} --environmentUrl ${ENVIRONMENTURL} --clientId ${CLIENTID} --clientSecret ${SECRET} --botId ${BOTID}
+.\PVATestFramework.exe getFromDV --interval {INTERVAL} --value ${VALUE} --path ${PATH} --tenantId ${TENANTID} --environmentUrl ${ENVIRONMENTURL} --clientId ${CLIENTID} --clientSecret ${SECRET} --botId ${BOTID}
 ```
 
 For more information about the available regions check this [link](https://learn.microsoft.com/en-us/power-platform/admin/new-datacenter-regions).
@@ -234,7 +234,7 @@ For creating a basic DYM test script, the only consideration to have is that the
 ![image](./Images/chat3.png)
 
 - Usage:
-  BotTestFramework.Console convertChatFile [options]
+  PVATestFramework convertChatFile [options]
 - Options:
 
   --path <path> (REQUIRED) The path of the .chat file (input).
@@ -245,7 +245,7 @@ For creating a basic DYM test script, the only consideration to have is that the
 
 ### Example:
 ```
-.\BotTestFramework.Console.exe convertChatFile --path to_convert.chat --outputFile converted.json
+.\PVATestFramework.exe convertChatFile --path to_convert.chat --outputFile converted.json
 ```
 
 ## How to get the PVA token endpoint
@@ -270,7 +270,7 @@ This endpoint should be used as the --tokenEndpoint parameter to run the test to
  ## Tips and tricks
  - If you want to run a bunch of files of the same extension, it is recommended to create a folder and then run the tool using a relative path to the folder. E.g: 
  ```
- .\BotTestFramework.Console.exe test --tokenEndpoint ${TOKENENDPOINT} --path ./FOLDER/
+ .\PVATestFramework.exe test --tokenEndpoint ${TOKENENDPOINT} --path ./FOLDER/
  ```
  This option is recommended for testing the tool locally and not when using it inside a Pipeline.
 
