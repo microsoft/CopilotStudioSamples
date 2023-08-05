@@ -21,7 +21,6 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
             BotId = botId;
             TenantId = tenantId;
             UriBuilder uriBuilder = new UriBuilder(tokenEndPoint);
-            uriBuilder.Query = $"botId={BotId}&tenantId={TenantId}";
             TokenUrl = uriBuilder.Uri;
         }
 

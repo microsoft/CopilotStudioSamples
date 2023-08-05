@@ -17,10 +17,6 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
 
         public string BotName { get; set; }
 
-        public string BotId { get; set; }
-
-        public string TenantId { get; set; }
-
         public string TokenEndPoint { get; set; }
 
         /// <summary>
