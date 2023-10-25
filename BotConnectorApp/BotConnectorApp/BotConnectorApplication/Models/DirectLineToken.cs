@@ -1,11 +1,11 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
+namespace BotConnectorApplication.Models
 {
-    /// <summary>
-    /// class for serialization/deserialization DirectLineToken
-    /// </summary>
     public class DirectLineToken
     {
         /// <summary>
