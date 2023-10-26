@@ -1,65 +1,58 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
+﻿using BotConnectorApp.Service;
+using BotConnectorApp.Service.Models;
 using Microsoft.Bot.Connector.DirectLine;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
+namespace BotConnectorApp
 {
-    public class BotConnectorApp
+    public class Program
     {
         private static string _watermark = null;
-        private const int _botReplyWaitIntervalInMilSec = 3000;
-        private const string _botDisplayName = "Bot";
-        private const string _userDisplayName = "You";
-        private static string s_endConversationMessage;
-        private static BotService s_botService;
+        private static IBotService _botService;
+        private static AppSettings _appSettings;
+        private static string _endConversationMessage;
+        private static string _userDisplayName = "You";
 
-        /// <summary>
-        /// Start BotConnectorApp console
-        /// See <see cref="README.md"/> for information on how to update bot settings in App.config
-        /// Takes user input and output bot reply, until user types EndConversationMessage
-        /// </summary>
+
         public static void Main(string[] args)
         {
-            var botId = ConfigurationManager.AppSettings["BotId"] ?? string.Empty;
-            var tenantId = ConfigurationManager.AppSettings["BotTenantId"] ?? string.Empty;
-            var botTokenEndpoint = ConfigurationManager.AppSettings["BotTokenEndpoint"] ?? string.Empty;
-            var botName = ConfigurationManager.AppSettings["BotName"] ?? string.Empty;
-            s_endConversationMessage = ConfigurationManager.AppSettings["EndConversationMessage"] ?? "quit";
-            if (string.IsNullOrEmpty(botId) || string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(botTokenEndpoint) || string.IsNullOrEmpty(botName))
+            var configuration = new ConfigurationBuilder()
+                               .AddJsonFile("appsettings.json")
+                               .AddEnvironmentVariables()
+                               .Build();
+
+            _appSettings = configuration.GetRequiredSection("Settings").Get<AppSettings>();
+            _endConversationMessage = _appSettings.EndConversationMessage ?? "quit";
+            
+            var serviceProvider = new ServiceCollection()
+                                .AddLogging()
+                                .AddSingleton<IBotService, BotService>()                
+                                .BuildServiceProvider();
+
+            _botService = serviceProvider.GetService<IBotService>();
+
+            if (string.IsNullOrEmpty(_appSettings.BotId) || string.IsNullOrEmpty(_appSettings.BotTenantId) || string.IsNullOrEmpty(_appSettings.BotTokenEndpoint) || string.IsNullOrEmpty(_appSettings.BotName))
             {
-                Console.WriteLine("Update App.config and start again.");
+                Console.WriteLine("Update appsettings and start again.");
                 Console.WriteLine("Press any key to exit");
                 Console.Read();
                 Environment.Exit(0);
             }
-
-            s_botService = new BotService()
-            {
-                BotName = botName,
-                BotId = botId,
-                TenantId = tenantId,
-                TokenEndPoint = botTokenEndpoint,
-            };
             StartConversation().Wait();
         }
 
-        private static async Task StartConversation()
+
+        public static async Task StartConversation()
         {
-            var token = await s_botService.GetTokenAsync();
-            using (var directLineClient = new DirectLineClient(token))
+            var directLineToken = await _botService.GetTokenAsync(_appSettings.BotTokenEndpoint);
+            using (var directLineClient = new DirectLineClient(directLineToken.Token))
             {
                 var conversation = await directLineClient.Conversations.StartConversationAsync();
                 var conversationtId = conversation.ConversationId;
                 string inputMessage;
 
-                while (!string.Equals(inputMessage = GetUserInput(), s_endConversationMessage, StringComparison.OrdinalIgnoreCase))
+                while (!string.Equals(inputMessage = GetUserInput(), _appSettings.EndConversationMessage, StringComparison.OrdinalIgnoreCase))
                 {
                     // Send user message using directlineClient
                     await directLineClient.Conversations.PostActivityAsync(conversationtId, new Activity()
@@ -71,8 +64,8 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
                         Locale = "en-Us",
                     });
 
-                    Console.WriteLine($"{_botDisplayName}:");
-                    Thread.Sleep(_botReplyWaitIntervalInMilSec);
+                    Console.WriteLine($"{_appSettings.BotName}:");
+                    Thread.Sleep(3000);
 
                     // Get bot response using directlinClient
                     List<Activity> responses = await GetBotResponseActivitiesAsync(directLineClient, conversationtId);
@@ -81,16 +74,6 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
             }
         }
 
-        /// <summary>
-        /// Prompt for user input
-        /// </summary>
-        /// <returns>user message as string</returns>
-        private static string GetUserInput()
-        {
-            Console.WriteLine($"{_userDisplayName}:");
-            var inputMessage = Console.ReadLine();
-            return inputMessage;
-        }
 
         /// <summary>
         /// Use directlineClient to get bot response
@@ -98,7 +81,7 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
         /// <returns>List of DirectLine activities</returns>
         /// <param name="directLineClient">directline client</param>
         /// <param name="conversationtId">current conversation ID</param>
-        /// <param name="botName">name of bot to connect to</param>
+        /// <param name="botName">name of bot to connect to</param>// <summary>        
         private static async Task<List<Activity>> GetBotResponseActivitiesAsync(DirectLineClient directLineClient, string conversationtId)
         {
             ActivitySet response = null;
@@ -119,7 +102,7 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
                 _watermark = response?.Watermark;
                 result = response?.Activities?.Where(x =>
                   x.Type == ActivityTypes.Message &&
-                    string.Equals(x.From.Name, s_botService.BotName, StringComparison.Ordinal)).ToList();
+                    string.Equals(x.From.Name, _appSettings.BotName, StringComparison.Ordinal)).ToList();
 
                 if (result != null && result.Any())
                 {
@@ -131,6 +114,18 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
 
             return new List<Activity>();
         }
+
+        /// <summary>
+        /// Prompt for user input
+        /// </summary>
+        /// <returns>user message as string</returns>
+        private static string GetUserInput()
+        {
+            Console.WriteLine($"{_userDisplayName}:");
+            var inputMessage = Console.ReadLine();
+            return inputMessage;
+        }
+
 
         /// <summary>
         /// Print bot reply to console
@@ -156,5 +151,6 @@ namespace Microsoft.PowerVirtualAgents.Samples.BotConnectorApp
                 }
             });
         }
+
     }
 }
