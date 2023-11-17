@@ -1,0 +1,22 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "16.20.2",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.12.0"
+    },
+    "version": "1.18.0",
+    "libraryName": "pva-extension-sso",
+    "libraryId": "14634225-91e5-41a4-b9cc-161ccb3400b4",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "pva-extension-sso",
+    "solutionShortDescription": "pva-extension-sso description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "extension",
+    "extensionType": "ApplicationCustomizer"
+  }
+}
