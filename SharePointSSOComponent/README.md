@@ -1,2 +1,25 @@
-# pva-extension-sso
- 
+ # SharePoint SSO Component
+
+This code sample that demonstrates how to create a SharePoint SPFx component which is a wrapper for a copilot, created with Microsoft Copilot Studio. The SPFx component included in the sample supports SSO, providing seamless user authentication for users interacting with the copilot.
+
+## Getting Started
+
+1. Create an app registration in Azure and configure authentication settings for your copilot in Copilot Studio
+2. Create an app registration for your SharePoint site
+3. Install the dependencies and build the component:
+
+```shell
+npm install
+gulp bundle --ship
+gulp package-solution --ship
+```
+
+
+4. Build and deploy the component to your SharePoint environment
+
+For more detailed instructions, please refer to the [Installation Guide](./INSTALLATION.md).
+
+## The Deployed Component
+
+![Microsoft Copilot Studio SSO](./images/SharePointSSOComponent.png)
+
