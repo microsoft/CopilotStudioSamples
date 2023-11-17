@@ -15,7 +15,7 @@ gulp package-solution --ship
 ```
 
 
-4. Build and deploy the component to your SharePoint environment
+4. Upload the component to your tenant app catalog and enable on your site
 
 For more detailed instructions, please refer to the [Installation Guide](./INSTALLATION.md).
 
