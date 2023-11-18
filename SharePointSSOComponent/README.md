@@ -6,18 +6,19 @@ This code sample that demonstrates how to create a SharePoint SPFx component whi
 
 1. Create an app registration in Azure and configure authentication settings for your copilot in Copilot Studio
 2. Create an app registration for your SharePoint site
-3. Install the dependencies and build the component:
+3. Clone this repo and cd into the SharePointSSOComponent folder
+4. Install the dependencies and build the component:
 
-```shell
-npm install
-gulp bundle --ship
-gulp package-solution --ship
-```
+    ```shell
+    npm install
+    gulp bundle --ship
+    gulp package-solution --ship
+    ```
 
 
 4. Upload the component to your tenant app catalog and enable on your site
 
-For more detailed instructions, please refer to the [Installation Guide](./INSTALLATION.md).
+For more detailed instructions, please refer to the [step-by-step setup guide](./SETUP.md).
 
 ## The Deployed Component
 
