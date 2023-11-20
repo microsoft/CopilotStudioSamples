@@ -1,9 +1,9 @@
 
-# Power Virtual Agents Samples
+# Microsoft Copilot Studio Samples
 
 ## Overview
 
-This branch contains samples for connecting your Power Virtual Agents bot to a custom app or to existing [Azure Bot Service channels](/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0). 
+This branch contains samples for connecting your Copilot Studio copilots and bots to a custom app or to existing [Azure Bot Service channels](/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0). 
 The ConnectToEngagementHub sample contains code for handing off conversations seamlessly and contextually to an Engagement hub.
 
 ## Samples list
