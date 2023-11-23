@@ -8,20 +8,20 @@ This repository contains samples and artifacts for Microsoft Copilot Studio.
 ## Useful links for Microsoft Copilot Studio
 
 | Description | Link |
-|--- |--- |
+| --- | --- |
 | Home page | [aka.ms/CopilotStudio](https://aka.ms/CopilotStudio) |
 | Official blog | [aka.ms/CopilotStudioBlog](https://aka.ms/CopilotStudioBlog) |
 | Community forum | [aka.ms/CopilotStudioCommunity](https://aka.ms/CopilotStudioCommunity) |
 | Product documentation | [aka.ms/CopilotStudioDocs](https://aka.ms/CopilotStudioDocs) |
 | Guidance documentation | [aka.ms/CopilotStudioGuidance](https://aka.ms/CopilotStudioGuidance) |
-| This GitHub repository of samples | [aka.ms/CopilotStudioSamples](https://aka.ms/CopilotStudioSamples) |
+| GitHub repository of samples | [aka.ms/CopilotStudioSamples](https://aka.ms/CopilotStudioSamples) |
 | Demo Copilot Studio | [aka.ms/CopilotStudioDemo](https://aka.ms/CopilotStudioDemo) |
 | Try Copilot Studio | [aka.ms/TryCopilotStudio](https://aka.ms/TryCopilotStudio) |
 
 ## Samples list
 
-| Sample Name           | Description                                                                    | View   |
-|-----------------------|--------------------------------------------------------------------------------|-------------|
+| Sample Name | Description | View |
+| --- | --- | --- |
 | BotConnectorApp | Demonstrates how to connect your bot to a custom app for example mobile-device app   | [View][cs#1]|
 | BuildYourOwnCanvasSamples | Demonstrates how to connect your bot to a custom canvas with various functionality | [View][cs#2] |
 | ConnectToEngagementHub | Demonstrates how to detect a handoff activity during a bot conversation and read conversation context | [View][cs#3] |
