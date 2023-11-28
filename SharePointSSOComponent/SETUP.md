@@ -144,7 +144,7 @@ When configuring the canvas app registration, pay attention to the following det
 
 6. The gulp package-solution command should create a packaged solution (.sppkg) in the sharepoint/assets folder
 
-**Step 4 – Upload the component to SharePoint.**
+## Step 4 – Upload the component to SharePoint
 
 1. Follow the instructions in [Manage apps using the Apps site - SharePoint - SharePoint in Microsoft 365 | Microsoft Learn](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog#add-custom-apps) to upload the sppkg file using your SharePoint admin center. 
 
