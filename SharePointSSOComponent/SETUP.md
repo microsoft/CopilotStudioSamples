@@ -54,17 +54,21 @@ When configuring the canvas app registration, pay attention to the following det
 
 3. The canvas app registration will need permissions for the custom API that was configured in *Step 1*. To add this permission, select an API from “APIs my organization uses” and search for the name you have given your copilot app registration in *Step 1*. For example, if your copilot app registration is called “SharePoint Bot Authentication” search for that name in the list of APIs, and select your custom scope (a name for your custom scope has been selected while configuring a custom API for your copilot app registration)
 
-<figure style="text-align: center;">
-  <img src="./images/apisMyOrganization.png" alt="APIs">
-  <figcaption>The API can be found under “APIs my organization uses”</figcaption>
-</figure>
+<p align="center">
+  <img src="./images/apisMyOrganization.png" alt="APIs my organization uses">
+  <br>
+  <em>The API can be found under “APIs my organization uses”</em>
+</p>
 <br/>
 <figure style="text-align: center;">
   <img src="./images/scopePermissions.png" alt="Permissions for the Custom Scope">
   <figcaption>Selecting the scope for the API</figcaption>
 </figure>
 
-4. After registering your canvas app, you will not have to use the code sample the page refers to. The code sample provided is a standalone web page implementing SSO for Microsoft Copilot Studio which can be used for testing purposes, but it is not a SharePoint component. 
+
+
+
+1. After registering your canvas app, you will not have to use the code sample the page refers to. The code sample provided is a standalone web page implementing SSO for Microsoft Copilot Studio which can be used for testing purposes, but it is not a SharePoint component. 
 
    However, you will need to document the Application (client) ID for the SharePoint component configuration in the next step.
 
