@@ -3,9 +3,9 @@
 To follow through the end-to-end setup process, you would need to:
 
 1. Configure Microsoft Entra ID authentication for your copilot.
-1. Register your SharePoint site as a canvas app – an application that will host your copilot and handle the single sign-on flow.
-1. Download the SharePoint component and configure its properties based on values from step (2).
-1. Upload the component to SharePoint and add the component to your site.
+2. Register your SharePoint site as a canvas app – an application that will host your copilot and handle the single sign-on flow.
+3. Build the SharePoint component and configure its properties based on values from step (2).
+4. Upload the component to SharePoint and add the component to your site.
 
 ## Step 1 - Configure Microsoft Entra ID authentication for your copilot
 
@@ -14,25 +14,29 @@ This step can be completed mostly by following the instructions here: [Configure
 1. **Optional – add scopes for SharePoint and OneDrive**. For your copilot to use the Generative Answers capability over a SharePoint or OneDrive data source, you would need to configure additional scopes for the API permissions assigned to your app. Please refer to [Generative answers with Search and summarize: Authentication](https://learn.microsoft.com/en-us/power-virtual-agents/nlu-boost-node#authentication).
 
 
-<figure style="text-align: center;">
-  <img src="./images/apiPermissions.png" alt="API Permissiongs">
-  <figcaption>API Permissions of the copilot app registration</figcaption>
-</figure>
+<p align="center">
+  <img src="./images/apiPermissions.png" alt="API Permissions">
+  <br>
+  <em>API Permissions of the copilot app registration</em>
+</p>
 
-2. **Mandatory – populate the token exchange URL in the copilot’s authentication settings.** Your copilot will send this URL to any custom application hosting it, instructing the custom application it should sign-in the user interacting with the copilot by acquiring a token matching this custom scope. The value for “token exchange URL” is the full URI for the custom scope you have added when configuring a custom API. 
 
-<figure style="text-align: center;">
+2. **Mandatory – populate the token exchange URL in the copilot’s authentication settings.** Your copilot will send this URL to any custom application hosting it, instructing the custom application it should sign users in by acquiring a token matching this custom scope. The value for “token exchange URL” is the full URI for the custom scope you have added when configuring a custom API. 
+
+<p align="center">
   <img src="./images/customScope.png" alt="Custom Scope">
-  <figcaption>The custom scope for the copilot app registration</figcaption>
-</figure>
+  <br>
+  <em>The custom scope for the copilot app registration</em>
+</p>
 <br/>
-<figure style="text-align: center;">
+<p align="center">
   <img src="./images/toeknExchangeURL.png" alt="Authentication Settings">
-  <figcaption>Authentication configuration of the copilot, including token exchange URL</figcaption>
-</figure>
+  <br>
+  <em>Authentication configuration of the copilot, including token exchange URL</em>
+</p>
 
 
-Once all the steps under [Configure user authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/power-virtual-agents/configuration-authentication-azure-ad) have been completed and the optional additional scopes have been specified, you should be able to use Generative Answers over a SharePoint or OneDrive data source from the Microsoft Copilot Studio authoring experience. Please refer to [Use content on SharePoint or OneDrive for Business for generative answers](https://learn.microsoft.com/en-us/power-virtual-agents/nlu-generative-answers-sharepoint-onedrive) for instructions on how to configure SharePoint or OneDrive data sources for your Copilot Generative Answers node.
+Once all the steps under [Configure user authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/power-virtual-agents/configuration-authentication-azure-ad) have been completed and the optional additional scopes have been specified, you should be able to use Generative Answers over a SharePoint or OneDrive data source from the Microsoft Copilot Studio authoring experience. Please refer to [Use content on SharePoint or OneDrive for Business for generative answers](https://learn.microsoft.com/en-us/power-virtual-agents/nlu-generative-answers-sharepoint-onedrive) for instructions on add a SharePoint or OneDrive data source for your Copilot Generative Answers node.
 
 Before moving to Step 2, make sure the Copilot Studio authoring canvas can succesfully sign you in. If "Require users to sign in" is selected in the authentication settings, the canvas will try to sign in you in as soon as the conversation starts. Otherwise, the-sign in topic will have to be triggered by a specific event in the conversation. In case Generative Answers is configured over SharePoint or OneDrive, please make sure your copilot responds to questions as expected. 
 
@@ -60,22 +64,21 @@ When configuring the canvas app registration, pay attention to the following det
   <em>The API can be found under “APIs my organization uses”</em>
 </p>
 <br/>
-<figure style="text-align: center;">
-  <img src="./images/scopePermissions.png" alt="Permissions for the Custom Scope">
-  <figcaption>Selecting the scope for the API</figcaption>
-</figure>
+<p align="center">
+  <img src="./images/scopePermissions.png" alt="Persmissions for the customer scope">
+  <br>
+  <em>Selecting the scope for the API</em>
+</p>
 
-
-
-
-1. After registering your canvas app, you will not have to use the code sample the page refers to. The code sample provided is a standalone web page implementing SSO for Microsoft Copilot Studio which can be used for testing purposes, but it is not a SharePoint component. 
+4. After registering your canvas app, you will not have to use the code sample the page refers to. The code sample provided is a standalone web page implementing SSO for Microsoft Copilot Studio which can be used for testing purposes, but it is not a SharePoint component. 
 
    However, you will need to document the Application (client) ID for the SharePoint component configuration in the next step.
 
-<figure style="text-align: center;">
+<p align="center">
   <img src="./images/clientID.png" alt="Document the Client ID">
-  <figcaption>The Application (client) ID</figcaption>
-</figure>
+  <br>
+  <em>The Application (client) ID</em>
+</p>
 
 
 
@@ -89,13 +92,14 @@ When configuring the canvas app registration, pay attention to the following det
    In this repo, you will find the SharePointSSOComponent project, which is a code sample for a SharePoint SPFx component (an Application Customizer), which renders a copilot at the bottom of all pages on a specific site. This SPFx component uses the MSAL library to perform a silent login and shares the user’s token with Microsoft Copilot Studio, providing a seamless single sign-on experience.
 3. Using Visual Studio Code, open the local folder to which you have cloned the repository. The folder structure should look like below:
 
-<figure style="text-align: center;">
-  <img src="./images/folderStructure.png" alt="The Repo Folder Structure">
-  <figcaption>The Project Folder Structure</figcaption>
-</figure>
+<p align="center">
+  <img src="./images/folderStructure.png" alt="The project folder structure">
+  <br>
+  <em>The Project Folder Structure</em>
+</p>
 
 
-4. Locate elements.xml under SharePointSSOComponent/sharepoint/assets, and update the values in the file, using one of the two following options:
+1. Locate elements.xml under SharePointSSOComponent/sharepoint/assets, and update the values in the file, using one of the two following options:
 
    *Option 1*: run the following python script and provide values based values from Steps 1 & 2 
    
@@ -152,7 +156,10 @@ When configuring the canvas app registration, pay attention to the following det
 
    After adding the app, a button will be appear at the bottom of all the pages under the target site. Clicking on the button will open a dialog with a chat canvas for your copilot. Based on the logic of your copilot, users will be signed in automatically at the beggining of the conversation, or when a specific event occurs. 
 
-    <figure style="text-align: center;">
-        <img src="./images/SharePointSSOComponent.png" alt="Copilot Component">
-        <figcaption>The Copilot Component</figcaption>
-    </figure>
+    <p align="center">
+      <img src="./images/SharePointSSOComponent.png" alt="Copilot Component">
+      <br>
+      <em>The Compilot Component Dialog</em>
+    </p>
+
+    
