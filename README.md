@@ -31,6 +31,7 @@ This repository contains samples and artifacts for Microsoft Copilot Studio.
 | MultilingualBotSample | Sample implementation of a middleware translation relay bot to do real-time translations using Azure services | [View][cs#7] |
 |RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#8] |
 | TestFramework | Run tests against a bot using Direct Line channel and validate that the bot works as expected | [View][cs#9] |
+| SharePointSSOComponent | A Sharepoint component demonstrating how copilots can be deployed to SharePoint sites with SSO enabled | [View][cs#10] |
 
 
 [cs#1]:./BotConnectorApp
@@ -42,6 +43,7 @@ This repository contains samples and artifacts for Microsoft Copilot Studio.
 [cs#7]:./MultilingualBotSample
 [cs#8]:./RelayBotSample
 [cs#9]:./PVATestFramework
+[cs#10]:./SharePointSSOComponent
 
 ## Contributing
 
