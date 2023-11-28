@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "YOUR_SHAREPOINT_SITE",
+      "customActions": {
+        "bbcf8287-ea2d-4bb6-868f-19b9cf4b0812": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "botURL": "YOUR_BOT_URL",
+            "customScope" : "YOUR_CUSTOM_SCOPE",
+            "clientID" : "YOUR_CLIENT_ID",
+            "authority" : "YOUR_TENANT",
+            "greet" : true
+          }
+        }
+      }
+    },
+    "pvaSso": {
+      "pageUrl": "YOUR_SHAREPOINT_SITE",
+      "customActions": {
+        "bbcf8287-ea2d-4bb6-868f-19b9cf4b0812": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "botURL": "YOUR_BOT_URL",
+            "customScope" : "YOUR_CUSTOM_SCOPE",
+            "clientID" : "YOUR_CLIENT_ID",
+            "authority" : "YOUR_TENANT",
+            "greet" : true
+          }
+        }
+      }
+    }
+  }
+}
