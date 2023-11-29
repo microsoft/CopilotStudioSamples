@@ -159,7 +159,7 @@ When configuring the canvas app registration, pay attention to the following det
     <p align="center">
       <img src="./images/SharePointSSOComponent.png" alt="Copilot Component">
       <br>
-      <em>The Compilot Component Dialog</em>
+      <em>The Copilot Component Dialog</em>
     </p>
 
     
