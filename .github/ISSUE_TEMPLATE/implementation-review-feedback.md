@@ -7,7 +7,8 @@ assignees: HenryJammes
 
 ---
 
-**Template version (bottom left corner of first slide):**: 
-**Slide number**: 
+**Template version**: the version of number is available on the first slide, in the bottom left corner.
+**Slide number(s)**: slides where your feedback applies to
 
-**Feedback:**
+**Detail your feedback and suggestions:**
+Add details on your feedback on the implementation review, or suggestions for new content or improvements.
