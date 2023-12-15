@@ -329,3 +329,5 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 /sabacha/Dispatcher/dispatcher.bot
+SharePointSSOComponent/package-lock.json
+SharePointSSOComponent/config/serve.json

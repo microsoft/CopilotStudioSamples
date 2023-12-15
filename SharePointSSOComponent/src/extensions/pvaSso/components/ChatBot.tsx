@@ -33,6 +33,11 @@ export const PVAChatbotDialog: React.FunctionComponent<IChatbotProps> = (props) 
     // Your bot's token endpoint
     const botURL = props.botURL;
 
+    // constructing URL using regional settings
+    const environmentEndPoint = botURL.slice(0,botURL.indexOf('/powervirtualagents'));
+    const apiVersion = botURL.slice(botURL.indexOf('api-version')).split('=')[1];
+    const regionalChannelSettingsURL = `${environmentEndPoint}/powervirtualagents/regionalchannelsettings?api-version=${apiVersion}`;
+
     // Using refs instead of IDs to get the webchat and loading spinner elements
     const webChatRef = useRef<HTMLDivElement>(null);
     const loadingSpinnerRef = useRef<HTMLDivElement>(null);
@@ -59,15 +64,29 @@ export const PVAChatbotDialog: React.FunctionComponent<IChatbotProps> = (props) 
 
         const token = responseToken?.accessToken || null;
 
-        // Create DirectLine object
-        const response = await fetch(botURL);
+        // Get the regional channel URL
+        let regionalChannelURL;
 
+        const regionalResponse = await fetch(regionalChannelSettingsURL);
+        if(regionalResponse.ok){
+            const data = await regionalResponse.json();
+            regionalChannelURL = data.channelUrlsById.directline;
+        }
+        else {
+            console.error(`HTTP error! Status: ${regionalResponse.status}`);
+        }
+
+
+        // Create DirectLine object
         let directline: any;
 
+        const response = await fetch(botURL);
+        
         if (response.ok) {
             const conversationInfo = await response.json();
             directline = ReactWebChat.createDirectLine({
             token: conversationInfo.token,
+            domain: regionalChannelURL + 'v3/directline',
         });
         } else {
         console.error(`HTTP error! Status: ${response.status}`);

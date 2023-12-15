@@ -1,6 +1,6 @@
  # SharePoint SSO Component
 
-This code sample that demonstrates how to create a SharePoint SPFx component which is a wrapper for a copilot, created with Microsoft Copilot Studio. The SPFx component included in the sample supports SSO, providing seamless user authentication for users interacting with the copilot.
+This code sample demonstrates how to create a SharePoint SPFx component which is a wrapper for a copilot, created with Microsoft Copilot Studio. The SPFx component included in the sample supports SSO, providing seamless authentication for users interacting with the copilot.
 
 ## Getting Started
 
