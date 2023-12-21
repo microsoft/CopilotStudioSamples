@@ -75,7 +75,7 @@ To install and use the Employee FAQ template you will need a Microsoft Teams acc
 
 First, add the required apps to Teams, and create your Power Apps app:
 
-1. Download the Employee FAQ template solution.
+1. Download the appropriate [Employee FAQ template solution](https://github.com/microsoft/CopilotStudioSamples/tree/master/Templates/Employee%20FAQ/Solutions).
 2. Add the [Power Virtual Agents app in Microsoft Teams](https://teams.microsoft.com/l/app/1850b8bb-76ac-411c-9637-08f7d1812d35?source=store-copy-link), you can search for it directly in Microsoft Teams app store.
 3. Add the [Power Apps app in Microsoft Teams](https://teams.microsoft.com/l/app/a6b63365-31a4-4f43-92ec-710b71557af9?source=store-copy-link), and open it.
 4. It will open the app in **Home** tab and select **Start now**.
