@@ -21,7 +21,7 @@ This solution allows customers to create a Power BI dashboard for their copilots
 - One or more copilots created in Microsoft Copilot Studio
 - A Power BI account
 - [Power BI Desktop](https://powerbi.microsoft.com/en-us/downloads/)
-- TDS
+- [TDS endpoint in Dataverse enabled](https://learn.microsoft.com/en-us/power-query/connectors/dataverse#prerequisites)
 
 ### Installation steps
 
@@ -44,6 +44,6 @@ The report is based on what is shared on the analytics pane in Microsoft Copilot
 
 ## Troubleshooting
 
-1. Ensure the TDS endpoint in Dataverse is enabled and you have permission to access data within tables. Empty data tables may indicate a permissions problem. See [Dataverse Prerequisites](https://learn.microsoft.com/en-us/power-query/connectors/dataverse#prerequisites)
+1. Ensure the TDS endpoint in Dataverse is enabled and you have permission to access data within tables. Empty data tables may indicate a permissions problem. See [Dataverse Prerequisites](https://learn.microsoft.com/en-us/power-query/connectors/dataverse#prerequisites).
 1. When using the Dataverse connector, if you experience an "Unable to connect" error due to a network or instance-specific issue, it may be because TCP ports 1433 or 5558 are blocked, see [SQL Server connection issue due to closed ports](https://learn.microsoft.com/en-us/power-query/connectors/dataverse#sql-server-connection-issue-due-to-closed-ports).
 1. Please raise [a new issue](https://github.com/microsoft/CopilotStudioSamples/issues/new/choose) in this repository for other problems.
