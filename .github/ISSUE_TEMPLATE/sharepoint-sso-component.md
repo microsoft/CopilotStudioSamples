@@ -2,7 +2,7 @@
 name: SharePoint SSO Component
 about: Provide feedback for the SharePoint SSO Component
 title: 'Issue: SharePoint SSO Component'
-labels: ''
+labels: ["SharePointSSOComponent"]
 assignees: adilei
 
 ---
