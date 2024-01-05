@@ -16,7 +16,7 @@ This sample shows the minimum code required for a Power Virtual Agent client to 
 - To detect the handoff activity,
     1. Clone the repository
     ```bash
-    git clone https://github.com/microsoft/PowerVirtualAgentsSample.git
+    git clone https://github.com/microsoft/CopilotStudioSamples.git
     ```
     2. Add the HandoffHelper and dependent models on the client to intercept activities payload sent over Directline.
     
