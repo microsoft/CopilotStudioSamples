@@ -75,7 +75,7 @@ Follow the steps below to set up the app registration and import the solution
 <p align="center">
   <img src="./images/flow.png" alt="Compromised Bot Report">
   <br>
-  <em>The Cloud FLow</em>
+  <em>The Cloud Flow</em>
 </p>
 
 2. Run the flow, and wait for it to complete. On a succesful run, you should recieve an email message with the list of compromised copilots attached. 
