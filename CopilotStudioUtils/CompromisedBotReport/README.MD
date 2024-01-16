@@ -2,7 +2,7 @@
 
 Microsoft Copilot Studio allows [adding copilots to Teams](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams) using two ways: by sharing a direct link to the copilot and by publishing the copilot to the Teams app catalog. Copilots are published to the Teams app catalog when they are shared with specific users, the entire organization or uploaded manually as an app to Teams. 
 
-As per [MC699716](https://admin.microsoft.com/Adminportal/Home?#/MessageCenter/:/messages/MC699716), on January 31st, 2024, the ability to chat via the Teams channel with bots/copilots that are shared via like but **not published to the Teams app catalog**, will be blocked for users who are not under a policy that allows uploading custom apps.
+As per [MC699716](https://admin.microsoft.com/Adminportal/Home?#/MessageCenter/:/messages/MC699716), on January 31st, 2024, the ability to chat on Teams with bots/copilots that are shared via link but **not published to the Teams app catalog**, will be blocked for users who are not under a policy that allows uploading custom apps.
 
 
 ## Impact for Copilot Studio customers
