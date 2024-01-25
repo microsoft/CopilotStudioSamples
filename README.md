@@ -27,7 +27,7 @@ This repository contains samples and artifacts for Microsoft Copilot Studio.
 | ConnectToEngagementHub | Demonstrates how to detect a handoff activity during a bot conversation and read conversation context | [View][cs#3] |
 | CustomAnalytics | This solution allows customers to create a custom Power BI dashboard on top of their copilots analytics data | [View][cs#4] |
 | HumanVerificationSample | Identify if the user on the other side is a human or a bot by sending an email to the user with a verification code | [View][cs#5] |
-| ImplementationReview | The implementation review document provides a framework to do a 360-degree review of a Copilot Studio project. Through probing questions, it highlights potential risks and gaps, aims at aligning the project with the product roadmap, and shares guidance, best practices and reference architecture examples | [View][cs#6] |
+| ImplementationGuide | The implementation guide document provides a framework to do a 360-degree review of a Copilot Studio project. Through probing questions, it highlights potential risks and gaps, aims at aligning the project with the product roadmap, and shares guidance, best practices and reference architecture examples | [View][cs#6] |
 | MultilingualBotSample | Sample implementation of a middleware translation relay bot to do real-time translations using Azure services | [View][cs#7] |
 | RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#8] |
 | SharePointSSOComponent | A Sharepoint component demonstrating how copilots can be deployed to SharePoint sites with SSO enabled | [View][cs#9] |
@@ -39,7 +39,7 @@ This repository contains samples and artifacts for Microsoft Copilot Studio.
 [cs#3]:./ConnectToEngagementHub
 [cs#4]:./CustomAnalytics
 [cs#5]:./HumanVerificationSample
-[cs#6]:./ImplementationReview
+[cs#6]:./ImplementationGuide
 [cs#7]:./MultilingualBotSample
 [cs#8]:./RelayBotSample
 [cs#9]:./SharePointSSOComponent
