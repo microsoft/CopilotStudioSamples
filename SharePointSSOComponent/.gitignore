@@ -10,7 +10,8 @@ node_modules
 dist
 lib
 release
-solution
+solution/*
+!solution/*.sppkg
 temp
 .heft
 
@@ -19,7 +20,7 @@ coverage
 
 # OSX
 .DS_Store
-
+gulp
 # Visual Studio files
 .ntvs_analysis.dat
 .vs

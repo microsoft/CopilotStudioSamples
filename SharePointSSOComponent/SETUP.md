@@ -38,13 +38,13 @@ This step can be completed mostly by following the instructions here: [Configure
 
 Once all the steps under [Configure user authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/power-virtual-agents/configuration-authentication-azure-ad) have been completed and the optional additional scopes have been specified, you should be able to use Generative Answers over a SharePoint or OneDrive data source from the Microsoft Copilot Studio authoring experience. Please refer to [Use content on SharePoint or OneDrive for Business for generative answers](https://learn.microsoft.com/en-us/power-virtual-agents/nlu-generative-answers-sharepoint-onedrive) for instructions on add a SharePoint or OneDrive data source for your Copilot Generative Answers node.
 
-Before moving to Step 2, make sure the Copilot Studio authoring canvas can succesfully sign you in. If "Require users to sign in" is selected in the authentication settings, the canvas will try to sign in you in as soon as the conversation starts. Otherwise, the-sign in topic will have to be triggered by a specific event in the conversation. In case Generative Answers is configured over SharePoint or OneDrive, please make sure your copilot responds to questions as expected. 
+Before moving to Step 2, make sure the Copilot Studio authoring canvas can successfully sign you in. If "Require users to sign in" is selected in the authentication settings, the canvas will try to sign in you in as soon as the conversation starts. Otherwise, the-sign in topic will have to be triggered by a specific event in the conversation. In case Generative Answers is configured over SharePoint or OneDrive, please make sure your copilot responds to questions as expected. 
 
 **Important:** For now, the copilot canvas will use a validation code to sign you in, but once the setup is complete, users will be signed-in seamlessly.
 
 ## Step 2 - Register your SharePoint site as a custom canvas
 
-A custom canvas is a custom application that hosts your copilot. In our case, it is also the application that will be responsible for a seamless sign-in expirience.
+A custom canvas is a custom application that hosts your copilot. In our case, it is also the application that will be responsible for a seamless sign-in experience.
 
 In order to configure your SharePoint site as a canvas application with single sign-on enabled, follow the steps specified in [Configure single sign-on with Microsoft Entra ID](https://learn.microsoft.com/en-us/power-virtual-agents/configure-sso?tabs=webApp#create-app-registrations-for-your-custom-website). 
 
@@ -65,7 +65,7 @@ When configuring the canvas app registration, pay attention to the following det
 </p>
 <br/>
 <p align="center">
-  <img src="./images/scopePermissions.png" alt="Persmissions for the customer scope">
+  <img src="./images/scopePermissions.png" alt="Permissions for the customer scope">
   <br>
   <em>Selecting the scope for the API</em>
 </p>
@@ -83,6 +83,9 @@ When configuring the canvas app registration, pay attention to the following det
 
 
 ## Step 3 - Download and configure the SharePoint SPFx component
+
+At this point you have a choice whether to configure and build the component yourself, or use the pre-built package that is included with this sample. Since this is only a reference sample, we encourage you to build the component yourself, but if you choose to deploy the pre-built package, skip ahead to **step 4**
+
 1. Make sure your development environment includes the following tools and libraries:
    1. VS Code (or a similar code editor)
    2. A version of Node.JS which is [supported by the SPFx framework](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/compatibility#spfx-development-environment-compatibility) (for this sample, use either v16 or v18)
@@ -110,8 +113,11 @@ When configuring the canvas app registration, pay attention to the following det
    *Option 2*: manually replace placeholders in elements.xml with actual values. ClientSideComponentProperties accepts an escaped JSON string. 
 
     ```xml
-    ClientSideComponentProperties=="{&quot;botURL&quot;:&quot;YOUR_BOT_URL&quot;,&quot;customScope&quot;:&quot;YOUR_CUSTOM_SCOPE&quot;,&quot;clientID&quot;:&quot;YOU_CLIENT_ID&quot;,&quot;authority&quot;:&quot;YOUR_AAD_LOGIN_URL&quot;,&quot;greet&quot;:TRUE_OR_FALSE,&quot;buttonLabel&quot;:&quot;CHAT_BUTTON_LABEL&quot;,&quot;botName&quot;:&quot;BOT_NAME&quot;}"
+    ClientSideComponentProperties="{&quot;botURL&quot;:&quot;YOUR_BOT_URL&quot;,&quot;customScope&quot;:&quot;YOUR_CUSTOM_SCOPE&quot;,&quot;clientID&quot;:&quot;YOU_CLIENT_ID&quot;,&quot;authority&quot;:&quot;YOUR_AAD_LOGIN_URL&quot;,&quot;greet&quot;:TRUE,&quot;buttonLabel&quot;:&quot;CHAT_BUTTON_LABEL&quot;,&quot;botName&quot;:&quot;BOT_NAME&quot;}"
     ```
+
+
+    *Option 3*: leave elements.xml without changing any details, build and deploy the component on a site, and later configure the component by running [Configure-MCSForSite.ps1](./Configure-MCSForSite.ps1) (see instructions on how to run this script in step 4)
 
 
     ### Property details
@@ -128,7 +134,7 @@ When configuring the canvas app registration, pay attention to the following det
 
 <br/>
 
-5. Open a new terminal in VS Code and navigate to the solution folder (the SharePointSSOComponent folder). Run the following commands:
+5. after populating properties in elements.xml, or if you left elements.xml untouched and plan to run Configure-MCSForSite.ps1 after building and deploying the component, open a new terminal in VS Code and navigate to the solution folder (the SharePointSSOComponent folder). Run the following commands:
 
     ```shell
     npm install
@@ -142,11 +148,11 @@ When configuring the canvas app registration, pay attention to the following det
     npm install gulp-cli --global
     ```
 
-6. The gulp package-solution command should create a packaged solution (.sppkg) in the sharepoint/assets folder
+6. The gulp package-solution command should create a packaged solution (.sppkg) in the sharepoint/solution folder
 
 ## Step 4 – Upload the component to SharePoint
 
-1. Follow the instructions in [Manage apps using the Apps site - SharePoint - SharePoint in Microsoft 365 | Microsoft Learn](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog#add-custom-apps) to upload the sppkg file using your SharePoint admin center. 
+1. Whether you have build the component yourself, or opted to use the pre-built package, you should see a file called **pva-extension-sso.sppkg** under [sharepoint/solution](./sharepoint/solution/). Follow the instructions in [Manage apps using the Apps site - SharePoint - SharePoint in Microsoft 365 | Microsoft Learn](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog#add-custom-apps) to upload the sppkg file using your SharePoint admin center. After uploading the sppkg file, choose **Enable App** and not **Enable this app and add it to all sites**. 
 
    Once the app has been successfully uploaded and enabled, it will be visible under “Apps for SharePoint”
 
@@ -154,7 +160,13 @@ When configuring the canvas app registration, pay attention to the following det
 
    To add an app to your site, follow the instructions in: [Add an app to a site - Microsoft Support](https://support.microsoft.com/en-us/office/add-an-app-to-a-site-ef9c0dbd-7fe1-4715-a1b0-fe3bc81317cb?ui=en-us&rs=en-us&ad=us).
 
-   After adding the app, a button will be appear at the bottom of all the pages under the target site. Clicking on the button will open a dialog with a chat canvas for your copilot. Based on the logic of your copilot, users will be signed in automatically at the beggining of the conversation, or when a specific event occurs. 
+3. If you left elements.xml untouched, or if you are uploading the pre-built package, or even in case you would like to override the values configured in elements.xml for the site on which the component has been deployed, you can now run [Configure-MCSForSite.ps1](./Configure-MCSForSite.ps1):
+
+```PowerShell
+.\Configure-McsForSite.ps1 -siteUrl "<siteUrl>" -botUrl "<botUrl>" -botName "<botName>" -greet $True -customScope "<customScope>" -clientId "<clientId>" -authority "<authority>" -buttonLabel "<buttonLabel>"
+```
+
+4. After adding the app (and running Configure-MCSForSite.ps1 in case elements.xml has been left untouched), a button will be appear at the bottom of all the pages under the target site. Clicking on the button will open a dialog with a chat canvas for your copilot. Based on the logic of your copilot, users will be signed in automatically at the beginning of the conversation, or when a specific event occurs. 
 
     <p align="center">
       <img src="./images/SharePointSSOComponent.png" alt="Copilot Component">
