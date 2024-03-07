@@ -65,7 +65,7 @@ When configuring the canvas app registration, pay attention to the following det
 </p>
 <br/>
 <p align="center">
-  <img src="./images/scopePermissions.png" alt="Permissions for the customer scope">
+  <img src="./images/scopePermissions.png" alt="Permissions for the custom scope">
   <br>
   <em>Selecting the scope for the API</em>
 </p>
@@ -152,7 +152,7 @@ At this point you have a choice whether to configure and build the component you
 
 ## Step 4 – Upload the component to SharePoint
 
-1. Whether you have build the component yourself, or opted to use the pre-built package, you should see a file called **pva-extension-sso.sppkg** under [sharepoint/solution](./sharepoint/solution/). Follow the instructions in [Manage apps using the Apps site - SharePoint - SharePoint in Microsoft 365 | Microsoft Learn](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog#add-custom-apps) to upload the sppkg file using your SharePoint admin center. After uploading the sppkg file, choose **Enable App** and not **Enable this app and add it to all sites**. 
+1. Whether you have built the component yourself, or opted to use the pre-built package, you should see a file called **pva-extension-sso.sppkg** under [sharepoint/solution](./sharepoint/solution/). Follow the instructions in [Manage apps using the Apps site - SharePoint - SharePoint in Microsoft 365 | Microsoft Learn](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog#add-custom-apps) to upload the sppkg file using your SharePoint admin center. After uploading the sppkg file, choose **Enable App** and not **Enable this app and add it to all sites**. 
 
    Once the app has been successfully uploaded and enabled, it will be visible under “Apps for SharePoint”
 
