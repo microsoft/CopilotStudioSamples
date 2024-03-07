@@ -5,15 +5,15 @@ import re
 # Define the namespace
 ns = {'sp': 'http://schemas.microsoft.com/sharepoint/'}
 
-def get_user_input(value_type, current_value):
+def get_user_input(key, value_type, current_value):
     if value_type == bool:
         while True:
-            user_input = input(f"Enter new value for boolean ('true' or 'false', current: {current_value}): ").strip().lower()
+            user_input = input(f"Enter new value for '{key}' boolean ('true' or 'false', current: {current_value}): ").strip().lower()
             if user_input in ['true', 'false']:
                 return user_input == 'true'
             print("Invalid input for boolean, please enter 'true' or 'false'.")
     else:
-        return input(f"Enter new value for {value_type} (current: {current_value}): ").strip()
+        return input(f"Enter new value for '{key}' {value_type} (current: {current_value}): ").strip()
 
 def parse_properties(properties_str):
     # Replace placeholder boolean value with an actual boolean for parsing
@@ -24,7 +24,7 @@ def update_properties(properties):
     new_properties = {}
     for key, value in properties.items():
         value_type = bool if isinstance(value, bool) else str
-        new_properties[key] = get_user_input(value_type, value)
+        new_properties[key] = get_user_input(key, value_type, value)
     return new_properties
 
 def escape_json_for_xml(json_obj):
