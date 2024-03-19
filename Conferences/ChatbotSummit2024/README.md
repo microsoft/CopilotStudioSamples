@@ -7,7 +7,7 @@
 
 ## Instructions
 
-- Follow each lab PDF instructions in their logical order.
+- Download [Lab files.zip](https://github.com/microsoft/CopilotStudioSamples/raw/master/Conferences/ChatbotSummit2024/Lab%20files.zip ), unzip them, and follow each lab PDF instructions in the sequential order.
 - Ideally, set up a new work profile in your browser, specific to that workshop. Alternatively, you can choose to browse as a guest or start an InPrivate session.
 
 ## Resources
