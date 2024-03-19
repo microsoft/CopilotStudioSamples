@@ -1,5 +1,15 @@
 # Chatbot Summit 2024 Workshop
 
+## Agenda
+
+- Introduction to Copilot Studio 
+- Walkthrough of the studio
+- Lab 01: Create a smart custom copilot using your website data
+- Lab 02: Influence answers with custom instructions
+- Lab 03: Create custom topics by describing them
+- Lab 04: Advanced topic authoring and HTTP requests
+- Lab 05: Use dynamic chaining to interact with your APIs
+
 ## Getting started
 
 - Workshop resources and documents (i.e., this GitHub location): [aka.ms/ChatbotSummit2024](https://aka.ms/ChatbotSummit2024)
