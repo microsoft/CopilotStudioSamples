@@ -12,7 +12,7 @@
 
 ## Getting started
 
-- Workshop resources and documents (i.e., this GitHub location): [aka.ms/M365Conf2024](https://aka.ms/M365Conf2024)
+- Workshop resources and documents (i.e., this GitHub location): [aka.ms/MCSM365Conf](https://aka.ms/MCSM365Conf).
 - Connect to Copilot Studio: [aka.ms/CopilotStudioStart](https://aka.ms/CopilotStudioStart) using the provided credentials.
 
 ## Instructions
