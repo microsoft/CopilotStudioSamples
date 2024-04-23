@@ -13,12 +13,12 @@
 ## Getting started
 
 - Workshop resources and documents (i.e., this GitHub location): [aka.ms/MCSM365Conf](https://aka.ms/MCSM365Conf).
-- Connect to Copilot Studio: [aka.ms/CopilotStudioStart](https://aka.ms/CopilotStudioStart) using the provided credentials.
 
 ## Instructions
 
 - Download [Lab files.zip](https://github.com/microsoft/CopilotStudioSamples/raw/master/Conferences/M365%20Conference%202024/Lab%20files.zip ), unzip them, and follow each lab PDF instructions in the sequential order.
 - Ideally, set up a new work profile in your browser, specific to that workshop. Alternatively, you can choose to browse as a guest or start an InPrivate session.
+- Connect to Copilot Studio: [aka.ms/CopilotStudioStart](https://aka.ms/CopilotStudioStart) using the provided credentials.
 
 ## Resources
 
