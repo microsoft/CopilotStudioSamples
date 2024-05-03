@@ -20,7 +20,7 @@ Labs:
 
 ## Instructions
 
-- Access today's slides here: [Microsoft Copilot Studio - Workshop.pdf](https://github.com/microsoft/CopilotStudioSamples/blob/69bc4a83c518e45972eedeb849eb5dc1c40342a8/Conferences/M365%20Conference%202024/Microsoft%20Copilot%20Studio%20-%20Workshop.pdf).
+- Access today's slides here: [Microsoft Copilot Studio - Workshop.pdf](https://github.com/microsoft/CopilotStudioSamples/raw/master/Conferences/M365%20Conference%202024/Microsoft%20Copilot%20Studio%20-%20Workshop.pdf).
 - Download [Lab files.zip](https://github.com/microsoft/CopilotStudioSamples/raw/master/Conferences/M365%20Conference%202024/Lab%20files.zip ), unzip them, and follow each lab PDF instructions in the sequential order.
 - Ideally, set up a new work profile in your browser, specific to that workshop. Alternatively, you can choose to browse as a guest or start an InPrivate session.
 - Connect to Copilot Studio: [aka.ms/CopilotStudioStart](https://aka.ms/CopilotStudioStart) using the provided credentials.
