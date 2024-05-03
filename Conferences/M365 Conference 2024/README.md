@@ -4,11 +4,13 @@
 
 - Introduction to Copilot Studio 
 - Walkthrough of the studio
-- Lab 01: -
-- Lab 02: -
-- Lab 03: -
-- Lab 04: -
-- Lab 05: -
+- Lab 1: Create your first Copilot in Microsoft Copilot Studio
+- Lab 2: Microsoft Copilot Studio: Authoring 101
+- Lab 3: Build and Invoke Power Automate cloud flows
+- Lab 4: Using the HTTP Node to connect to an API
+- Lab 5: Generative answers and custom instructions
+- Lab 6: Use dynamic chaining to interact with your APIs![image](https://github.com/microsoft/CopilotStudioSamples/assets/37898885/57acfd6c-94bd-4be6-86d8-e184b60baa9e)
+
 
 ## Getting started
 
