@@ -1,0 +1,160 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Single adaptive card with a carousel format
+    triggerQueries:
+      - Single adaptive card with a carousel format
+
+  actions:
+    - kind: SetVariable
+      id: setVariable_a7lReD
+      variable: Topic.DataJSON
+      value: "[     {         \"icon\": \"data:image/svg+xml;utf8,%3Csvg%20width%3D%2296%22%20height%3D%2296%22%20viewBox%3D%220%200%2096%2096%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cdefs%3E%0A%3Cfilter%20id%3D%22filter0_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%224%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3Cfilter%20id%3D%22filter1_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%220.38%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3ClinearGradient%20id%3D%22paint0_linear%22%20x1%3D%2271%22%20y1%3D%2296.0002%22%20x2%3D%2215%22%20y2%3D%22-40.9998%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23742774%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23BB35A4%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint1_linear%22%20x1%3D%2232%22%20y1%3D%220.0002436%22%20x2%3D%2278%22%20y2%3D%2296.0002%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23E48CC7%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23D467B9%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint2_linear%22%20x1%3D%2262%22%20y1%3D%2229.0002%22%20x2%3D%2276%22%20y2%3D%2272%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23E9A1CB%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23E48CC7%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3CclipPath%20id%3D%22clip0%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3CclipPath%20id%3D%22clip1%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3CclipPath%20id%3D%22clip2%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%20transform%3D%22translate(0%200.00012207)%22%2F%3E%0A%3C%2FclipPath%3E%0A%3C%2Fdefs%3E%0A%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%0A%3Cg%20clip-path%3D%22url(%23clip1)%22%3E%0A%3Cg%20clip-path%3D%22url(%23clip2)%22%3E%0A%3Cmask%20id%3D%22mask0%22%20mask-type%3D%22alpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%22-1%22%20y%3D%221%22%20width%3D%2297%22%20height%3D%2294%22%3E%0A%3Cpath%20d%3D%22M1.45715%2044.049C-0.522237%2046.3111%20-0.522238%2049.6889%201.45715%2051.951L36.9897%2092.5596C38.5833%2094.381%2041.4167%2094.381%2043.0103%2092.5596L46.8367%2088.1866L51.0504%2092.7833C52.6358%2094.5128%2055.3623%2094.5128%2056.9476%2092.7833L94.2825%2052.0543C96.3853%2049.7604%2096.3853%2046.2396%2094.2825%2043.9457L56.9476%203.21667C55.3623%201.4872%2052.6358%201.4872%2051.0504%203.21667L46.8367%207.81341L43.0103%203.44035C41.4167%201.61904%2038.5833%201.61904%2036.9897%203.44035L1.45715%2044.049Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url(%23mask0)%22%3E%0A%3Cpath%20d%3D%22M40%2096L-2%2048L40%200L82%2048L40%2096Z%22%20fill%3D%22url(%23paint0_linear)%22%2F%3E%0A%3Cg%20filter%3D%22url(%23filter0_f)%22%3E%0A%3Cpath%20d%3D%22M53.999%202L97.999%2050L53.999%2098L34.4767%2076.7029C33.0748%2075.1736%2033.0748%2072.8264%2034.4767%2071.2971L51.5214%2052.7029C52.9232%2051.1736%2052.9232%2048.8264%2051.5214%2047.2971L34.4767%2028.7029C33.0748%2027.1736%2033.0748%2024.8264%2034.4767%2023.2971L53.999%202Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.32%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20filter%3D%22url(%23filter1_f)%22%3E%0A%3Cpath%20d%3D%22M53.999%200.380127L97.999%2048.3801L53.999%2096.3801L34.4767%2075.083C33.0748%2073.5537%2033.0748%2071.2065%2034.4767%2069.6772L51.5214%2051.083C52.9232%2049.5537%2052.9232%2047.2065%2051.5214%2045.6772L34.4767%2027.083C33.0748%2025.5537%2033.0748%2023.2065%2034.4767%2021.6772L53.999%200.380127Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.24%22%2F%3E%0A%3C%2Fg%3E%0A%3Cpath%20d%3D%22M53.999%200L97.999%2048L53.999%2096L34.4767%2074.7029C33.0748%2073.1736%2033.0748%2070.8264%2034.4767%2069.2971L51.5214%2050.7029C52.9232%2049.1736%2052.9232%2046.8264%2051.5214%2045.2971L34.4767%2026.7029C33.0748%2025.1736%2033.0748%2022.8264%2034.4767%2021.2971L53.999%200Z%22%20fill%3D%22url(%23paint1_linear)%22%2F%3E%0A%3Cpath%20d%3D%22M73.0514%2027.2167C74.6367%2025.4872%2077.3633%2025.4872%2078.9486%2027.2167L98%2048L78.9486%2068.7833C77.3633%2070.5128%2074.6367%2070.5128%2073.0514%2068.7833L57.7165%2052.0543C55.6137%2049.7604%2055.6137%2046.2396%2057.7165%2043.9457L73.0514%2027.2167Z%22%20fill%3D%22url(%23paint2_linear)%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E\",         \"name\": \"Power Apps\",         \"description\": \"Reduce your development costs and do more with less by enabling everyone to rapidly build and share low-code apps using Microsoft Power Apps.\",         \"linkurl\": \"https://powerapps.microsoft.com/en-us/\",         \"linklabel\": \"Learn More\"     },     {         \"icon\": \"data:image/svg+xml;utf8,%3Csvg%20width%3D%2296%22%20height%3D%2296%22%20viewBox%3D%220%200%2096%2096%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cdefs%3E%0A%3Cfilter%20id%3D%22filter0_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%220.4%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3Cfilter%20id%3D%22filter1_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%224%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3ClinearGradient%20id%3D%22paint0_linear%22%20x1%3D%2243%22%20y1%3D%2255%22%20x2%3D%2229%22%20y2%3D%2210%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%230D36A5%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231152D4%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint1_linear%22%20x1%3D%2246%22%20y1%3D%2210%22%20x2%3D%2246%22%20y2%3D%2286%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%2384CAFF%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2361B1FB%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint2_linear%22%20x1%3D%2237.5%22%20y1%3D%2210%22%20x2%3D%2237.5%22%20y2%3D%2286%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%233B90F5%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232A78EE%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3CclipPath%20id%3D%22clip0%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3CclipPath%20id%3D%22clip1%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3C%2Fdefs%3E%0A%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%0A%3Cg%20clip-path%3D%22url(%23clip1)%22%3E%0A%3Cmask%20id%3D%22mask0%22%20mask-type%3D%22alpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%22-1%22%20y%3D%2210%22%20width%3D%2297%22%20height%3D%2276%22%3E%0A%3Cpath%20d%3D%22M61.2116%2010C62.3496%2010%2063.4337%2010.4847%2064.1925%2011.3328L94.6136%2045.3328C95.9723%2046.8514%2095.9723%2049.1486%2094.6136%2050.6672L64.1925%2084.6672C63.4337%2085.5153%2062.3496%2086%2061.2116%2086H3.94634C0.488777%2086%20-1.34012%2081.9095%200.965366%2079.3328L29%2048L0.965366%2016.6672C-1.34012%2014.0905%200.488777%2010%203.94634%2010H61.2116Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url(%23mask0)%22%3E%0A%3Cpath%20d%3D%22M63%2010L29%2048L-5%2010H63Z%22%20fill%3D%22url(%23paint0_linear)%22%2F%3E%0A%3Cg%20filter%3D%22url(%23filter0_f)%22%3E%0A%3Cpath%20d%3D%22M63%2010.4L-5%2086.4H63L97%2048.4L63%2010.4Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.24%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20filter%3D%22url(%23filter1_f)%22%3E%0A%3Cpath%20d%3D%22M63%2012L-5%2088H63L97%2050L63%2012Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.32%22%2F%3E%0A%3C%2Fg%3E%0A%3Cpath%20d%3D%22M-5%2086L63%2010L97%2048L63%2086H-5Z%22%20fill%3D%22url(%23paint1_linear)%22%2F%3E%0A%3Cpath%20d%3D%22M-5%2086L63%2010L80%2029L29%2086H-5Z%22%20fill%3D%22url(%23paint2_linear)%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E\",         \"name\": \"Power Automate\",         \"description\": \"Do more with less by streamlining repetitive tasks and business processes—increasing efficiency and reducing costs—with Microsoft Power Automate.\",         \"linkurl\": \"https://powerautomate.microsoft.com/en-us/\",         \"linklabel\": \"Learn More\"     },     {         \"icon\": \"data:image/svg+xml;utf8,%3Csvg%20width%3D%2296%22%20height%3D%2296%22%20viewBox%3D%220%200%2096%2096%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cdefs%3E%0A%3Cfilter%20id%3D%22filter0_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%220.4%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3Cfilter%20id%3D%22filter1_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%224%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3ClinearGradient%20id%3D%22paint0_linear%22%20x1%3D%2246.6667%22%20y1%3D%22-8.97795e-07%22%20x2%3D%2288.8653%22%20y2%3D%2289.4466%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23E6AD10%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23C87E0E%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint1_linear%22%20x1%3D%2231.9974%22%20y1%3D%2224%22%20x2%3D%2267.4859%22%20y2%3D%2292.8262%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23F6D751%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23E6AD10%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint2_linear%22%20x1%3D%2211.9974%22%20y1%3D%2248%22%20x2%3D%2231.6083%22%20y2%3D%2294.4775%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23F9E589%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23F6D751%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3CclipPath%20id%3D%22clip0%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3C%2Fdefs%3E%0A%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%0A%3Cmask%20id%3D%22mask0%22%20mask-type%3D%22alpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%2212%22%20y%3D%220%22%20width%3D%2272%22%20height%3D%2296%22%3E%0A%3Cpath%20d%3D%22M52%204C52%201.79086%2053.7909%200%2056%200H80C82.2091%200%2084%201.79086%2084%204V92C84%2094.2091%2082.2091%2096%2080%2096H16C13.7909%2096%2012%2094.2091%2012%2092V52C12%2049.7909%2013.7909%2048%2016%2048H32.0001V28C32.0001%2025.7909%2033.791%2024%2036.0001%2024H52V4Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url(%23mask0)%22%3E%0A%3Cpath%20d%3D%22M84%200L84%2096H52L52%200H84Z%22%20fill%3D%22url(%23paint0_linear)%22%2F%3E%0A%3Cg%20filter%3D%22url(%23filter0_f)%22%3E%0A%3Cpath%20d%3D%22M64%2028.4V96.4H32V24.4H60C62.2091%2024.4%2064%2026.1909%2064%2028.4Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.2%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20filter%3D%22url(%23filter1_f)%22%3E%0A%3Cpath%20d%3D%22M64%2030V98H32V26H60C62.2091%2026%2064%2027.7909%2064%2030Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.18%22%2F%3E%0A%3C%2Fg%3E%0A%3Cpath%20d%3D%22M64%2028V96H32V24H60C62.2091%2024%2064%2025.7909%2064%2028Z%22%20fill%3D%22url(%23paint1_linear)%22%2F%3E%0A%3Cpath%20d%3D%22M12%2048V96H44V52C44%2049.7909%2042.2091%2048%2040%2048H12Z%22%20fill%3D%22url(%23paint2_linear)%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E\",         \"name\": \"Power BI\",         \"description\": \"Do more with less using an end-to-end BI platform to create a single source of truth, uncover more powerful insights, and translate them into impact.\",         \"linkurl\": \"https://powerbi.microsoft.com/en-us/\",         \"linklabel\": \"Learn More\"     },     {         \"icon\": \"data:image/svg+xml;utf8,%3Csvg%20width%3D%2296%22%20height%3D%2296%22%20viewBox%3D%220%200%2096%2096%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cdefs%3E%0A%3Cfilter%20id%3D%22filter0_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%220.4%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3Cfilter%20id%3D%22filter1_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%224%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3ClinearGradient%20id%3D%22paint0_linear%22%20x1%3D%2217.3997%22%20y1%3D%222.10083%22%20x2%3D%2243.0799%22%20y2%3D%2294.0143%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23A391E8%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23685CD0%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint1_linear%22%20x1%3D%2294%22%20y1%3D%2286.0005%22%20x2%3D%2276.5%22%20y2%3D%2235.5006%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%2338389F%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%234B44C0%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint2_linear%22%20x1%3D%2235.2102%22%20y1%3D%22-12.4822%22%20x2%3D%2260.0759%22%20y2%3D%2260.2955%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23DBCEF8%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23C0AFF1%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint3_linear%22%20x1%3D%2221.9912%22%20y1%3D%22-3.25494%22%20x2%3D%2248.766%22%20y2%3D%2292.3691%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23C0AFF1%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238675DD%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3CclipPath%20id%3D%22clip0%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3CclipPath%20id%3D%22clip1%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3C%2Fdefs%3E%0A%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%0A%3Cg%20clip-path%3D%22url(%23clip1)%22%3E%0A%3Cmask%20id%3D%22mask0%22%20style%3D%22mask-type%3Aalpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2296%22%20height%3D%2296%22%3E%0A%3Cpath%20d%3D%22M51.0015%201.29095C49.2237%20-0.0423787%2046.7792%20-0.0423776%2045.0015%201.29096L2.33529%2033.2906C-0.33138%2035.2906%20-0.33138%2039.2906%202.33529%2041.2906L23.5208%2057.1797L14.5736%2063.8902C11.9069%2065.8902%2011.9069%2069.8902%2014.5736%2071.8902L44.9999%2094.7099C46.7776%2096.0432%2049.2221%2096.0432%2050.9999%2094.7099L93.666%2062.7103C96.3327%2060.7103%2096.3327%2056.7103%2093.666%2054.7103L72.4805%2038.8211L81.4278%2032.1107C84.0944%2030.1107%2084.0944%2026.1107%2081.4278%2024.1107L51.0015%201.29095Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url(%23mask0)%22%3E%0A%3Cpath%20d%3D%22M9.24023%2067.8902L60.2397%2029.6406L98.9994%2058.7103L47.9999%2096.9599L9.24023%2067.8902Z%22%20fill%3D%22url(%23paint0_linear)%22%2F%3E%0A%3Cpath%20d%3D%22M23.5195%2057.1803L60.2392%2029.6406L98.9988%2058.7103L65.2792%2084C63.5014%2085.3333%2061.0569%2085.3334%2059.2792%2084L23.5195%2057.1803Z%22%20fill%3D%22url(%23paint1_linear)%22%2F%3E%0A%3Cg%20filter%3D%22url(%23filter0_f)%22%3E%0A%3Cpath%20d%3D%22M-2.99805%2037.6906L48.0015%20-0.559021L86.7611%2028.5107L38.7616%2064.5103C36.9838%2065.8437%2034.5394%2065.8437%2032.7616%2064.5103L-2.99805%2037.6906Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.24%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20filter%3D%22url(%23filter1_f)%22%3E%0A%3Cpath%20d%3D%22M-2.99805%2039.2906L48.0015%201.04095L86.7611%2030.1107L38.7616%2066.1103C36.9838%2067.4436%2034.5394%2067.4436%2032.7616%2066.1103L-2.99805%2039.2906Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.32%22%2F%3E%0A%3C%2Fg%3E%0A%3Cpath%20d%3D%22M-2.99805%2037.2906L48.0015%20-0.959045L86.7611%2028.1107L38.7616%2064.1103C36.9838%2065.4436%2034.5394%2065.4436%2032.7616%2064.1103L-2.99805%2037.2906Z%22%20fill%3D%22url(%23paint2_linear)%22%2F%3E%0A%3Cpath%20d%3D%22M-2.99805%2037.2897L30.7216%2011.9999C32.4994%2010.6666%2034.9438%2010.6666%2036.7216%2011.9999L72.4812%2038.8197L38.7616%2064.1094C36.9838%2065.4427%2034.5394%2065.4427%2032.7616%2064.1094L-2.99805%2037.2897Z%22%20fill%3D%22url(%23paint3_linear)%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E\",         \"name\": \"Power Pages\",         \"description\": \"Do more with less by enabling all your teams, not just developers, to create professional websites—so you get to market faster at lower cost.\",         \"linkurl\": \"https://powerpages.microsoft.com/en-us/\",         \"linklabel\": \"Learn More\"     },     {         \"icon\": \"data:image/svg+xml;utf8,%3Csvg%20width%3D%2296%22%20height%3D%2296%22%20viewBox%3D%220%200%2096%2096%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cdefs%3E%0A%3Cfilter%20id%3D%22filter0_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%224%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3Cfilter%20id%3D%22filter1_f%22%3E%0A%3CfeFlood%20flood-opacity%3D%220%22%20result%3D%22BackgroundImageFix%22%2F%3E%0A%3CfeBlend%20mode%3D%22normal%22%20in%3D%22SourceGraphic%22%20in2%3D%22BackgroundImageFix%22%20result%3D%22shape%22%2F%3E%0A%3CfeGaussianBlur%20stdDeviation%3D%220.38%22%20result%3D%22effect1_foregroundBlur%22%2F%3E%0A%3C%2Ffilter%3E%0A%3ClinearGradient%20id%3D%22paint0_linear%22%20x1%3D%2211%22%20y1%3D%2228%22%20x2%3D%2256%22%20y2%3D%22115%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%23117B97%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230A4A5C%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22paint1_linear%22%20x1%3D%2260%22%20y1%3D%2224%22%20x2%3D%2290%22%20y2%3D%2295%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%3Cstop%20stop-color%3D%22%231392B4%22%2F%3E%0A%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23117B97%22%2F%3E%0A%3C%2FlinearGradient%3E%0A%3CclipPath%20id%3D%22clip0%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3CclipPath%20id%3D%22clip1%22%3E%0A%3Crect%20width%3D%2296%22%20height%3D%2296%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3C%2Fdefs%3E%0A%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%0A%3Cg%20clip-path%3D%22url(%23clip1)%22%3E%0A%3Cmask%20id%3D%22mask0%22%20mask-type%3D%22alpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%22-1%22%20y%3D%224%22%20width%3D%2298%22%20height%3D%2292%22%3E%0A%3Cpath%20d%3D%22M72%2056C72%2053.7909%2073.7909%2052%2076%2052H92.0636C94.2708%2052%2096.0609%2050.2121%2096.0636%2048.0049L96.1123%208.00487C96.115%205.79383%2094.3234%204%2092.1123%204H28C25.7909%204%2024%205.79086%2024%208V28H3.99911C1.78993%2028%20-0.000940126%2029.7909%20-0.000895181%2032.0001L-8.13786e-05%2072.0001C-3.64342e-05%2074.2092%201.79081%2076%203.99992%2076H20C22.2091%2076%2024%2077.7909%2024%2080V92.7574C24%2095.4301%2027.2314%2096.7686%2029.1213%2094.8787L46.8284%2077.1716C47.5786%2076.4214%2048.596%2076%2049.6569%2076H68C70.2091%2076%2072%2074.2091%2072%2072V56Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url(%23mask0)%22%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M-0.000976562%2028L0%2076H20C22.2091%2076%2024%2077.7909%2024%2080V100L46.8284%2077.1716C47.5786%2076.4214%2048.596%2076%2049.6569%2076H72L71.9996%2032C71.9995%2029.7908%2070.2087%2028%2067.9996%2028H-0.000976562Z%22%20fill%3D%22url(%23paint0_linear)%22%2F%3E%0A%3Cg%20filter%3D%22url(%23filter0_f)%22%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M96.1172%206L96.0002%2054L76.0007%2054C73.7915%2054%2072.0007%2055.7908%2072.0007%2057.9999L72.0005%2070.7575C72.0004%2073.4302%2068.769%2074.7687%2066.8791%2072.8788L49.1719%2055.1716C48.4218%2054.4214%2047.4044%2054%2046.3435%2054H28C25.7909%2054%2024%2052.2091%2024%2050V30V6H96.1172Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.32%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20filter%3D%22url(%23filter1_f)%22%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M96.1172%204.38L96.0002%2052.38L76.0007%2052.38C73.7915%2052.38%2072.0007%2054.1708%2072.0007%2056.3799L72.0005%2069.1375C72.0004%2071.8102%2068.769%2073.1487%2066.8791%2071.2588L49.1719%2053.5516C48.4218%2052.8014%2047.4044%2052.38%2046.3435%2052.38H28C25.7909%2052.38%2024%2050.5891%2024%2048.38V28.38V4.38H96.1172Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.24%22%2F%3E%0A%3C%2Fg%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M96.1172%204L96.0002%2052L76.0007%2052C73.7915%2052%2072.0007%2053.7908%2072.0007%2055.9999L72.0005%2068.7575C72.0004%2071.4302%2068.769%2072.7687%2066.8791%2070.8788L49.1719%2053.1716C48.4218%2052.4214%2047.4044%2052%2046.3435%2052H28C25.7909%2052%2024%2050.2091%2024%2048V28V4H96.1172Z%22%20fill%3D%22url(%23paint1_linear)%22%2F%3E%0A%3Crect%20x%3D%2224%22%20y%3D%224%22%20width%3D%2272%22%20height%3D%2216%22%20fill%3D%22%234CCBED%22%2F%3E%0A%3Crect%20x%3D%2224%22%20y%3D%2220%22%20width%3D%2272%22%20height%3D%2216%22%20fill%3D%22%2317AAD2%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E\",         \"name\": \"Power Virtual Agents\",         \"description\": \"Build intelligent bots in minutes using Generative AI and respond rapidly to customer and employee needs at scale with Power Virtual Agents.\",         \"linkurl\": \"https://powervirtualagents.microsoft.com/en-us/\",         \"linklabel\": \"Learn More\"     } ]"
+
+    - kind: ParseValue
+      id: Cp9Reg
+      variable: Topic.DataTable
+      valueType:
+        kind: Table
+        properties:
+          description: String
+          icon: String
+          linklabel: String
+          linkurl: String
+          name: String
+
+      value: =Topic.DataJSON
+
+    - kind: SetVariable
+      id: setVariable_XgXhO2
+      variable: Topic.DataTableWithIndex
+      value: |-
+        =ForAll(
+            Sequence(
+                CountRows(Topic.DataTable)
+            ),
+            { 
+                ItemNumber: Value,
+                Name: Index(Topic.DataTable, Value).name,
+                Description: Index(Topic.DataTable, Value).description,
+                ImageURL: Index(Topic.DataTable, Value).icon,
+                URL: Index(Topic.DataTable, Value).linkurl,
+                Label: Index(Topic.DataTable, Value).linklabel
+            }
+         )
+
+    - kind: SendActivity
+      id: sendActivity_W8X0Bf
+      activity:
+        attachments:
+          - kind: AdaptiveCardTemplate
+            cardContent: |-
+              ={
+                type: "AdaptiveCard",
+                '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                version: "1.5",
+                body: ForAll(Topic.DataTableWithIndex,
+                  {
+                    type: "Container",
+                    items: [
+                      {      
+                      type: "ColumnSet",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "auto",
+                          items: [
+                            {
+                              type: "Image",
+                              url: "data:image/svg+xml;utf8,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%3Cpath%20d%3D%22M12.2801%2016.5307L12.3527%2016.4466C12.5706%2016.153%2012.5464%2015.7363%2012.2801%2015.47L9.56078%2012.7507L16.2505%2012.7504L16.3523%2012.7435C16.7183%2012.6939%2017.0005%2012.3801%2017.0005%2012.0004L16.9936%2011.8986C16.944%2011.5325%2016.6302%2011.2504%2016.2505%2011.2504L9.55878%2011.2507L12.2807%208.52997L12.3534%208.44587C12.5713%208.1523%2012.5471%207.73563%2012.2809%207.46931C11.9881%207.17637%2011.5132%207.17628%2011.2203%207.46911L7.21873%2011.4691L7.14609%2011.5532C6.92816%2011.8468%206.95233%2012.2636%207.21863%2012.5299L11.2195%2016.5307L11.3036%2016.6033C11.5972%2016.8212%2012.0138%2016.797%2012.2801%2016.5307ZM12%202C6.47715%202%202%206.47715%202%2012C2%2017.5228%206.47715%2022%2012%2022C17.5228%2022%2022%2017.5228%2022%2012C22%206.47715%2017.5228%202%2012%202ZM12%2020.5C7.30558%2020.5%203.5%2016.6944%203.5%2012C3.5%207.30558%207.30558%203.5%2012%203.5C16.6944%203.5%2020.5%207.30558%2020.5%2012C20.5%2016.6944%2016.6944%2020.5%2012%2020.5Z%22%20fill%3D%22%23212121%22%20%2F%3E%0A%3C%2Fsvg%3E"
+                            }
+                          ],
+                          selectAction: {
+                            type: "Action.ToggleVisibility",
+                            title: "Preview",
+                            targetElements: [
+                              "card" & If(ItemNumber = 1, Last(Topic.DataTableWithIndex).ItemNumber, ItemNumber - 1),
+                              "card" & ItemNumber
+                            ]
+                          }
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Container",
+                              items: [
+                                {
+                                  type: "ColumnSet",
+                                  columns: [
+                                    {
+                                      type: "Column",
+                                      width: "auto",
+                                      items: [
+                                        {
+                                          type: "Image",
+                                          url: ImageURL,
+                                          size: "Small"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      type: "Column",
+                                      width: "stretch",
+                                      items: [
+                                        {
+                                          type: "TextBlock",
+                                          text: Description,
+                                          wrap: true,
+                                          size: "Small"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              type: "ActionSet",
+                              actions: [
+                                {
+                                  type: "Action.OpenUrl",
+                                  title: Label,
+                                  url: URL
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "auto",
+                          items: [
+                            {
+                              type: "Image",
+                              url: "data:image/svg+xml;utf8,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%3Cpath%20d%3D%22M12.001%202C17.5238%202%2022.001%206.47715%2022.001%2012C22.001%2017.5228%2017.5238%2022%2012.001%2022C6.47813%2022%202.00098%2017.5228%202.00098%2012C2.00098%206.47715%206.47813%202%2012.001%202ZM12.001%203.5C7.30656%203.5%203.50098%207.30558%203.50098%2012C3.50098%2016.6944%207.30656%2020.5%2012.001%2020.5C16.6954%2020.5%2020.501%2016.6944%2020.501%2012C20.501%207.30558%2016.6954%203.5%2012.001%203.5ZM11.648%207.55308L11.7206%207.46897C11.9869%207.2027%2012.4036%207.17849%2012.6972%207.39635L12.7813%207.46897L16.7821%2011.4698C17.0484%2011.7361%2017.0726%2012.1528%2016.8547%2012.4464L16.782%2012.5306L12.7805%2016.5306C12.4876%2016.8234%2012.0127%2016.8233%2011.7198%2016.5303C11.4536%2016.264%2011.4295%2015.8474%2011.6474%2015.5538L11.72%2015.4697L14.442%2012.749L7.75027%2012.7493C7.37058%2012.7493%207.05678%2012.4671%207.00712%2012.1011L7.00027%2011.9993C7.00027%2011.6196%207.28243%2011.3058%207.6485%2011.2561L7.75027%2011.2493L14.44%2011.249L11.7206%208.52963C11.4544%208.26336%2011.4302%207.8467%2011.648%207.55308L11.7206%207.46897L11.648%207.55308Z%22%20fill%3D%22%23212121%22%20%2F%3E%0A%3C%2Fsvg%3E"
+                            }
+                          ],
+                          selectAction: {
+                            type: "Action.ToggleVisibility",
+                            title: "Next",
+                            targetElements: [
+                              "card" & ItemNumber,
+                              "card" & If(ItemNumber = Last(Topic.DataTableWithIndex).ItemNumber, 1, ItemNumber + 1)
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  minHeight: "1px",
+                  spacing: "None",
+                  id: "card" & ItemNumber,
+                  bleed: true,
+                  isVisible: If(ItemNumber = 1, true, false)
+                  }
+                )
+              }
