@@ -22,28 +22,30 @@ This repository contains samples and artifacts for Microsoft Copilot Studio.
 
 | Sample Name | Description | View |
 | --- | --- | --- |
-| BotConnectorApp | Demonstrates how to connect your bot to a custom app for example mobile-device app   | [View][cs#1]|
-| BuildYourOwnCanvasSamples | Demonstrates how to connect your bot to a custom canvas with various functionality | [View][cs#2] |
-| ConnectToEngagementHub | Demonstrates how to detect a handoff activity during a bot conversation and read conversation context | [View][cs#3] |
-| CustomAnalytics | This solution allows customers to create a custom Power BI dashboard on top of their copilots analytics data | [View][cs#4] |
-| HumanVerificationSample | Identify if the user on the other side is a human or a bot by sending an email to the user with a verification code | [View][cs#5] |
-| ImplementationGuide | The implementation guide document provides a framework to do a 360-degree review of a Copilot Studio project. Through probing questions, it highlights potential risks and gaps, aims at aligning the project with the product roadmap, and shares guidance, best practices and reference architecture examples | [View][cs#6] |
-| MultilingualBotSample | Sample implementation of a middleware translation relay bot to do real-time translations using Azure services | [View][cs#7] |
-| RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#8] |
-| SharePointSSOComponent | A Sharepoint component demonstrating how copilots can be deployed to SharePoint sites with SSO enabled | [View][cs#9] |
-| TestFramework | Run tests against a bot using Direct Line channel and validate that the bot works as expected | [View][cs#10] |
+| 3rdPartySSOWithOKTA | Demonstrates how to implement a seamless SSO experience with a 3rd party authentication provider   | [View][cs#1]|
+| BotConnectorApp | Demonstrates how to connect your bot to a custom app for example mobile-device app   | [View][cs#2]|
+| BuildYourOwnCanvasSamples | Demonstrates how to connect your bot to a custom canvas with various functionality | [View][cs#3] |
+| ConnectToEngagementHub | Demonstrates how to detect a handoff activity during a bot conversation and read conversation context | [View][cs#4] |
+| CustomAnalytics | This solution allows customers to create a custom Power BI dashboard on top of their copilots analytics data | [View][cs#5] |
+| HumanVerificationSample | Identify if the user on the other side is a human or a bot by sending an email to the user with a verification code | [View][cs#6] |
+| ImplementationGuide | The implementation guide document provides a framework to do a 360-degree review of a Copilot Studio project. Through probing questions, it highlights potential risks and gaps, aims at aligning the project with the product roadmap, and shares guidance, best practices and reference architecture examples | [View][cs#7] |
+| MultilingualBotSample | Sample implementation of a middleware translation relay bot to do real-time translations using Azure services | [View][cs#8] |
+| RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#9] |
+| SharePointSSOComponent | A Sharepoint component demonstrating how copilots can be deployed to SharePoint sites with SSO enabled | [View][cs#10] |
+| TestFramework | Run tests against a bot using Direct Line channel and validate that the bot works as expected | [View][cs#11] |
 
 
-[cs#1]:./BotConnectorApp
-[cs#2]:./BuildYourOwnCanvasSamples
-[cs#3]:./ConnectToEngagementHub
-[cs#4]:./CustomAnalytics
-[cs#5]:./HumanVerificationSample
-[cs#6]:./ImplementationGuide
-[cs#7]:./MultilingualBotSample
-[cs#8]:./RelayBotSample
-[cs#9]:./SharePointSSOComponent
-[cs#10]:./PVATestFramework
+[cs#1]:./3rdPartySSOWithOKTA
+[cs#2]:./BotConnectorApp
+[cs#3]:./BuildYourOwnCanvasSamples
+[cs#4]:./ConnectToEngagementHub
+[cs#5]:./CustomAnalytics
+[cs#6]:./HumanVerificationSample
+[cs#7]:./ImplementationGuide
+[cs#8]:./MultilingualBotSample
+[cs#9]:./RelayBotSample
+[cs#10]:./SharePointSSOComponent
+[cs#11]:./PVATestFramework
 
 ## Contributing
 
