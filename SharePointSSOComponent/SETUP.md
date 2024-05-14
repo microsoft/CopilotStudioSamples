@@ -163,7 +163,7 @@ At this point you have a choice whether to configure and build the component you
 3. If you left elements.xml untouched, or if you are uploading the pre-built package, or even in case you would like to override the values configured in elements.xml for the site on which the component has been deployed, you can now run [Configure-MCSForSite.ps1](./Configure-MCSForSite.ps1):
 
 ```PowerShell
-.\Configure-McsForSite.ps1 -siteUrl "<siteUrl>" -botUrl "<botUrl>" -botName "<botName>" -greet $True -customScope "<customScope>" -clientId "<clientId>" -authority "<authority>" -buttonLabel "<buttonLabel>"
+.\Configure-McsForSite.ps1 -siteUrl "<siteUrl>" -botUrl "<botUrl>" -botName "<botName>" -greet:$True -customScope "<customScope>" -clientId "<clientId>" -authority "<authority>" -buttonLabel "<buttonLabel>"
 ```
 
 4. After adding the app (and running Configure-MCSForSite.ps1 in case elements.xml has been left untouched), a button will be appear at the bottom of all the pages under the target site. Clicking on the button will open a dialog with a chat canvas for your copilot. Based on the logic of your copilot, users will be signed in automatically at the beginning of the conversation, or when a specific event occurs. 
