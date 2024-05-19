@@ -8,7 +8,7 @@ To run this sample, including the end-to-end SSO flow with OKTA, you will need t
 
 1. Deploy [index.html](./public/index.html) and [signout.html](./public/signout.html) on a remote or local server 
 2. Create an OKTA developer account, or use an existing one
-3. Create a new application in OKTA
+3. Create a new app integration in OKTA
 4. Configure the default access policy in the OTKA authorization server
 5. Retrieve the token endpoint for a custom copilot that is configured with manual authentication
 6. Update configuration values in index.html
@@ -22,7 +22,7 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 ### Configure OKTA
 
 1. Sign up for an [OKTA developer account](https://developer.okta.com/signup/)
-2. Sign in to the OKTA admin dashboard at **https://{your domain}-admin.okta.com/** and create a new application with the following details.
+2. Sign in to the OKTA admin dashboard at **https://{your domain}-admin.okta.com/** and create a new app integration with the following details.
 
 
 | Application Property   | Value                                                               |
@@ -35,14 +35,17 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 | Trusted origins        | your base URL, for example http://localhost:8080                    |
 | Assignments            | allow access to specific users or groups based on your requirements |
 
-3. After creating the application, note down its Client ID
-4. **Index.html** uses the OKTA sign-in widget which relies on the Interaction Code sign-in flow. To enable the Interaction Code flow:
+1. After creating the app integration, note its Client ID
+2. **Index.html** uses the OKTA sign-in widget which relies on the Interaction Code sign-in flow. To enable the Interaction Code flow:
    
    1. Navigate to the API settings page in **https://{your domain}.okta.com/admin/oauth2/as**
    2. Under Authorization Servers, edit the default authorization server
    3. Under Access Policies, edit the default policy rule
    4. Under "IF Grant type is" -> Other grants, click on **Interaction Code**. 
    5. Update the rule
+   6. 
+
+3. You should also make shoure that CORS has been enabled for your base URL. In the OKTA admin center, navigate to Security -> API -> Trusted Origins. You  base url (e.g. http://localhost:8080) should appear under "Trusted Origins" with CORS enabled. In case your base url is missing, add the url with CORS enabled.
    
 
 ### Configure manual authentication and obtain the token endpoint
@@ -70,7 +73,7 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 | baseUrl               | your OKTA domain, for example: https://mydomain.okta.com/                                 |
 | clientID              | The Client ID of the OKTA application                                                     |
 | redirectUri           | the URL for index.html, for example: http://localhost:8080/src/index.html                 |
-| issuer                | {your OKTA domain}/oauth2/default, for example: https://mydomain.okta.com//oauth2/default |
+| issuer                | {your OKTA domain}/oauth2/default, for example: https://mydomain.okta.com/oauth2/default |
 | tokenEndpoint         | Your copilot's token endpoint                                                             |
 | postLogoutRedirectUri | he URL for signout.html, for example: http://localhost:8080/src/signout.html              |
 
