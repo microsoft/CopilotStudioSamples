@@ -35,25 +35,22 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 | Trusted origins        | your base URL, for example http://localhost:8080                    |
 | Assignments            | allow access to specific users or groups based on your requirements |
 
-1. After creating the app integration, note its Client ID
-2. **Index.html** uses the OKTA sign-in widget which relies on the Interaction Code sign-in flow. To enable the Interaction Code flow:
+3. After creating the app integration, note its Client ID
+4. **Index.html** uses the OKTA sign-in widget which relies on the Interaction Code sign-in flow. To enable the Interaction Code flow:
    
    1. Navigate to the API settings page in **https://{your domain}.okta.com/admin/oauth2/as**
    2. Under Authorization Servers, edit the default authorization server
    3. Under Access Policies, edit the default policy rule
    4. Under "IF Grant type is" -> Other grants, click on **Interaction Code**. 
    5. Update the rule
-   6. 
 
-3. You should also make shoure that CORS has been enabled for your base URL. In the OKTA admin center, navigate to Security -> API -> Trusted Origins. You  base url (e.g. http://localhost:8080) should appear under "Trusted Origins" with CORS enabled. In case your base url is missing, add the url with CORS enabled.
+
+5. You should also make shoure that CORS has been enabled for your base URL. In the OKTA admin center, navigate to Security -> API -> Trusted Origins. You  base url (e.g. http://localhost:8080) should appear under "Trusted Origins" with CORS enabled. In case your base url is missing, add the url with CORS enabled.
    
 
-### Configure manual authentication and obtain the token endpoint
+### Configure authentication in Copilot Studio, and obtain the token endpoint
 
-1. This SSO pattern will work for copilots configured with manual authentication and any OAuth authentication provider, but will even work when no values are provided for an authentication provider. To configure manual authentication without providing any real values, select "Azure Active Directory v2" and enter **placeholder** for both client ID and secret
-
-> [!IMPORTANT]  
-> After making any changes to the copilot's authentication settings, publish the copilot.
+1. This SSO pattern will work for copilots configured with [manual authentication and any OAuth authentication provider](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#manual-authentication-fields). Since it is a passthrough pattern, in which the token is sent to Copilot Studio, but not validated, it will even work when no values are provided for an authentication provider. To configure manual authentication without providing any real values, select "Azure Active Directory v2" and enter **placeholder** in both client ID and secret.
 
 <p align="center">
   <img src="./img/placeholder.png" alt="Manual authentication without real values">
@@ -61,6 +58,9 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
   <em>Manual authentication without real values</em>
 </p>
 
+> [!IMPORTANT]
+> When using "placeholder" instead of real values, SSO will not work in the test canvas.  
+> After making any changes to the copilot's authentication settings, publish the copilot.
 
 2. Obtain the copilot's token endpoint from Settings -> Channels -> Mobile App
 
