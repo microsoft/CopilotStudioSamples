@@ -79,3 +79,23 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 
 2. Publish or save index.html, depending if it is deployed locally or remotely
 
+### Test the SSO flow
+
+After signing-in using the OKTA sign-in widget, the user's access token will be sent to Copilot Studio and stored in ***System.User.AccessToken***, which can be used to make calls to protected APIs
+
+
+<p align="center">
+  <img src="./img/widget.png" alt="The OKTA sign-in widget" width="400px">
+  <br>
+  <em>The OKTA sign-in widget</em>
+</p>
+
+
+<p align="center">
+  <img src="./img/token.png" alt="The user's access token" width="400px">
+  <br>
+  <em>System.User.AccessToken is set</em>
+</p>
+
+
+
