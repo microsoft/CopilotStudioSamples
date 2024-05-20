@@ -95,12 +95,12 @@
     <script>
 
         const oktaSignIn = new OktaSignIn({
-            baseUrl: "https://dev-25967803.okta.com/", //e.g. https://mydomain.okta.com
-            clientId: "0oagtvvsz4XWxadh95d7",
-            redirectUri: "http://127.0.0.1:5500/src/mcs_okta_sso.html", // For example http://localhost:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/index.html
+            baseUrl: "https://{your okta subdomain}.okta.com", //e.g. https://mydomain.okta.com
+            clientId: "{your app configuration ID}",
+            redirectUri: "{the published URL for index.html}", // For example http://localhost:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/index.html
             authParams: {
                 responseType: ['code'],
-                issuer: "https://dev-25967803.okta.com/oauth2/default", //for example: https://mydomain.okta.com/oauth2/default
+                issuer: "https://{your okta subdomain}.okta.com/oauth2/default", //for example: https://mydomain.okta.com/oauth2/default
                 display: 'page',
                 pkce: true,
                 scopes: ['openid', 'email', 'profile'],
@@ -131,7 +131,7 @@
         function signOut() {
             oktaSignIn.authClient.signOut({
                 clearTokensBeforeRedirect: true,
-                postLogoutRedirectUri: 'http://127.0.0.1:5500/src/mcs_okta_sso_signout.html'// For example, 'http://127.0.0.1:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/signout.html'
+                postLogoutRedirectUri: '{The published URL for signout.html}'// For example, 'http://127.0.0.1:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/signout.html'
             });
         }
 
@@ -163,7 +163,7 @@
                     userEmail = idToken.claims.email;
                 });
 
-            const tokenEndpoint = "https://8c40032d041be8659e3538508ad528.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr148_okta/directline/token?api-version=2022-03-01-preview"
+            const tokenEndpoint = "{your copilot token endpoint}"
 
             const userID = userEmail != null ?
                 (userEmail).substr(0, 36) :
