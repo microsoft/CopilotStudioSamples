@@ -1,6 +1,6 @@
 # 3rd Party SSO with OKTA
 
-This custom canvas demonstates how an access token obtained from a 3rd party identity provider, like OKTA, can be used in the context of a single sign-on (SSO) login flow with Copilot Studio.
+This custom canvas demonstrates how an access token obtained from a 3rd party identity provider, like OKTA, can be used in the context of a single sign-on (SSO) login flow with Copilot Studio.
 
 ## Getting started
 
@@ -17,7 +17,7 @@ To run this sample, including the end-to-end SSO flow with OKTA, you will need t
 
 ### Deploy the sample files
 
-Deploy [index.html](./public/index.html) and [signout.html](./public/signout.html) on a local or a remote server, so they are availabe via two URLs. For example: [http://localhost:8080/index.html](http://localhost:8080/index.html) and [http://localhost:8080/signout.html](http://localhost:8080/signout.html)
+Deploy [index.html](./public/index.html) and [signout.html](./public/signout.html) on a local or a remote server, so they are available via two URLs. For example: [http://localhost:8080/index.html](http://localhost:8080/index.html) and [http://localhost:8080/signout.html](http://localhost:8080/signout.html)
 
 ### Configure OKTA
 
@@ -41,9 +41,9 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
    1. Navigate to the API settings page under ***Security -> API***
    2. Under the Authorization Servers tab, edit the default authorization server
    3. Under Access Policies, edit the default policy rule
-   4. Under "IF Grant type is" -> Other grants, click on **Interaction Code**. 
+   4. Under ***IF Grant type is*** -> ***Other grants***, click on **Interaction Code**. 
    5. Update the rule
-   6. You should also verify that CORS has been enabled for your base URL. On same API page, under the ***Trusted Origins*** tab, your base url url (e.g. http://localhost:8080) should appear under with CORS enabled. In case your base url is missing, add the url with CORS enabled.
+   6. You should also verify that CORS has been enabled for your base URL. On the same API page, under the ***Trusted Origins*** tab, your base url (e.g. http://localhost:8080) should appear under ***Trusted Origins*** with CORS enabled. In case your base url is missing, add the url with CORS enabled.
    
 
 ### Configure authentication in Copilot Studio, and obtain the token endpoint
