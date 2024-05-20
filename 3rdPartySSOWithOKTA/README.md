@@ -1,6 +1,6 @@
 # 3rd Party SSO with OKTA
 
-This custom canvas demonstates how an access token obtained from a 3rd party identity provider, like OKTA, can be used in the context of a Copilot Studio sign-in flow.
+This custom canvas demonstates how an access token obtained from a 3rd party identity provider, like OKTA, can be used in the context of a single sign-on (SSO) login flow with Copilot Studio.
 
 ## Getting started
 
@@ -38,14 +38,12 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 3. After creating the app integration, note its Client ID
 4. **Index.html** uses the OKTA sign-in widget which relies on the Interaction Code sign-in flow. To enable the Interaction Code flow:
    
-   1. Navigate to the API settings page in **https://{your domain}.okta.com/admin/oauth2/as**
-   2. Under Authorization Servers, edit the default authorization server
+   1. Navigate to the API settings page under ***Security -> API***
+   2. Under the Authorization Servers tab, edit the default authorization server
    3. Under Access Policies, edit the default policy rule
    4. Under "IF Grant type is" -> Other grants, click on **Interaction Code**. 
    5. Update the rule
-
-
-5. You should also make shoure that CORS has been enabled for your base URL. In the OKTA admin center, navigate to Security -> API -> Trusted Origins. You  base url (e.g. http://localhost:8080) should appear under "Trusted Origins" with CORS enabled. In case your base url is missing, add the url with CORS enabled.
+   6. You should also verify that CORS has been enabled for your base URL. On same API page, under the ***Trusted Origins*** tab, your base url url (e.g. http://localhost:8080) should appear under with CORS enabled. In case your base url is missing, add the url with CORS enabled.
    
 
 ### Configure authentication in Copilot Studio, and obtain the token endpoint
@@ -62,7 +60,7 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 > When using "placeholder" instead of real values, SSO will not work in the test canvas.  
 > After making any changes to the copilot's authentication settings, publish the copilot.
 
-2. Obtain the copilot's token endpoint from Settings -> Channels -> Mobile App
+2. Copy the copilot's token endpoint from Settings -> Channels -> Mobile App
 
 ### Populate configuration values in index.html
 
@@ -81,7 +79,7 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 
 ### Test the SSO flow
 
-After signing-in using the OKTA sign-in widget, the user's access token will be sent to Copilot Studio and stored in ***System.User.AccessToken***, which can be used to make calls to protected APIs
+After signing-in using the OKTA sign-in widget, the user's access token will be sent to Copilot Studio and stored in ***System.User.AccessToken***, which can be used by copilot makers to make calls to protected APIs
 
 
 <p align="center">
@@ -94,7 +92,7 @@ After signing-in using the OKTA sign-in widget, the user's access token will be 
 <p align="center">
   <img src="./img/token.png" alt="The user's access token" width="400px">
   <br>
-  <em>System.User.AccessToken is set</em>
+  <em>System.User.AccessToken is populated</em>
 </p>
 
 

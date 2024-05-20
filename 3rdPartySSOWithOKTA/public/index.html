@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Copilot Studio SSO with OKTA</title>
+    <title>Copilot Studio 3P SSO with OKTA</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <script crossorigin="anonymous" src="https://global.oktacdn.com/okta-signin-widget/7.2.1/js/okta-sign-in.min.js"
         type="text/javascript"></script>
@@ -74,7 +74,7 @@
             border-radius: 5px;
         }
 
-        #chatwindow {
+        #chat-container {
             visibility: hidden;
         }
     </style>
@@ -84,9 +84,9 @@
 <body>
     <div id="okta-signin-container"></div>
 
-    <div id="chatwindow">
+    <div id="chat-container">
         <div id="header">
-            Copilot Studio SSO with OKTA
+            Copilot Studio 3P SSO with OKTA
         </div>
         <button id="sign-out-button" onclick=signOut()>Sign Out</button>
         <div id="webchat"> </div>
@@ -94,13 +94,13 @@
 
     <script>
 
-        var oktaSignIn = new OktaSignIn({
-            baseUrl: "{your okta domain}", //e.g. https://mydomain.okta.com}
-            clientId: "{your OKTA app configuration client ID}",
-            redirectUri: "{the URL for index.html}", // For example http://localhost:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/index.html}
+        const oktaSignIn = new OktaSignIn({
+            baseUrl: "https://dev-25967803.okta.com/", //e.g. https://mydomain.okta.com
+            clientId: "0oagtvvsz4XWxadh95d7",
+            redirectUri: "http://127.0.0.1:5500/src/mcs_okta_sso.html", // For example http://localhost:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/index.html
             authParams: {
                 responseType: ['code'],
-                issuer: "{your OKTA domain}/oauth2/default", //for example: https://mydomain.okta.com/oauth2/default
+                issuer: "https://dev-25967803.okta.com/oauth2/default", //for example: https://mydomain.okta.com/oauth2/default
                 display: 'page',
                 pkce: true,
                 scopes: ['openid', 'email', 'profile'],
@@ -111,10 +111,10 @@
         // If the user is already authenticated, render the chat widget
         // If the user isn't authentictated, render the OKTA login widget first 
         oktaSignIn.authClient.token.getUserInfo().then(function (user) {
-            console.log('User is already authenticated - rendering chat widget');
+            console.log('User is already authenticated - rendering the chat widget');
             renderChatWidget();
         }, function (error) {
-            console.log('User is not - rendering login widget');
+            console.log('User is not authenticated - rendering the login widget first');
             oktaSignIn.showSignInToGetTokens({
                 el: '#okta-signin-container'
             }).then(function (tokens) {
@@ -131,7 +131,7 @@
         function signOut() {
             oktaSignIn.authClient.signOut({
                 clearTokensBeforeRedirect: true,
-                postLogoutRedirectUri: '{the URL for signout.html}'// For example, 'http://127.0.0.1:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/signout.html'
+                postLogoutRedirectUri: 'http://127.0.0.1:5500/src/mcs_okta_sso_signout.html'// For example, 'http://127.0.0.1:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/signout.html'
             });
         }
 
@@ -154,9 +154,14 @@
 
         async function renderChatWidget() {
 
+            // Exrtact the user's access token and email from OKTA's token store
             const accessToken = oktaSignIn.authClient.getAccessToken();
-            const idToken = await oktaSignIn.authClient.tokenManager.get('idToken');
-            const userEmail = idToken.claims.email;
+
+            let userEmail;
+            oktaSignIn.authClient.tokenManager.get('idToken')
+                .then(idToken => {
+                    userEmail = idToken.claims.email;
+                });
 
             const tokenEndpoint = "https://8c40032d041be8659e3538508ad528.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr148_okta/directline/token?api-version=2022-03-01-preview"
 
@@ -239,10 +244,10 @@
 
             const styleOptions = {
                 // Add styleOptions to customize Web Chat canvas
-                hideUploadButton: true,
+                hideUploadButton: true
             };
 
-            document.getElementById('chatwindow').style.visibility = 'visible';
+            document.getElementById('chat-container').style.visibility = 'visible';
             document.getElementById('sign-out-button').style.visibility = 'visible';
 
             window.WebChat.renderWebChat(
