@@ -20,7 +20,7 @@ Labs:
 
 ## Instructions
 
-- Access today's slides here: [Microsoft Copilot Studio - Workshop.pdf](https://github.com/microsoft/CopilotStudioSamples/raw/master/Conferences/Kickstarter/Microsoft%20Copilot%20Studio%20-%20Workshop.pdf).
+- Access today's slides here: [Power CAT - Power of GenAI & Microsoft Copilot Studio Kickstarter Workshop.pdf](https://github.com/microsoft/CopilotStudioSamples/raw/master/Conferences/Kickstarter/Power%20CAT%20-%20Power%20of%20GenAI%20%26%20Microsoft%20Copilot%20Studio%20Kickstarter%20Workshop.pdf).
 - Download [Lab files.zip](https://github.com/microsoft/CopilotStudioSamples/raw/master/Conferences/Kickstarter/Lab%20files.zip ), unzip them, and follow each lab PDF instructions in the sequential order.
 - Ideally, set up a new work profile in your browser, specific to that workshop. Alternatively, you can choose to browse as a guest or start an InPrivate session.
 - Connect to Copilot Studio: [aka.ms/CopilotStudioStart](https://aka.ms/CopilotStudioStart) using the provided credentials.
