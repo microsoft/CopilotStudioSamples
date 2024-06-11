@@ -1,9 +1,8 @@
-# European Power Platform Conference: Microsoft Copilot Studio Tutorial
+# European Power Platform Conference 2024 Microsoft Copilot Studio Tutorial
 
 ## Build and Extend your own Copilot using Microsoft Copilot Studio
 
-- Introduction to Microsoft Copilot Studio 
-- Walkthrough of the studio
+Introduction to Microsoft Copilot Studio 
 
 Labs:
 - Lab 1: Create your first copilot in Microsoft Copilot Studio
@@ -13,7 +12,9 @@ Labs:
 - Lab 5: Knowledge sources and custom instructions
 - Lab 6: Use generative AI orchestration to interact with your connectors
 - Lab 7: Invoke AI Builder custom prompts
-- 
+
+Q&A
+  
 ## Getting started
 
 - Workshop resources and documents (i.e., this GitHub location): [aka.ms/CopilotStudioEPPC24](https://aka.ms/CopilotStudioEPPC24).
