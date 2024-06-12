@@ -232,6 +232,8 @@ namespace PVATestFramework.Console
 						{
                             var botReg = new Regex(Regex.Escape("bot:"));
                             var botText = botReg.Replace(line, string.Empty, 1).Trim();
+                            botText = botText.Replace(@"\n", "\n"); //linebreaks
+                            botText = botText.Replace(@"\s+", string.Empty).Trim(); //double spaces avoid mistakes
                             if (string.IsNullOrEmpty(botText))
                             {
                                 throw new ArgumentException("The bot message is null or empty.");
