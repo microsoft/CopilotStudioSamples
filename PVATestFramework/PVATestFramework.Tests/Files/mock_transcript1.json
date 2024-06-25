@@ -1,0 +1,198 @@
+{
+    "list_of_conversations": [
+        {
+            "Activities": [
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "event",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "user",
+                        "Role": 1
+                    },
+                    "ChannelId": "directline",
+                    "Value": null,
+                    "TextFormat": null,
+                    "Text": null,
+                    "Name": "StartConversation",
+                    "Attachments": [],
+                    "ChannelData": {
+                        "AssetType": "iOS_Mobile_CommBank_app",
+                        "AssetVersion": "5.12.0.12344",
+                        "Cif": "123456789",
+                        "ClientIp": "122.12.23.12",
+                        "WebtrackerId": "12345ds1-12dasd-as112-asd",
+                        "NetbankId": "123456789",
+                        "isStepUp": true,
+                        "CorelationId": "7a988c-asd233-ca23-2435fe"
+                    },
+                    "ReplyToId": null,
+                    "SuggestedActions": [],
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "event",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "bot",
+                        "Role": 0
+                    },
+                    "ChannelId": "directline",
+                    "Value": null,
+                    "TextFormat": null,
+                    "Text": null,
+                    "Name": "EndOfResponse",
+                    "Attachments": [],
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": [],
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "message",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "user",
+                        "Role": 1
+                    },
+                    "ChannelId": "directline",
+                    "Value": null,
+                    "TextFormat": null,
+                    "Text": "Hi",
+                    "Name": null,
+                    "Attachments": [],
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": [],
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "message",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "bot",
+                        "Role": 0
+                    },
+                    "ChannelId": "directline",
+                    "Value": null,
+                    "TextFormat": null,
+                    "Text": "Hello, how can I help you today?",
+                    "Name": null,
+                    "Attachments": null,
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": null,
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "event",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "bot",
+                        "Role": 0
+                    },
+                    "ChannelId": "directline",
+                    "Value": "{\"accounts\":[{\"accountBalance\":0.0,\"accountBalanceCurrencyCode\":\"AUD\",\"accountNumber\":\"0623709098987429\",\"availableBalance\":0.0,\"availableBalanceCurrencyCode\":\"AUD\",\"displayAccountName\":\"HomeLoan\",\"displayAmount\":0.0,\"displayAmountCurrencyCode\":\"AUD\",\"displayAmountText\":\"Accountbalance\",\"formattedAccountNumber\":\"062-3709098987429\",\"imageName\":\"homeLoanImage\",\"productCode\":\"LAH\",\"productName\":\"HomeLoan\",\"productSubCode\":\"06\",\"recordId\":\"aa97e175-df09-42f5-aa0b-7654acddbc3d,3f3c406e-16e4-475a-8ba7-78c501c092c5\",\"status\":\"Closed\",\"type\":\"Account\"}]}",
+                    "TextFormat": null,
+                    "Name": "Generic.AccountSelector",
+                    "Attachments": null,
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": null,
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "message",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "bot",
+                        "Role": 0
+                    },
+                    "ChannelId": "directline",
+                    "Value": null,
+                    "TextFormat": null,
+                    "Text": "Generic.AccountSelector",
+                    "Attachments": [
+                        {
+                            "ContentType": "application/vnd.microsoft.card.hero",
+                            "Content": {
+                                "Title": "EndOfResponse",
+                                "Images": [],
+                                "buttons": []
+                            }
+                        }
+                    ],
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": {
+                            "to": [],
+                            "actions": [
+                            {
+                                "type": "imBack",
+                                "title": "Select",
+                                "text": "Select",
+                                "value": "Select"
+                            },
+                            {
+                                "type": "imBack",
+                                "title": "Cancel",
+                                "text": "Cancel",
+                                "value": "Cancel"
+                            }
+                            ]
+                        },
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "message",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "user",
+                        "Role": 1
+                    },
+                    "ChannelId": "directline",
+                    "Value": "{\"accountBalance\":0.0,\"accountBalanceCurrencyCode\":\"AUD\",\"accountNumber\":\"0623709098987429\",\"availableBalance\":0.0,\"availableBalanceCurrencyCode\":\"AUD\",\"displayAccountName\":\"HomeLoan\",\"displayAmount\":0.0,\"displayAmountCurrencyCode\":\"AUD\",\"displayAmountText\":\"Accountbalance\",\"formattedAccountNumber\":\"062-3709098987429\",\"imageName\":\"homeLoanImage\",\"productCode\":\"LAH\",\"productName\":\"HomeLoan\",\"productSubCode\":\"06\",\"recordId\":\"aa97e175-df09-42f5-aa0b-7654acddbc3d,3f3c406e-16e4-475a-8ba7-78c501c092c5\",\"status\":\"Closed\",\"type\":\"Account\"}",
+                    "TextFormat": null,
+                    "Text": "Select",
+                    "Attachments": null,
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": null,
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "message",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "bot",
+                        "Role": 0
+                    },
+                    "ChannelId": "directline",
+                    "Value": null,
+                    "TextFormat": null,
+                    "Text": "Thank you",
+                    "Attachments": null,
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": null,
+                    "LineNumber": null
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,68 @@
+{
+    "list_of_conversations": [
+        {
+            "Activities": [
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "event",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "bot",
+                        "Role": 0
+                    },
+                    "ChannelId": "directline",
+                    "Value": null,
+                    "TextFormat": null,
+                    "Text": null,
+                    "Name": "EndOfResponse",
+                    "Attachments": [],
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": [],
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "event",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "user",
+                        "Role": 1
+                    },
+                    "ChannelId": "directline",
+                    "Value": "jump_greeting",
+                    "TextFormat": null,
+                    "Text": null,
+                    "Name": "jump",
+                    "Attachments": [],
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": [],
+                    "LineNumber": null
+                },
+                {
+                    "ValueType": "",
+                    "Id": "",
+                    "Type": "message",
+                    "Timestamp": 1719206271,
+                    "From": {
+                        "Id": "bot",
+                        "Role": 0
+                    },
+                    "ChannelId": "directline",
+                    "Value": null,
+                    "TextFormat": null,
+                    "Text": "Hello, how can I help you today?",
+                    "Name": null,
+                    "Attachments": [],
+                    "ChannelData": null,
+                    "ReplyToId": null,
+                    "SuggestedActions": [],
+                    "LineNumber": null
+                }
+            ]
+        }
+    ]
+}
