@@ -48,16 +48,16 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
 
 ### Configure authentication in Copilot Studio, and obtain the token endpoint
 
-1. This SSO pattern will work for copilots configured with [manual authentication and any OAuth authentication provider](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#manual-authentication-fields). Since it is a passthrough pattern, in which the token is sent to Copilot Studio, but not validated, it will even work when no values are provided for an authentication provider. To configure manual authentication without providing any real values, select "Azure Active Directory v2" and enter **placeholder** in both client ID and secret.
+1. This SSO pattern will work for copilots configured with [manual authentication and any OAuth authentication provider](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#manual-authentication-fields). Since it is a passthrough pattern, in which the token is sent to Copilot Studio, but not validated, it will even work when no values are provided for an authentication provider. To configure manual authentication without providing any real values, select "Generic OAuth 2.0" and enter **placeholder** in required fields.
 
 <p align="center">
-  <img src="./img/placeholder.png" alt="Manual authentication without real values">
+  <img src="./img/placeholder.png" alt="Manual authentication without real values" width="500px">
   <br>
   <em>Manual authentication without real values</em>
 </p>
 
 > [!IMPORTANT]
-> When using "placeholder" instead of real values, SSO will not work in the test canvas.  
+> When using "placeholder" instead of real values, SSO will not work in the test canvas, and users will not be able to sign-on using the standard "login card".
 > After making any changes to the copilot's authentication settings, publish the copilot.
 
 2. Copy the copilot's token endpoint from Settings -> Channels -> Mobile App
