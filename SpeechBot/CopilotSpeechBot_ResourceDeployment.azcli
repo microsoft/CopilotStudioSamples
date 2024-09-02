@@ -1,0 +1,52 @@
+# Assign values to variables
+$ressourceGroup="CopilotSpeechSample"
+$location="westeurope"
+$appServiceName="CopilotSpeechBotAppPlan"
+$webAppName="CopilotSpeechBotWebApp"
+$cognitiveServiceAccountName="CopilotSpeechBotAIService"
+$botName="CopilotSpeechBot"
+$appRegistrationName="CopilotSpeechBotPrincipal"
+$tenantId="<Tenant ID>"
+$webAppEndoint=echo https://$webAppName.azurewebsites.net/api/messages
+$subscriptionId=<ID from az account set output>
+
+az login
+az account set --subscription $subscriptionId
+##Create speech services
+az group create --location westeurope --name $ressourceGroup
+az cognitiveservices account create -n $cognitiveServiceAccountName -g $ressourceGroup --kind SpeechServices --sku F0 -l $location --yes
+$cognitiveServicesKey=$(az cognitiveservices account keys list -n $cognitiveServiceAccountName -g $ressourceGroup --query "key1")
+
+##Create app plan and web app
+az appservice plan create -g $ressourceGroup -n $appServiceName --sku F1 --location $location
+az webapp create -g $ressourceGroup -n $webAppName -p $appServiceName
+
+#Enable web sockets on the app
+az webapp config set -g $ressourceGroup -n $webAppName --web-sockets-enabled true
+#Create entry app registration and bot
+$appId = $(az ad app create --display-name $appRegistrationName --query "appId")
+#TODO get appid
+az bot create -g $ressourceGroup -n $botName --app-type SingleTenant --appid $appId --tenant-id $tenantId
+#Set bot endpoint to web app path
+az bot update -g $ressourceGroup -n $botName --endpoint $webAppEndoint
+#Add DL speech channel and enbale streaming endpoint in the Azure Portal
+
+######################### Deploy bot source
+
+#Clone Echo bot sample
+git clone https://github.com/aschauera/SpeechRelayBot.git
+#Build
+dotnet build -c release .\SampleBot.csproj
+#Prepare
+if(Test-Path .deployment){
+    Remove-Item -Force .deployment
+    Remove-Item -Force CopilotSpeechBot.zip
+ }
+az bot prepare-deploy --lang CSharp --code-dir . --proj-file-path .\SampleBot.csproj
+Compress-Archive * .\CopilotSpeechBot.zip -force
+#Deploy
+az webapp deployment source config-zip --resource-group $ressourceGroup --name $webAppName --src .\CopilotSpeechBot.zip
+
+########################
+#Remove everything
+az group delete --name $CopilotSpeechSample
