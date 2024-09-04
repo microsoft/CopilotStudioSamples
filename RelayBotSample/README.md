@@ -18,10 +18,9 @@ This bot has been created based on [Bot Framework](https://dev.botframework.com)
 - Clone the repository
 
     ```bash
-    git clone https://github.com/microsoft/PowerVirtualAgentsSample.git
+    git clone clone https://github.com/microsoft/CopilotStudioSamples.git
+    cd RelayBotSample
     ```
-
-- In a terminal, navigate to `BYOBSample/`
 - Update file appsettings.json with your Power Virtual Agent bot id, tenant id, bot name and other settings.
     
     To retrieve your bot's bot ID and tenant ID, click on left side pane's ***Manage***, click ***Channels*** and click on the Azure Bot Service channel that you need to connect to.
