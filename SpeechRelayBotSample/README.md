@@ -82,7 +82,8 @@ The following sets up Azure Cognitive Services for speech as well as an App Serv
 
     ```bash
     #Clone Echo bot sample
-    git clone https://github.com/aschauera/SpeechRelayBot.git
+    git clone https://github.com/microsoft/CopilotStudioSamples.git
+    cd RelayBotSample
     ```
 
 - In a terminal, navigate to `SpeechRelayBot/`

@@ -23,18 +23,19 @@ az webapp create -g $ressourceGroup -n $webAppName -p $appServiceName
 
 #Enable web sockets on the app
 az webapp config set -g $ressourceGroup -n $webAppName --web-sockets-enabled true
-#Create entry app registration and bot
+#Create app registration entry
 $appId = $(az ad app create --display-name $appRegistrationName --query "appId")
-#TODO get appid
+#Create bot
 az bot create -g $ressourceGroup -n $botName --app-type SingleTenant --appid $appId --tenant-id $tenantId
 #Set bot endpoint to web app path
 az bot update -g $ressourceGroup -n $botName --endpoint $webAppEndoint
-#Add DL speech channel and enbale streaming endpoint in the Azure Portal
+#Add DL speech channel and enable streaming endpoint in the Azure Portal
 
 ######################### Deploy bot source
 
 #Clone Echo bot sample
-git clone https://github.com/aschauera/SpeechRelayBot.git
+git clone https://github.com/microsoft/CopilotStudioSamples.git
+cd RelayBotSample
 #Build
 dotnet build -c release .\SampleBot.csproj
 #Prepare
