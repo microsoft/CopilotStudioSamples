@@ -1,4 +1,4 @@
-# Microsoft Copilot Studio Hands-On Workshop
+# Microsoft Copilot Studio 
 
 ## Build and Extend your own Copilot using Microsoft Copilot Studio
 
@@ -35,6 +35,7 @@
 | Copilot Studio Website | [aka.ms/CopilotStudio](https://aka.ms/CopilotStudio) |
 | Official Blog | [aka.ms/CopilotStudioBlog](https://aka.ms/CopilotStudioBlog) |
 | Copilot Studio Demo | [aka.ms/CopilotStudioDemo](https://aka.ms/CopilotStudioDemo) |
+| Copilot Studio Kit | [aka.ms/CopilotStudioKit](https://aka.ms/CopilotStudioKit) |
 | Product Documentation | [aka.ms/CopilotStudioDocs](https://aka.ms/CopilotStudioDemo) |
 | Product Guidance | [aka.ms/CopilotStudioGuidance](https://aka.ms/CopilotStudioGuidance) |
 | Implementation Guide | [aka.ms/CopilotStudioImplementationGuide](https://ka.ms/CopilotStudioImplementationGuide) |
