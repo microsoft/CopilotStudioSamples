@@ -22,8 +22,8 @@
 
 ## Attendee Instructions
 
-- Access the workshop main slides here: [Microsoft Copilot Studio - Workshop.pptx](https://github.com/microsoft/CopilotStudioSamples/raw/master/CopilotStudioWorkshop/Microsoft%20Copilot%20Studio%20-%20Workshop.pptx).
-- Download [Lab files.zip](https://github.com/microsoft/CopilotStudioSamples/raw/master/CopilotStudioWorkshop/Lab%20files.zip), unzip them, and follow each lab DOCX (if you don't have Word, use PDF) instructions in the sequential order.
+- Access the workshop main slides here: [Microsoft Copilot Studio - Workshop.pptx](https://github.com/microsoft/CopilotStudioSamples/raw/refs/heads/master/Conferences/PPCC24/Microsoft%20Copilot%20Studio%20-%20Workshop.pptx).
+- Download [Lab files.zip](https://github.com/microsoft/CopilotStudioSamples/raw/refs/heads/master/Conferences/PPCC24/Lab%20files.zip), unzip them, and follow each lab DOCX (if you don't have Word, use PDF) instructions in the sequential order.
 - Ideally, set up a new work profile in your browser, specific to that workshop. Alternatively, you can choose to browse as a guest or start an InPrivate session.
 - Connect to Copilot Studio: [aka.ms/CopilotStudioStart](https://aka.ms/CopilotStudioStart) using the provided credentials.
 
