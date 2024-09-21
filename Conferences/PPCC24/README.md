@@ -1,4 +1,4 @@
-# Microsoft Copilot Studio 
+# Power Platform Community Conference 2024
 
 ## Build and Extend your own Copilot using Microsoft Copilot Studio
 
