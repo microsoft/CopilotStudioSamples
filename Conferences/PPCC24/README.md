@@ -20,7 +20,7 @@
 
 ## Workshop Resources:
 
-- Workshop resources and documents (i.e., this GitHub location): [aka.ms/CopilotStudioWorkshop](https://aka.ms/CopilotStudioWorkshop).
+- Workshop resources and documents (i.e., this GitHub location): [aka.ms/PPCCMCSWorkshop](https://aka.ms/PPCCMCSWorkshop).
 
 ## Attendee Instructions
 
