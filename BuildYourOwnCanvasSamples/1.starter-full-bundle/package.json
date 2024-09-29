@@ -15,10 +15,10 @@
     "http-proxy": "^1.18.1",
     "math-random": "^1.0.4",
     "node-fetch": "^2.5.0",
-    "restify": "^8.3.2",
+    "restify": "^11.1.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "node-dev": "^4.0.0"
+    "node-dev": "^8.0.0"
   }
 }
