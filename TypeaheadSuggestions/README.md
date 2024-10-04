@@ -21,7 +21,8 @@ This code sample allows you to create a typeahead suggestion functionality for y
 
 # Watch below Demo to Get Started
 
-[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=7xbSpzmQcIg)
+[![Watch the video](<img width="713" alt="image" src="https://github.com/user-attachments/assets/5ac3e6cc-0fc4-48e0-a3e8-f235d379099b">
+)](https://www.youtube.com/watch?v=7xbSpzmQcIg)
 
 https://www.youtube.com/watch?v=7xbSpzmQcIg
 
