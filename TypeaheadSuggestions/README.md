@@ -20,6 +20,9 @@ This code sample allows you to create a typeahead suggestion functionality for y
 10. For getting type ahead suggestions continue to type in the chat bot canvas and suggestions will be shown below the chat area. Clicking on any suggestion submits the utterance to the bot.
 
 # Watch below Demo to Get Started
+
+[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=7xbSpzmQcIg)
+
 https://www.youtube.com/watch?v=7xbSpzmQcIg
 
 
