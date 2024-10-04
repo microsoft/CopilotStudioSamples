@@ -150,21 +150,48 @@
     <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
 
     <script>
-        // Direct Line connection with token
-        const directLine = window.WebChat.createDirectLine({
-            token: 'SOX63112OBo.JfGgLFePdWhavt2XlmBgNFRBRJcpJOaFpe3teh4pf1c'  // Replace with your Direct Line secret
-        });
+        // Function to retrieve the Direct Line token. Add your directline token url on line 156
+        async function getDirectLineToken() {
+            try {
+                const response = await fetch('https://default76f66a0b386f4e01b8b17ef54f9545.6c.environment.api.powerplatform.com/powervirtualagents/botsbyschema/crdee_typeAheadBotDemo/directline/token?api-version=2022-03-01-preview');  // Your token API
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                return data.token;  // Assuming the token is in the 'token' field
+            } catch (error) {
+                console.error('Error fetching token:', error);
+                return null;
+            }
+        }
 
-        // Render Web Chat in bot container
-        window.WebChat.renderWebChat(
-            {
-                directLine: directLine,
-                userID: 'user1',
-                username: 'User',
-                locale: 'en-US'
-            },
-            document.getElementById('webchat')
-        );
+        // Direct Line connection initialization
+        async function initializeDirectLine() {
+            const token = await getDirectLineToken();  // Fetch the token
+            if (token) {
+                const directLine = window.WebChat.createDirectLine({
+                    token: token  // Use the fetched token
+                });
+
+                // Render Web Chat in bot container
+                window.WebChat.renderWebChat(
+                    {
+                        directLine: directLine,
+                        userID: 'user1',
+                        username: 'User',
+                        locale: 'en-US'
+                    },
+                    document.getElementById('webchat')
+                );
+
+                // Listen for user input in Web Chat (via Direct Line connection)
+                directLine.activity$.subscribe(activity => {
+                    if (activity.type === 'message' && activity.from.id === 'user1') {
+                        handleInput(activity.text);  // Handle input to show suggestions
+                    }
+                });
+            } else {
+                console.error('Failed to initialize Direct Line due to missing token');
+            }
+        }
 
         // Initialize topics array
         let topics = [];
@@ -190,7 +217,7 @@
         // Function to fetch Suggestion using API. The API needs to return an Array of Suggestions
         async function fetchTopics() {
             try {
-                const response = await fetch('https://prod-177.westus.logic.azure.com:443/workflows/7539cccafbaa45a3b139c8e83492aa44/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=1iEAjAT50LuQI_54hHJYult5P1ygpj9G3i2qxQsoOKI');
+                const response = await fetch('https://prod-177.westus.logic.azure.com:443/workflows/7539cccafbaa45a3b139c8e83492aa44/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=1iEAjAT50LuQI_54hHJYult5P1ygpj9G3i2qxQsoOKI'); // Add your RestAPI here
                 if (!response.ok) throw new Error('Network response was not ok');
                 const fetchedTopics = await response.json();  // Get the response data
 
@@ -244,13 +271,6 @@
             }
         }
 
-        // Listen for user input in Web Chat (via Direct Line connection)
-        directLine.activity$.subscribe(activity => {
-            if (activity.type === 'message' && activity.from.id === 'user1') {
-                handleInput(activity.text);  // Handle input to show suggestions
-            }
-        });
-
         // Open bot on chat bubble click
         document.getElementById('chatBubble').addEventListener('click', async function() {
             const botContainer = document.getElementById('botContainer');
@@ -258,6 +278,7 @@
             this.style.display = 'none';  // Hide chat bubble
             
             await fetchTopics();  // Fetch topics when the chat bubble is clicked
+            initializeDirectLine();  // Initialize Direct Line after fetching topics
         });
 
         // Close bot on 'X' button click
