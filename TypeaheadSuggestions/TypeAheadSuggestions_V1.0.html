@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copilot Studio Intelligent Suggestions Version 1.0</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            background: url('https://github.com/paragdessai/PVAClickAnalytics/blob/main/Chatbotbackground.png?raw=true') no-repeat center center;
+            background-size: cover;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Chat bubble style */
+        #chatBubble {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #0078D4;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Bot container hidden initially */
+        #botContainer {
+            position: fixed;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        }
+
+        /* Chat window style */
+        .chat-window {
+            background-color: white;
+            border-radius: 8px;
+            width: 600px; /* Increased width */
+            height: 600px; /* Increased height */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Close button inside chat */
+        #closeBot {
+            position: absolute;
+            top: 10px;
+            right: 50px;
+            background-color: #ff4d4f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            line-height: 30px;
+        }
+
+        /* Refresh button inside chat */
+        #refreshBot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #4CAF50; /* Green */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            line-height: 30px;
+        }
+
+        #webchat {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.9);
+            margin-top: 20px;
+            overflow: hidden;
+            position: relative; /* Make it a positioning context */
+        }
+
+        /* Suggestions list Styling */
+        .suggestion-list {
+            position: relative;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 20px);
+            max-width: 560px; /* Increased max-width */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0;
+            display: none;
+            margin-top: 5px; /* Add some space from the chat input */
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            list-style-type: none;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f4f4f4;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Chat bubble to open the bot -->
+    <div id="chatBubble">💬</div>
+
+    <!-- Bot container with chat window -->
+    <div id="botContainer">
+        <div class="chat-window">
+            <button id="closeBot">X</button>
+            <button id="refreshBot">🔄</button> <!-- Refresh button -->
+            <div id="webchat" role="main"></div>
+            <ul id="suggestions" class="suggestion-list"></ul> <!-- Suggestions now positioned relative to the input -->
+        </div>
+    </div>
+
+    <!-- Include BotFramework WebChat -->
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+
+    <script>
+        // Direct Line connection with token
+        const directLine = window.WebChat.createDirectLine({
+            token: 'SOX63112OBo.JfGgLFePdWhavt2XlmBgNFRBRJcpJOaFpe3teh4pf1c'  // Replace with your Direct Line secret
+        });
+
+        // Render Web Chat in bot container
+        window.WebChat.renderWebChat(
+            {
+                directLine: directLine,
+                userID: 'user1',
+                username: 'User',
+                locale: 'en-US'
+            },
+            document.getElementById('webchat')
+        );
+
+        // Initialize topics array
+        let topics = [];
+
+        // List of values to exclude from API Response
+        const excludedTopics = [
+            'Reset Conversation',
+            'Thank you',
+            'Sign in',
+            'Sign in ',
+            'Conversation Start',
+            'End of Conversation',
+            'On Error',
+            'Fallback',
+            'Conversational boosting',
+            'Multiple Topics Matched',
+            'Escalate',
+            'Start Over'
+        ];
+
+        const suggestionsList = document.getElementById('suggestions');
+
+        // Function to fetch Suggestion using API. The API needs to return an Array of Suggestions
+        async function fetchTopics() {
+            try {
+                const response = await fetch('https://prod-177.westus.logic.azure.com:443/workflows/7539cccafbaa45a3b139c8e83492aa44/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=1iEAjAT50LuQI_54hHJYult5P1ygpj9G3i2qxQsoOKI');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const fetchedTopics = await response.json();  // Get the response data
+
+                // Filter out excluded topics
+                topics = fetchedTopics.filter(topic => !excludedTopics.includes(topic));
+                console.log('Topics fetched:', topics);
+            } catch (error) {
+                console.error('Error fetching topics:', error);
+            }
+        }
+
+        // Function to handle user typing and show suggestions
+        function handleInput(input) {
+            const userInput = input.toLowerCase();
+            suggestionsList.innerHTML = '';  // Clear previous suggestions
+
+            if (userInput) {
+                const filteredTopics = topics.filter(topic => topic.toLowerCase().includes(userInput));
+
+                // Show suggestions list only if there are filtered topics
+                if (filteredTopics.length > 0) {
+                    filteredTopics.forEach(topic => {
+                        const suggestionItem = document.createElement('li');
+                        suggestionItem.classList.add('suggestion-item');
+                        suggestionItem.textContent = topic;
+
+                        // Handle click on suggestion
+                        suggestionItem.addEventListener('click', function() {
+                            // Send the selected suggestion as a message to the bot
+                            directLine.postActivity({
+                                from: { id: 'user1' },  // User ID
+                                type: 'message',
+                                text: topic  // Send the selected topic
+                            }).subscribe(
+                                id => console.log('Message sent with ID:', id),
+                                error => console.error('Error sending message:', error)
+                            );
+
+                            suggestionsList.style.display = 'none';  // Hide suggestions after selection
+                        });
+
+                        suggestionsList.appendChild(suggestionItem);
+                    });
+
+                    suggestionsList.style.display = 'block';  // Show suggestions list
+                } else {
+                    suggestionsList.style.display = 'none';  // Hide if no suggestions
+                }
+            } else {
+                suggestionsList.style.display = 'none';  // Hide if input is cleared
+            }
+        }
+
+        // Listen for user input in Web Chat (via Direct Line connection)
+        directLine.activity$.subscribe(activity => {
+            if (activity.type === 'message' && activity.from.id === 'user1') {
+                handleInput(activity.text);  // Handle input to show suggestions
+            }
+        });
+
+        // Open bot on chat bubble click
+        document.getElementById('chatBubble').addEventListener('click', async function() {
+            const botContainer = document.getElementById('botContainer');
+            botContainer.style.display = 'flex';  // Show the bot container
+            this.style.display = 'none';  // Hide chat bubble
+            
+            await fetchTopics();  // Fetch topics when the chat bubble is clicked
+        });
+
+        // Close bot on 'X' button click
+        document.getElementById('closeBot').addEventListener('click', function() {
+            document.getElementById('botContainer').style.display = 'none';  // Hide bot container
+            document.getElementById('chatBubble').style.display = 'block';  // Show chat bubble
+        });
+
+        // Refresh page on refresh button click
+        document.getElementById('refreshBot').addEventListener('click', function() {
+            location.reload();  // Refresh the page
+        });
+
+        // Display suggestions based on user typing in the web chat
+        document.getElementById('webchat').addEventListener('input', function(event) {
+            const userInput = event.target.value;
+            handleInput(userInput);  // Call handleInput function to show suggestions
+        });
+    </script>
+</body>
+</html>
