@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Custom Web Chat with Dynamic Suggestions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        #webchat-container {
+            width: 400px;
+            height: 600px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+
+            /* Center the chat container */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+        }
+
+        .suggestions-list {
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            position: absolute;
+            bottom: 60px;
+            /* Push it above the sendbox */
+            left: 0;
+            z-index: 1000;
+            /* Ensure it's above other elements */
+        }
+
+        .suggestions-list li {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestions-list li:hover {
+            background-color: #e0e0e0;
+        }
+
+        .sendbox-container {
+            margin-top: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="webchat-container">
+        <div id="webchat" role="main"></div>
+    </div>
+
+    <script src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+
+    <script>
+        const { Components, createDirectLine } = window.WebChat;
+        const { useState, useEffect } = React;
+
+        const SuggestionList = ({ visible, filterText, suggestions }) => {
+            // Filter suggestions based on filterText
+            const filteredSuggestions = suggestions.filter(suggestion =>
+                suggestion.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            // Function to handle suggestion click
+            const handleSuggestionClick = (suggestion) => {
+                // Dispatch the action to set the sendbox text to the clicked suggestion
+                store.dispatch({
+                    type: 'WEB_CHAT/SET_SEND_BOX',
+                    payload: {
+                        text: suggestion, // Set sendbox text to the clicked suggestion
+                    }
+                });
+            };
+
+            return visible && filteredSuggestions.length > 0 ? React.createElement(
+                'ul',
+                { className: 'suggestions-list' },
+                filteredSuggestions.map((suggestion, index) =>
+                    React.createElement('li', {
+                        key: index,
+                        onClick: () => handleSuggestionClick(suggestion) // Handle click on suggestion
+                    }, suggestion)
+                )
+            ) : null; // Return null if not visible or no suggestions match
+        };
+
+        // Define prop types for the component
+        SuggestionList.propTypes = {
+            visible: PropTypes.bool.isRequired,
+            filterText: PropTypes.string.isRequired,
+            suggestions: PropTypes.arrayOf(PropTypes.string).isRequired,
+        };
+
+        // Recomposing the WebChat UI
+        const CustomWebChat = ({ showSuggestions, filterText, suggestions }) => {
+            return React.createElement(
+                Components.AccessKeySinkSurface,
+                null,
+                React.createElement(Components.BasicToaster),
+                React.createElement(Components.BasicTranscript),
+                React.createElement(Components.BasicConnectivityStatus),
+                React.createElement(SuggestionList, { visible: showSuggestions, filterText, suggestions }),
+                React.createElement('div', { className: 'sendbox-container' },
+                    React.createElement(Components.BasicSendBox)
+                )
+            );
+        };
+
+        const tokenEndpointURL = "https://default76f66a0b386f4e01b8b17ef54f9545.6c.environment.api.powerplatform.com/powervirtualagents/botsbyschema/crdee_typeAheadBotDemo/directline/token?api-version=2022-03-01-preview";  // Replace with your token endpoint
+
+        const getToken = async () => {
+            const response = await fetch(tokenEndpointURL);
+            const data = await response.json();
+            return data.token;
+        };
+
+        const getSuggestionsFromAPI = async (userInput) => {
+            try {
+                const response = await fetch('https://prod-26.westus.logic.azure.com:443/workflows/15d5f7995b0f49c28167fea4b0151ef3/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=d8I-bRYI_sx16HgyH5TlRxH7ExA2C-XaYcwAzdiP-KQ', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: userInput })
+                });
+
+                if (response.ok) {
+                    const textData = await response.text();
+                    // Try to parse the text response manually
+                    const suggestions = textData
+                        .replace(/\[|\]|'/g, '') // Remove brackets and single quotes
+                        .split(',') // Split by comma
+                        .map(item => item.trim()); // Trim whitespace
+
+                    return suggestions;
+                } else {
+                    console.error('Failed to fetch suggestions from API');
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+                return [];
+            }
+        };
+
+        const App = () => {
+            const [showSuggestions, setShowSuggestions] = useState(false);
+            const [filterText, setFilterText] = useState('');
+
+            //Use default values for suggestions to handle events when API response is null
+            const [suggestions, setSuggestions] = useState([
+                'How many servings will this yield',
+                'Look for similar recipes',
+                'What are the ingredients',
+                'How long does it take to cook',
+                'Can I substitute an ingredient',
+                'What is the nutritional information'
+            ]);
+
+            window.updateShowSuggestions = setShowSuggestions;
+            window.updateFilterText = setFilterText;
+            window.updateSuggestions = setSuggestions;
+
+            useEffect(() => {
+                const fetchSuggestions = async () => {
+                    if (filterText.startsWith('/')) {
+                        const apiSuggestions = await getSuggestionsFromAPI(filterText.slice(1));
+                        setSuggestions(apiSuggestions);
+                        setShowSuggestions(true);
+                    } else {
+                        setShowSuggestions(false);
+                    }
+                };
+                fetchSuggestions();
+            }, [filterText]);
+
+            return React.createElement(CustomWebChat, { showSuggestions, filterText, suggestions });
+        };
+
+        let store;
+
+        (async () => {
+            const token = await getToken();
+            const directLine = createDirectLine({ token });
+
+            // Create the store with middleware
+            store = window.WebChat.createStore(
+                {},
+                () => next => async action => {
+                    if (action.type === "WEB_CHAT/SEND_MESSAGE") {
+                        const text = action.payload.text;
+
+                        // Call API to get suggestions every time user sends a message to bot. Response from API needs to be an array for example ['suggestion 1','suggestion 2','suggestion 3']
+                        const suggestions = await getSuggestionsFromAPI(text);
+                        window.updateSuggestions(suggestions);
+                    }
+
+                    if (action.type === "WEB_CHAT/SET_SEND_BOX") {
+                        const text = action.payload.text;
+                        const showSuggestions = text.startsWith('/');
+                        const filterText = text.startsWith('/') ? text.slice(1) : '';
+
+                        // Update state using the exposed functions
+                        window.updateShowSuggestions(showSuggestions);
+                        window.updateFilterText(filterText);
+                    }
+                    return next(action);
+                }
+            );
+
+            // Render the Web Chat with the Composer
+            ReactDOM.render(
+                React.createElement(
+                    Components.Composer,
+                    { directLine, store },
+                    React.createElement(App) // Use the App component
+                ),
+                document.getElementById('webchat')
+            );
+        })();
+    </script>
+</body>
+
+</html>
