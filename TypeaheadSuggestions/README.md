@@ -41,7 +41,7 @@ Please note that version 2 which is built using REACT component calls the API ev
 )](https://www.youtube.com/watch?v=7xbSpzmQcIg)
 
 # Watch below Demo to Get Started with Version 2
-[![Watch the video](https://microsoft-my.sharepoint.com/:v:/p/paragdessai/ETkn3PA1l15Fhya-wCo6ENQB-Da9lRknTh9tZzysqxZsLQ?e=b3bDMI&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D)
+[![Watch the video](https://microsoft-my.sharepoint.com/:v:/p/paragdessai/ETkn3PA1l15Fhya-wCo6ENQB0szoB46zwB0zJHO5xTvjCw)
 
 
 
