@@ -41,7 +41,8 @@ Please note that version 2 which is built using REACT component calls the API ev
 )](https://www.youtube.com/watch?v=7xbSpzmQcIg)
 
 # Watch below Demo to Get Started with Version 2
-[![Watch the video](https://youtu.be/H9_r7R4iNOU)
+[![Watch the video](https://th.bing.com/th/id/OIP.9k6Gz3sbmi5b8r6YxTSG-QHaEK?w=289&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7
+)](https://youtu.be/H9_r7R4iNOU)
 
 
 
