@@ -1,8 +1,8 @@
 # Typeahed Suggestions for Copilot Studio 
 This code sample allows you to create a typeahead suggestion functionality for your custome copilot that can assist users finding things like frequently asked questions, auto correcting typos and showing a list of menu items like product names or topic names before sending a message to the copilot. The version one uses an API that returns topic names for given bot but the sample can be used with any RestFul endpoint to show relevant suggestions based on your usecase.
 
-### Please note that version 1 calls the API once and loads the suggestions for your bot when the chat is initiated. It then filters through these suggestions based on users questions.
-### Please note that version 2 which is built using REACT component calls the API every time users asks a questions and shows the relevant suggestion based on each question when user type '/'
+Please note that version 1 calls the API once and loads the suggestions for your bot when the chat is initiated. It then filters through these suggestions based on users questions.
+Please note that version 2 which is built using REACT component calls the API every time users asks a questions and shows the relevant suggestion based on each question when user type '/'
 
 
 
@@ -40,11 +40,10 @@ This code sample allows you to create a typeahead suggestion functionality for y
 [![Watch the video](https://th.bing.com/th/id/OIP.9k6Gz3sbmi5b8r6YxTSG-QHaEK?w=289&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7
 )](https://www.youtube.com/watch?v=7xbSpzmQcIg)
 
-https://www.youtube.com/watch?v=7xbSpzmQcIg
 # Watch below Demo to Get Started with Version 2
 [![Watch the video](https://microsoft-my.sharepoint.com/:v:/p/paragdessai/ETkn3PA1l15Fhya-wCo6ENQB-Da9lRknTh9tZzysqxZsLQ?e=b3bDMI&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D)
 
-<iframe src="https://microsoft-my.sharepoint.com/personal/paragdessai_microsoft_com/_layouts/15/embed.aspx?UniqueId=f0dc2739-9735-455e-8726-bec02a3a10d4&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" width="640" height="360" frameborder="0" scrolling="no" allowfullscreen title="Meeting with Parag Dessai-20241007_220230-Meeting Recording.mp4"></iframe>
+
 
 
 
