@@ -128,7 +128,7 @@
             );
         };
 
-        const tokenEndpointURL = "https://default76f66a0b386f4e01b8b17ef54f9545.6c.environment.api.powerplatform.com/powervirtualagents/botsbyschema/crdee_typeAheadBotDemo/directline/token?api-version=2022-03-01-preview";  // Replace with your token endpoint
+        const tokenEndpointURL = "Replace with your token endpoint";  // 
 
         const getToken = async () => {
             const response = await fetch(tokenEndpointURL);
@@ -138,7 +138,7 @@
 
         const getSuggestionsFromAPI = async (userInput) => {
             try {
-                const response = await fetch('https://prod-26.westus.logic.azure.com:443/workflows/15d5f7995b0f49c28167fea4b0151ef3/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=d8I-bRYI_sx16HgyH5TlRxH7ExA2C-XaYcwAzdiP-KQ', {
+                const response = await fetch('Add your API EndPoint here. The API response needs to return array of suggestions ['suggestion1','suggestions']', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -212,7 +212,7 @@
                     if (action.type === "WEB_CHAT/SEND_MESSAGE") {
                         const text = action.payload.text;
 
-                        // Call API to get suggestions every time user sends a message to bot. Response from API needs to be an array for example ['suggestion 1','suggestion 2','suggestion 3']
+                        // Call API to get suggestions every time user sends a message to bot.
                         const suggestions = await getSuggestionsFromAPI(text);
                         window.updateSuggestions(suggestions);
                     }
