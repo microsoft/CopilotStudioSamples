@@ -2,7 +2,7 @@
 
 Sample solution showing how to index the content of a SharePoint library into a Copilot Studio agent as knowledge source files, along with a workaround to get nice citations that point to the source files in SharePoint.
 
-Benefits for this approach:
+## Benefits for this approach:
 1.	Faster latency to get response.
 2.	Better indexing to search for content and summarize answers.
 3.	Embedded [image understanding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-file-upload#annotated-image-support-preview) for PDF files.
@@ -11,18 +11,18 @@ Benefits for this approach:
 6.	Clickable citations that point to the source file.
 7.	Can work unauthenticated..
 
-Downsides:
+## Downsides:
 1.	No role-based access control – users of the agent have access to generated answers used with content from the uploaded files.
 2.	Need to refresh the files (re-run / schedule the flow) to push updates from SharePoint to Copilot Studio.
 
-Instructions:
+## Instructions:
 1.	Import solution on your target environment (can be different from the one hosting your Copilot Studio agent).
 2.	Update environment variables for the mandatory inputs.
 3.	In your Copilot Studio agent, update the Conversation boosting topic with the provided YAML (make a backup of your current YAML for peace of mind, especially if you had customized the default behavior).
 4.	Make sure the cloud flow is turned on
 5.	Run the cloud flow.
 
-Limitations:
+## Limitations:
  - Embedded images are only supported in Switzerland and the United States.
  - Files that contain encrypted content, are password-protected, or contain confidential tags, aren't supported.
  - The maximum number of files that can be included as knowledge in a copilot is 500 files.
