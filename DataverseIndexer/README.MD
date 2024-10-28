@@ -21,3 +21,8 @@ Instructions:
 3.	In your Copilot Studio agent, update the Conversation boosting topic with the provided YAML (make a backup of your current YAML for peace of mind, especially if you had customized the default behavior).
 4.	Make sure the cloud flow is turned on
 5.	Run the cloud flow.
+
+Limitations:
+ - Embedded images are only supported in Switzerland and the United States.
+ - Files that contain encrypted content, are password-protected, or contain confidential tags, aren't supported.
+ - The maximum number of files that can be included as knowledge in a copilot is 500 files.
