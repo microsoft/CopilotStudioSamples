@@ -7,9 +7,10 @@ Sample solution showing how to index the content of a SharePoint library into a 
 2.	Better indexing to search for content and summarize answers.
 3.	Embedded [image understanding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-file-upload#annotated-image-support-preview) for PDF files.
 4.	Support for [more](https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-file-upload#supported-document-types) file types.
-5.	Support files up to 512 MB.
-6.	Clickable citations that point to the source file.
-7.	Can work unauthenticated..
+5. Indexes SharePoint .aspx pages as files.
+6.	Support files up to 512 MB.
+7.	Clickable citations that point to the source file.
+8.	Can work unauthenticated..
 
 ## Downsides:
 1.	No role-based access control – users of the agent have access to generated answers used with content from the uploaded files.
