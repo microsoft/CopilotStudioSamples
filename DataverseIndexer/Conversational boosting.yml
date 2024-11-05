@@ -45,7 +45,7 @@ beginDialog:
                             IsBlank(Url),
                             If(
                                 Left(Name,8) = "https://", 
-                                Name,
+                                Substitute(Name, " ", "%20"),
                                 "cite:" & Id
                             ),
                             // Else use the returned URL Value.
