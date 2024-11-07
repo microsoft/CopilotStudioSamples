@@ -55,7 +55,15 @@ beginDialog:
                         // Improve file name formatting
                         " """ & 
                 
-                        Substitute(Last(Split(Name, "/")).Value, "%20", " ")
+                        // Extract the file name, remove query if present
+                        Substitute(
+                            If(
+                                Find("?", Last(Split(Name, "/")).Value) > 0,
+                                Left(Last(Split(Name, "/")).Value, Find("?", Last(Split(Name, "/")).Value) - 1),
+                                Last(Split(Name, "/")).Value
+                            ),
+                            "%20", " "
+                        )
                 
                         &  """",
                 
