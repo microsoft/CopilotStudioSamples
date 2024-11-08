@@ -13,6 +13,7 @@
 - Lab 6: Make HTTP requests to connect to an API
 - Lab 7: Use generative AI orchestration to interact with your connectors
 - Lab 8: Using Topic Inputs
+- Lab 9: Generative Orchestration
 
 **Q&A**  
 
