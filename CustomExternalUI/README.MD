@@ -12,7 +12,9 @@ This is an example for a bot before and after using the provided sample
 ## Instructions
 
 Create your Copilot agent and publish it.
-Download the sample html and open it in a code editor.
+
+Download the file [CustomChatbotUI.html](src/CustomChatbotUI.html) and open it in a code editor.
+
 Replace the following values with values of your choice.
 
 | Old Value | Replace with |
@@ -26,7 +28,8 @@ Replace the following values with values of your choice.
 | YourTokenURL | Token Endpoint, can be obtained from the mobile Channel in Copilot Studio |
 
 Please play around yourself! Feel free to change the size of your containers, colors and much more in the html!
-Also take a look at the documentation for the Web Chat customiation - there are more options available! https://learn.microsoft.com/en-us/azure/bot-service/bot-builder-webchat-customization?view=azure-bot-service-4.0
+
+Also take a look at the documentation for the Web Chat customization - there are more options available: https://learn.microsoft.com/en-us/azure/bot-service/bot-builder-webchat-customization?view=azure-bot-service-4.0
 
 ## Downsides
 
