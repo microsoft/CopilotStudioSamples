@@ -7,6 +7,8 @@ The solution uses the Customization Options from the Azure AI Bot Services as we
 
 This is an example for a bot before and after using the provided sample
 
+<img src="assets/chatbot_ui_comparison.png" alt="Custom chatbot UI compared to the standard UI">
+
 ## Instructions
 
 Create your Copilot agent and publish it.
