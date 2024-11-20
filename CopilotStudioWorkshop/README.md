@@ -12,8 +12,8 @@
 - Lab 5: Invoke AI Builder prompts
 - Lab 6: Make HTTP requests to connect to an API
 - Lab 7: Use generative AI orchestration to interact with your connectors
-- Lab 8: Using Topic Inputs
-- Lab 9: Generative Orchestration
+- Lab 8: Using topic inputs
+- Lab 9: Advanced generative orchestration
 
 **Q&A**  
 
