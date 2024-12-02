@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Facial Palsy UK Virtual Assistant</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Roboto, sans-serif !important;
+            background-color: #f4f6f9;
+            /*font-size: 14px !important;*/
+        }
+        .chat-container {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            bottom: 80px;
+            right: 18px;
+            width: 100%;
+            max-width: 500px;
+            min-height: 300px;
+            height: 600px;
+            max-height: 80%;
+            z-index: 1000;
+        }
+        .chat-icon {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+            background-color: #000099;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1001;
+            animation: fadeIn 0.5s ease;
+        }
+        .chat-icon img {
+            width: 30px;
+            height: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        .chat-icon.cancel-icon::before {
+            content: "✖";
+            font-size: 24px;
+            color: white;
+            animation: fadeIn 0.5s ease;
+        }
+        #banner h1 {
+            font: Roboto;
+            color: #ffffff;
+            font-size: 24px;
+            line-height: 28px;
+            margin: 0;
+            padding: 0 20px;
+            transition: color 0.3s;
+        }
+
+        #banner {
+            align-items: center;
+            background-color: #000099;
+            display: flex;
+            height: 70px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            justify-content: center;
+            border-radius: 10px 10px 0 0;
+            border: 1px solid #e2e2e2;
+            animation: fadeIn 0.5s ease;
+        }
+        #webchat {
+            background-color: #ffffff;
+            flex-grow: 1;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 10px 10px;
+            animation: fadeIn 0.5s ease;
+            border: 1px solid #e2e2e2;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @media (max-width: 600px) {
+            #banner {
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+            }
+            h1 {
+                padding: 10px 0;
+            }
+        }
+
+        /* Overriding Styles for adaptive cards */
+        .ac-multichoiceInput {
+            padding: 3px !important;
+            border-radius: 4px;
+        }
+
+        .ac-pushButton {
+            color: rgb(0, 0, 153);
+            border-color: rgb(0, 0, 153);
+            font-weight: 300 !important;
+            padding: 5px !important;
+            border-radius: 4px;
+            background-color: transparent !important;
+            width: fit-content !important;
+            max-width: 100% !important;
+        }
+
+        .ac-pushButton:hover {
+            background-color: rgb(0, 0, 153, 0.2) !important;
+            cursor: pointer;
+        }
+
+        .ac-pushButton[aria-pressed="true"] {
+            background-color: rgb(0, 0, 153) !important;
+            color: white;
+        }
+
+        button[class*="suggested-action"] {
+            padding: 5px !important;
+            height: fit-content !important;
+            border-radius: 4px !important;
+            background-color: transparent !important;
+            cursor: pointer;
+            max-width: 100% !important;
+        }
+
+        button[class*="suggested-action"]:hover {
+            background-color: rgb(0, 0, 153, 0.2) !important;
+        }
+
+        .webchat__bubble__content * {
+            font-size: 14px !important;
+            font-family: Roboto, sans-serif !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container" id="chat-container">
+        <div id="banner">
+            <h1>Facial Palsy UK Virtual Assistant</h1>
+        </div>
+        <div id="webchat" role="main"></div>
+    </div>
+    <div class="chat-icon" id="chat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 30 30">  
+            <path d="M12,3C6.5,3 2,6.58 2,11C2.05,13.15 3.06,15.17 4.75,16.5C4.75,17.1 4.33,18.67 2,21C4.37,20.89 6.64,20 8.47,18.5C9.61,18.83 10.81,19 12,19C17.5,19 22,15.42 22,11C22,6.58 17.5,3 12,3M12,17C7.58,17 4,14.31 4,11C4,7.69 7.58,5 12,5C16.42,5 20,7.69 20,11C20,14.31 16.42,17 12,17Z" fill="white" />  
+          </svg>  
+    </div>
+    <script crossorigin="anonymous" src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <script>
+        document.getElementById('chat-icon').addEventListener('click', function () {
+            const chatContainer = document.getElementById('chat-container');
+            const chatIcon = document.getElementById('chat-icon');
+            const isVisible = chatContainer.style.display === 'flex';
+            chatContainer.style.display = isVisible ? 'none' : 'flex';
+            if (isVisible) {
+                chatIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 30 30"> <path d="M12,3C6.5,3 2,6.58 2,11C2.05,13.15 3.06,15.17 4.75,16.5C4.75,17.1 4.33,18.67 2,21C4.37,20.89 6.64,20 8.47,18.5C9.61,18.83 10.81,19 12,19C17.5,19 22,15.42 22,11C22,6.58 17.5,3 12,3M12,17C7.58,17 4,14.31 4,11C4,7.69 7.58,5 12,5C16.42,5 20,7.69 20,11C20,14.31 16.42,17 12,17Z" fill="white" /> </svg>  ';
+                chatIcon.classList.remove('cancel-icon');
+            } else {
+                chatIcon.innerHTML = '';
+                chatIcon.classList.add('cancel-icon');
+            }
+        });
+
+        (async function () {
+            const styleOptions = {
+                accent: '#000099',
+                botAvatarBackgroundColor: '#000000',
+                botAvatarImage: 'https://i.imgur.com/v0pQRJe.jpeg',
+                botAvatarInitials: ' ',
+                userAvatarBackgroundColor: '#555555',
+                userAvatarImage: 'https://i.imgur.com/Vd2rwWx.jpeg',
+                userAvatarInitials: ' ',
+                backgroundColor: '#f4f6f9',
+                bubbleBackground: '#E2E2E2',
+                bubbleTextColor: '#333333',
+                bubbleFromUserBackground: '#E2E2E2',
+                bubbleFromUserTextColor: '#333333',
+                sendBoxBackground: '#F4F4F4',
+                sendBoxTextColor: '#333333',
+                sendBoxButtonColor: '#000000',
+                avatarBorderRadius: '50%',
+                avatarSize: 40,
+                showAvatarInGroup: true,
+                bubbleBorderRadius: '8px',
+                bubbleFromUserBorderRadius: '8px',
+                bubbleNubSize: '10px',
+                bubbleFromUserNubSize: '10px',
+                sendBoxButtonColorOnFocus: '#c4005d',
+                sendBoxButtonColorOnHover: '#c4005d',
+                connectivityIconPadding: '10px',
+                connectivityMarginTopBottom: '10px',
+                notificationText: '#4A4A4A',
+                transcriptOverlayBackground: 'rgba(255, 255, 255, 0.8)',
+                transcriptOverlayPadding: '20px',
+                transcriptVerticalSpacer: '10px',
+                hideUploadButton: true,
+            };
+
+            const tokenEndpointURL = 'https://Defaultb62a9626ac0e43b7aee7c0d0a11492.90.environment.api.powerplatform.com/powervirtualagents/botsbyschema/crfad_facialPalsyCoPilot/directline/token?api-version=2022-03-01-preview';
+            const locale = document.documentElement.lang || 'en';
+            const apiVersion = new URL(tokenEndpointURL).searchParams.get('api-version');
+
+            const [directLineURL, token] = await Promise.all([
+                fetch(new URL(`/powervirtualagents/regionalchannelsettings?api-version=${apiVersion}`, tokenEndpointURL))
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to retrieve regional channel settings.');
+                        }
+                        return response.json();
+                    })
+                    .then(({ channelUrlsById: { directline } }) => directline),
+                fetch(tokenEndpointURL)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to retrieve Direct Line token.');
+                        }
+                        return response.json();
+                    })
+                    .then(({ token }) => token)
+            ]);
+
+            const directLine = WebChat.createDirectLine({
+                domain: new URL('v3/directline', directLineURL),
+                token
+            });
+
+            const subscription = directLine.connectionStatus$.subscribe({
+                next(value) {
+                    if (value === 2) {
+                        directLine.postActivity({
+                            localTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                            locale,
+                            name: 'startConversation',
+                            type: 'event'
+                        }).subscribe();
+                        subscription.unsubscribe();
+                    }
+                }
+            });
+
+            WebChat.renderWebChat({
+                directLine,
+                locale,
+                styleOptions
+            }, document.getElementById('webchat'));
+        })();
+    </script>
+</body>
+
+</html>
