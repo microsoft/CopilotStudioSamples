@@ -16,10 +16,10 @@ Use this URL to download the latest version of the guide: [aka.ms/CopilotStudioI
 The Copilot Studio implementation guide covers these chapters:
 - Overview of the project
 - Architecture overview
-- Language
+- Language understanding
 - AI functionalities
 - Integrations
-- Channels and hand off
+- Channels, clients, and hand off
 - Security, monitoring & governance
 - Application lifecycle management
 - Analytics & KPIs
@@ -30,6 +30,7 @@ The Copilot Studio implementation guide covers these chapters:
 
 | Version | Date | Updates |
 | --- | --- | --- |
+| 1.5 | January 20, 2024 | - Updated naming to match latest branding (agents, generative orchestration, etc.).<br>- Added latest knowledge sources (Graph Connectors, Real-time connectors, Azure AI Search) and updated descriptions (new limits or new features like 'Enhanced Search Results').<br>- Added new Copilot Studio architecture slides.<br>- Added new content on generative orchestration.<br>- Added new content on the various quotas and limits.<br>- Updated security and governance to cover latest capabilities like network isolation or DLP enforcement updates.<br>- Added a new slide on component collections.<br>- Added new slides on conversation design and outcome tracking. |
 | 1.4 | March 5, 2024 | - Divided the **Integrations and channels** chapter into 2 chapters.<br>- Reworked the **Generative answers processes and considerations** slide to surface the Query rewriting step and also highlight the validation that occurs at each steps. This slide also contains footnotes detailing the process.<br>- Added a new **Generative AI security and compliance considerations** slide.<br>Added an **Integration patterns and considerations** slide.<br>- Added a **Security, copilot, &  user management** slide, detailing best practices to secure a Copilot Studio project.<br>- Added a **Copilot Studio security roles** slide. |
 | 1.3 | January 9, 2024 | - Added 2 patterns for live agent hand off.<br>- Added the **Security and administration controls** slide. |
 | 1.2 | December 6, 2023 | - Minor edits. |
