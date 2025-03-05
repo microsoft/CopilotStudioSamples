@@ -3,7 +3,9 @@
 
 ## Overview
 
-This repository contains samples and artifacts for Microsoft Copilot Studio.
+This repository contains samples and artifacts for Microsoft Copilot Studio. 
+
+Older samples and labs, largely focused on Power Virtual Agents, have been moved to the [Legacy](https://github.com/microsoft/CopilotStudioSamples/tree/legacy) branch of this repo.
 
 ## Useful links for Microsoft Copilot Studio
 
@@ -14,9 +16,19 @@ This repository contains samples and artifacts for Microsoft Copilot Studio.
 | Community forum | [aka.ms/CopilotStudioCommunity](https://aka.ms/CopilotStudioCommunity) |
 | Product documentation | [aka.ms/CopilotStudioDocs](https://aka.ms/CopilotStudioDocs) |
 | Guidance documentation | [aka.ms/CopilotStudioGuidance](https://aka.ms/CopilotStudioGuidance) |
-| GitHub repository of samples | [aka.ms/CopilotStudioSamples](https://aka.ms/CopilotStudioSamples) |
-| Demo Copilot Studio | [aka.ms/CopilotStudioDemo](https://aka.ms/CopilotStudioDemo) |
 | Try Copilot Studio | [aka.ms/TryCopilotStudio](https://aka.ms/TryCopilotStudio) |
+
+## Microsoft Copilot Studio and Agents SDK links
+| Description | Link |
+| --- | --- |
+| M365 Agents SDK | Github Repo for the [M365 Agents SDK](https://aka.ms/Agents) |
+| M365 Agents SDK - C# | Github Repo for the [C# M365 Agents SDK](https://github.com/Microsoft/Agents-for-net) |
+| M365 Agents SDK - JavaScript | Github Repo for the [M365 Agents SDK](https://github.com/Microsoft/Agents-for-js) |
+| M365 Agents SDK - Python | Github Repo for the [M365 Agents SDK](https://github.com/Microsoft/Agents-for-python) |
+| Adaptive Cards | [Adaptive Cards docs and builder](https://adaptivecards.microsoft.com) |
+| Web Chat | [Web Chat Github Repo](https://github.com/microsoft/BotFramework-WebChat) |
+| Power Platform Snippets | [Copilot Studio snippets](https://github.com/pnp/powerplatform-snippets/tree/main/copilot-studio) |
+
 
 ## Samples list
 
