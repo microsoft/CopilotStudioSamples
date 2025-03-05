@@ -1,6 +1,13 @@
 
 # Microsoft Copilot Studio Samples
 
+This legacy branch is intended to preserve content (docs & samples) for some of the older technologies used for creating agents. Some of this content
+is focused on Power Virtual Agents (replaced with Copilot Studio) or references features no longer available. 
+
+No updates are planned for this branch. 
+
+For current samples, please see the main [Copilot Studio Samples](https://github.com/microsoft/CopilotStudioSamples) repo.
+
 ## Overview
 
 This repository contains samples and artifacts for Microsoft Copilot Studio.
