@@ -1,8 +1,0 @@
-{
-  "@odata.context": "https://testname.crm.dynamics.com/api/data/v9.2/$metadata#conversationtranscripts",
-  "value": [
-    {
-      "content": "{\"activities\":[{\"valueType\":\"ConversationInfo\",\"id\":null,\"type\":\"trace\",\"timestamp\":1677590794,\"from\":{\"id\":\"\",\"role\":0},\"channelId\":null,\"value\":{\"isDesignMode\":false,\"locale\":null}},{\"id\":\"D4Qiv3Tns5d6a8vZvaXoAR-us|0000000\",\"type\":\"message\",\"timestamp\":1677590794,\"from\":{\"id\":\"06f22724-9df4-942a-db09-f4bbb9004bb0\",\"role\":1},\"channelId\":\"directline\",\"text\":\"hi\",\"attachments\":[]}]}"
-    }
-  ]
-}
