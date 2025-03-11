@@ -12,4 +12,4 @@ Instructions cover:
 - Setting up SharePoint 
 - Setting up the ServiceNow instance.
 
-Download [Proctor files.zip](https://github.com/microsoft/CopilotStudioSamples/raw/master/CopilotStudioWorkshop/Proctor%20files.zip) and follow the instructions contained in **Microsoft Copilot Studio - Workshop setup instructions.docx** to setup the environment for the workshop.
+Download [Proctor files.zip](https://github.com/microsoft/CopilotStudioSamples/blob/main/CopilotStudioWorkshop/Proctor%20files.zip) and follow the instructions contained in **Microsoft Copilot Studio - Workshop setup instructions.docx** to setup the environment for the workshop.
