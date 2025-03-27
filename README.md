@@ -40,20 +40,22 @@ Older samples and labs, largely focused on Power Virtual Agents, have been moved
 | Dataverse Indexer | Index the content of a SharePoint library into a Copilot Studio Agent as knowledge source files, along with citations that point to the source files in SharePoint | [View][cs#7]|
 | Load Testing | JMeter test plan to use as a starting point for load testing conversational agents built with Copilot Studio | [View][cs#8]|
 | RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#3] |
-| SharePointSSOComponent | A SharePoint component demonstrating how copilots can be deployed to SharePoint sites with SSO enabled | [View][cs#4] |
+| SharePointSSOComponent | A SharePoint component demonstrating how custom agents can be deployed to SharePoint sites with SSO enabled | [View][cs#4] |
+| SSOwithEntraID | Single Sign-On for Web and Entra ID | [View][cs#10] |
 | Type Ahead Suggestions | Demonstrates typeahead suggestion functionality for your custom copilot that can assist users finding things like frequently asked questions, auto correcting typos and showing a list of menu items like product names or topic names before sending a message to the copilot | [View][cs#9] |
 | WebChat Customization | Shows the Customization Options from the Azure AI Bot Services as well as some CSS to drastically change the look of your Copilot agent | [View][cs#6]|
 
 
-[cs#1]:./3rdPartySSOWithOKTA
+[cs#1]:./SSOSamples/3rdPartySSOWithOKTA
 [cs#2]:./ImplementationGuide
 [cs#3]:./RelayBotSample
-[cs#4]:./SharePointSSOComponent
+[cs#4]:./SSOSamples/SharePointSSOComponent
 [cs#5]:./AdaptiveCardSamples
 [cs#6]:./CustomExternalUI
 [cs#7]:./DataverseIndexer
 [cs#8]:./LoadTesting/JMeterMultiThreadGroup
 [cs#9]:./TypeaheadSuggestions
+[cs#10]:./SSOSamples/SSOwithEntraID
 
 ## Contributing
 

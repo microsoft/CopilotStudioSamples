@@ -1,4 +1,4 @@
-# 3rd Party SSO with OKTA
+# Description
 
 This custom canvas demonstrates how an access token obtained from a 3rd party identity provider, like OKTA, can be used in the context of a single sign-on (SSO) login flow with Copilot Studio.
 
