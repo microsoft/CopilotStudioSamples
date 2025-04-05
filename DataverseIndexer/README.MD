@@ -25,6 +25,17 @@ Sample solution showing how to index the content of a SharePoint library into a 
 1.	Make sure the cloud flow is turned on
 1.	Run the cloud flow.
 
+ ## Tips for Further Manual Enhancements to the Flow
+ 1) **Error Handling and Alerting**
+    - If you want to get notified if flow step failed or retry, you can add parallel branch to catch specific error and send email for notifications. Configure Run After for each block we want to monitor : https://learn.microsoft.com/en-us/training/modules/error-handling/2-configure-run-after
+
+
+2) **Description Field in Add a new row for file data** 
+     - In the step 'Upload files to copilot studio'where we are adding row data for the file, the 'Description' filed can store upto 2500 characters. So you can prebuilt the informaiton for each file and its description using other tools like AI Builder (This can only process 1MB of data as of today) that has metadata and short summary. This will enhance the agent results.
+
+3) **Automated Triggers**
+    - You can use SharePoint triggers 'When an item or file is modified', 'When a file is deleted' instead of manual trigger to keep files in sync. Reference : https://learn.microsoft.com/en-us/sharepoint/dev/business-apps/power-automate/sharepoint-connector-actions-triggers
+
 ## Limitations:
  - Embedded images are only supported in Switzerland and the United States.
  - Files that contain encrypted content, are password-protected, or contain confidential tags, aren't supported.
