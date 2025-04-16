@@ -134,7 +134,7 @@ At this point you have a choice whether to configure and build the component you
 
 <br/>
 
-5. after populating properties in elements.xml, or if you left elements.xml untouched and plan to run Configure-MCSForSite.ps1 after building and deploying the component, open a new terminal in VS Code and navigate to the solution folder (the SharePointSSOComponent folder). Run the following commands:
+5. after populating properties in elements.xml, or if you left elements.xml untouched and plan to run Configure-McsForSite.ps1 after building and deploying the component, open a new terminal in VS Code and navigate to the solution folder (the SharePointSSOComponent folder). Run the following commands:
 
     ```shell
     npm install
@@ -160,7 +160,7 @@ At this point you have a choice whether to configure and build the component you
 
    To add an app to your site, follow the instructions in: [Add an app to a site - Microsoft Support](https://support.microsoft.com/en-us/office/add-an-app-to-a-site-ef9c0dbd-7fe1-4715-a1b0-fe3bc81317cb?ui=en-us&rs=en-us&ad=us).
 
-3. If you left elements.xml untouched, or if you are uploading the pre-built package, or even in case you would like to override the values configured in elements.xml for the site on which the component has been deployed, you can now run [Configure-MCSForSite.ps1](./Configure-MCSForSite.ps1):
+3. If you left elements.xml untouched, or if you are uploading the pre-built package, or even in case you would like to override the values configured in elements.xml for the site on which the component has been deployed, you can now run [Configure-McsForSite.ps1](./Configure-McsForSite.ps1):
 
 ```PowerShell
 .\Configure-McsForSite.ps1 -siteUrl "<siteUrl>" -botUrl "<botUrl>" -botName "<botName>" -greet $True -customScope "<customScope>" -clientId "<clientId>" -authority "<authority>" -buttonLabel "<buttonLabel>"
