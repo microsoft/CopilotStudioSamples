@@ -45,7 +45,6 @@ beginDialog:
                         ),
                         currentRecord.Url
                     ) & " " & """" &
-                    //add the name, this might need logic to cater for a name of citations-1 etc for file upload without SP as source
          Substitute(
                         If(
                             Find(
@@ -72,7 +71,7 @@ beginDialog:
                                             "/"
                                         )
                                     ).Value
-                                ) - 1
+                                )
                             ),
                             Last(
                                 Split(
