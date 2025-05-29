@@ -1,0 +1,103 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnGeneratedResponse
+  id: main
+  condition: =CountRows(System.Response.Citations)>0
+  actions:
+    - kind: SetVariable
+      id: setVariable_wtNwaw
+      variable: Topic.externalWebsiteURL
+      value: https://yourwebsite.com/citations/
+
+    - kind: SetVariable
+      id: setVariable_9IFwdP
+      variable: Topic.CitationsSnip
+      value: |-
+        =With(
+            {CitationsTable: System.Response.Citations},
+            Concat(
+                ForAll(
+                    Sequence(CountRows(CitationsTable)),
+                    Value
+                ),
+                With(
+                    {
+                        currentRecord: Index(
+                            CitationsTable,
+                            Value
+                        )
+                    },
+                //begin logic
+                    "[" & Text(Value) & "]: " & If(
+                        IsBlank(currentRecord.Url),
+                        If(
+                            Left(
+                                currentRecord.Name,
+                                8
+                            ) = "https://",
+                            Substitute(
+                                currentRecord.Name,
+                                " ",
+                                "%20"
+                            ),
+                            Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20")
+                            //Text(currentRecord.Id)
+                        ),
+                        currentRecord.Url
+                    ) & " " & """" &
+                    //add the name, this might need logic to cater for a name of citations-1 etc for file upload without SP as source
+         Substitute(
+                        If(
+                            Find(
+                                "?",
+                                Last(
+                                    Split(
+                                        currentRecord.Name,
+                                        "/"
+                                    )
+                                ).Value
+                            ) > 0,
+                            Left(
+                                Last(
+                                    Split(
+                                        currentRecord.Name,
+                                        "/"
+                                    )
+                                ).Value,
+                                Find(
+                                    "?",
+                                    Last(
+                                        Split(
+                                            currentRecord.Name,
+                                            "/"
+                                        )
+                                    ).Value
+                                ) - 1
+                            ),
+                            Last(
+                                Split(
+                                    currentRecord.Name,
+                                    "/"
+                                )
+                            ).Value
+                        ),
+                        "%20",
+                        " "
+                    ) & """"
+                //end logic
+                ),
+                Char(10) & Char(10)
+            )
+        )
+
+    - kind: SendActivity
+      id: sendActivity_i4mW3G
+      activity: "{Left(System.Response.FormattedText, Find(\"[1]:\", System.Response.FormattedText) + -1) & Text(Topic.CitationsSnip)}"
+
+    - kind: SetVariable
+      id: setVariable_jVzQGX
+      variable: System.ContinueResponse
+      value: false
+
+inputType: {}
+outputType: {}
