@@ -45,7 +45,7 @@ beginDialog:
                         ),
                         currentRecord.Url
                     ) & " " & """" &
-         Substitute(
+                    Substitute(
                         If(
                             Find(
                                 "?",
