@@ -1,4 +1,4 @@
-# Dataverse Indexer
+# AI Response Generated Citation Swap
 
 Sample solution showing how to swap the citation links when leveraging File Upload Knowledge and Generative Orchestration to point at the same documents hosted on a public website. This allow users to open and see the full document instead of just the chunk (and they can actually download it if they need). This is designed for publicly available documents who need to be indexed by Dataverse to produce the most accurate responses. 
 
