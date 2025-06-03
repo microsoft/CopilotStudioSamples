@@ -40,7 +40,22 @@ beginDialog:
                                 " ",
                                 "%20"
                             ),
-                            Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20")
+                            Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20") &
+                            //  
+                            If(
+                                // check if cited source is a PDF
+                                EndsWith(currentRecord.Name,".pdf"),
+                                // add page for PDFs
+                                "#page=" & Mid(
+                                    currentRecord.Text,
+                                    Find("<page value=", currentRecord.Text
+                                    ) + Len("<page value=") + 1,
+                                    Find(
+                                        ">",
+                                        currentRecord.Text
+                                    ) - Len("<page value=")-3
+                                )
+                            ),
                             //Text(currentRecord.Id)
                         ),
                         currentRecord.Url
