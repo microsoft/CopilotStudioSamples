@@ -2,13 +2,15 @@
 
 Sample solution showing how to swap the citation links when leveraging File Upload Knowledge and Generative Orchestration to point at the same documents hosted on a public website. This allow users to open and see the full document instead of just the chunk (and they can actually download it if they need). This is designed for publicly available documents who need to be indexed by Dataverse to produce the most accurate responses. 
 
+Update 6/3/2025: the citation now points to the actual page used in the response (for PDFs only)
+
 ## Benefits for this approach:
 1.	Ability to scope specific documents
 1.	Better indexing to search for content and summarize answers.
 1.	Embedded [image understanding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-file-upload#annotated-image-support-preview) for PDF files.
 1.	Support for [more](https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-file-upload#supported-document-types) file types.
 1.	Support files up to 512 MB.
-1.	Clickable citations that point to the source file.
+1.	Clickable citations that point to the source file and the actual page number (PDFs only)
 1.	Can work unauthenticated.
 1.  Allow users to view the entire document and download it if necessary.
 
