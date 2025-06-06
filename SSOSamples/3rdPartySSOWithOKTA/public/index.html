@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Copilot Studio 3P SSO with OKTA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <script crossorigin="anonymous" src="https://global.oktacdn.com/okta-signin-widget/7.2.1/js/okta-sign-in.min.js"
+        type="text/javascript"></script>
+    <link href="https://global.oktacdn.com/okta-signin-widget/7.2.1/css/okta-sign-in.min.css" type="text/css"
+        rel="stylesheet" />
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <!-- This styling is for the canvas demonstration purposes. It is recommended 
+        that style is moved to separate file for organization in larger projects -->
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #header {
+            background-color: rgb(11, 85, 106);
+            color: rgb(255, 255, 255);
+            font-weight: 600;
+            height: 48px;
+            padding: 0px 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #subheader {
+            background-color: rgb(243, 242, 241);
+            padding: 7px 13px;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        a {
+            color: rgb(0, 90, 158);
+        }
+
+        a:hover {
+            color: rgb(0, 69, 120);
+        }
+
+        #webchat {
+            position: fixed;
+            height: calc(100% - 75px);
+            width: 100%;
+            top: 75px;
+            overflow: hidden;
+        }
+
+        #sign-out-button {
+            font-size: 16px;
+            border: none;
+            color: black;
+            cursor: pointer;
+            visibility: hidden;
+            position: fixed;
+            top: 5px;
+            right: 10px;
+            /* Add the following lines */
+            display: inline-block;
+            width: auto;
+            padding: 10px 20px;
+            /* Adjust as needed */
+            border-radius: 5px;
+        }
+
+        #chat-container {
+            visibility: hidden;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="okta-signin-container"></div>
+
+    <div id="chat-container">
+        <div id="header">
+            Copilot Studio 3P SSO with OKTA
+        </div>
+        <button id="sign-out-button" onclick=signOut()>Sign Out</button>
+        <div id="webchat"> </div>
+    </div>
+
+    <script>
+
+        const oktaSignIn = new OktaSignIn({
+            baseUrl: "https://{your okta subdomain}.okta.com", //e.g. https://mydomain.okta.com
+            clientId: "{your app configuration ID}",
+            redirectUri: "{the published URL for index.html}", // For example http://localhost:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/index.html
+            authParams: {
+                responseType: ['code'],
+                issuer: "https://{your okta subdomain}.okta.com/oauth2/default", //for example: https://mydomain.okta.com/oauth2/default
+                display: 'page',
+                pkce: true,
+                scopes: ['openid', 'email', 'profile'],
+                storage: 'sessionStorage'
+            }
+        });
+
+        // If the user is already authenticated, render the chat widget
+        // If the user isn't authentictated, render the OKTA login widget first 
+        oktaSignIn.authClient.token.getUserInfo().then(function (user) {
+            console.log('User is already authenticated - rendering the chat widget');
+            renderChatWidget();
+        }, function (error) {
+            console.log('User is not authenticated - rendering the login widget first');
+            oktaSignIn.showSignInToGetTokens({
+                el: '#okta-signin-container'
+            }).then(function (tokens) {
+                oktaSignIn.authClient.tokenManager.setTokens(tokens);
+                oktaSignIn.remove();
+                console.log('Authentication successful - rendering chat widget');
+                renderChatWidget();
+            }).catch(function (err) {
+                console.log('error logging in', err);
+            });
+        });
+
+        // Sign out and redirect to sign out page
+        function signOut() {
+            oktaSignIn.authClient.signOut({
+                clearTokensBeforeRedirect: true,
+                postLogoutRedirectUri: '{The published URL for signout.html}'// For example, 'http://127.0.0.1:5501/CopilotStudioSamples/3rdPartySSOWithOKTA/public/signout.html'
+            });
+        }
+
+        // Utility function 
+        async function fetchJSON(url, options = {}) {
+            const res = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    accept: 'application/json'
+                }
+            });
+
+            if (!res.ok) {
+                throw new Error(`Failed to fetch JSON due to ${res.status}`);
+            }
+
+            return await res.json();
+        }
+
+        async function renderChatWidget() {
+
+            // Exrtact the user's access token and email from OKTA's token store
+            const accessToken = oktaSignIn.authClient.getAccessToken();
+
+            let userEmail;
+            oktaSignIn.authClient.tokenManager.get('idToken')
+                .then(idToken => {
+                    userEmail = idToken.claims.email;
+                });
+
+            const tokenEndpoint = "{your copilot token endpoint}"
+
+            const userID = userEmail != null ?
+                (userEmail).substr(0, 36) :
+                (Math.random().toString() + Date.now().toString()).substr(0, 64);
+
+
+            // Generate a direct line token
+            const { token } = await fetchJSON(tokenEndpoint);
+            const directLine = window.WebChat.createDirectLine({ token });
+
+            const store = WebChat.createStore(
+                {},
+                ({ dispatch }) => next => action => {
+                    const { type } = action;
+
+                    // Configure your bot to start the conversation automatically
+                    // See https://learn.microsoft.com/en-us/power-virtual-agents/configure-bot-greeting
+                    if (action.type === "DIRECT_LINE/CONNECT_FULFILLED") {
+                        dispatch({
+                            meta: {
+                                method: "keyboard",
+                            },
+                            payload: {
+                                activity: {
+                                    channelData: {
+                                        postBack: true,
+                                    },
+                                    // Web Chat will show the Start Conversation System Topic message
+                                    name: 'startConversation',
+                                    type: "event"
+                                },
+                            },
+                            type: "DIRECT_LINE/POST_ACTIVITY",
+                        });
+                    }
+
+                    // Filter incoming activities from Direct Line to intercept the Login Card
+                    // If user is logged-in, post the access token obtained from OKTA to the token post URI
+                    if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+                        const activity = action.payload.activity;
+
+                        if (activity.attachments?.[0]?.contentType === 'application/vnd.microsoft.card.oauth') {
+
+                            // Extract the endpoint to which the token is posted
+                            const postEndpoint = activity.attachments?.[0].content.tokenPostResource.sasUrl;
+
+                            if (accessToken) {
+                                fetch(postEndpoint, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        token: accessToken
+                                    })
+                                }).then(() => {
+                                    // Token sent successfully, do not show the login card
+                                }).catch((error) => {
+                                    console.error('An error occurred:', error);
+                                    // Token was not sent successfully, display the login card to the user
+                                    return next(action);
+                                });
+                                return;
+                            }
+                            else {
+                                return next(action);
+                            }
+
+                        }
+                        else {
+                            return next(action);
+                        }
+                    }
+                    else {
+                        return next(action);
+                    }
+                });
+
+            const styleOptions = {
+                // Add styleOptions to customize Web Chat canvas
+                hideUploadButton: true
+            };
+
+            document.getElementById('chat-container').style.visibility = 'visible';
+            document.getElementById('sign-out-button').style.visibility = 'visible';
+
+            window.WebChat.renderWebChat(
+                {
+                    directLine: directLine,
+                    store,
+                    userID: userID,
+                    styleOptions
+                },
+                document.getElementById('webchat')
+            );
+        }
+    </script>
+</body>
+
+</html>

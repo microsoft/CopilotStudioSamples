@@ -1,0 +1,81 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnUnknownIntent
+  id: main
+  priority: -1
+  actions:
+    - kind: SearchAndSummarizeContent
+      id: search-content
+      latencyMessageSettings:
+        allowLatencyMessage: false
+
+      userInput: =System.Activity.Text
+      autoSend: false
+      variable: Topic.Answer
+      additionalInstructions:
+      responseCaptureType: FullResponse
+
+    - kind: ConditionGroup
+      id: has-answer-conditions
+      conditions:
+        - id: has-answer
+          condition: =!IsBlank(Topic.Answer)
+          actions:
+            - kind: SetVariable
+              id: setVariable_eWQVoG
+              variable: Topic.FormattedAnswer
+              value: |-
+                =If(
+                    // If there are no citations
+                    CountRows(Topic.Answer.Text.CitationSources) = 0, 
+                    // Render the original answer
+                    Topic.Answer.Text.MarkdownContent,
+                
+                    // If there are citations, rebuild the Markdown answer entirely 
+                    Topic.Answer.Text.Content & Char(10) & Char(10) & 
+                
+                    // Concatenate citations in Markdown format
+                    Concat(
+                        Topic.Answer.Text.CitationSources,
+                        
+                        // Recreate the Url if there isn't one
+                        "[" & Id & "]: " & 
+                        If(
+                            // If there is no URL
+                            IsBlank(Url),
+                            If(
+                                Left(Name,8) = "https://", 
+                                Substitute(Name, " ", "%20"),
+                                "cite:" & Id
+                            ),
+                            // Else use the returned URL Value.
+                            Url
+                        ) &
+                
+                        // Improve file name formatting
+                        " """ & 
+                
+                        // Extract the file name, remove query if present
+                        Substitute(
+                            If(
+                                Find("?", Last(Split(Name, "/")).Value) > 0,
+                                Left(Last(Split(Name, "/")).Value, Find("?", Last(Split(Name, "/")).Value) - 1),
+                                Last(Split(Name, "/")).Value
+                            ),
+                            "%20", " "
+                        )
+                
+                        &  """",
+                
+                        // Line breaks between citations
+                        Char(10) & Char(10)
+                    )
+                )
+
+            - kind: SendActivity
+              id: sendActivity_skwikk
+              activity: "{Topic.FormattedAnswer}"
+
+            - kind: EndDialog
+              id: end-topic
+              clearTopicQueue: true

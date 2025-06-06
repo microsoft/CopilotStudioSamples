@@ -3,7 +3,9 @@
 
 ## Overview
 
-This repository contains samples and artifacts for Microsoft Copilot Studio.
+This repository contains samples and artifacts for Microsoft Copilot Studio. 
+
+Older samples and labs, largely focused on Power Virtual Agents, have been moved to the [Legacy](https://github.com/microsoft/CopilotStudioSamples/tree/legacy) branch of this repo.
 
 ## Useful links for Microsoft Copilot Studio
 
@@ -14,36 +16,46 @@ This repository contains samples and artifacts for Microsoft Copilot Studio.
 | Community forum | [aka.ms/CopilotStudioCommunity](https://aka.ms/CopilotStudioCommunity) |
 | Product documentation | [aka.ms/CopilotStudioDocs](https://aka.ms/CopilotStudioDocs) |
 | Guidance documentation | [aka.ms/CopilotStudioGuidance](https://aka.ms/CopilotStudioGuidance) |
-| GitHub repository of samples | [aka.ms/CopilotStudioSamples](https://aka.ms/CopilotStudioSamples) |
-| Demo Copilot Studio | [aka.ms/CopilotStudioDemo](https://aka.ms/CopilotStudioDemo) |
 | Try Copilot Studio | [aka.ms/TryCopilotStudio](https://aka.ms/TryCopilotStudio) |
+
+## Microsoft Copilot Studio and Agents SDK links
+| Description | Link |
+| --- | --- |
+| M365 Agents SDK | Github Repo for the [M365 Agents SDK](https://aka.ms/Agents) |
+| M365 Agents SDK - C# | Github Repo for the [C# M365 Agents SDK](https://github.com/Microsoft/Agents-for-net) |
+| M365 Agents SDK - JavaScript | Github Repo for the [M365 Agents SDK](https://github.com/Microsoft/Agents-for-js) |
+| M365 Agents SDK - Python | Github Repo for the [M365 Agents SDK](https://github.com/Microsoft/Agents-for-python) |
+| Adaptive Cards | [Adaptive Cards docs and builder](https://adaptivecards.microsoft.com) |
+| Web Chat | [Web Chat Github Repo](https://github.com/microsoft/BotFramework-WebChat) |
+| Power Platform Snippets | [Copilot Studio snippets](https://github.com/pnp/powerplatform-snippets/tree/main/copilot-studio) |
+
 
 ## Samples list
 
 | Sample Name | Description | View |
 | --- | --- | --- |
-| BotConnectorApp | Demonstrates how to connect your bot to a custom app for example mobile-device app   | [View][cs#1]|
-| BuildYourOwnCanvasSamples | Demonstrates how to connect your bot to a custom canvas with various functionality | [View][cs#2] |
-| ConnectToEngagementHub | Demonstrates how to detect a handoff activity during a bot conversation and read conversation context | [View][cs#3] |
-| CustomAnalytics | This solution allows customers to create a custom Power BI dashboard on top of their copilots analytics data | [View][cs#4] |
-| HumanVerificationSample | Identify if the user on the other side is a human or a bot by sending an email to the user with a verification code | [View][cs#5] |
-| ImplementationGuide | The implementation guide document provides a framework to do a 360-degree review of a Copilot Studio project. Through probing questions, it highlights potential risks and gaps, aims at aligning the project with the product roadmap, and shares guidance, best practices and reference architecture examples | [View][cs#6] |
-| MultilingualBotSample | Sample implementation of a middleware translation relay bot to do real-time translations using Azure services | [View][cs#7] |
-| RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#8] |
-| SharePointSSOComponent | A Sharepoint component demonstrating how copilots can be deployed to SharePoint sites with SSO enabled | [View][cs#9] |
-| TestFramework | Run tests against a bot using Direct Line channel and validate that the bot works as expected | [View][cs#10] |
+| 3rdPartySSOWithOKTA | Demonstrates how to implement a seamless SSO experience with a 3rd party authentication provider   | [View][cs#1]|
+| Adaptive Card Samples | YAML sample with a dynamics Adaptive Cards (Power Fx) | [View][cs#5]|
+| ImplementationGuide | The implementation guide document provides a framework to do a 360-degree review of a Copilot Studio project. Through probing questions, it highlights potential risks and gaps, aims at aligning the project with the product roadmap, and shares guidance, best practices and reference architecture examples | [View][cs#2] |
+| Dataverse Indexer | Index the content of a SharePoint library into a Copilot Studio Agent as knowledge source files, along with citations that point to the source files in SharePoint | [View][cs#7]|
+| Load Testing | JMeter test plan to use as a starting point for load testing conversational agents built with Copilot Studio | [View][cs#8]|
+| RelayBotSample | Demonstrates how to connect your bot to existing Azure Bot Service channels | [View][cs#3] |
+| SharePointSSOComponent | A SharePoint component demonstrating how custom agents can be deployed to SharePoint sites with SSO enabled | [View][cs#4] |
+| SSOwithEntraID | Single Sign-On for Web and Entra ID | [View][cs#10] |
+| Type Ahead Suggestions | Demonstrates typeahead suggestion functionality for your custom copilot that can assist users finding things like frequently asked questions, auto correcting typos and showing a list of menu items like product names or topic names before sending a message to the copilot | [View][cs#9] |
+| WebChat Customization | Shows the Customization Options from the Azure AI Bot Services as well as some CSS to drastically change the look of your Copilot agent | [View][cs#6]|
 
 
-[cs#1]:./BotConnectorApp
-[cs#2]:./BuildYourOwnCanvasSamples
-[cs#3]:./ConnectToEngagementHub
-[cs#4]:./CustomAnalytics
-[cs#5]:./HumanVerificationSample
-[cs#6]:./ImplementationGuide
-[cs#7]:./MultilingualBotSample
-[cs#8]:./RelayBotSample
-[cs#9]:./SharePointSSOComponent
-[cs#10]:./PVATestFramework
+[cs#1]:./SSOSamples/3rdPartySSOWithOKTA
+[cs#2]:./ImplementationGuide
+[cs#3]:./RelayBotSample
+[cs#4]:./SSOSamples/SharePointSSOComponent
+[cs#5]:./AdaptiveCardSamples
+[cs#6]:./CustomExternalUI
+[cs#7]:./DataverseIndexer
+[cs#8]:./LoadTesting/JMeterMultiThreadGroup
+[cs#9]:./TypeaheadSuggestions
+[cs#10]:./SSOSamples/SSOwithEntraID
 
 ## Contributing
 
