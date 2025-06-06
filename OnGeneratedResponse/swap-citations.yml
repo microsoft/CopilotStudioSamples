@@ -2,7 +2,7 @@ kind: AdaptiveDialog
 beginDialog:
   kind: OnGeneratedResponse
   id: main
-  condition: =CountRows(System.Response.Citations)>0
+  condition: =CountRows(System.Response.Citations) > 0
   actions:
     - kind: SetVariable
       id: setVariable_wtNwaw
@@ -12,101 +12,64 @@ beginDialog:
     - kind: SetVariable
       id: setVariable_9IFwdP
       variable: Topic.CitationsSnip
-      value: |-
+      value: |
         =With(
-            {CitationsTable: System.Response.Citations},
+            { CitationsTable: System.Response.Citations },
             Concat(
                 ForAll(
-                    Sequence(CountRows(CitationsTable)),
-                    Value
-                ),
-                With(
-                    {
-                        currentRecord: Index(
-                            CitationsTable,
-                            Value
-                        )
-                    },
-                //begin logic
-                    "[" & Text(Value) & "]: " & If(
-                        IsBlank(currentRecord.Url),
+                    Sequence(CountRows(CitationsTable)) As seqItem,
+                    With(
+                        { currentRecord: Index(CitationsTable, seqItem.Value) },
+                        "[" & Text(seqItem.Value) & "]: " &
                         If(
-                            Left(
-                                currentRecord.Name,
-                                8
-                            ) = "https://",
-                            Substitute(
-                                currentRecord.Name,
-                                " ",
-                                "%20"
-                            ),
-                            Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20") &
-                            //  
+                            IsBlank(currentRecord.Url),
                             If(
-                                // check if cited source is a PDF
-                                EndsWith(currentRecord.Name,".pdf"),
-                                // add page for PDFs
-                                "#page=" & Mid(
-                                    currentRecord.Text,
-                                    Find("<page value=", currentRecord.Text
-                                    ) + Len("<page value=") + 1,
-                                    Find(
-                                        ">",
-                                        currentRecord.Text
-                                    ) - Len("<page value=")-3
+                                Left(currentRecord.Name, 8) = "https://",
+                                Substitute(currentRecord.Name, " ", "%20"),
+                                Substitute(
+                                    Topic.externalWebsiteURL & currentRecord.Name,
+                                    " ",
+                                    "%20"
+                                ) &
+                                If(
+                                    EndsWith(currentRecord.Name, ".pdf") &&
+                                    !IsBlank(currentRecord.Text) &&
+                                    Find("<page value=", currentRecord.Text) > 0,
+                                    "#page=" &
+                                    Mid(
+                                        currentRecord.Text,
+                                        Find("<page value=", currentRecord.Text) + Len("<page value="),
+                                        Find(">", currentRecord.Text) - Find("<page value=", currentRecord.Text) - Len("<page value=")
+                                    ),
+                                    ""
                                 )
                             ),
-                            //Text(currentRecord.Id)
-                        ),
-                        currentRecord.Url
-                    ) & " " & """" &
-                    Substitute(
-                        If(
-                            Find(
-                                "?",
-                                Last(
-                                    Split(
-                                        currentRecord.Name,
-                                        "/"
-                                    )
-                                ).Value
-                            ) > 0,
-                            Left(
-                                Last(
-                                    Split(
-                                        currentRecord.Name,
-                                        "/"
-                                    )
-                                ).Value,
-                                Find(
-                                    "?",
-                                    Last(
-                                        Split(
-                                            currentRecord.Name,
-                                            "/"
-                                        )
-                                    ).Value
-                                )
-                            ),
-                            Last(
-                                Split(
-                                    currentRecord.Name,
-                                    "/"
-                                )
-                            ).Value
-                        ),
-                        "%20",
-                        " "
-                    ) & """"
-                //end logic
+                            currentRecord.Url
+                        ) & " \""" &
+                        With(
+                            { nameParts: Split(currentRecord.Name, "/") },
+                            Substitute(
+                                If(
+                                    Find("?", Last(nameParts).Value) > 0,
+                                    Left(
+                                        Last(nameParts).Value,
+                                        Find("?", Last(nameParts).Value)
+                                    ),
+                                    Last(nameParts).Value
+                                ),
+                                "%20",
+                                " "
+                            )
+                        ) & "\"""
+                    )
                 ),
-                Char(10) & Char(10)
+                Char(13) & Char(10)
             )
         )
 
     - kind: SendActivity
       id: sendActivity_i4mW3G
-      activity: "{Left(System.Response.FormattedText, Find(\"[1]:\", System.Response.FormattedText) + -1) & Text(Topic.CitationsSnip)}"
+      activity: =Left(System.Response.FormattedText, Find("[1]:", System.Response.FormattedText) - 1) & Text(Topic.CitationsSnip)
 
     - kind: SetVariable
       id: setVariable_jVzQGX
