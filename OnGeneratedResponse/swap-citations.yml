@@ -56,7 +56,7 @@ beginDialog:
                                     ) - Len("<page value=")-3
                                 )
                             ),
-                            //Text(currentRecord.Id)
+                            Text(currentRecord.Id)
                         ),
                         currentRecord.Url
                     ) & " " & """" &
