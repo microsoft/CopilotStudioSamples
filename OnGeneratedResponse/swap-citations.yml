@@ -55,7 +55,7 @@ beginDialog:
                                         currentRecord.Text
                                     ) - Len("<page value=")-3
                                 )
-                            ),
+                            )
                             //Text(currentRecord.Id)
                         ),
                         currentRecord.Url
