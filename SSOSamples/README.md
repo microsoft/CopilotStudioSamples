@@ -10,8 +10,10 @@ This pattern requires the application hosting WebChat to obtain an access token 
 | SSOwithEntraID | SSO on Web with Entra ID  | [View][cs#1]|
 | 3rdPartySSOWithOKTA | Demonstrates how to implement a seamless SSO experience with a 3rd party authentication provider   | [View][cs#2]|
 | SharePointSSOComponent | A SharePoint component demonstrating how copilots can be deployed to SharePoint sites with SSO enabled | [View][cs#3] |
+| CopilotStudioChatAPI | Direct integration with Copilot Studio Chat API (experimental) using SSO and streaming responses | [View][cs#4] |
 
 
 [cs#1]:./SSOwithEntraID
 [cs#2]:./3rdPartySSOWithOKTA
 [cs#3]:./SharePointSSOComponent
+[cs#4]:./CopilotStudioChatAPI
