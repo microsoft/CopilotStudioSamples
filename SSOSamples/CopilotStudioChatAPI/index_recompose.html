@@ -16,6 +16,7 @@
       height: 100%;
       margin: 0;
       background-color: #f0f0f0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
     #webchat-container {
@@ -55,40 +56,22 @@
     }
 
     .typing-bubble {
-      background-color: #f1f1f1;
-      border-radius: 16px;
-      padding: 6px 12px;
-      margin-left: 8px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      padding: 8px 12px;
+      margin-left: 16px;
       font-size: 14px;
-      display: flex;
-      align-items: center;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      color: #242424;
+      font-style: italic;
+      border: 1px solid #e6e6e6;
+      max-width: 75%;
+      animation: blinkBubble 1.4s infinite;
     }
 
-    .typing-dot {
-      width: 6px;
-      height: 6px;
-      margin: 0 2px;
-      background-color: #666;
-      border-radius: 50%;
-      animation: blink 1.4s infinite both;
-    }
-
-    .typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes blink {
-      0%, 80%, 100% {
-        opacity: 0;
-      }
-      40% {
-        opacity: 1;
-      }
+    @keyframes blinkBubble {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
   </style>
 </head>
@@ -115,6 +98,16 @@
       scopes: ["https://api.powerplatform.com/CopilotStudio.Copilots.Invoke"]
     };
 
+    function TypingIndicator({ isTyping }) {
+      return React.createElement(
+        'div',
+        { className: `typing-indicator${isTyping ? ' active' : ''}` },
+        isTyping
+          ? React.createElement('div', { className: 'typing-bubble' }, 'Retrieving...')
+          : ''
+      );
+    }
+
     async function getToken() {
       const accounts = msalInstance.getAllAccounts();
       if (accounts.length > 0) {
@@ -122,22 +115,6 @@
       } else {
         return (await msalInstance.loginPopup({ ...loginRequest, prompt: "consent" })).accessToken;
       }
-    }
-
-    function TypingIndicator({ isTyping }) {
-      return React.createElement(
-        'div',
-        { className: `typing-indicator${isTyping ? ' active' : ''}` },
-        isTyping
-          ? React.createElement(
-              'div',
-              { className: 'typing-bubble' },
-              React.createElement('span', { className: 'typing-dot' }),
-              React.createElement('span', { className: 'typing-dot' }),
-              React.createElement('span', { className: 'typing-dot' })
-            )
-          : ''
-      );
     }
 
     async function startChat(token) {
@@ -198,10 +175,22 @@
       window.ReactDOM.render(
         React.createElement(
           window.WebChat.FluentThemeProvider,
-          {},
+          null,
           React.createElement(
             Components.Composer,
-            { directLine },
+            {
+              directLine,
+              styleOptions: {
+                backgroundColor: 'var(--colorNeutralBackground1)',
+                bubbleBackground: 'var(--colorNeutralBackground2)',
+                bubbleTextColor: 'var(--colorNeutralForeground1)',
+                bubbleFromUserBackground: 'var(--colorBrandStroke2)',
+                bubbleFromUserTextColor: 'var(--colorNeutralForeground1)',
+                timestampColor: 'var(--colorNeutralForeground3)',
+                bubbleBorderRadius: 10,
+                bubbleFromUserBorderRadius: 10,
+              }
+            },
             React.createElement(App)
           )
         ),
