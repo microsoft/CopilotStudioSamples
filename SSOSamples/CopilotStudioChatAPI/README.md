@@ -8,7 +8,7 @@ This sample demonstrates how to use the Copilot Studio Chat API to communicate w
 ## Overview
 
 This sample showcases:
-- Authentication using Microsoft Authentication Library (MSAL)
+- Single sign-on using Microsoft Authentication Library (MSAL)
 - Support for streaming responses (ChatGPT style)
 - A "Retrieving" indicator when Knowledge is invoked by the agent
 
