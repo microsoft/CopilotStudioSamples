@@ -1,153 +1,218 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Copilot Chat</title>
-    <script src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/botframework-webchat@4.18.1-main.20241015.4744d69/dist/webchat.js"></script>
-    <script
-        src="https://unpkg.com/botframework-webchat-fluent-theme@4.18.1-main.20241015.4744d69/dist/botframework-webchat-fluent-theme.production.min.js"></script>
-    <script
-        src="https://unpkg.com/copilot-studio-direct-to-engine-chat-adapter@0.0.0-main.20241022-173702.3e37c28/dist/copilot-studio-direct-to-engine-chat-adapter.production.global.js"></script>
-    <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
-    <style>
-        html,
-        body,
-        #webchat {
-            height: 100%;
-            margin: 0;
-        }
+  <meta charset="UTF-8" />
+  <title>Copilot Chat with Sendbox Pinned</title>
+  <script src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/botframework-webchat@4.18.1-main.20241015.4744d69/dist/webchat.js"></script>
+  <script src="https://unpkg.com/botframework-webchat-fluent-theme@4.18.1-main.20241015.4744d69/dist/botframework-webchat-fluent-theme.production.min.js"></script>
+  <script src="https://unpkg.com/copilot-studio-direct-to-engine-chat-adapter@0.0.0-main.20241022-173702.3e37c28/dist/copilot-studio-direct-to-engine-chat-adapter.production.global.js"></script>
+  <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        #auth-error {
-            color: #b00020;
-            background: #fff4f4;
-            padding: 1em;
-            text-align: center;
-            font-family: sans-serif;
-        }
+    #webchat-container {
+      width: 1000px;
+      height: 600px;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
 
-        #retry-auth {
-            display: block;
-            margin: 1em auto;
-            padding: 0.6em 1.2em;
-            background: #0078d4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-    </style>
+    #webchat {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
+
+    .typing-indicator {
+      min-height: 24px;
+      transition: padding 0.2s ease;
+      padding: 0;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .typing-indicator.active {
+      padding: 8px 0;
+    }
+
+    .typing-bubble {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      padding: 8px 12px;
+      margin-left: 16px;
+      font-size: 14px;
+      color: #242424;
+      font-style: italic;
+      border: 1px solid #e6e6e6;
+      max-width: 75%;
+      animation: blinkBubble 1.4s infinite;
+    }
+
+    @keyframes blinkBubble {
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div id="webchat-container">
     <div id="webchat" role="main"></div>
+  </div>
 
-    <script>
-        const msalInstance = new msal.PublicClientApplication({
-            auth: {
-                clientId: "40347a26-35bb-48f3-bdc4-7f4f209aecb1",
-                authority: "https://login.microsoftonline.com/8a235459-3d2c-415d-8c1e-e2fe133509ad",
-                redirectUri: window.location.origin
+  <script>
+    const msalInstance = new msal.PublicClientApplication({
+      auth: {
+        clientId: "YOUR_CLIENT_ID", // Replace with your Microsoft Entra application client ID
+        authority: "https://login.microsoftonline.com/YOUR_TENANT_ID", // Replace with your tenant ID
+        redirectUri: window.location.origin
+      },
+      cache: {
+        cacheLocation: "localStorage",
+        storeAuthStateInCookie: true
+      }
+    });
+
+    const loginRequest = {
+      scopes: ["https://api.powerplatform.com/CopilotStudio.Copilots.Invoke"]
+    };
+
+    function TypingIndicator({ isTyping }) {
+      return React.createElement(
+        'div',
+        { className: `typing-indicator${isTyping ? ' active' : ''}` },
+        isTyping
+          ? React.createElement('div', { className: 'typing-bubble' }, 'Retrieving...')
+          : ''
+      );
+    }
+
+    async function getToken() {
+      const accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        return (await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] })).accessToken;
+      } else {
+        return (await msalInstance.loginPopup({ ...loginRequest, prompt: "consent" })).accessToken;
+      }
+    }
+
+    async function startChat(token) {
+      const strategy = new window.CopilotStudioDirectToEngineChatAdapter.ThirdPartyPublishedBotStrategy({
+        botSchema: 'YOUR_AGENT_SCHEMA', // Replace with your Copilot Studio Agent schema name
+        environmentEndpointURL: new URL('https://YOUR_ENVIRONMENT_ENDPOINT.environment.api.powerplatform.com/'), // Replace with your Power Platform environment endpoint
+        getToken: () => token,
+        transport: 'auto'
+      });
+
+      const directLine = window.CopilotStudioDirectToEngineChatAdapter.toDirectLineJS(
+        window.CopilotStudioDirectToEngineChatAdapter.createHalfDuplexChatAdapter(strategy, { emitStartConversationEvent: true })
+      );
+
+      const { Components } = window.WebChat;
+      const { useState, useEffect } = window.React;
+
+      const App = () => {
+        const [isTyping, setIsTyping] = useState(false);
+
+        useEffect(() => {
+          const sub = directLine.activity$.subscribe(activity => {
+            if (
+              activity.type === 'event' &&
+              activity.name === 'DynamicPlanReceived' &&
+              Array.isArray(activity?.value?.steps) &&
+              activity.value.steps.some(step => step.includes('UniversalSearchTool'))
+            ) {
+              setIsTyping(true);
+            } else if (
+              activity.type === 'event' &&
+              activity.name === 'DynamicPlanStepFinished' &&
+              activity?.value?.taskDialogId === 'P:UniversalSearchTool'
+            ) {
+              setIsTyping(false);
+            }
+          });
+          return () => sub.unsubscribe();
+        }, []);
+
+        return React.createElement(
+          Components.AccessKeySinkSurface,
+          {
+            style: {
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              height: '100%'
+            }
+          },
+          React.createElement(Components.BasicToaster),
+          React.createElement(Components.BasicTranscript),
+          React.createElement(TypingIndicator, { isTyping }),
+          React.createElement(Components.BasicSendBox)
+        );
+      };
+
+      window.ReactDOM.render(
+        React.createElement(
+          window.WebChat.FluentThemeProvider,
+          null,
+          React.createElement(
+            Components.Composer,
+            {
+              directLine,
+              styleOptions: {
+                backgroundColor: 'var(--colorNeutralBackground1)',
+                bubbleBackground: 'var(--colorNeutralBackground2)',
+                bubbleTextColor: 'var(--colorNeutralForeground1)',
+                bubbleFromUserBackground: 'var(--colorBrandStroke2)',
+                bubbleFromUserTextColor: 'var(--colorNeutralForeground1)',
+                timestampColor: 'var(--colorNeutralForeground3)',
+                bubbleBorderRadius: 10,
+                bubbleFromUserBorderRadius: 10,
+              }
             },
-            cache: {
-                cacheLocation: "localStorage",
-                storeAuthStateInCookie: true
-            }
-        });
+            React.createElement(App)
+          )
+        ),
+        document.getElementById('webchat')
+      );
+    }
 
-        const loginRequest = {
-            scopes: ["https://api.powerplatform.com/CopilotStudio.Copilots.Invoke"]
-        };
-
-        async function getToken() {
-            const accounts = msalInstance.getAllAccounts();
-
-            if (accounts.length > 0) {
-                const silentRequest = {
-                    ...loginRequest,
-                    account: accounts[0]
-                };
-                const result = await msalInstance.acquireTokenSilent(silentRequest);
-                return result.accessToken;
-            } else {
-                const result = await msalInstance.loginPopup({ ...loginRequest, prompt: "consent" });
-                return result.accessToken;
-            }
-        }
-
-        function startChat(token) {
-            const strategy = new window.CopilotStudioDirectToEngineChatAdapter.ThirdPartyPublishedBotStrategy({
-                botSchema: 'cr26e_stramingResponse',
-                environmentEndpointURL: new URL('https://6cc0c98e3fe6e0d58ebaba51c9da1d.13.environment.api.powerplatform.com/'),
-                getToken: () => token,
-                transport: 'auto'
-            });
-
-            const directLine = window.CopilotStudioDirectToEngineChatAdapter.toDirectLineJS(
-                window.CopilotStudioDirectToEngineChatAdapter.createHalfDuplexChatAdapter(strategy, { emitStartConversationEvent: true })
-            );
-
-
-            const {
-                React: { createElement },
-                ReactDOM: { render },
-                WebChat: { FluentThemeProvider, ReactWebChat }
-            } = window;
-
-            const store = WebChat.createStore(
-                {},
-                ({ dispatch }) => next => action => {
-                    const { type } = action;
-
-                   
-                     console.log('Activity type:', action.payload?.activity);
-                    return next(action);
-
-                });
-
-            render(
-                createElement(FluentThemeProvider, {}, createElement(ReactWebChat, { directLine, store, locale: 'en-US' })),
-                document.getElementById('webchat')
-            );
-        }
-
-        function showError(message) {
-            let el = document.getElementById('auth-error');
-            if (!el) {
-                el = document.createElement('div');
-                el.id = 'auth-error';
-                document.body.insertBefore(el, document.getElementById('webchat'));
-            }
-            el.innerText = message;
-
-            let btn = document.getElementById('retry-auth');
-            if (!btn) {
-                btn = document.createElement('button');
-                btn.id = 'retry-auth';
-                btn.innerText = 'Retry Authentication';
-                btn.onclick = () => {
-                    el.remove();
-                    btn.remove();
-                    init();
-                };
-                el.after(btn);
-            }
-        }
-
-        async function init() {
-            try {
-                const token = await getToken();
-                startChat(token);
-            } catch (e) {
-                showError(e.message || "Authentication failed.");
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const token = await getToken();
+        startChat(token);
+      } catch (e) {
+        document.body.innerHTML = `<div style="color: red; font-family: sans-serif; padding: 1em;">Authentication failed: ${e.message}</div>`;
+      }
+    });
+  </script>
 </body>
 
 </html>
