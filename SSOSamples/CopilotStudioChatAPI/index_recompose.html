@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Copilot Chat with Recomposed Typing Indicator</title>
+  <title>Copilot Chat with Sendbox Pinned</title>
   <script src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/botframework-webchat@4.18.1-main.20241015.4744d69/dist/webchat.js"></script>
@@ -31,21 +31,64 @@
       transform: translate(-50%, -50%);
       display: flex;
       flex-direction: column;
+      justify-content: flex-end;
       overflow: hidden;
     }
 
     #webchat {
-      flex: 1;
       display: flex;
       flex-direction: column;
       height: 100%;
+      width: 100%;
     }
 
     .typing-indicator {
-      text-align: center;
-      font-style: italic;
-      color: #666;
-      padding: 8px;
+      min-height: 24px;
+      transition: padding 0.2s ease;
+      padding: 0;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .typing-indicator.active {
+      padding: 8px 0;
+    }
+
+    .typing-bubble {
+      background-color: #f1f1f1;
+      border-radius: 16px;
+      padding: 6px 12px;
+      margin-left: 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      margin: 0 2px;
+      background-color: #666;
+      border-radius: 50%;
+      animation: blink 1.4s infinite both;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+      0%, 80%, 100% {
+        opacity: 0;
+      }
+      40% {
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -82,7 +125,19 @@
     }
 
     function TypingIndicator({ isTyping }) {
-      return isTyping ? React.createElement('div', { className: 'typing-indicator' }, 'Bot is typing...') : null;
+      return React.createElement(
+        'div',
+        { className: `typing-indicator${isTyping ? ' active' : ''}` },
+        isTyping
+          ? React.createElement(
+              'div',
+              { className: 'typing-bubble' },
+              React.createElement('span', { className: 'typing-dot' }),
+              React.createElement('span', { className: 'typing-dot' }),
+              React.createElement('span', { className: 'typing-dot' })
+            )
+          : ''
+      );
     }
 
     async function startChat(token) {
@@ -97,40 +152,44 @@
         window.CopilotStudioDirectToEngineChatAdapter.createHalfDuplexChatAdapter(strategy, { emitStartConversationEvent: true })
       );
 
-      const { hooks, Components } = window.WebChat;
+      const { Components } = window.WebChat;
       const { useState, useEffect } = window.React;
 
       const App = () => {
         const [isTyping, setIsTyping] = useState(false);
 
         useEffect(() => {
-          const subscription = directLine.activity$.subscribe(activity => {
+          const sub = directLine.activity$.subscribe(activity => {
             if (
               activity.type === 'event' &&
               activity.name === 'DynamicPlanReceived' &&
               Array.isArray(activity?.value?.steps) &&
               activity.value.steps.some(step => step.includes('UniversalSearchTool'))
             ) {
-              console.log('🔵 Showing typing indicator for UniversalSearchTool');
               setIsTyping(true);
             } else if (
               activity.type === 'event' &&
               activity.name === 'DynamicPlanStepFinished' &&
               activity?.value?.taskDialogId === 'P:UniversalSearchTool'
             ) {
-              console.log('🟡 Hiding typing indicator after step finished');
               setIsTyping(false);
             }
           });
-
-          return () => subscription.unsubscribe();
+          return () => sub.unsubscribe();
         }, []);
 
         return React.createElement(
           Components.AccessKeySinkSurface,
-          { style: { flex: 1, display: 'flex', flexDirection: 'column' } },
+          {
+            style: {
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              height: '100%'
+            }
+          },
           React.createElement(Components.BasicToaster),
-          React.createElement(Components.BasicTranscript, { style: { flex: 1 } }),
+          React.createElement(Components.BasicTranscript),
           React.createElement(TypingIndicator, { isTyping }),
           React.createElement(Components.BasicSendBox)
         );
@@ -150,16 +209,14 @@
       );
     }
 
-    async function init() {
+    document.addEventListener('DOMContentLoaded', async () => {
       try {
         const token = await getToken();
         startChat(token);
       } catch (e) {
-        document.body.innerHTML = `<div style='color: red; font-family: sans-serif; padding: 1em;'>Authentication failed: ${e.message}</div>`;
+        document.body.innerHTML = `<div style="color: red; font-family: sans-serif; padding: 1em;">Authentication failed: ${e.message}</div>`;
       }
-    }
-
-    document.addEventListener('DOMContentLoaded', init);
+    });
   </script>
 </body>
 
