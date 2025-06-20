@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Copilot Chat with Recomposed Typing Indicator</title>
+  <script src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/botframework-webchat@4.18.1-main.20241015.4744d69/dist/webchat.js"></script>
+  <script src="https://unpkg.com/botframework-webchat-fluent-theme@4.18.1-main.20241015.4744d69/dist/botframework-webchat-fluent-theme.production.min.js"></script>
+  <script src="https://unpkg.com/copilot-studio-direct-to-engine-chat-adapter@0.0.0-main.20241022-173702.3e37c28/dist/copilot-studio-direct-to-engine-chat-adapter.production.global.js"></script>
+  <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    #webchat-container {
+      width: 1000px;
+      height: 600px;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #webchat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .typing-indicator {
+      text-align: center;
+      font-style: italic;
+      color: #666;
+      padding: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="webchat-container">
+    <div id="webchat" role="main"></div>
+  </div>
+
+  <script>
+    const msalInstance = new msal.PublicClientApplication({
+      auth: {
+        clientId: "40347a26-35bb-48f3-bdc4-7f4f209aecb1",
+        authority: "https://login.microsoftonline.com/8a235459-3d2c-415d-8c1e-e2fe133509ad",
+        redirectUri: window.location.origin
+      },
+      cache: {
+        cacheLocation: "localStorage",
+        storeAuthStateInCookie: true
+      }
+    });
+
+    const loginRequest = {
+      scopes: ["https://api.powerplatform.com/CopilotStudio.Copilots.Invoke"]
+    };
+
+    async function getToken() {
+      const accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        return (await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] })).accessToken;
+      } else {
+        return (await msalInstance.loginPopup({ ...loginRequest, prompt: "consent" })).accessToken;
+      }
+    }
+
+    function TypingIndicator({ isTyping }) {
+      return isTyping ? React.createElement('div', { className: 'typing-indicator' }, 'Bot is typing...') : null;
+    }
+
+    async function startChat(token) {
+      const strategy = new window.CopilotStudioDirectToEngineChatAdapter.ThirdPartyPublishedBotStrategy({
+        botSchema: 'cr26e_stramingResponse',
+        environmentEndpointURL: new URL('https://6cc0c98e3fe6e0d58ebaba51c9da1d.13.environment.api.powerplatform.com/'),
+        getToken: () => token,
+        transport: 'auto'
+      });
+
+      const directLine = window.CopilotStudioDirectToEngineChatAdapter.toDirectLineJS(
+        window.CopilotStudioDirectToEngineChatAdapter.createHalfDuplexChatAdapter(strategy, { emitStartConversationEvent: true })
+      );
+
+      const { hooks, Components } = window.WebChat;
+      const { useState, useEffect } = window.React;
+
+      const App = () => {
+        const [isTyping, setIsTyping] = useState(false);
+
+        useEffect(() => {
+          const subscription = directLine.activity$.subscribe(activity => {
+            if (
+              activity.type === 'event' &&
+              activity.name === 'DynamicPlanReceived' &&
+              Array.isArray(activity?.value?.steps) &&
+              activity.value.steps.some(step => step.includes('UniversalSearchTool'))
+            ) {
+              console.log('🔵 Showing typing indicator for UniversalSearchTool');
+              setIsTyping(true);
+            } else if (
+              activity.type === 'event' &&
+              activity.name === 'DynamicPlanStepFinished' &&
+              activity?.value?.taskDialogId === 'P:UniversalSearchTool'
+            ) {
+              console.log('🟡 Hiding typing indicator after step finished');
+              setIsTyping(false);
+            }
+          });
+
+          return () => subscription.unsubscribe();
+        }, []);
+
+        return React.createElement(
+          Components.AccessKeySinkSurface,
+          { style: { flex: 1, display: 'flex', flexDirection: 'column' } },
+          React.createElement(Components.BasicToaster),
+          React.createElement(Components.BasicTranscript, { style: { flex: 1 } }),
+          React.createElement(TypingIndicator, { isTyping }),
+          React.createElement(Components.BasicSendBox)
+        );
+      };
+
+      window.ReactDOM.render(
+        React.createElement(
+          window.WebChat.FluentThemeProvider,
+          {},
+          React.createElement(
+            Components.Composer,
+            { directLine },
+            React.createElement(App)
+          )
+        ),
+        document.getElementById('webchat')
+      );
+    }
+
+    async function init() {
+      try {
+        const token = await getToken();
+        startChat(token);
+      } catch (e) {
+        document.body.innerHTML = `<div style='color: red; font-family: sans-serif; padding: 1em;'>Authentication failed: ${e.message}</div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+
+</html>
