@@ -60,8 +60,12 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
     new Map()
   );
 
+  // Track active/busy threads in a map
+  const [processingThreads, setProcessingThreads] = useState<Map<string, boolean>>(
+    new Map([[DEFAULT_THREAD_ID, false]])
+  );
+  
   // Client state
-  const [isRunning, setIsRunning] = useState(false);
   const clientRef = useRef<CopilotStudioClient | null>(null);
   const clientInitializing = useRef<boolean>(false);
   const clientInitialized = useRef<boolean>(false);
@@ -82,6 +86,11 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
     });
   }, []);
   
+  // Helper to set a thread as processing or idle
+  const setThreadProcessing = useCallback((threadId: string, isProcessing: boolean) => {
+    setProcessingThreads(prev => new Map(prev).set(threadId, isProcessing));
+  }, []);
+  
   // Initialize a new conversation for a thread
   const initializeConversationForThread = useCallback(async (threadId: string) => {
     if (!clientRef.current || !clientInitialized.current) {
@@ -90,6 +99,9 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
 
     try {
       console.log(`Starting new conversation for thread ${threadId}...`);
+      
+      // Mark this thread as processing
+      setThreadProcessing(threadId, true);
       
       // Start a new conversation
       const activity = await clientRef.current.startConversationAsync(true);
@@ -124,8 +136,11 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
         content: ERROR_MESSAGES.CONVERSATION_START_ERROR 
       });
       return null;
+    } finally {
+      // Mark thread as no longer processing
+      setThreadProcessing(threadId, false);
     }
-  }, [addMessageToThread, setConversationIds]);
+  }, [addMessageToThread, setConversationIds, setThreadProcessing]);
 
   // Client initialization with default thread handling
   useEffect(() => {
@@ -182,6 +197,10 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
         ]);
         
         setThreads(prev => new Map(prev).set(newThreadId, []));
+        
+        // Initialize processing state for this thread
+        setProcessingThreads(prev => new Map(prev).set(newThreadId, false));
+        
         setCurrentThreadId(newThreadId);
         
         // Then initialize the conversation for this thread
@@ -227,6 +246,12 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
           return next;
         });
         
+        setProcessingThreads(prev => {
+          const next = new Map(prev);
+          next.delete(threadId);
+          return next;
+        });
+        
         // Switch to default if archiving current thread
         if (currentThreadId === threadId) {
           setCurrentThreadId(DEFAULT_THREAD_ID);
@@ -251,6 +276,12 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
           return next;
         });
         
+        setProcessingThreads(prev => {
+          const next = new Map(prev);
+          next.delete(threadId);
+          return next;
+        });
+        
         // Switch to default if deleting current thread
         if (currentThreadId === threadId) {
           setCurrentThreadId(DEFAULT_THREAD_ID);
@@ -268,7 +299,8 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
     setRegularThreads,
     setArchivedThreads,
     setThreads,
-    setConversationIds
+    setConversationIds,
+    setProcessingThreads
   ]);
 
   // Handle new message submission
@@ -278,21 +310,26 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
     }
 
     const input = message.content[0].text;
-    addMessageToThread(currentThreadId, { role: "user", content: input });
+    // Capture the thread ID at the time the message is sent
+    const threadId = currentThreadId;
+    
+    addMessageToThread(threadId, { role: "user", content: input });
 
-    setIsRunning(true);
+    // Mark this specific thread as processing
+    setThreadProcessing(threadId, true);
+    
     try {
       if (!clientRef.current) {
         throw new Error(ERROR_MESSAGES.CLIENT_NOT_INITIALIZED);
       }
 
       // Get or create conversation ID for current thread
-      let threadConversationId = conversationIds.get(currentThreadId);
+      let threadConversationId = conversationIds.get(threadId);
       
       // If no conversation exists for this thread, create one
       if (!threadConversationId) {
-        console.log(`No conversation ID for thread ${currentThreadId}, creating new conversation`);
-        const newConversationId = await initializeConversationForThread(currentThreadId);
+        console.log(`No conversation ID for thread ${threadId}, creating new conversation`);
+        const newConversationId = await initializeConversationForThread(threadId);
         
         if (!newConversationId) {
           throw new Error(ERROR_MESSAGES.CONVERSATION_FAILED);
@@ -301,7 +338,7 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
         threadConversationId = newConversationId;
       }
 
-      console.log(`Sending message for thread ${currentThreadId} with conversation ID ${threadConversationId}: "${input}"`);
+      console.log(`Sending message for thread ${threadId} with conversation ID ${threadConversationId}: "${input}"`);
       
       // Send the message to the conversation
       const activities = await clientRef.current.askQuestionAsync(input, threadConversationId);
@@ -310,7 +347,7 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
       for (const activity of activities) {
         console.log(`Received activity: ${activity.type}`, activity);
         if (activity.type === ActivityTypes.Message && activity.text) {
-          addMessageToThread(currentThreadId, { 
+          addMessageToThread(threadId, { 
             role: "assistant", 
             content: activity.text 
           });
@@ -319,31 +356,39 @@ export function CopilotStudioRuntimeProvider({ children }: { children: ReactNode
       }
 
       if (!receivedMessage) {
-        addMessageToThread(currentThreadId, { 
+        addMessageToThread(threadId, { 
           role: "assistant", 
           content: ERROR_MESSAGES.NO_RESPONSE 
         });
       }
     } catch (err) {
       console.error("Error during conversation:", err);
-      addMessageToThread(currentThreadId, { 
+      addMessageToThread(threadId, { 
         role: "assistant", 
         content: ERROR_MESSAGES.GENERAL_ERROR 
       });
     } finally {
-      setIsRunning(false);
+      // Mark the thread as no longer processing, regardless of outcome
+      setThreadProcessing(threadId, false);
     }
-  }, [currentThreadId, conversationIds, addMessageToThread, initializeConversationForThread]);
+  }, [currentThreadId, conversationIds, addMessageToThread, initializeConversationForThread, setThreadProcessing]);
 
   // Get current thread messages with memoization
   const currentMessages = useMemo(() => 
     threads.get(currentThreadId) || [], 
     [threads, currentThreadId]
   );
+  
+  // Get the running state for the currently visible thread
+  const isCurrentThreadProcessing = useMemo(() => 
+    processingThreads.get(currentThreadId) ?? false,
+    [processingThreads, currentThreadId]
+  );
 
   // Create runtime object with memoization
   const runtime = useExternalStoreRuntime({
-    isRunning,
+    // Only show as running if the current thread is processing
+    isRunning: isCurrentThreadProcessing,
     messages: currentMessages,
     convertMessage,
     onNew,
