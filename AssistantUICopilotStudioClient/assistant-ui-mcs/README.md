@@ -107,10 +107,10 @@ This sample showcases:
 
 ## Additional Resources
 
-- [Assistant UI Documentation](https://learn.microsoft.com/azure/ai-studio/how-to/assistant-ui)
-- [Copilot Studio Documentation](https://learn.microsoft.com/power-platform/copilot-studio/)
+- [Assistant UI Documentation](https://github.com/assistant-ui/assistant-ui)
+- [Copilot Studio Documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/)
 - [Microsoft 365 Agents SDK - NodeJS /TypeScript](https://github.com/Microsoft/Agents-for-js)
-- [Microsoft Authentication Library (MSAL)](https://learn.microsoft.com/azure/active-directory/develop/msal-overview)
+- [Microsoft Authentication Library (MSAL)](https://learn.microsoft.com/en-us/entra/identity-platform/msal-overview)
 
 ## License
 
