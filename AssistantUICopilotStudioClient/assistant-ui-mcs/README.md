@@ -109,6 +109,7 @@ This sample showcases:
 
 - [Assistant UI Documentation](https://learn.microsoft.com/azure/ai-studio/how-to/assistant-ui)
 - [Copilot Studio Documentation](https://learn.microsoft.com/power-platform/copilot-studio/)
+- [Microsoft 365 Agents SDK - NodeJS /TypeScript](https://github.com/Microsoft/Agents-for-js)
 - [Microsoft Authentication Library (MSAL)](https://learn.microsoft.com/azure/active-directory/develop/msal-overview)
 
 ## License
