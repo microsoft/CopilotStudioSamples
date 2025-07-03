@@ -1,0 +1,829 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "prefix": {
+            "type": "string",
+            "defaultValue": "wportnoy"
+        },
+        "locationsNetwork": {
+            "type": "array",
+            "defaultValue": [
+                "eastus",
+                "westus"
+            ]
+        },
+        "locationsTargets": {
+            "type": "array",
+            "defaultValue": [
+                "eastus"
+            ]
+        },
+        "locationsPolicy": {
+            "type": "array",
+            "defaultValue": [
+                "unitedstates",
+                "centraluseuap"
+            ]
+        }
+    },
+    "functions": [
+        {
+            "namespace": "ns",
+            "members": {
+                "capitalize": {
+                    "parameters": [
+                        {
+                            "name": "text",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(toUpper(first(parameters('text'))), toLower(substring(parameters('text'), 1)))]"
+                    }
+                }
+            }
+        }
+    ],
+    "variables": {
+        "locationsRegion": "[union(parameters('locationsNetwork'), parameters('locationsTargets'))]",
+        "prefixResourceGroup": "[concat(parameters('prefix'), 'NetworkIsolation')]",
+        "prefixDeployment": "[concat(parameters('prefix'), 'Deployment')]",
+        "prefixEnterprisePolicy": "[concat(parameters('prefix'), 'EnterprisePolicy')]",
+        "prefixNetworkManager": "[concat(parameters('prefix'), 'Manager')]",
+        "prefixAddressPool": "[concat(parameters('prefix'), 'Pool')]",
+        "prefixVirtualNetwork": "[concat(parameters('prefix'), 'VNet')]",
+        "prefixPeering": "[concat(parameters('prefix'), 'Peering')]",
+        "prefixSubNet": "[concat(parameters('prefix'), 'SubNet')]",
+        "prefixSubNetDelegated": "[concat(variables('prefixSubNet'), 'Delegated')]",
+        "prefixSubNetInternal": "[concat(variables('prefixSubNet'), 'Internal')]",
+        "prefixLinkScope": "[concat(parameters('prefix'), 'LinkScope')]",
+        "prefixKeyVault": "[concat(parameters('prefix'), 'KeyVault')]",
+        "prefixInsights": "[concat(parameters('prefix'), 'Insights')]",
+        "prefixInsightsWorkspace": "[concat(variables('prefixInsights'), 'Workspace')]",
+        "prefixInsightsComponent": "[concat(variables('prefixInsights'), 'Component')]",
+        "prefixEndpoint": "[concat(parameters('prefix'), 'Endpoint')]",
+        "prefixEndpointKeyVault": "[concat(variables('prefixEndpoint'), 'KeyVault')]",
+        "prefixEndpointComponent": "[concat(variables('prefixEndpoint'), 'Component')]",
+        "prefixInterface": "[concat(parameters('prefix'), 'Interface')]",
+        "prefixInterfaceKeyVault": "[concat(variables('prefixInterface'), 'KeyVault')]",
+        "prefixInterfaceComponent": "[concat(variables('prefixInterface'), 'Component')]",
+        "capitalsRegion": "[map(variables('locationsRegion'), lambda('x', ns.capitalize(lambdaVariables('x'))))]",
+        "capitalsPolicy": "[map(parameters('locationsPolicy'), lambda('x', ns.capitalize(lambdaVariables('x'))))]",
+        "countRegion": "[length(variables('locationsRegion'))]",
+        "countPolicy": "[length(parameters('locationsPolicy'))]",
+        "copy": [
+            {
+                "name": "policies",
+                "count": "[length(parameters('locationsPolicy'))]",
+                "input": {
+                    "ordinal": "[copyIndex('policies')]",
+                    "location": "[parameters('locationsPolicy')[copyIndex('policies')]]",
+                    "capital": "[variables('capitalsPolicy')[copyIndex('policies')]]",
+                    "nameResourceGroup": "[concat(variables('prefixResourceGroup'), variables('capitalsPolicy')[copyIndex('policies')])]",
+                    "nameDeployment": "[concat(variables('prefixDeployment'), variables('capitalsPolicy')[copyIndex('policies')])]",
+                    "nameEnterprisePolicy": "[concat(variables('prefixEnterprisePolicy'), variables('capitalsPolicy')[copyIndex('policies')])]"
+                }
+            },
+            {
+                "name": "regions",
+                "count": "[length(variables('locationsRegion'))]",
+                "input": {
+                    "ordinal": "[copyIndex('regions')]",
+                    "location": "[variables('locationsRegion')[copyIndex('regions')]]",
+                    "capital": "[variables('capitalsRegion')[copyIndex('regions')]]",
+                    "nameResourceGroup": "[concat(variables('prefixResourceGroup'), variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameDeploymentNetwork": "[concat(variables('prefixDeployment'), 'Network', variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameDeploymentPeering": "[concat(variables('prefixDeployment'), 'Peering', variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameDeploymentTargets": "[concat(variables('prefixDeployment'), 'Targets', variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameSubNetInternal": "[concat(variables('prefixSubNetInternal'), variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameNetworkManager": "[concat(variables('prefixNetworkManager'), variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameAddressPool": "[concat(variables('prefixAddressPool'), variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameVirtualNetwork": "[concat(variables('prefixVirtualNetwork'), variables('capitalsRegion')[copyIndex('regions')])]",
+                    "prefixPeering": "[concat(variables('prefixPeering'), variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameInsightsWorkspace": "[concat(variables('prefixInsightsWorkspace'), variables('capitalsRegion')[copyIndex('regions')])]",
+                    "nameInsightsComponent": "[concat(variables('prefixInsightsComponent'), variables('capitalsRegion')[copyIndex('regions')])]",
+                    "endpointKeyVault": {
+                        "nameDeployment": "[concat(variables('prefixDeployment'), 'TargetsKeyVault', variables('capitalsRegion')[copyIndex('regions')])]",
+                        "typeResource": "Microsoft.KeyVault/vaults",
+                        "nameResource": "[concat(variables('prefixKeyVault'), variables('capitalsRegion')[copyIndex('regions')])]",
+                        "nameEndpoint": "[concat(variables('prefixEndpointKeyVault'), variables('capitalsRegion')[copyIndex('regions')])]",
+                        "nameInterface": "[concat(variables('prefixInterfaceKeyVault'), variables('capitalsRegion')[copyIndex('regions')])]",
+                        "groupIds": "vault",
+                        "nameZones": [
+                            "privatelink.vaultcore.azure.net"
+                        ]
+                    },
+                    "endpointLinkScope": {
+                        "nameDeployment": "[concat(variables('prefixDeployment'), 'TargetsLinkScope', variables('capitalsRegion')[copyIndex('regions')])]",
+                        "typeResource": "microsoft.insights/privatelinkscopes",
+                        "nameResource": "[concat(variables('prefixLinkScope'), variables('capitalsRegion')[copyIndex('regions')])]",
+                        "nameEndpoint": "[concat(variables('prefixEndpointComponent'), variables('capitalsRegion')[copyIndex('regions')])]",
+                        "nameInterface": "[concat(variables('prefixInterfaceComponent'), variables('capitalsRegion')[copyIndex('regions')])]",
+                        "groupIds": "azuremonitor",
+                        "nameZones": [
+                            "privatelink.monitor.azure.com",
+                            "privatelink.blob.core.windows.net",
+                            "privatelink.ods.opinsights.azure.com",
+                            "privatelink.oms.opinsights.azure.com",
+                            "privatelink.agentsvc.azure-automation.net"
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "cross",
+                "count": "[mul(variables('countRegion'), variables('countPolicy'))]",
+                "input": {
+                    "region": "[variables('regions')[mod(copyIndex('cross'), variables('countRegion'))]]",
+                    "policy": "[variables('policies')[div(copyIndex('cross'), variables('countRegion'))]]",
+                    "nameSubNetDelegated": "[concat(variables('prefixSubNetDelegated'), variables('capitalsPolicy')[div(copyIndex('cross'), variables('countRegion'))], variables('capitalsRegion')[mod(copyIndex('cross'), variables('countRegion'))])]"
+                }
+            }
+        ],
+        "networks": "[filter(variables('regions'), lambda('x', contains(parameters('locationsNetwork'), lambdaVariables('x').location)))]",
+        "countNetworks": "[length(variables('networks'))]",
+        "targets": "[filter(variables('regions'), lambda('x', contains(parameters('locationsTargets'), lambdaVariables('x').location)))]",
+        "crossPolicy": "[groupBy(variables('cross'), lambda('x', lambdaVariables('x').policy.location))]",
+        "crossRegion": "[groupBy(variables('cross'), lambda('x', lambdaVariables('x').region.location))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2025-04-01",
+            "copy": {
+                "name": "RegionGroupCopy",
+                "count": "[length(variables('networks'))]"
+            },
+            "name": "[variables('networks')[copyIndex()].nameResourceGroup]",
+            "location": "[variables('networks')[copyIndex()].location]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2025-04-01",
+            "dependsOn": [
+                "RegionGroupCopy"
+            ],
+            "copy": {
+                "name": "NetworkCopy",
+                "count": "[length(variables('networks'))]"
+            },
+            "name": "[variables('networks')[copyIndex()].nameDeploymentNetwork]",
+            "resourceGroup": "[variables('networks')[copyIndex()].nameResourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
+                "parameters": {
+                    "region": {
+                        "value": "[variables('networks')[copyIndex()]]"
+                    },
+                    "cross": {
+                        "value": "[variables('crossRegion')[variables('networks')[copyIndex()].location]]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "region": {
+                            "type": "object"
+                        },
+                        "cross": {
+                            "type": "array"
+                        }
+                    },
+                    "variables": {
+                        "copy": [
+                            {
+                                "name": "delegated",
+                                "count": "[length(parameters('cross'))]",
+                                "input": {
+                                    "name": "[parameters('cross')[copyindex('delegated')].nameSubNetDelegated]",
+                                    "delegations": [
+                                        {
+                                            "name": "Microsoft.PowerPlatform/enterprisePolicies",
+                                            "properties": {
+                                                "serviceName": "Microsoft.PowerPlatform/enterprisePolicies"
+                                            },
+                                            "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "subnets",
+                                "count": "[length(variables('both'))]",
+                                "input": {
+                                    "name": "[variables('both')[copyIndex('subnets')].name]",
+                                    "properties": {
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "numberOfIpAddresses": "256",
+                                                "pool": {
+                                                    "id": "[resourceId('Microsoft.Network/networkManagers/ipamPools', parameters('region').nameNetworkManager, parameters('region').nameAddressPool)]"
+                                                }
+                                            }
+                                        ],
+                                        "defaultOutboundAccess": false,
+                                        "privateEndpointNetworkPolicies": "Disabled",
+                                        "privateLinkServiceNetworkPolicies": "Enabled",
+                                        "delegations": "[variables('both')[copyIndex('subnets')].delegations]"
+                                    }
+                                }
+                            }
+                        ],
+                        "internals": [
+                            {
+                                "name": "[parameters('region').nameSubNetInternal]",
+                                "delegations": []
+                            }
+                        ],
+                        "both": "[concat(variables('delegated'), variables('internals'))]"
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/networkManagers",
+                            "apiVersion": "2024-05-01",
+                            "name": "[parameters('region').nameNetworkManager]",
+                            "location": "[parameters('region').location]",
+                            "properties": {
+                                "networkManagerScopes": {
+                                    "subscriptions": [
+                                        "[subscription().id]"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/ipamPools",
+                            "apiVersion": "2024-05-01",
+                            "name": "[concat(parameters('region').nameNetworkManager, '/', parameters('region').nameAddressPool)]",
+                            "location": "[parameters('region').location]",
+                            "properties": {
+                                "addressPrefixes": [
+                                    "[concat('10.', parameters('region').ordinal, '.0.0/16')]"
+                                ]
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('region').nameNetworkManager)]"
+                            ]
+                        },
+                        {
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "apiVersion": "2024-05-01",
+                            "name": "[parameters('region').nameVirtualNetwork]",
+                            "location": "[parameters('region').location]",
+                            "properties": {
+                                "addressSpace": {
+                                    "ipamPoolPrefixAllocations": [
+                                        {
+                                            "numberOfIpAddresses": "65536",
+                                            "pool": {
+                                                "id": "[resourceId('Microsoft.Network/networkManagers/ipamPools', parameters('region').nameNetworkManager, parameters('region').nameAddressPool)]"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "subnets": "[variables('subnets')]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers/ipamPools', parameters('region').nameNetworkManager, parameters('region').nameAddressPool)]"
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2025-04-01",
+            "dependsOn": [
+                "NetworkCopy"
+            ],
+            "copy": {
+                "name": "PeeringCopy",
+                "count": "[length(variables('networks'))]"
+            },
+            "name": "[variables('networks')[copyIndex()].nameDeploymentPeering]",
+            "resourceGroup": "[variables('networks')[copyIndex()].nameResourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
+                "parameters": {
+                    "networks": {
+                        "value": "[variables('networks')]"
+                    },
+                    "sourceOrdinal": {
+                        "value": "[copyIndex()]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "networks": {
+                            "type": "array"
+                        },
+                        "sourceOrdinal": {
+                            "type": "int"
+                        }
+                    },
+                    "variables": {
+                        "source": "[parameters('networks')[parameters('sourceOrdinal')]]"
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                            "apiVersion": "2024-05-01",
+                            "copy": {
+                                "name": "PeerCopy",
+                                "count": "[length(parameters('networks'))]"
+                            },
+                            "condition": "[not(equals(parameters('sourceOrdinal'), copyIndex()))]",
+                            "name": "[concat(variables('source').nameVirtualNetwork, '/',  variables('source').prefixPeering, parameters('networks')[copyIndex()].capital)]",
+                            "location": "[variables('source').location]",
+                            "properties": {
+                                "remoteVirtualNetwork": {
+                                    "id": "[resourceId(subscription().subscriptionId, parameters('networks')[copyIndex()].nameResourceGroup, 'Microsoft.Network/virtualNetworks', parameters('networks')[copyIndex()].nameVirtualNetwork)]"
+                                },
+                                "allowVirtualNetworkAccess": true,
+                                "allowForwardedTraffic": false,
+                                "allowGatewayTransit": false,
+                                "useRemoteGateways": false
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2025-04-01",
+            "name": "[variables('targets')[copyIndex()].nameDeploymentTargets]",
+            "dependsOn": [
+                "NetworkCopy"
+            ],
+            "copy": {
+                "name": "TargetsCopy",
+                "count": "[length(variables('targets'))]"
+            },
+            "resourceGroup": "[variables('targets')[copyIndex()].nameResourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
+                "parameters": {
+                    "region": {
+                        "value": "[variables('targets')[copyIndex()]]"
+                    },
+                    "networks": {
+                        "value": "[variables('networks')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "region": {
+                            "type": "object"
+                        },
+                        "networks": {
+                            "type": "array"
+                        },
+                        "tenantId": {
+                            "type": "string",
+                            "defaultValue": "[subscription().tenantId]"
+                        },
+                        "roleDefinitionId": {
+                            "type": "string",
+                            "defaultValue": "4633458b-17de-408a-b874-0445c86b69e6"
+                        },
+                        "principalType": {
+                            "type": "string",
+                            "defaultValue": "User"
+                        },
+                        "principalId": {
+                            "type": "string",
+                            "defaultValue": "[deployer().objectId]"
+                        }
+                    },
+                    "variables": {
+                        "endpoints": [
+                            "[parameters('region').endpointKeyVault]",
+                            "[parameters('region').endpointLinkScope]"
+                        ]
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.KeyVault/vaults",
+                            "apiVersion": "2024-11-01",
+                            "name": "[parameters('region').endpointKeyVault.nameResource]",
+                            "location": "[parameters('region').location]",
+                            "properties": {
+                                "sku": {
+                                    "family": "A",
+                                    "name": "Standard"
+                                },
+                                "tenantId": "[parameters('tenantId')]",
+                                "networkAcls": {
+                                    "bypass": "None",
+                                    "defaultAction": "Deny",
+                                    "ipRules": [],
+                                    "virtualNetworkRules": []
+                                },
+                                "accessPolicies": [],
+                                "enabledForDeployment": false,
+                                "enabledForDiskEncryption": false,
+                                "enabledForTemplateDeployment": false,
+                                "enableSoftDelete": true,
+                                "softDeleteRetentionInDays": 90,
+                                "enableRbacAuthorization": true,
+                                "publicNetworkAccess": "Disabled"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.KeyVault/vaults/secrets",
+                            "apiVersion": "2024-11-01",
+                            "name": "[concat(parameters('region').endpointKeyVault.nameResource, '/name')]",
+                            "location": "[parameters('region').location]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.KeyVault/vaults', parameters('region').endpointKeyVault.nameResource)]"
+                            ],
+                            "properties": {
+                                "attributes": {
+                                    "enabled": true
+                                },
+                                "contentType": "NotASecret",
+                                "value": "NotASecret"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "comments": "this is the latest non-preview API version",
+                            "apiVersion": "2022-04-01",
+                            "scope": "[format('Microsoft.KeyVault/vaults/{0}', parameters('region').endpointKeyVault.nameResource)]",
+                            "name": "[guid(parameters('roleDefinitionId'), parameters('principalType'), parameters('principalId'), resourceId('Microsoft.KeyVault/vaults', parameters('region').endpointKeyVault.nameResource))]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]",
+                                "principalType": "[parameters('principalType')]",
+                                "principalId": "[parameters('principalId')]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.KeyVault/vaults', parameters('region').endpointKeyVault.nameResource)]"
+                            ]
+                        },
+                        {
+                            "type": "Microsoft.OperationalInsights/workspaces",
+                            "apiVersion": "2025-02-01",
+                            "name": "[parameters('region').nameInsightsWorkspace]",
+                            "location": "[parameters('region').location]",
+                            "properties": {
+                                "sku": {
+                                    "name": "pergb2018"
+                                },
+                                "retentionInDays": 30,
+                                "features": {
+                                    "legacy": 0,
+                                    "searchVersion": 1,
+                                    "enableLogAccessUsingOnlyResourcePermissions": true
+                                },
+                                "workspaceCapping": {
+                                    "dailyQuotaGb": -1
+                                },
+                                "publicNetworkAccessForIngestion": "Disabled",
+                                "publicNetworkAccessForQuery": "Disabled"
+                            }
+                        },
+                        {
+                            "type": "microsoft.insights/components",
+                            "comments": "this is the latest non-preview API version",
+                            "apiVersion": "2020-02-02",
+                            "name": "[parameters('region').nameInsightsComponent]",
+                            "location": "[parameters('region').location]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('region').nameInsightsWorkspace)]"
+                            ],
+                            "kind": "web",
+                            "properties": {
+                                "Application_Type": "web",
+                                "Flow_Type": "Redfield",
+                                "RetentionInDays": 90,
+                                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('region').nameInsightsWorkspace)]",
+                                "IngestionMode": "LogAnalytics",
+                                "publicNetworkAccessForIngestion": "Disabled",
+                                "publicNetworkAccessForQuery": "Disabled"
+                            }
+                        },
+                        {
+                            "type": "microsoft.insights/privatelinkscopes",
+                            "comments": "this is the latest non-preview API version",
+                            "apiVersion": "2021-09-01",
+                            "name": "[parameters('region').endpointLinkScope.nameResource]",
+                            "location": "global",
+                            "properties": {
+                                "accessModeSettings": {
+                                    "exclusions": [],
+                                    "queryAccessMode": "PrivateOnly",
+                                    "ingestionAccessMode": "PrivateOnly"
+                                }
+                            }
+                        },
+                        {
+                            "type": "microsoft.insights/privatelinkscopes/scopedresources",
+                            "comments": "this is the latest non-preview API version",
+                            "apiVersion": "2021-09-01",
+                            "name": "[concat(parameters('region').endpointLinkScope.nameResource, '/', parameters('region').nameInsightsWorkspace)]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('region').nameInsightsWorkspace)]"
+                            ],
+                            "properties": {
+                                "linkedResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('region').nameInsightsWorkspace)]"
+                            }
+                        },
+                        {
+                            "type": "microsoft.insights/privatelinkscopes/scopedresources",
+                            "comments": "this is the latest non-preview API version",
+                            "apiVersion": "2021-09-01",
+                            "name": "[concat(parameters('region').endpointLinkScope.nameResource, '/', parameters('region').nameInsightsComponent)]",
+                            "dependsOn": [
+                                "[resourceId('microsoft.insights/components', parameters('region').nameInsightsComponent)]"
+                            ],
+                            "properties": {
+                                "linkedResourceId": "[resourceId('microsoft.insights/components', parameters('region').nameInsightsComponent)]"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2025-04-01",
+                            "copy": {
+                                "name": "EndpointCopy",
+                                "count": "[length(variables('endpoints'))]"
+                            },
+                            "name": "[variables('endpoints')[copyIndex()].nameDeployment]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.KeyVault/vaults', parameters('region').endpointKeyVault.nameResource)]",
+                                "[resourceId('microsoft.insights/privatelinkscopes', parameters('region').endpointLinkScope.nameResource)]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "expressionEvaluationOptions": {
+                                    "scope": "Inner"
+                                },
+                                "parameters": {
+                                    "region": {
+                                        "value": "[parameters('region')]"
+                                    },
+                                    "endpoint": {
+                                        "value": "[variables('endpoints')[copyIndex()]]"
+                                    },
+                                    "networks": {
+                                        "value": "[parameters('networks')]"
+                                    }
+                                },
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {
+                                        "region": {
+                                            "type": "object"
+                                        },
+                                        "endpoint": {
+                                            "type": "object"
+                                        },
+                                        "networks": {
+                                            "type": "array"
+                                        }
+                                    },
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateEndpoints",
+                                            "apiVersion": "2024-05-01",
+                                            "name": "[parameters('endpoint').nameEndpoint]",
+                                            "location": "[parameters('region').location]",
+                                            "dependsOn": [],
+                                            "properties": {
+                                                "privateLinkServiceConnections": [
+                                                    {
+                                                        "name": "[parameters('endpoint').nameEndpoint]",
+                                                        "properties": {
+                                                            "privateLinkServiceId": "[resourceId(parameters('endpoint').typeResource, parameters('endpoint').nameResource)]",
+                                                            "groupIds": [
+                                                                "[parameters('endpoint').groupIds]"
+                                                            ]
+                                                        }
+                                                    }
+                                                ],
+                                                "manualPrivateLinkServiceConnections": [],
+                                                "customNetworkInterfaceName": "[parameters('endpoint').nameInterface]",
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('region').nameVirtualNetwork, parameters('region').nameSubNetInternal)]"
+                                                },
+                                                "ipConfigurations": [],
+                                                "customDnsConfigs": []
+                                            }
+                                        },
+                                        {
+                                            "type": "Microsoft.Resources/deployments",
+                                            "apiVersion": "2025-04-01",
+                                            "dependsOn": [],
+                                            "copy": {
+                                                "name": "ZoneCopy",
+                                                "count": "[length(parameters('endpoint').nameZones)]"
+                                            },
+                                            "name": "[take(concat(parameters('endpoint').nameDeployment, parameters('endpoint').nameZones[copyIndex()]), 64)]",
+                                            "properties": {
+                                                "mode": "Incremental",
+                                                "expressionEvaluationOptions": {
+                                                    "scope": "Inner"
+                                                },
+                                                "parameters": {
+                                                    "nameZone": {
+                                                        "value": "[parameters('endpoint').nameZones[copyIndex()]]"
+                                                    },
+                                                    "networks": {
+                                                        "value": "[parameters('networks')]"
+                                                    }
+                                                },
+                                                "template": {
+                                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                                    "contentVersion": "1.0.0.0",
+                                                    "parameters": {
+                                                        "nameZone": {
+                                                            "type": "string"
+                                                        },
+                                                        "networks": {
+                                                            "type": "array"
+                                                        }
+                                                    },
+                                                    "variables": {},
+                                                    "resources": [
+                                                        {
+                                                            "type": "Microsoft.Network/privateDnsZones",
+                                                            "apiVersion": "2024-06-01",
+                                                            "name": "[parameters('nameZone')]",
+                                                            "location": "global",
+                                                            "properties": {}
+                                                        },
+                                                        {
+                                                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                                                            "apiVersion": "2024-06-01",
+                                                            "copy": {
+                                                                "name": "ZoneLink",
+                                                                "count": "[length(parameters('networks'))]"
+                                                            },
+                                                            "name": "[concat(parameters('nameZone'), '/', parameters('networks')[copyIndex()].nameVirtualNetwork)]",
+                                                            "location": "global",
+                                                            "dependsOn": [
+                                                                "[resourceId('Microsoft.Network/privateDnsZones', parameters('nameZone'))]"
+                                                            ],
+                                                            "properties": {
+                                                                "registrationEnabled": false,
+                                                                "resolutionPolicy": "Default",
+                                                                "virtualNetwork": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, parameters('networks')[copyIndex()].nameResourceGroup, 'Microsoft.Network/virtualNetworks', parameters('networks')[copyIndex()].nameVirtualNetwork)]"
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                                            "apiVersion": "2024-05-01",
+                                            "name": "[concat(parameters('endpoint').nameEndpoint, '/default')]",
+                                            "dependsOn": [
+                                                "ZoneCopy",
+                                                "[resourceId('Microsoft.Network/privateEndpoints', parameters('endpoint').nameEndpoint)]"
+                                            ],
+                                            "properties": {
+                                                "copy": [
+                                                    {
+                                                        "name": "privateDnsZoneConfigs",
+                                                        "count": "[length(parameters('endpoint').nameZones)]",
+                                                        "input": {
+                                                            "name": "[replace(parameters('endpoint').nameZones[copyIndex('privateDnsZoneConfigs')], '.', '-')]",
+                                                            "properties": {
+                                                                "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('endpoint').nameZones[copyIndex('privateDnsZoneConfigs')])]"
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2025-04-01",
+            "copy": {
+                "name": "PolicyGroupCopy",
+                "count": "[length(variables('policies'))]"
+            },
+            "name": "[variables('policies')[copyIndex()].nameResourceGroup]",
+            "location": "[first(variables('locationsRegion'))]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2025-04-01",
+            "dependsOn": [
+                "PolicyGroupCopy",
+                "NetworkCopy"
+            ],
+            "copy": {
+                "name": "PolicyCopy",
+                "count": "[length(variables('policies'))]"
+            },
+            "name": "[variables('policies')[copyIndex()].nameDeployment]",
+            "resourceGroup": "[variables('policies')[copyIndex()].nameResourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
+                "parameters": {
+                    "policy": {
+                        "value": "[variables('policies')[copyIndex()]]"
+                    },
+                    "cross": {
+                        "value": "[variables('crossPolicy')[variables('policies')[copyIndex()].location]]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "policy": {
+                            "type": "object"
+                        },
+                        "cross": {
+                            "type": "array"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.PowerPlatform/enterprisePolicies",
+                            "comments": "this is the latest non-preview API version",
+                            "apiVersion": "2020-10-30-preview",
+                            "name": "[parameters('policy').nameEnterprisePolicy]",
+                            "location": "[parameters('policy').location]",
+                            "kind": "NetworkInjection",
+                            "properties": {
+                                "networkInjection": {
+                                    "copy": [
+                                        {
+                                            "name": "virtualNetworks",
+                                            "count": "[length(parameters('cross'))]",
+                                            "input": {
+                                                "id": "[resourceId(subscription().subscriptionId, parameters('cross')[copyIndex('virtualNetworks')].region.nameResourceGroup, 'Microsoft.Network/virtualNetworks', parameters('cross')[copyIndex('virtualNetworks')].region.nameVirtualNetwork)]",
+                                                "subnet": {
+                                                    "name": "[parameters('cross')[copyIndex('virtualNetworks')].nameSubNetDelegated]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "policies": {
+            "type": "array",
+            "value": "[variables('policies')]"
+        },
+        "regions": {
+            "type": "array",
+            "value": "[variables('regions')]"
+        },
+        "cross": {
+            "type": "array",
+            "value": "[variables('cross')]"
+        },
+        "crossPolicy": {
+            "type": "object",
+            "value": "[variables('crossPolicy')]"
+        },
+        "crossRegion": {
+            "type": "object",
+            "value": "[variables('crossRegion')]"
+        }
+    }
+}
