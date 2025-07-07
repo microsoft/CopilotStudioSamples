@@ -4,6 +4,9 @@ WebChat supports sharing a user's access token over Direct Line. This allows the
 
 This pattern requires the application hosting WebChat to obtain an access token using a library like MSAL (or equivalent for non-Entra providers), and post it over Direct Line.
 
+> [!IMPORTANT]
+> AI-generated answers from SharePoint and Graph Connector data sources are not available to Guest users in SSO-enabled apps.
+
 
 | Sample Name | Description | View |
 | --- | --- | --- |
