@@ -11,7 +11,7 @@ This code sample demonstrates how to create a SharePoint SPFx component which is
 >   - **SharePoint Pay As You Go (PayG)** is enabled in the **Microsoft Admin Center (MAC)** for the user's tenant, **and**
 >   - A **billing capability** (either **prepaid messages** or **PayG**) is configured for the agent's environment in the **Power Platform Admin Center (PPAC)**.
 > 
-> 👉 Learn more: [Add a Copilot Studio bot to SharePoint](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint)
+> 👉 Learn more: [Publish an agent to SharePoint](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint)
 
 ## Getting Started
 
