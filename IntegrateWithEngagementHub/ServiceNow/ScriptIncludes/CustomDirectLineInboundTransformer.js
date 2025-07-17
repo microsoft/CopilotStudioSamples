@@ -17,7 +17,7 @@ CustomDirectLineInboundTransformer.prototype = Object.extendsObject(
         var response = this._response || {};
         var activities = response.activities || [];
 
-        // Use Array.prototype.some for elegant event detection
+        // Use Array.prototype.some for event detection
         var handoffDetected = activities.some(function(activity) {
             return activity.type === "event" && activity.name === "handoff.initiate";
         });
