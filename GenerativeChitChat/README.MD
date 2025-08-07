@@ -1,32 +1,28 @@
-# AI Response Generated Citation Swap
+# AI Response Generated Chit Chat
 
-Sample solution showing how to swap the citation links when leveraging File Upload Knowledge and Generative Orchestration to point at the same documents hosted on a public website. This allow users to open and see the full document instead of just the chunk (and they can actually download it if they need). This is designed for publicly available documents who need to be indexed by Dataverse to produce the most accurate responses. 
-
-Update 6/3/2025: the citation now points to the actual page used in the response (for PDFs only)
+Sample solution showing how to provide simple chit chat capabilities to Copilot Studio without the need to enable General Knowledge.  Many makers will not want all of the general knowledge capabilities but would like to have general chit chat work within their agent.  This sample allows for you to do this without the need for General Knowledge.  It is not necessary to do this if general knowledge is on with your agent unless you want to control chit chat differently than knowledge. 
 
 ## Benefits for this approach:
-1.	Ability to scope specific documents
-1.	Better indexing to search for content and summarize answers.
-1.	Embedded [image understanding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-file-upload#annotated-image-support-preview) for PDF files.
-1.	Support for [more](https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-file-upload#supported-document-types) file types.
-1.	Support files up to 512 MB.
-1.	Clickable citations that point to the source file and the actual page number (PDFs only)
-1.	Can work unauthenticated.
-1.  Allow users to view the entire document and download it if necessary.
+1.	Ability to enable chit chat scenarios that are context aware and rich.
+1.	Maker can choose the model they want to be used for chit chat separatly from the rest of the agent.
+1.	Chit chat personality can be tuned differently than the rest of the agent allowing finer grain of control of the chit chat experience.
+1.	Chit chat will support multi-lingual scenarios natively.
+1.  Chit chat contained in a central component collection allowing for distribution centraly
 
 ## Downsides:
-1.	No role-based access control – users of the agent have access to generated answers used with content from the uploaded files.
-1.	Need to refresh the files to push updates from your website to Copilot Studio.
-1.  Files need to be named exactly the same in your website and in Copilot Studio.
-1.  Files need to all be in the same directory on your website (at least for this code sample to work).
+1.	Topic must be used for Chit Chat capability.
+1.	Prompt and Topic costs for Chit Chat experience.
+1.  Chit Chat configuration needs to be in sync with personality of agent to ensure that agent maintains tone if desired.
 
 ## Instructions:
-1.	In an agent with Generative Orchestration, upload your files to Knowledge (the exact same that are stored on your public website).
-1.  Create a new topic, switch to the code editor view and copy-paste the content of the YAML file (it should now use the trigger "AI  Response Generated").
-1.	Update the variable "externalWebsiteURL" to reflect your website URL, including the directory that contains all your documents (for example: http://www.mywebsite/upload/documents/copilot/). Save the topic.
-1.  Ask a question about your documents, once the answer is generated this new topic will swap the citations links to point at the source documents on your website (instead of showing the popup containing the chunked content).
+1.	In an agent with Generative Orchestration, in Settings on the Generative AI Tab navigate to the Knowledge section and turn off "Use general knowledge". (Optional if you only want to turn off General Knowledge but enable Chit Chat)
+1.  In Topics turn off the default topics called "Greeting" and "Thank you".
+1.	Install the solution in this GitHub Repo to get the Chit Chat component collection installed into your environment.
+1.  In the agent that you want to add chit chat to, go to Settings and then select the Component Collections tab in navigation. Then click on Available in the section for Manage component collections.  Hover over the Chit Chat component collection and click the "..." and then click "Add to agent".
+1.  Go to Topics in your agent and confirm that you see the Chit Chat topic.
+1.  Go into the Topic and click "View model details" in the Prompt and modify the prompt as you see fit for your organizational needs or select model you want to use for chit chat. (Optional)
+1.  Open Test chat and provide a chit chat that you want to talk to the agent such as "Hey, how are you today?"
 
 ## Limitations:
- - Embedded images in documents are only supported in Switzerland and the United States.
- - Files that contain encrypted content, are password-protected, or contain confidential tags, aren't supported.
- - The maximum number of files that can be included as knowledge in an agent is 500 files.
+ - Goodbye type chat needs to trigger goodbye topic to properly end the conversation
+ 
