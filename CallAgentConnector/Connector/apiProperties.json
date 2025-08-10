@@ -1,0 +1,63 @@
+{
+  "properties": {
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "identityProvider": "aad",
+          "clientId": "YOUR_CLIENT_ID",
+          "scopes": [
+            "CopilotStudio.Copilots.Invoke"
+          ],
+          "redirectMode": "GlobalPerConnector",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect/copilotstudiocat-REDIRECTURL",
+          "properties": {
+            "IsFirstParty": "False",
+            "AzureActiveDirectoryResourceId": "https://api.powerplatform.com",
+            "IsOnbehalfofLoginSupported": true
+          },
+          "customParameters": {
+            "LoginUri": {
+              "value": "https://login.microsoftonline.com"
+            },
+            "TenantId": {
+              "value": "common"
+            },
+            "ResourceUri": {
+              "value": "https://api.powerplatform.com"
+            },
+            "EnableOnbehalfOfLogin": {
+              "value": "false"
+            }
+          }
+        },
+        "uiDefinition": {
+          "displayName": "OAuth Connection",
+          "description": "OAuth Connection",
+          "constraints": {
+            "required": "true",
+            "hidden": "false"
+          }
+        }
+      },
+      "token:TenantId": {
+        "type": "string",
+        "metadata": {
+          "sourceType": "AzureActiveDirectoryTenant"
+        },
+        "uiDefinition": {
+          "constraints": {
+            "required": "false",
+            "hidden": "true"
+          }
+        }
+      }
+    },
+    "iconBrandColor": "#007ee5",
+    "capabilities": [],
+    "scriptOperations": [],
+    "publisher": "",
+    "stackOwner": "",
+    "policyTemplateInstances": []
+  }
+}
