@@ -43,8 +43,8 @@ export async function SyncToAsyncService(request: HttpRequest, context: Invocati
         const settings: ConnectionSettings = {
             environmentId: body.environmentId,
             agentIdentifier: body.agentIdentifier,
-            tenantId: '', // You may need to extract this from the token or pass it as a parameter
-            appClientId: '' // Not needed when using a provided bearer token
+            tenantId: '', // Not needed as token is passed as a parameter
+            appClientId: '' // Not needed as token is passed as a parameter
         };
 
         // Create Copilot Studio client with the bearer token from header
@@ -119,3 +119,4 @@ app.http('SyncToAsyncService', {
     authLevel: 'anonymous',
     handler: SyncToAsyncService
 });
+
