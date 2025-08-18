@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "dynamics-live-chat-sso-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/dynamicsLiveChatSso/DynamicsLiveChatSsoWebPart.js",
+          "manifest": "./src/webparts/dynamicsLiveChatSso/DynamicsLiveChatSsoWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "DynamicsLiveChatSsoWebPartStrings": "lib/webparts/dynamicsLiveChatSso/loc/{locale}.js"
+  }
+}
