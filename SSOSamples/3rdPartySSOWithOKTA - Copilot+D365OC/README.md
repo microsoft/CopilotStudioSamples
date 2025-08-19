@@ -236,48 +236,48 @@ Follow the demo steps below to test SSO flow -
 Step 1: <em> Go to `https://[Default domain]`. . Log in using Okta Credentials. </em>
 
 <p  align="center">
-<img  src="/images/Step1GotoToLogin.png"  alt="Go to `https://[Default domain]`"  width="800px">
+<img  src="images/Step1GotoToLogin.png"  alt="Go to `https://[Default domain]`"  width="800px">
 <br>
 </p>
 
 Step 2: <em> Verify login. Logout button would be visible.</em>
 
 <p  align="center">
-<img  src="/images/Step2SignedIn.png"  alt="Verify login. Logout button would be visible."  width="800px">
+<img  src="images/Step2SignedIn.png"  alt="Verify login. Logout button would be visible."  width="800px">
 <br>
 </p>
 
 Step 3: <em> Once logged in; click on the chat widget top open. </em>
 
 <p  align="center">
-<img  src="/images/Step3OpenChatWidget.png"  alt="Once logged in; click on the chat widget top open."  width="800px">
+<img  src="images/Step3OpenChatWidget.png"  alt="Once logged in; click on the chat widget top open."  width="800px">
 <br>
 </p> 
 
 Step 4: <em> Agent displays Okta identification message with username.  This step confirm Copilot Studio authentication. </em>
 
 <p  align="center">
-<img  src="/images/Step4LoggedIn.png"  alt="Agent displays Okta identification message with username.  This step confirm Copilot Studio authentication."  width="800px">
+<img  src="images/Step4LoggedIn.png"  alt="Agent displays Okta identification message with username.  This step confirm Copilot Studio authentication."  width="800px">
 <br>
 </p>
 
 Step 5: <em> Type `Escalate` in chat window to transfer chat to D365 Omnichannel. </em>
 
 <p  align="center">
-<img  src="/images/Step5Escalate.png"  alt="Type `Escalate` in chat window to transfer chat to D365 Omnichannel. "  width="800px">
+<img  src="images/Step5Escalate.png"  alt="Type `Escalate` in chat window to transfer chat to D365 Omnichannel. "  width="800px">
 <br>
 </p>
 
 Step 6: <em> Open Omnichannel for Customer Service console in D365 Service. A chat equest notification pops with username.  This step confirm D365 Omnichannel authentication.  </em>
 
 <p  align="center">
-<img  src="/images/Step7Escalate.png"  alt="Open Omnichannel for Customer Service console in D365 Service. A chat equest notification pops with username.  This step confirm D365 Omnichannel authentication.  "  width="800px">
+<img  src="images/Step7Escalate.png"  alt="Open Omnichannel for Customer Service console in D365 Service. A chat equest notification pops with username.  This step confirm D365 Omnichannel authentication.  "  width="800px">
 <br>
 </p>
 
 Step 7: <em> Click on accept button. Chat window opens up with Okta username for Copilot & D365 Omnichannel. </em>
 
 <p  align="center">
-<img  src="/images/Step8Final.png"  alt="Click on accept button. Chat window opens up with Okta username for Copilot & D365 Omnichannel."  width="800px">
+<img  src="images/Step8Final.png"  alt="Click on accept button. Chat window opens up with Okta username for Copilot & D365 Omnichannel."  width="800px">
 <br>
 </p>
