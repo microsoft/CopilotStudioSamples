@@ -137,7 +137,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
  1. Open browser and type in URL `https://<Default domain>/publickey`. The browser should display public key definition. 
 
 <p  align="center">
-<img  src="/images/PublicKey.png"  alt="Open browser and type in URL `https://<Default domain>/publickey`. The browser should display public key definition."  width="600px">
+<img  src="images/PublicKey.png"  alt="Open browser and type in URL `https://<Default domain>/publickey`. The browser should display public key definition."  width="600px">
 <br>
 </p>
  
