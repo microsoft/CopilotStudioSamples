@@ -182,7 +182,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
   > In addition, the token is **not** validated by Copilot till it is used e.g.to cal an API. 
   > Authentication flow works as long as Copilot Studio receives the token. 
   
-  > [!OPTIONAL] Steps [5], [6] are to be followed **only** when implementing pass-through pattern pattern.
+  > [!IMPORTANT] Steps [5], [6] are to be followed **only** when implementing pass-through pattern pattern.
  
  5. Copy YAML code from /copilot/SingIn - Pass Through Pattern Flow.YAML file and paste in the code editor. Save topic.
  
@@ -194,7 +194,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
  > the authenticated user, such as their identity, attributes etc.). 
  > The authentication flow validates the token at the time of SSO. 
  
- > [!OPTIONAL] Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
+ > [!IMPORTANT] Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
  
  7. Copy YAML code from /COPILOT/SingIn - Introspection Flow.YAML file and paste in the code editor.
  
