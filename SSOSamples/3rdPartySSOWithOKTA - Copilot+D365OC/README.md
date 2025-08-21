@@ -187,7 +187,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
  
  6. Publish the agent.
  
- ##### Use introspection API. <span style="color:red"> OPTIONAL</span>
+ ##### Use introspection API. [!NOTE] OPTIONAL
  > [!IMPORTANT] 
  > In this pattern, the token is sent to Copilot Studio. The Copilot Studio calls the Idp instrspection API to validate the token and get the Idp payload (typically includes information about 
  > the authenticated user, such as their identity, attributes etc.). 
