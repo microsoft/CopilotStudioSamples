@@ -81,6 +81,7 @@
                 oktaToken = oktaSignIn.authClient.getAccessToken();
             }, function (error) {
                 console.log('User is not authenticated - rendering the login widget first');
+                document.getElementById("soc-lcw-container").style.visibility = 'hidden';
                 oktaSignIn.showSignInToGetTokens({
                     el: '#okta-signin-container'
                 }).then(function (tokens) {
