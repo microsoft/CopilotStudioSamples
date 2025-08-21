@@ -174,24 +174,29 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
    
  3. In the Copilot Studio **Topics** select **System**. Click on **Sign In** topic. 
     
- 4. Click on **More** and select **Open code editor**. 
-   
- > [!IMPORTANT] This SSO pattern will work for Copilots Studio as **pass-through pattern** where only the token (not the payload) is sent to Copilot Studio and the token 
- > is **not** validated by Copilot till it is used. So, authentication flow works as long as Copilot Studio receives the token. To validate the token and get the payload details, 
- > the alternative is to call Idp/Okta introspection API.   
+ 4. Click on **More** and select **Open code editor**.  
  
  ##### Use pass-through pattern. 
+  > [!IMPORTANT] 
+  > In this pattern, only the token and not the Idp payload (typically includes information about the authenticated user, such as their identity, attributes etc.) is sent to Copilot Studio. 
+  > In addition, the token is **not** validated by Copilot till it is used e.g.to cal an API. 
+  > Authentication flow works as long as Copilot Studio receives the token. 
+  > [!OPTIONAL] Steps [5], [6] are to be followed **only** when implementing pass-through pattern pattern.
  
  5. Copy YAML code from /copilot/SingIn - Pass Through Pattern Flow.YAML file and paste in the code editor. Save topic.
  
  6. Publish the agent.
  
  ##### Use introspection API. 
- > [!OPTIONAL] Steps [5], [6], [7] are to be followed **only** when implementing introspection API pattern.
+ > [!IMPORTANT] 
+ > In this pattern, the token is sent to Copilot Studio. The Copilot Studio calls the Idp instrspection API to validate the token and get the Idp payload (typically includes information about 
+ > the authenticated user, such as their identity, attributes etc.). 
+ > The authentication flow validates the token at the time of SSO. 
+ > [!OPTIONAL] Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
  
- 5. Copy YAML code from /COPILOT/SingIn - Introspection Flow.YAML file and paste in the code editor.
+ 7. Copy YAML code from /COPILOT/SingIn - Introspection Flow.YAML file and paste in the code editor.
  
- 6. Replac the following placeholder in the code. Save topic.
+ 8. Replac the following placeholder in the code. Save topic.
 
 | Placeholder | Value |
    |--|--|
@@ -199,7 +204,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
    | Env.cat_OktaValidationURI)| `{yourOktaAuthServer}/v1/introspect`|
    | Env.cat_OktaClientId| Client ID of Okta app noted above.|
 
- 7. Publish the agent.
+ 9. Publish the agent.
 
 ### Update constants in the sample app:
 
