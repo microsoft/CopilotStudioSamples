@@ -27,18 +27,17 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 1. Deploy sample app to Azure.
 2. Create an OKTA developer account, or use an existing one
 3. Create a new app integration in OKTA.
-5. Configure the default access policy in the OTKA authorization server.
-6. Setup manual authentication in Copilot Studio and D365 Omnichannel.
-7. Update constants in the sample app. 
-8. Redeploy sample app to Azure.
+4. Setup manual authentication in Copilot Studio and D365 Omnichannel.
+5. Update constants in the sample app. 
+6. Redeploy sample app to Azure.
 
 > Replace  `<>`  with your appropriate values.</em>
 
 ## Detailed instructions
 
-### Deploy sample app to Azure:
+### 1. Deploy sample app to Azure:
 
-1. Navigate to your project directory.
+ 1. Navigate to your project directory.
  
      `cd <your-project-folder>` 
  
@@ -75,10 +74,10 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 
 9. Verify **Status = Running** on the **Overview** page. Copy the `Default domain` from the detail page. 
 
-### Create an OKTA developer account:
+### 2. Create an OKTA developer account:
 1. Sign up for an [OKTA developer account](https://developer.okta.com/signup/)
 
-### Create a new app integration in OKTA:
+### 3. Create a new app integration in OKTA:
 
 1. Sign in to the OKTA admin dashboard. 
 	- Note the URL **https://{your OKTA domain}-admin.okta.com/**.
@@ -109,7 +108,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 
 11. Verify that CORS has been enabled for your base URL. On the same API page, under the ***Trusted Origins*** tab, base URL of the app i.e. `https://<Default domain>` should appear under ***Trusted Origins*** with CORS and -   Redirect enabled. In case base URL is missing, add the URL i.e. `https://<Default domain>` with CORS and Redirect enabled.
 
-### Setup manual authentication in Copilot Studio and D365 Omnichannel:
+### 4. Setup manual authentication in Copilot Studio and D365 Omnichannel:
 
 > This section assumes that [Copilot handoff to Dynamics 365 Customer Service](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-hand-off-omnichannel?tabs=webApp) is configured.
 
@@ -209,7 +208,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 
  9. Publish the agent.
 
-### Update constants in the sample app:
+### 5. Update constants in the sample app:
 
 1. Update sample app constants in `views/chatwidget.html.env` file. Save the file after updates.
 
@@ -230,7 +229,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
    | OKTA_REDIRECT_URI| `https://<Default domain>`|
    | OKTA_AUTHORIZATION_SERVER| `default` |
 
-### Redeploy updated sample app to Azure:
+### 6. Redeploy updated sample app to Azure:
 
 1. Navigate to your project directory.
  
