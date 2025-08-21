@@ -164,7 +164,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 
  1. In the Copilot Studio **Settings** select **Security**. Set  **Authentication** to **Authenticate manually**. 
  
- 2. Provide the following information on the **Authentication** page:
+ 2. Provide the following information on the **Authentication** page and click Save:
    
    | Application Property | Value |
    |--|--|
@@ -172,19 +172,32 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
    | Service provider| Generic OAuth 2|
    | All other values| String - `placeholder`|
    
- 3. This SSO pattern will work for copilots as a pass-through pattern, in which the token is sent to Copilot Studio, but not validated, it will even work when no values are provided for an authentication provider. 
+ 3. In the Copilot Studio **Topics** select **System**. Click on **Sign In** topic. 
+    
+ 4. Click on **More** and select **Open code editor**. 
+   
+ > [!IMPORTANT] This SSO pattern will work for Copilots Studio as **pass-through pattern** where only the token (not the payload) is sent to Copilot Studio and the token 
+ > is **not** validated by Copilot till it is used. So, authentication flow works as long as Copilot Studio receives the token. To validate the token and get the payload details, 
+ > the alternative is to call Idp/Okta introspection API.   
  
- 4. Create a new topic Validate Token from code in file `/copilot/Validate Token.yaml`.
+ ##### Use pass-through pattern. 
  
- 5. Provide the following placeholder and save topic.
+ 5. Copy YAML code from /copilot/SingIn - Pass Through Pattern Flow.YAML file and paste in the code editor. Save topic.
+ 
+ 6. Publish the agent.
+ 
+ ##### Use introspection API. 
+ > [!OPTIONAL] Steps [5], [6], [7] are to be followed **only** when implementing introspection API pattern.
+ 
+ 5. Copy YAML code from /COPILOT/SingIn - Introspection Flow.YAML file and paste in the code editor.
+ 
+ 6. Replac the following placeholder in the code. Save topic.
 
 | Placeholder | Value |
    |--|--|
-   | OktaValidationURL | `https://{yourOktaDomain}/oauth2/` |
-   | OktaValidationURI| `{yourOktaAuthServer}/v1/introspect`|
-   | OktaClientId| Client ID of Okta app noted above.|
-
- 6. Edit system topic `Sign in`. At the end of the topic, add a `redirect` node to topic `Validate Token`.
+   | Env.cat_OktaValidationURL | `https://{yourOktaDomain}/oauth2/` |
+   | Env.cat_OktaValidationURI)| `{yourOktaAuthServer}/v1/introspect`|
+   | Env.cat_OktaClientId| Client ID of Okta app noted above.|
 
  7. Publish the agent.
 
