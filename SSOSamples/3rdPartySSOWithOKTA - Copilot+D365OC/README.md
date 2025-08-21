@@ -181,8 +181,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
   > In this pattern, only the token and not the Idp payload (typically includes information about the authenticated user, such as their identity, attributes etc.) is sent to Copilot Studio. 
   > In addition, the token is **not** validated by Copilot till it is used e.g.to cal an API. 
   > Authentication flow works as long as Copilot Studio receives the token. 
-  
-  > [!IMPORTANT] Steps [5], [6] are to be followed **only** when implementing pass-through pattern pattern.
+  > Steps [5], [6] are to be followed **only** when implementing pass-through pattern pattern.
  
  5. Copy YAML code from /copilot/SingIn - Pass Through Pattern Flow.YAML file and paste in the code editor. Save topic.
  
@@ -193,8 +192,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
  > In this pattern, the token is sent to Copilot Studio. The Copilot Studio calls the Idp instrspection API to validate the token and get the Idp payload (typically includes information about 
  > the authenticated user, such as their identity, attributes etc.). 
  > The authentication flow validates the token at the time of SSO. 
- 
- > [!IMPORTANT] Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
+ > Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
  
  7. Copy YAML code from /COPILOT/SingIn - Introspection Flow.YAML file and paste in the code editor.
  
