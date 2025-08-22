@@ -320,7 +320,7 @@ Step 5: <em> Agent displays Okta identification message with **username** of the
 <br>
 </p>
 
-Step 6: <em> Type `Escalate` in chat window to transfer chat to D365 Omnichannel. </em>
+Step 6: <em> Type `i want to talk to an agent` in chat window to transfer chat to D365 Omnichannel. </em>
 
 <p  align="center">
 <img  src="images/Step5Escalate.png"  alt="Type `Escalate` in chat window to transfer chat to D365 Omnichannel. "  width="800px">
