@@ -13,10 +13,10 @@ Chat Widget -->> Okta: 2. Send authentication challenge.
 Okta-->> Chat Widget: 3. Return access token.
 Chat Widget -->> Copilot Studio: 4. Send access token.
 Note right of Copilot Studio: 5. [OPTIONAL] Validate token using <br/>retrospection endpoint. <br/>.
-Copilot Studio -->> 3rd Party Suystems: 6. Access token authenticates users.
-Note left of Chat Widget: 7. Sign token <br/>with private key. <br/>.
-Chat Widget -->> D365 Omnichannel: 8. Send signed access token.
-Note right of D365 Omnichannel: 9. Validates token <br/>with public key. <br/>.
+Copilot Studio -->> 3rd Party Systems: 6. Access token authenticates users.
+Note left of Chat Widget: 7. Sign JWT token <br/>with private key. <br/>.
+Chat Widget -->> D365 Omnichannel: 8. Send signed JWT token.
+Note right of D365 Omnichannel: 9. Validates JWT token <br/>with public key. <br/>.
 D365 Omnichannel -->> Chat Widget: 10. Return auth confirmation.
 ```
 ## Getting started
@@ -209,7 +209,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
  
  ##### Use pass-through pattern. 
   > [!TIP] 
-  > In this pattern, only the token and not the Idp payload (typically includes information about the authenticated user, such as their identity, attributes etc.) is sent to Copilot Studio. 
+  > In this pattern, only the token and not the JWT payload (typically includes information about the authenticated user, such as their identity, attributes etc.) is sent to Copilot Studio. 
   > In addition, the token is **not** validated by Copilot till it is used e.g.to cal an API. 
   > Authentication flow works as long as Copilot Studio receives the token. 
  
@@ -222,7 +222,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
  > **OPTIONAL** - Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
  
  > [!TIP] 
- > In this pattern, the token is sent to Copilot Studio. The Copilot Studio calls the Idp instrspection API to validate the token and get the Idp payload (typically includes information about 
+ > In this pattern, the token is sent to Copilot Studio. The Copilot Studio calls the Idp instrspection API to validate the token and get the JWT payload (typically includes information about 
  > the authenticated user, such as their identity, attributes etc.). 
  > The authentication flow validates the token at the time of SSO. 
  
