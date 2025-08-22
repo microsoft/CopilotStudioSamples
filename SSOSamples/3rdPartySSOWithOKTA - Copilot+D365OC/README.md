@@ -13,7 +13,7 @@ Note left of Chat Widget: 1. Client side Okta <br/>Authentication widget <br/>.
 Chat Widget -->> Okta: 2. Send authentication challenge.
 Okta-->> Chat Widget: 3. Return access token.
 Chat Widget -->> Copilot Studio: 4. Send access token.
-Note right of Copilot Studio: 5. [OPTIONAL] Validate token using <br/>retrospection endpoint. <br/>.
+Note right of Copilot Studio: 5. [OPTIONAL] Validate token <br/>using retrospection endpoint. <br/>.
 Copilot Studio -->> 3rd Party Systems: 6. Access token authenticates users.
 Note left of Chat Widget: 7. Sign JWT token <br/>with private key. <br/>.
 Chat Widget -->> D365 Omnichannel: 8. Send signed JWT token.
