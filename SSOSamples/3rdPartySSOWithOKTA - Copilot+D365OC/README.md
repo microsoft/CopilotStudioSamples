@@ -41,7 +41,6 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
      `cd <your-project-folder>` 
  
 2. Open the project director in VS Code. 
-
 	<p  align="center">
 	<img  src="images/1-OpenFolder.png"  alt="Open the project director in VS Code."  width="800px">
 	<br>
