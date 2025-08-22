@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+    <CustomAction
+        Title="SidebarAgent"
+        Location="ClientSideExtension.ApplicationCustomizer"
+        ClientSideComponentId="4c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2"
+        ClientSideComponentProperties="">
+    </CustomAction>
+</Elements>

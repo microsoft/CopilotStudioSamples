@@ -1,0 +1,19 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.17.0",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "sidebar-agent",
+    "libraryId": "54cbba6a-2459-43a9-80a4-bc0675a81ac0",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "sidebar-agent",
+    "solutionShortDescription": "sidebar-agent description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "extension",
+    "extensionType": "ApplicationCustomizer"
+  }
+}
