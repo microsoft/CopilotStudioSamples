@@ -12,8 +12,7 @@ Note left of Chat Widget: 1. Client side Okta <br/>Authentication widget <br/>.
 Chat Widget -->> Okta: 2. Send authentication challenge.
 Okta-->> Chat Widget: 3. Return access token.
 Chat Widget -->> Copilot Studio: 4. Send access token.
-Note left of Copilot Studio: 5. Validates token by<br/> retrospection end point, <br/>.
-Copilot Studio -->> Chat Widget: 6. Return auth confirmation.
+Note left of Copilot Studio: 5. [OPTIONAL] Validates token by<br/> retrospection end point, <br/>.
 Note left of Chat Widget: 7. Sign token <br/>with private key. <br/>.
 Chat Widget -->> D365 Omnichannel: 8. Send signed access token.
 Note right of D365 Omnichannel: 7. Validates token <br/>with public key. <br/>.
@@ -42,7 +41,6 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
      `cd <your-project-folder>` 
  
 2. Open the project director in VS Code. 
-
 	<p  align="center">
 	<img  src="images/1-OpenFolder.png"  alt="Open the project director in VS Code."  width="600px">
 	<br>
@@ -145,9 +143,10 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 > This section assumes that [Copilot handoff to Dynamics 365 Customer Service](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-hand-off-omnichannel?tabs=webApp) is configured.
 
 #### Public Key / Private Key Setup:
-> <em> This sample app comes with pre configured public/private keys. This step is optional if self generated keys are not required. </em>
+ > [!NOTE] 
+ > **OPTIONAL** - This sample app comes with pre configured public/private keys. This step is optional if self generated keys are not required. 
 
-1. Install [Git Bash](https://www.atlassian.com/git/tutorials/git-bash) on your machine.
+ 1. Install [Git Bash](https://www.atlassian.com/git/tutorials/git-bash) on your machine.
  
  2. Generate a private key by running the command on git bash. 
  
@@ -161,7 +160,7 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
  
 	 `openssl rsa -pubout -in private_key.pem -out public_key.pem`
 	 
-6. Rename the file `public.key` and save the file in `/keys` project folder. 
+ 6. Rename the file `public.key` and save the file in `/keys` project folder. 
 
 #### D365 Omnichannel:
 
@@ -220,13 +219,12 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
  
  ##### Use introspection API. 
  > [!NOTE] 
- > OPTIONAL
+ > **OPTIONAL** - Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
  
  > [!TIP] 
  > In this pattern, the token is sent to Copilot Studio. The Copilot Studio calls the Idp instrspection API to validate the token and get the Idp payload (typically includes information about 
  > the authenticated user, such as their identity, attributes etc.). 
  > The authentication flow validates the token at the time of SSO. 
- > Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
  
  7. Copy YAML code from `/copilot/SingIn - Introspection Flow.YAML` file and paste in the code editor.
  
