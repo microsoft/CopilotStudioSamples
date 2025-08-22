@@ -30,7 +30,7 @@
         let oktaSignIn;
         let oktaToken;
         const botTokenUrl = "https://4107ffcb4d1ce0adb962846b6eb233.0f.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr097_vineetKaulAgent/directline/token?api-version=2022-03-01-preview"
-        const defaultdomain = "https://vseopenairesourcegroupapp.azurewebsites.net"
+        const defaultdomain = "https://copilot-d365-gqh5b8fwfnepdbdv.westus-01.azurewebsites.net"
         const clientId = "0oasew2r50h7dVgeC697"
         const baseUrl = "https://trial-5352495.okta.com"
         let signInIds = []; // Array to track authenticated sign-in cards
@@ -53,9 +53,9 @@
 
         window.addEventListener("lcw:onMaximize", function handleWidgetMaximizeEvent(){ // Handle the live chat widget maximize event
             console.log("Widget maximized");
-            if (oktaToken === undefined) {
-                console.log("Okta token is not defined.");
-                //Microsoft.Omnichannel.LiveChatWidget.SDK.closeChat();
+            if (oktaToken == undefined) {
+                alert("User is not authenticated");
+                Microsoft.Omnichannel.LiveChatWidget.SDK.closeChat();
         }
         });
 
@@ -81,8 +81,8 @@
                 oktaToken = oktaSignIn.authClient.getAccessToken();
             }, function (error) {
                 console.log('User is not authenticated - rendering the login widget first');
-                alert ('hello');
-                document.getElementById("oc-lcw-container").style.visibility = 'hidden';
+                //alert (document.getElementById("Microsoft_Omnichannel_LCWidget").getAttribute("data-hide-chat-button"));
+
                 oktaSignIn.showSignInToGetTokens({
                     el: '#okta-signin-container'
                 }).then(function (tokens) {
@@ -100,6 +100,9 @@
 
         window.addEventListener("lcw:ready", function signInOmnichannel() {
             console.log("LCW Ready triggered----");
+            setTimeout(function() {
+                //your code to be executed after 5 seconds
+            }, 5000);
             Microsoft.Omnichannel.LiveChatWidget.SDK.closeChat();
             window.Microsoft.Omnichannel.LiveChatWidget.SDK.setBotAuthTokenProvider(async (botTokenUrl, callback) => {
             const urlSearchParams = new URLSearchParams(botTokenUrl);
