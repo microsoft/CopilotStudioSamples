@@ -29,14 +29,15 @@
     <script>
         let oktaSignIn;
         let oktaToken;
-        const botTokenUrl = "https://4107ffcb4d1ce0adb962846b6eb233.0f.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr097_vineetKaulAgent/directline/token?api-version=2022-03-01-preview"
-        const defaultdomain = "https://copilot-d365-gqh5b8fwfnepdbdv.westus-01.azurewebsites.net"
-        const clientId = "0oasew2r50h7dVgeC697"
-        const baseUrl = "https://trial-5352495.okta.com"
+        let botTokenUrl = "";
+        let defaultdomain = "";
+        let clientId = "";
+        let baseUrl = "";
         let signInIds = []; // Array to track authenticated sign-in cards
         var auth = {};
         const appName = "My Awesome App";
 
+        getPrivateData();
         // Sign out and redirect to sign out page
         function signOut() {
             oktaSignIn.authClient.signOut({
@@ -172,6 +173,31 @@
         xhttp.setRequestHeader("Authorization", "Bearer " + oktaToken);
         xhttp.send();
     };
+
+        // Example using Fetch API in client-side JavaScript
+    async function getPrivateData() {
+        try {
+            const response = await fetch('/constants', { 
+                method: 'GET',
+            });
+
+            if (!response.ok) {
+                // Handle unauthorized access or other errors
+                console.error('Failed to fetch private data:', response.statusText);
+                return;
+            }
+
+            const data = await response.json();
+            botTokenUrl = data.botTokenUrl;
+            defaultdomain = data.defaultdomain;
+            clientId = data.clientId;
+            baseUrl = data.baseUrl;
+            console.log('Private data received:', data);
+
+        } catch (error) {
+            console.error('Error fetching private data:', error);
+        }
+    }
 
     async function renderChatWidget() {
         document.getElementById('chat-container').style.visibility = 'visible';

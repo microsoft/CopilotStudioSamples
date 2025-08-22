@@ -6,12 +6,14 @@ app.use(express.json());
 
 const publicRouter = require('./routes/publickey');
 const privateRouter = require('./routes/privatekey');
+const privateRouterConst = require('./routes/constants');
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/publickey', publicRouter);
 app.use('/privatekey', privateRouter);
+app.use('/constants', privateRouterConst);
 
 app.get("/", (req, res) => {
     //res.send("Hello, World");

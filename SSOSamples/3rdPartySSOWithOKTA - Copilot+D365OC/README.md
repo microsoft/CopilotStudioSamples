@@ -2,7 +2,8 @@
 
 # Unified SSO with Copilot Agent and D365 Omnichannel
 
-This sample app demonstrates unified SSO with Copilot Agent and D365 Omnichannel using a 3rd party authentication provider.  
+This sample app demonstrates unified SSO with Copilot Agent and D365 Omnichannel using a 3rd party authentication provider. 
+*Use Case:* C2 get authenticated to Copilot agent and D365 Omnichannel at the start of the session. C2 can get authenticated / private information from Copilot agent and continue to have secure conversation with live agent on agent handover. 
 
 ## Authentication Process
 
@@ -240,19 +241,12 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 
 ### 5. Update constants in the sample app:
 
-1. Update sample app constants in `views/chatwidget.html.env` file. Save the file after updates.
+1. Update environment variable in `.env` file in the root folder. Save the file after updates.
 
 | Placeholder | Value |
    |--|--|
-   | baseUrl| `https://{yourOktaDomain}.okta.com`|
-   | clientId| The Client ID of the OKTA application noted above.|
-   | defaultdomain| `https://<Default domain>`|
-   | botTokenUrl| In the Copilot Studio select **Channels** and **Web App**. Copy the **Connection String** value. |
-   
-2. Update environment variable in `.env` file in the root folder. Save the file after updates.
-
-| Placeholder | Value |
-   |--|--|
+   | AZURE_DEFAULT_DOMAIN| `https://<Default domain>`|
+   | COPILOT_BOT_TOKEN_URL| In the Copilot Studio select **Channels** and **Web App**. Copy the **Connection String** value. |
    | OKTA_ORG_URL| `https://{yourOktaDomain}.okta.com`|
    | OKTA_CLIENT_ID| The Client ID of the OKTA application noted above.|
    | OKTA_SCOPES| `okta.users.read`|
@@ -320,21 +314,30 @@ Step 5: <em> Agent displays Okta identification message with **username** of the
 <br>
 </p>
 
-Step 6: <em> Type `i want to talk to an agent` in chat window to transfer chat to D365 Omnichannel. </em>
+Step 6: <em> Type `i want to talk to an agent` in chat window to transfer / handover chat to D365 Omnichannel. </em>
 
 <p  align="center">
-<img  src="images/Step5Escalate.png"  alt="Type `Escalate` in chat window to transfer chat to D365 Omnichannel. "  width="800px">
+<img  src="images/Step5Escalate.png"  alt="Type `i want to talk to an agent` in chat window to transfer chat to D365 Omnichannel."  width="800px">
 <br>
 </p>
 
-Step 7: <em> Open Omnichannel for Customer Service console in D365 Service. A chat equest notification pops with **username** of the test user.  This step confirm D365 Omnichannel authentication.  </em>
+Step 7: <em> Check Live Agent is available from Presence Status. </em>
+
+<p  align="center">
+<img  src="images/CheckAgent.png"  alt="Type `i want to talk to an agent` in chat window to transfer chat to D365 Omnichannel."  width="800px">
+<br>
+</p>
+
+Step 8: <em> Open Omnichannel for Customer Service console in D365 Service. A chat request notification pops with **username** of the test user.  This step confirm D365 Omnichannel authentication.  </em>
+  > [!TIP] 
+  > Rewrite utterance `i want to talk to an agent` in chat widget if chat request notification does not come up.
 
 <p  align="center">
 <img  src="images/Step7Escalate.png"  alt="Open Omnichannel for Customer Service console in D365 Service. A chat equest notification pops with username. This step confirm D365 Omnichannel authentication.  "  width="800px">
 <br>
 </p>
 
-Step 8: <em> Click on accept button. Chat window opens up with Okta username for Copilot & D365 Omnichannel. </em>
+Step 9: <em> Click on accept button. Chat window opens up with Okta username for Copilot & D365 Omnichannel. </em>
 
 <p  align="center">
 <img  src="images/Step8Final.png"  alt="Click on accept button. Chat window opens up with Okta username for Copilot & D365 Omnichannel."  width="800px">
