@@ -13,12 +13,11 @@ Chat Widget -->> Okta: 2. Send authentication challenge.
 Okta-->> Chat Widget: 3. Return access token.
 Chat Widget -->> Copilot Studio: 4. Send access token.
 Note right of Copilot Studio: 5. [OPTIONAL] Validate token using <br/>retrospection endpoint. <br/>.
-Note left of Chat Widget: 6. Sign token <br/>with private key. <br/>.
-Chat Widget -->> D365 Omnichannel: 7. Send signed access token.
-Note right of D365 Omnichannel: 8. Validates token <br/>with public key. <br/>.
-D365 Omnichannel -->> Chat Widget: 9. Return auth confirmation.
-Copilot Studio -->> 3rd Party Suystems: 10. Access token authenticates users.
-D365 Omnichannel -->> 3rd Party Suystems: 11. Access token authenticates users.
+Copilot Studio -->> 3rd Party Suystems: 6. Access token authenticates users.
+Note left of Chat Widget: 7. Sign token <br/>with private key. <br/>.
+Chat Widget -->> D365 Omnichannel: 8. Send signed access token.
+Note right of D365 Omnichannel: 9. Validates token <br/>with public key. <br/>.
+D365 Omnichannel -->> Chat Widget: 10. Return auth confirmation.
 ```
 ## Getting started
 
