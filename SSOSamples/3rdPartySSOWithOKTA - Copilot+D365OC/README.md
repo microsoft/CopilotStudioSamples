@@ -212,7 +212,6 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
   > In this pattern, only the token and not the Idp payload (typically includes information about the authenticated user, such as their identity, attributes etc.) is sent to Copilot Studio. 
   > In addition, the token is **not** validated by Copilot till it is used e.g.to cal an API. 
   > Authentication flow works as long as Copilot Studio receives the token. 
-  > Steps [5], [6] are to be followed **only** when implementing pass-through pattern pattern.
  
  5. Copy YAML code from `/copilot/SingIn - Pass Through Pattern Flow.YAML` file and paste in the code editor. Save topic.
  
