@@ -37,42 +37,74 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 
 ### 1. Deploy sample app to Azure:
 
- 1. Navigate to your project directory.
+1. Navigate to your project directory.
  
      `cd <your-project-folder>` 
  
- 2. Initialize the local Git repository using the command.
+2. Open the project director in VS Code. 
 
-	`git clone <repository_url>`
+	<p  align="center">
+	<img  src="images/1-OpenFolder.png"  alt="Open the project director in VS Code."  width="600px">
+	<br>
+	</p> 
  
- 3. Log in to Azure CLI. The steps assumes and active subscription and resource group `<myResourceGroup>`.
+3. In Command Bar, select `Show and Run Commands`. 
 
-	`az login` 
+	<p  align="center">
+	<img  src="images/2-ShowRunCommand.png"  alt="In Command Bar, select `Show and Run Commands`."  width="600px">
+	<br>
+	</p> 
  
- 4. Deploy the sample app to Azure using Azure CLI commands. 
-	- Create a App Service Plan in Azure:
+4. In Command Bar, select `AppCenter > Create New App`. 
+
+	<p  align="center">
+	<img  src="images/3-CreateNewApp.png"  alt="In Command Bar, select `AppCenter > Create New App`."  width="600px">
+	<br>
+	</p> 
 	
-		`az appservice plan create --name <myAppServicePlan> --resource-group <myResourceGroup> --sku <sku> --location <location>` 
+5. In Command Bar, enter the name of app and clict Enter. 
 
-	> **Example:** az appservice plan create --name myAppServicePlan --resource-group myResourceGroup --sku P0v3 --location "West US"
+	<p  align="center">
+	<img  src="images/3-SelectName.png"  alt="In Command Bar, enter the name of app and clict Enter."  width="600px">
+	<br>
+	</p> 	
 
-	- Create a Web App. Use the App Service Plan created in the previous step in the --name parameter:
+6. In Command Bar, select location of the app resource. 
+
+	<p  align="center">
+	<img  src="images/4-SelectLocation.png"  alt="In Command Bar, select location of the app resource."  width="600px">
+	<br>
+	</p> 	
 	
-		 `az webapp create --name <myWebapp> --resource-group <myResourceGroup> --plan <myAppServicePlan>
-` 
+7. In Command Bar, select `Node 22 LTS` as runtime stack. 
 
-	> **Example:**  az webapp create --name  myWebapp --resource-group  myResourceGroup --plan  myAppServicePlan
+	<p  align="center">
+	<img  src="images/5-SelectRuntime.png"  alt="In Command Bar, select `Node 22 LTS` as runtime stack."  width="600px">
+	<br>
+	</p> 	
 
-	- Deploy code from repository. Use the Web App name created in the previous step in the --name parameter  		
+8. In Command Bar, select pricing tier and click enter.
+
+	<p  align="center">
+	<img  src="images/6-SelectPricing.png"  alt="In Command Bar, select pricing tier."  width="600px">
+	<br>
+	</p> 
 	
-		` az webapp deployment source config --name <myWebapp> --resource-group <myResourceGroup> --repo-url <repository_url> --branch master --manual-integration`
+8. Confirm successful app creation.
 
-	> **Example:** az webapp deployment source config --name myWebapp --resource-group myResourceGroup --repo-url <repository_url> --branch master --manual-integration
+	<p  align="center">
+	<img  src="images/7-ConfirmSuccess.png"  alt="Confirm successful app creation."  width="600px">
+	<br>
+	</p> 	
+	
+ 9. Login into [Azure Portal](https://portal.azure.com/). Search for app created in the previous step and go to **Overview** page. 
 
+ 10. Verify **Status = Running** on the **Overview** page. Copy the `Default domain` from the detail page. 
  
-8. Login into [Azure Portal](https://portal.azure.com/). Search for app created in the previous step and go to **Overview** page. 
-
-9. Verify **Status = Running** on the **Overview** page. Copy the `Default domain` from the detail page. 
+ <p  align="center">
+ 	<img  src="images/8-DefaultDomain.png"  alt="Copy the `Default domain` from the detail page."  width="600px">
+ 	<br>
+	</p> 	
 
 ### 2. Create an OKTA developer account:
 1. Sign up for an [OKTA developer account](https://developer.okta.com/signup/)
@@ -234,20 +266,20 @@ To run this sample app with end-to-end SSO flow with OKTA, you will need to:
 1. Navigate to your project directory.
  
      `cd <your-project-folder>` 
-     
-2. Source the project to local git.
+ 
+2. Open the project director in VS Code. 
 
-	` az webapp deployment source config-local-git --name <myWebapp>  --resource-group <myResourceGroup>`
+	<p  align="center">
+	<img  src="images/1-OpenFolder.png"  alt="Open the project director in VS Code."  width="600px">
+	<br>
+	</p> 
       
-4. Create a zip file for deployment.
+4. Click `Deploy to web app`.
 
-	` Compress-Archive -Path * -DestinationPath deployment\deployment.zip`
-
-5. Confirm that file `deployment.zip` is created in the `/deployment` folder.
-
-6. Redeploy sample app to Azure.
-
-	` az webapp deployment source config-zip --resource-group <myResourceGroup> --name <myWebapp> --src deployment\deployment.zip`
+	<p  align="center">
+		<img  src="images/9-Deploy.png"  alt="Click `Deploy to web app`."  width="600px">
+		<br>
+	</p> 
   
 ### Test the SSO flow:
 
