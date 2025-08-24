@@ -10,8 +10,8 @@ const { BasicWebChat, Composer } = Components;
 export interface IChatProps {
   appClientId: string;
   tenantId: string;
-  environmentId: string;
-  agentIdentifier: string;
+  environmentId?: string;
+  agentIdentifier?: string;
   directConnectUrl?: string;
   showTyping?: boolean;
   currentUserLogin?: string;
@@ -22,7 +22,7 @@ export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
   const [connection, setConnection] = useState<CopilotStudioWebChatConnection | null>(null);
   const [error, setError] = useState<string | undefined>();
 
-  const ready = appClientId && tenantId && environmentId && agentIdentifier;
+  const ready = appClientId && tenantId && (directConnectUrl || (environmentId && agentIdentifier));
 
   useEffect(() => {
     if (!ready) return;
@@ -37,9 +37,9 @@ export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
       const settings = new ConnectionSettings({
         appClientId,
         tenantId,
-        environmentId,
-        agentIdentifier,
-        directConnectUrl
+        environmentId: environmentId || '',
+        agentIdentifier: agentIdentifier || '',
+        directConnectUrl: directConnectUrl || ''
       });
       const client = new CopilotStudioClient(settings, token);
       const webchatSettings = { showTyping: showTyping !== false };
@@ -59,7 +59,7 @@ export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
   }, [ready, appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping, currentUserLogin]);
 
   if (!ready) {
-    return <div style={{ padding: 16 }}>Configure appClientId, tenantId, environmentId and agentIdentifier in the manifest properties.</div>;
+    return <div style={{ padding: 16 }}>Configure appClientId, tenantId, and either directConnectUrl or (environmentId and agentIdentifier) in the manifest properties.</div>;
   }
   if (error) {
     return <div style={{ padding: 16, color: 'red' }}>Error: {error}</div>;

@@ -19,8 +19,8 @@ const LOG_SOURCE: string = 'SidebarAgentApplicationCustomizer';
 export interface ISidebarAgentApplicationCustomizerProperties {
   appClientId: string;
   tenantId: string;
-  environmentId: string;
-  agentIdentifier: string;
+  environmentId?: string;
+  agentIdentifier?: string;
   directConnectUrl?: string;
   showTyping?: boolean;
 }
@@ -58,6 +58,21 @@ class SidebarAgentComponent extends React.Component<{ properties: ISidebarAgentA
 
   public render(): React.ReactElement {
     const { isPanelOpen } = this.state;
+    
+    // Validate properties
+    const hasRequiredProps = this.props.properties.appClientId && 
+                           this.props.properties.tenantId && 
+                           (this.props.properties.directConnectUrl || 
+                            (this.props.properties.agentIdentifier && this.props.properties.environmentId));
+    
+    if (!hasRequiredProps) {
+      return (
+        <div style={{ padding: '10px', background: '#f3f2f1', color: '#d83b01' }}>
+          <strong>Configuration Error:</strong> Missing required properties. Please configure appClientId, tenantId, and either directConnectUrl OR both agentIdentifier and environmentId.
+        </div>
+      );
+    }
+    
     return (
       <div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '4px 12px', background: '#0fa781' }}>
@@ -132,6 +147,19 @@ export default class SidebarAgentApplicationCustomizer
 
   public onInit(): Promise<void> {
     Log.info(LOG_SOURCE, `Initialized ${strings.Title}`);
+    
+    // Validate required properties
+    if (!this.properties.appClientId || !this.properties.tenantId) {
+      Log.error(LOG_SOURCE, new Error('appClientId and tenantId are required properties.'));
+      return Promise.reject('Missing required properties: appClientId and tenantId');
+    }
+    
+    // Validate that either directConnectUrl OR (agentIdentifier AND environmentId) are provided
+    if (!this.properties.directConnectUrl && (!this.properties.agentIdentifier || !this.properties.environmentId)) {
+      Log.error(LOG_SOURCE, new Error('Either directConnectUrl OR both agentIdentifier and environmentId must be provided.'));
+      return Promise.reject('Missing required properties: Either provide directConnectUrl OR both agentIdentifier and environmentId');
+    }
+    
     this.context.placeholderProvider.changedEvent.add(this, this._renderPlaceholders);
     this._renderPlaceholders();
     return Promise.resolve();
