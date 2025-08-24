@@ -3,6 +3,7 @@ import { PublicClientApplication, InteractionRequiredAuthError } from '@azure/ms
 export interface IAuthSettings {
   appClientId: string;
   tenantId: string;
+  currentUserLogin?: string;
 }
 
 export async function acquireToken (settings: IAuthSettings): Promise<string | undefined> {
@@ -15,34 +16,71 @@ export async function acquireToken (settings: IAuthSettings): Promise<string | u
     auth: {
       clientId: settings.appClientId,
       authority: `https://login.microsoftonline.com/${settings.tenantId}`
+    },
+    cache: {
+      cacheLocation: "localStorage"
     }
   });
 
   await msalInstance.initialize();
-  const loginRequest = {
-    scopes: ['https://api.powerplatform.com/.default'],
-    redirectUri: window.location.origin
-  };
+  const scopes = ['https://api.powerplatform.com/.default'];
 
   try {
     const accounts = await msalInstance.getAllAccounts();
-    if (accounts.length > 0) {
-      const response = await msalInstance.acquireTokenSilent({
-        ...loginRequest,
-        account: accounts[0]
-      });
+    let userAccount = null;
+
+    if (accounts === null || accounts.length === 0) {
+      console.log("No users are signed in");
+    } else if (accounts.length > 1 && settings.currentUserLogin) {
+      // Filter accounts to find matching username
+      userAccount = accounts.find(account => 
+        account.username.toLowerCase() === settings.currentUserLogin?.toLowerCase()
+      ) || null;
+    } else {
+      userAccount = accounts[0];
+    }
+
+    if (userAccount !== null) {
+      const accessTokenRequest = {
+        scopes: scopes,
+        account: userAccount
+      };
+
+      try {
+        const response = await msalInstance.acquireTokenSilent(accessTokenRequest);
+        return response.accessToken;
+      } catch (errorInternal) {
+        console.log(errorInternal);
+        // Continue to ssoSilent
+      }
+    }
+
+    // Try SSO silent
+    const ssoRequest = {
+      scopes: scopes,
+      loginHint: settings.currentUserLogin
+    };
+
+    try {
+      const response = await msalInstance.ssoSilent(ssoRequest);
       return response.accessToken;
+    } catch (silentError) {
+      console.log(silentError);
+      if (silentError instanceof InteractionRequiredAuthError) {
+        try {
+          const response = await msalInstance.loginPopup(ssoRequest);
+          return response.accessToken;
+        } catch (popupError) {
+          console.log(popupError);
+          return undefined;
+        }
+      }
+      return undefined;
     }
   } catch (e) {
-    if (!(e instanceof InteractionRequiredAuthError)) {
-      // Unexpected error
-      // eslint-disable-next-line no-console
-      console.error('Token acquisition error', e);
-      throw e;
-    }
+    // Unexpected error
+    // eslint-disable-next-line no-console
+    console.error('Token acquisition error', e);
+    return undefined;
   }
-
-  // Fall back to interactive
-  const response = await msalInstance.loginPopup(loginRequest);
-  return response.accessToken;
 }

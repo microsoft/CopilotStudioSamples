@@ -27,14 +27,25 @@ export interface ISidebarAgentApplicationCustomizerProperties {
 
 interface ISidebarAgentState {
   isPanelOpen: boolean;
+  currentUserLogin?: string;
 }
 
-class SidebarAgentComponent extends React.Component<{ properties: ISidebarAgentApplicationCustomizerProperties }, ISidebarAgentState> {
-  constructor(props: { properties: ISidebarAgentApplicationCustomizerProperties }) {
+class SidebarAgentComponent extends React.Component<{ properties: ISidebarAgentApplicationCustomizerProperties, context: any }, ISidebarAgentState> {
+  constructor(props: { properties: ISidebarAgentApplicationCustomizerProperties, context: any }) {
     super(props);
     this.state = {
-      isPanelOpen: false
+      isPanelOpen: false,
+      currentUserLogin: undefined
     };
+  }
+
+  public componentDidMount(): void {
+    // Get the current logged-in user's login name from SharePoint context
+    if (this.props.context && this.props.context.pageContext && this.props.context.pageContext.user) {
+      this.setState({
+        currentUserLogin: this.props.context.pageContext.user.loginName || this.props.context.pageContext.user.email
+      });
+    }
   }
 
   private _togglePanel = (): void => {
@@ -104,6 +115,7 @@ class SidebarAgentComponent extends React.Component<{ properties: ISidebarAgentA
               agentIdentifier={this.props.properties.agentIdentifier}
               directConnectUrl={this.props.properties.directConnectUrl}
               showTyping={this.props.properties.showTyping}
+              currentUserLogin={this.state.currentUserLogin}
             />
           </div>
         </Panel>
@@ -141,7 +153,7 @@ export default class SidebarAgentApplicationCustomizer
 
         const componentElement: React.ReactElement = React.createElement(
           SidebarAgentComponent,
-          { properties: this.properties }
+          { properties: this.properties, context: this.context }
         );
 
         ReactDOM.render(componentElement, this._reactContainer);

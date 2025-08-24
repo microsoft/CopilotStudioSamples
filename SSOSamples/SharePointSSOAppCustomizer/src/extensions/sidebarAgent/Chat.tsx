@@ -14,10 +14,11 @@ export interface IChatProps {
   agentIdentifier: string;
   directConnectUrl?: string;
   showTyping?: boolean;
+  currentUserLogin?: string;
 }
 
 export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
-  const { appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping } = props;
+  const { appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping, currentUserLogin } = props;
   const [connection, setConnection] = useState<CopilotStudioWebChatConnection | null>(null);
   const [error, setError] = useState<string | undefined>();
 
@@ -28,7 +29,7 @@ export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
 
     let cancelled = false;
     const init = async (): Promise<void> => {
-      const token = await acquireToken({ appClientId, tenantId });
+      const token = await acquireToken({ appClientId, tenantId, currentUserLogin });
       if (!token) {
         setError('Unable to acquire token.');
         return;
@@ -38,7 +39,7 @@ export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
         tenantId,
         environmentId,
         agentIdentifier,
-  directConnectUrl
+        directConnectUrl
       });
       const client = new CopilotStudioClient(settings, token);
       const webchatSettings = { showTyping: showTyping !== false };
@@ -55,7 +56,7 @@ export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
       }
     });
     return () => { cancelled = true; };
-  }, [ready, appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping]);
+  }, [ready, appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping, currentUserLogin]);
 
   if (!ready) {
     return <div style={{ padding: 16 }}>Configure appClientId, tenantId, environmentId and agentIdentifier in the manifest properties.</div>;
