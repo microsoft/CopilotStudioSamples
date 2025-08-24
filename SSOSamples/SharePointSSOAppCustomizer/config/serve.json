@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "https://m365x66364744.sharepoint.com/sites/GlobalSales/SitePages/Home.aspx",
+      "customActions": {
+        "4c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "appClientId": "APP-REGISTRATION-ID",
+            "tenantId": "TENANT-ID",
+            "environmentId": "ENV-ID",
+            "agentIdentifier": "AGENT-ID",
+            "directConnectUrl": "YOUR-DIRECT-CONNECT-URL",
+            "showTyping": true
+          }
+        }
+      }
+    },
+    "sidebarAgent": {
+      "pageUrl": "https://m365x66364744.sharepoint.com/sites/GlobalSales/SitePages/Home.aspx",
+      "customActions": {
+        "4c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "appClientId": "APP-REGISTRATION-ID",
+            "tenantId": "TENANT-ID",
+            "environmentId": "ENV-ID",
+            "agentIdentifier": "AGENT-ID",
+            "directConnectUrl": "YOUR-DIRECT-CONNECT-URL",
+            "showTyping": true
+          }
+        }
+      }
+    }
+  }
+}
