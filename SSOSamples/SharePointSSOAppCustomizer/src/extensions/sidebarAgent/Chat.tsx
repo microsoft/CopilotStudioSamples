@@ -65,7 +65,7 @@ export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
     return <div style={{ padding: 16, color: 'red' }}>Error: {error}</div>;
   }
   if (!connection) {
-    return <div style={{ padding: 16 }}>Connecting to Copilot...</div>;
+    return <div style={{ padding: 16 }}>Connecting to Copilot Studio...</div>;
   }
   return (
     <FluentThemeProvider>
