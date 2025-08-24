@@ -17,56 +17,79 @@ export interface IChatProps {
   currentUserLogin?: string;
 }
 
-export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
-  const { appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping, currentUserLogin } = props;
+const Chat: React.FC<IChatProps> = ({
+  appClientId,
+  tenantId,
+  environmentId,
+  agentIdentifier,
+  directConnectUrl,
+  showTyping = true,
+  currentUserLogin
+}) => {
   const [connection, setConnection] = useState<CopilotStudioWebChatConnection | null>(null);
-  const [error, setError] = useState<string | undefined>();
+  const [error, setError] = useState<string>();
 
-  const ready = appClientId && tenantId && (directConnectUrl || (environmentId && agentIdentifier));
+  const isConfigured = appClientId && tenantId && (directConnectUrl || (environmentId && agentIdentifier));
 
   useEffect(() => {
-    if (!ready) return;
+    if (!isConfigured) return;
 
     let cancelled = false;
-    const init = async (): Promise<void> => {
-      const token = await acquireToken({ appClientId, tenantId, currentUserLogin });
-      if (!token) {
-        setError('Unable to acquire token.');
-        return;
-      }
-      const settings = new ConnectionSettings({
-        appClientId,
-        tenantId,
-        environmentId: environmentId || '',
-        agentIdentifier: agentIdentifier || '',
-        directConnectUrl: directConnectUrl || ''
-      });
-      const client = new CopilotStudioClient(settings, token);
-      const webchatSettings = { showTyping: showTyping !== false };
-      if (!cancelled) {
-        setConnection(CopilotStudioWebChat.createConnection(client, webchatSettings));
+
+    const initializeConnection = async (): Promise<void> => {
+      try {
+        const token = await acquireToken({ appClientId, tenantId, currentUserLogin });
+        
+        if (!token) {
+          setError('Unable to acquire token.');
+          return;
+        }
+
+        const settings = new ConnectionSettings({
+          appClientId,
+          tenantId,
+          environmentId: environmentId || '',
+          agentIdentifier: agentIdentifier || '',
+          directConnectUrl: directConnectUrl || ''
+        });
+
+        const client = new CopilotStudioClient(settings, token);
+        const webchatSettings = { showTyping };
+
+        if (!cancelled) {
+          setConnection(CopilotStudioWebChat.createConnection(client, webchatSettings));
+        }
+      } catch (e) {
+        if (!cancelled) {
+          console.error('Chat initialization error:', e);
+          setError(e instanceof Error ? e.message : 'Unknown error initializing chat');
+        }
       }
     };
-    init().catch((e: unknown) => {
-      if (!cancelled) {
-        // eslint-disable-next-line no-console
-        console.error(e);
-        const message = e instanceof Error ? e.message : 'Unknown error initialising chat';
-        setError(message);
-      }
-    });
-    return () => { cancelled = true; };
-  }, [ready, appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping, currentUserLogin]);
 
-  if (!ready) {
-    return <div style={{ padding: 16 }}>Configure appClientId, tenantId, and either directConnectUrl or (environmentId and agentIdentifier) in the manifest properties.</div>;
+    initializeConnection();
+
+    return () => { 
+      cancelled = true; 
+    };
+  }, [isConfigured, appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping, currentUserLogin]);
+
+  if (!isConfigured) {
+    return (
+      <ChatMessage type="warning">
+        Configure appClientId, tenantId, and either directConnectUrl or (environmentId and agentIdentifier) in the manifest properties.
+      </ChatMessage>
+    );
   }
+
   if (error) {
-    return <div style={{ padding: 16, color: 'red' }}>Error: {error}</div>;
+    return <ChatMessage type="error">Error: {error}</ChatMessage>;
   }
+
   if (!connection) {
-    return <div style={{ padding: 16 }}>Connecting to Copilot Studio...</div>;
+    return <ChatMessage>Connecting to Copilot Studio...</ChatMessage>;
   }
+
   return (
     <FluentThemeProvider>
       <Composer 
@@ -80,6 +103,21 @@ export const Chat: React.FC<IChatProps> = (props: IChatProps) => {
       </Composer>
     </FluentThemeProvider>
   );
+};
+
+interface ChatMessageProps {
+  children: React.ReactNode;
+  type?: 'info' | 'warning' | 'error';
+}
+
+const ChatMessage: React.FC<ChatMessageProps> = ({ children, type = 'info' }) => {
+  const styles = {
+    info: { padding: 16 },
+    warning: { padding: 16, color: '#8a6d3b', backgroundColor: '#fcf8e3' },
+    error: { padding: 16, color: '#a94442', backgroundColor: '#f2dede' }
+  };
+
+  return <div style={styles[type]}>{children}</div>;
 };
 
 export default Chat;
