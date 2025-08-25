@@ -9,9 +9,9 @@ The key advantage of using the Microsoft 365 Agents SDK is its ability to connec
 
 > **Note**: This sample supersedes the [legacy SharePoint SSO Component sample](https://github.com/microsoft/CopilotStudioSamples/tree/main/SSOSamples/SharePointSSOComponent) which uses DirectLine and a modal dialog. 
 
-## Important: Consider the Built-in SharePoint Channel
-
-> **⚠️ This is an open-source reference sample only.** For production deployments we recommend using the [built-in SharePoint channel in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint#configure-the-sharepoint-channel)
+> [!IMPORTANT]
+> ⚠️ **This is an open-source reference sample only.**  
+> For production deployments, we strongly recommend using the [built-in SharePoint channel in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint#configure-the-sharepoint-channel). 
 
 ## Features of this sample
 
@@ -80,7 +80,8 @@ This step requires permissions to create application identities in your Azure te
    - Under **Implicit grant and hybrid flows**, ensure both checkboxes are **unchecked** (SPAs use PKCE flow)
    - Click **Save**
 
-   > **Important**: You must add both versions (with and without trailing slash) for EACH SharePoint site where the extension will be deployed. The authentication flow may use either format depending on the context.
+   > [!IMPORTANT] 
+   > You must add both versions (with and without trailing slash) for EACH SharePoint site where the extension will be deployed. The authentication flow may use either format depending on the context.
 
    **Example for multiple sites:**
    ```
@@ -108,7 +109,8 @@ This step requires permissions to create application identities in your Azure te
      - **Application (client) ID** (e.g., `12345678-1234-1234-1234-123456789012`)
      - **Directory (tenant) ID** (e.g., `87654321-4321-4321-4321-210987654321`)
 
-> **Important**: If you don't see "Power Platform API" in the list, you need to add it to your tenant first. See [Power Platform API Authentication](https://learn.microsoft.com/en-us/power-platform/admin/programmability-authentication) and follow Step 2 to add the API.
+> [!NOTE] 
+> If you don't see "Power Platform API" in the list, you need to add it to your tenant first. See [Power Platform API Authentication](https://learn.microsoft.com/en-us/power-platform/admin/programmability-authentication) and follow Step 2 to add the API.
 
 ### Step 2: Get Copilot Studio Configuration
 
@@ -167,7 +169,8 @@ ClientSideComponentProperties="{
 | `headerBackgroundColor` | No | Header bar color (accepts any CSS color value) | `white` |
 | `agentTitle` | No | Display title for the agent | `"Copilot Studio Agent"` |
 
-> **Note**: You must provide either `directConnectUrl` OR both `environmentId` and `agentIdentifier`.
+> [!NOTE]
+> You must provide either `directConnectUrl` OR both `environmentId` and `agentIdentifier`.
 
 ### Step 5: Test Locally (Optional)
 
@@ -191,9 +194,8 @@ After running `gulp serve`, navigate to the following URL (replace the values wi
 https://YOUR-TENANT.sharepoint.com/sites/YOUR-SITE/SitePages/Home.aspx?debugManifestsFile=https://localhost:4321/temp/build/manifests.js&loadSPFX=true&customActions={%224c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2%22:{%22location%22:%22ClientSideExtension.ApplicationCustomizer%22,%22properties%22:{%22appClientId%22:%22YOUR_APP_CLIENT_ID%22,%22tenantId%22:%22YOUR_TENANT_ID%22,%22directConnectUrl%22:%22YOUR_DIRECT_CONNECT_URL%22,%22showTyping%22:true,%22headerBackgroundColor%22:%22white%22,%22agentTitle%22:%22Your%20Agent%20Title%22}}}
 ```
 
-> **Note**: 
-> - Replace `YOUR-TENANT`, `YOUR-SITE`, `YOUR_APP_CLIENT_ID`, `YOUR_TENANT_ID`, and `YOUR_DIRECT_CONNECT_URL` with your actual values
-> - Ensure you've added `https://localhost:4321` to your app registration's redirect URIs if testing locally
+- Replace `YOUR-TENANT`, `YOUR-SITE`, `YOUR_APP_CLIENT_ID`, `YOUR_TENANT_ID`, and `YOUR_DIRECT_CONNECT_URL` with your actual values
+- Ensure you've added `https://localhost:4321` to your app registration's redirect URIs if testing locally
 
 ### Step 6: Build and Package
 
