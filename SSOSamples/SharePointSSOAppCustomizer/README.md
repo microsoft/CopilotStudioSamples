@@ -77,6 +77,8 @@ This step requires permissions to create application identities in your Azure te
      - For each SharePoint site where you'll deploy the extension, add:
        - The site URL **with** trailing slash (e.g., `https://contoso.sharepoint.com/sites/mysite/`)
        - The site URL **without** trailing slash (e.g., `https://contoso.sharepoint.com/sites/mysite`)
+       - For each page of the SharePoint site where you'll deploy the extension, add:
+          -  The page URL (e.g., `https://contoso.sharepoint.com/sites/mysite/SitePages/Home.aspx`)
    - Under **Implicit grant and hybrid flows**, ensure both checkboxes are **unchecked** (SPAs use PKCE flow)
    - Click **Save**
 
@@ -88,10 +90,13 @@ This step requires permissions to create application identities in your Azure te
    https://localhost:4321 (for local testing - default SPFx port)
    https://contoso.sharepoint.com/sites/hr/
    https://contoso.sharepoint.com/sites/hr
-   https://contoso.sharepoint.com/sites/it/
-   https://contoso.sharepoint.com/sites/it
+   https://contoso.sharepoint.com/sites/hr/SitePages/Home.aspx
+   https://contoso.sharepoint.com/sites/hr/SitePages/Culture.aspx
+   https://contoso.sharepoint.com/sites/hr/SitePages/Promotions.aspx
    https://contoso.sharepoint.com/sites/finance/
    https://contoso.sharepoint.com/sites/finance
+   https://contoso.sharepoint.com/sites/finance/SitePages/Home.aspx
+   https://contoso.sharepoint.com/sites/finance/SitePages/Approvals.aspx
    ```
 
 4. **Configure API Permissions**
@@ -234,6 +239,10 @@ Common causes:
 - Incorrect permissions in the app registration (ensure `CopilotStudio.Copilots.Invoke` is granted)
 - Incorrect tenant ID or client ID
 - MSAL authentication flow being blocked by browser settings
+
+### "The redirect URI specified in the request does not match the redirect URIs configured for the application" error
+
+Check that the current SharePoint URL has been added as an allowed redirect URI for the provided app registration.
 
 ## Additional Resources
 
