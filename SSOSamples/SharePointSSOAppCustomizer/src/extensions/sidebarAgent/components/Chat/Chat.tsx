@@ -15,6 +15,7 @@ export interface IChatProps {
   directConnectUrl?: string;
   showTyping?: boolean;
   currentUserLogin?: string;
+  baseUrl?: string;  // Add this line
 }
 
 const Chat: React.FC<IChatProps> = ({
@@ -24,7 +25,8 @@ const Chat: React.FC<IChatProps> = ({
   agentIdentifier,
   directConnectUrl,
   showTyping = true,
-  currentUserLogin
+  currentUserLogin,
+  baseUrl  // Add this parameter
 }) => {
   const [connection, setConnection] = useState<CopilotStudioWebChatConnection | null>(null);
   const [error, setError] = useState<string>();
@@ -38,7 +40,12 @@ const Chat: React.FC<IChatProps> = ({
 
     const initializeConnection = async (): Promise<void> => {
       try {
-        const token = await acquireToken({ appClientId, tenantId, currentUserLogin });
+        const token = await acquireToken({ 
+          appClientId, 
+          tenantId, 
+          currentUserLogin,
+          redirectUri: baseUrl  // Pass baseUrl as redirectUri
+        });
         
         if (!token) {
           setError('Unable to acquire token.');
@@ -72,7 +79,7 @@ const Chat: React.FC<IChatProps> = ({
     return () => { 
       cancelled = true; 
     };
-  }, [isConfigured, appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping, currentUserLogin]);
+  }, [isConfigured, appClientId, tenantId, environmentId, agentIdentifier, directConnectUrl, showTyping, currentUserLogin, baseUrl]); // Add baseUrl to dependencies
 
   if (!isConfigured) {
     return (

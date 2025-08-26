@@ -4,6 +4,7 @@ export interface IAuthSettings {
   appClientId: string;
   tenantId: string;
   currentUserLogin?: string;
+  redirectUri?: string;  
 }
 
 export async function acquireToken(settings: IAuthSettings): Promise<string | undefined> {
@@ -11,10 +12,13 @@ export async function acquireToken(settings: IAuthSettings): Promise<string | un
     return undefined;
   }
 
+  console.log('using this as a redirect URI: ', settings.redirectUri || window.location.origin);
+
   const msalInstance = new PublicClientApplication({
     auth: {
       clientId: settings.appClientId,
-      authority: `https://login.microsoftonline.com/${settings.tenantId}`
+      authority: `https://login.microsoftonline.com/${settings.tenantId}`,
+      redirectUri: settings.redirectUri || window.location.origin  
     },
     cache: {
       cacheLocation: "localStorage"
@@ -46,12 +50,15 @@ export async function acquireToken(settings: IAuthSettings): Promise<string | un
 
       try {
         const response = await msalInstance.acquireTokenSilent(accessTokenRequest);
-        return response.accessToken;
+        console.log('Token acquired via acquireTokenSilent');
+        return response.accessToken; 
       } catch (errorInternal) {
-        console.log(errorInternal);
+        console.log('acquireTokenSilent failed:', errorInternal);
+        // Fall through to try SSO
       }
     }
 
+    // Only reach here if no account or acquireTokenSilent failed
     const ssoRequest = {
       scopes: scopes,
       loginHint: settings.currentUserLogin
@@ -59,15 +66,17 @@ export async function acquireToken(settings: IAuthSettings): Promise<string | un
 
     try {
       const response = await msalInstance.ssoSilent(ssoRequest);
+      console.log('Token acquired via ssoSilent');
       return response.accessToken;
     } catch (silentError) {
-      console.log(silentError);
+      console.log('ssoSilent failed:', silentError);
       if (silentError instanceof InteractionRequiredAuthError) {
         try {
-          const response = await msalInstance.loginPopup(ssoRequest);
+          const response = await msalInstance.loginPopup(ssoRequest); 
+          console.log('Token acquired via loginPopup');
           return response.accessToken;
         } catch (popupError) {
-          console.log(popupError);
+          console.log('loginPopup failed:', popupError);
           return undefined;
         }
       }
