@@ -2,7 +2,8 @@ import { Log } from '@microsoft/sp-core-library';
 import {
   BaseApplicationCustomizer,
   PlaceholderContent,
-  PlaceholderName
+  PlaceholderName,
+  ApplicationCustomizerContext
 } from '@microsoft/sp-application-base';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -16,26 +17,19 @@ import {
 const LOG_SOURCE: string = 'SidebarAgentApplicationCustomizer';
 
 class SidebarAgentComponent extends React.Component<
-  { properties: ISidebarAgentApplicationCustomizerProperties; context: any }, 
+  { properties: ISidebarAgentApplicationCustomizerProperties; context: ApplicationCustomizerContext }, 
   ISidebarAgentState
 > {
-  constructor(props: { properties: ISidebarAgentApplicationCustomizerProperties; context: any }) {
+  constructor(props: { properties: ISidebarAgentApplicationCustomizerProperties; context: ApplicationCustomizerContext }) {
     super(props);
+    const user = props.context?.pageContext?.user;
     this.state = {
       isPanelOpen: false,
-      currentUserLogin: undefined,
+      currentUserLogin: user ? (user.loginName || user.email) : undefined,
       chatKey: 0
     };
   }
 
-  public componentDidMount(): void {
-    const user = this.props.context?.pageContext?.user;
-    if (user) {
-      this.setState({
-        currentUserLogin: user.loginName || user.email
-      });
-    }
-  }
 
   private _togglePanel = (): void => {
     this.setState({ isPanelOpen: !this.state.isPanelOpen });
@@ -127,7 +121,8 @@ class SidebarAgentComponent extends React.Component<
   }
 }
 
-const CopilotIcon: React.FC = () => (
+function CopilotIcon(): JSX.Element {
+  return (
   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 96 96" fill="none">
     <defs>
       <filter id="filter0_f_84_430" x="-25%" y="-25%" width="200%" height="200%" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
@@ -219,7 +214,8 @@ const CopilotIcon: React.FC = () => (
       </g>
     </g>
   </svg>
-);
+  );
+}
 
 export default class SidebarAgentApplicationCustomizer
   extends BaseApplicationCustomizer<ISidebarAgentApplicationCustomizerProperties> {

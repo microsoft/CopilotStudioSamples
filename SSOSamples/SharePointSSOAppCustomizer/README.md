@@ -67,7 +67,7 @@ This step requires permissions to create application identities in your Azure te
    - Choose **"Accounts in this organization directory only"**
    - Under **Redirect URI**:
      - Select **"Single-page application"** from the platform dropdown
-     - Enter your first SharePoint site URL (e.g., `https://contoso.sharepoint.com/sites/mysite/`)
+     - Enter your first SharePoint site URL without the trailing slash (e.g., `https://contoso.sharepoint.com/sites/mysite`)
    - Click **Register**
 
 3. **Configure Authentication - Add SharePoint URLs**
@@ -75,10 +75,7 @@ This step requires permissions to create application identities in your Azure te
    - Under **Single-page application**, add redirect URIs:
      - `https://localhost:4321` (only if you plan to test locally - this is the default SPFx port)
      - For each SharePoint site where you'll deploy the extension, add:
-       - The site URL **with** trailing slash (e.g., `https://contoso.sharepoint.com/sites/mysite/`)
        - The site URL **without** trailing slash (e.g., `https://contoso.sharepoint.com/sites/mysite`)
-       - For each page of the SharePoint site where you'll deploy the extension, add:
-          -  The page URL (e.g., `https://contoso.sharepoint.com/sites/mysite/SitePages/Home.aspx`)
    - Under **Implicit grant and hybrid flows**, ensure both checkboxes are **unchecked** (SPAs use PKCE flow)
    - Click **Save**
 
@@ -88,15 +85,9 @@ This step requires permissions to create application identities in your Azure te
    **Example for multiple sites:**
    ```
    https://localhost:4321 (for local testing - default SPFx port)
-   https://contoso.sharepoint.com/sites/hr/
    https://contoso.sharepoint.com/sites/hr
-   https://contoso.sharepoint.com/sites/hr/SitePages/Home.aspx
-   https://contoso.sharepoint.com/sites/hr/SitePages/Culture.aspx
-   https://contoso.sharepoint.com/sites/hr/SitePages/Promotions.aspx
-   https://contoso.sharepoint.com/sites/finance/
    https://contoso.sharepoint.com/sites/finance
-   https://contoso.sharepoint.com/sites/finance/SitePages/Home.aspx
-   https://contoso.sharepoint.com/sites/finance/SitePages/Approvals.aspx
+   https://contoso.sharepoint.com/sites/it
    ```
 
 4. **Configure API Permissions**
