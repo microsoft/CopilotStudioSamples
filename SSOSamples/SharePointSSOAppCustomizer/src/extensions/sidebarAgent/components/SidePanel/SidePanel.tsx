@@ -5,7 +5,7 @@ import { ISidePanelProps } from '../../models/ISidebarAgentProperties';
 
 export default class SidePanel extends React.Component<ISidePanelProps> {
   public render(): React.ReactElement {
-    const { isOpen, properties, currentUserLogin, onDismiss, onNewConversation, chatKey } = this.props;
+    const { isOpen, properties, currentUserLogin, baseUrl, onDismiss, onNewConversation, chatKey } = this.props;
     const agentTitle = properties.agentTitle || 'Copilot Studio Agent';
 
     return (
@@ -44,6 +44,7 @@ export default class SidePanel extends React.Component<ISidePanelProps> {
                 directConnectUrl={properties.directConnectUrl}
                 showTyping={properties.showTyping}
                 currentUserLogin={currentUserLogin}
+                baseUrl={baseUrl}  
               />
             </div>
           </div>

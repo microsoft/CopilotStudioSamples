@@ -51,6 +51,16 @@ class SidebarAgentComponent extends React.Component<
     }));
   };
 
+  private _getBaseUrl = (): string => {
+    // Use SPFx context to get the base site URL
+    const context = this.props.context;
+    if (context?.pageContext?.web?.absoluteUrl) {
+      return context.pageContext.web.absoluteUrl;
+    }
+    // Fallback to origin if context is not available
+    return window.location.origin;
+  };
+
   public render(): React.ReactElement {
     const { isPanelOpen } = this.state;
     const { properties } = this.props;
@@ -107,6 +117,7 @@ class SidebarAgentComponent extends React.Component<
           isOpen={isPanelOpen}
           properties={properties}
           currentUserLogin={this.state.currentUserLogin}
+          baseUrl={this._getBaseUrl()}
           onDismiss={this._onPanelDismiss}
           onNewConversation={this._startNewConversation}
           chatKey={this.state.chatKey}
