@@ -3,7 +3,7 @@
 
 ## Summary
 
-This sample demonstrates how to integrate a Microsoft Copilot Studio agent into SharePoint using a SharePoint Framework (SPFx) Application Customizer. It leverages the ReactWebChat component with the [Fluent UI theme pack](https://github.com/microsoft/BotFramework-WebChat#experimental-fluent-ui-theme-pack) and the [Microsoft 365 Agents SDK for NodeJS/TypeScript](https://github.com/microsoft/Agents-for-js) to establish a secure connection with a Copilot Studio agent configured with ['Authenticate with Microsoft'](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#authenticate-with-microsoft) authentication.
+This sample demonstrates how to integrate a Microsoft Copilot Studio agent into SharePoint using a SharePoint Framework (SPFx) Application Customizer. It leverages the ReactWebChat component with the [Fluent UI theme pack](https://github.com/microsoft/BotFramework-WebChat#experimental-fluent-ui-theme-pack) and the [Microsoft 365 Agents SDK for NodeJS/TypeScript](https://github.com/microsoft/Agents-for-js) to establish a secure connection with a Copilot Studio agent configured with ['Authenticate with Microsoft'](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#authenticate-with-microsoft).
 
 The key advantage of using the Microsoft 365 Agents SDK is its ability to connect to agents that support Microsoft authentication, which enables [tenant graph grounding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding) capabilities.
 
@@ -78,9 +78,6 @@ This step requires permissions to create application identities in your Azure te
        - The site URL **without** trailing slash (e.g., `https://contoso.sharepoint.com/sites/mysite`)
    - Under **Implicit grant and hybrid flows**, ensure both checkboxes are **unchecked** (SPAs use PKCE flow)
    - Click **Save**
-
-   > [!IMPORTANT] 
-   > You must add both versions (with and without trailing slash) for EACH SharePoint site where the extension will be deployed. The authentication flow may use either format depending on the context.
 
    **Example for multiple sites:**
    ```
