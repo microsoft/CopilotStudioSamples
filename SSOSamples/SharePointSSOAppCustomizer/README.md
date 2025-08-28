@@ -79,9 +79,6 @@ This step requires permissions to create application identities in your Azure te
    - Under **Implicit grant and hybrid flows**, ensure both checkboxes are **unchecked** (SPAs use PKCE flow)
    - Click **Save**
 
-   > [!IMPORTANT] 
-   > You must add both versions (with and without trailing slash) for EACH SharePoint site where the extension will be deployed. The authentication flow may use either format depending on the context.
-
    **Example for multiple sites:**
    ```
    https://localhost:4321 (for local testing - default SPFx port)
