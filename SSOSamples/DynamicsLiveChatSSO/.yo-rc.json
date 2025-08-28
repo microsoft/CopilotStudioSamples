@@ -1,0 +1,18 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.16.0",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "dynamics-live-chat-sso",
+    "libraryId": "f96b8c6f-747e-4797-964b-fba0595eb4e5",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "dynamics-live-chat-sso",
+    "solutionShortDescription": "dynamics-live-chat-sso description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

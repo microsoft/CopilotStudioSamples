@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+    <CustomAction
+        Title="SidebarAgent"
+        Location="ClientSideExtension.ApplicationCustomizer"
+        ClientSideComponentId="4c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2"
+        ClientSideComponentProperties="{
+            &quot;appClientId&quot;: &quot;YOUR_APP_CLIENT_ID&quot;,
+            &quot;tenantId&quot;: &quot;YOUR_TENANT_ID&quot;,
+            &quot;environmentId&quot;: &quot;YOUR_ENVIRONMENT_ID&quot;,
+            &quot;agentIdentifier&quot;: &quot;YOUR_AGENT_IDENTIFIER&quot;,
+            &quot;directConnectUrl&quot;: &quot;YOUR_DIRECT_CONNECT_URL&quot;,
+            &quot;showTyping&quot;: true,
+            &quot;headerBackgroundColor&quot;: &quot;white&quot;,
+            &quot;agentTitle&quot;: &quot;Copilot Studio Agent&quot;
+        }">
+    </CustomAction>
+</Elements>

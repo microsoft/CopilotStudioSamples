@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "fef561c2-0566-489f-968e-179246e0c8a4",
+  "alias": "DynamicsLiveChatSsoWebPart",
+  "componentType": "WebPart",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportedHosts": [
+    "SharePointWebPart",
+    "SharePointFullPage"
+  ],
+  "supportsThemeVariants": false,
+  "preconfiguredEntries": [
+    {
+      "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+      "group": {
+        "default": "Advanced"
+      },
+      "title": {
+        "default": "DynamicsLiveChatSSO"
+      },
+      "description": {
+        "default": "DynamicsLiveChatSSO description"
+      },
+      
+      "officeFabricIconFontName": "Page",
+      "properties": {
+        "applicationId": "00000000-0000-0000-0000-000000000000",
+        "redirectUri": "https://YOURTENANT.sharepoint.com/_layouts/15/workbench.aspx",
+        "tenantId": "00000000-0000-0000-0000-000000000000",
+        "copilotStudioScope": "",
+        "dynamicsAppId": "string",
+        "dynamicsLcwVersion": "string",
+        "dynamicsOrgId": "string",
+        "dynamicsOrgUrl": "string"
+      }
+    }
+  ]
+}

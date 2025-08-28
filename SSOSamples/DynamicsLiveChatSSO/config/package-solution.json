@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "dynamics-live-chat-sso-client-side-solution",
+    "id": "f96b8c6f-747e-4797-964b-fba0595eb4e5",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "dynamics-live-chat-sso description"
+      },
+      "longDescription": {
+        "default": "dynamics-live-chat-sso description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "dynamics-live-chat-sso Feature",
+        "description": "The feature that activates elements of the dynamics-live-chat-sso solution.",
+        "id": "e2f5e80a-f86b-4676-9b5d-3b1fd27acd59",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/dynamics-live-chat-sso.sppkg"
+  }
+}
