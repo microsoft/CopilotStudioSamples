@@ -1,0 +1,66 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnSignIn
+  id: main
+  actions:
+    - kind: ConditionGroup
+      id: conditionGroup_ypjGKL
+      conditions:
+        - id: conditionItem_7XYIIR
+          condition: =System.SignInReason = SignInReason.SignInRequired
+
+    - kind: OAuthInput
+      id: gOjhZA
+      title: Login
+      text: Say Hi to start conversation.
+
+    - kind: HttpRequestAction
+      id: djSRId
+      method: Post
+      url: =Concatenate(Env.cat_OktaValidationURL, Env.cat_OktaValidationURI)
+      headers:
+        accept: */*
+        content-type: application/x-www-form-urlencoded
+
+      body:
+        kind: RawRequestContent
+        contentType: application/x-www-form-urlencoded
+        content: =Concatenate("token=",System.User.AccessToken,"&client_id=",Env.cat_OktaClientId)
+
+      response: Topic.VarInstrospectionResult
+      responseSchema:
+        kind: Record
+        properties:
+          active: Boolean
+          aud: String
+          client_id: String
+          exp: Number
+          iat: Number
+          iss: String
+          jti: String
+          scope: String
+          sub: String
+          token_type: String
+          uid: String
+          username: String
+
+    - kind: ConditionGroup
+      id: conditionGroup_5XAZzU
+      conditions:
+        - id: conditionItem_m819xM
+          condition: =Topic.VarInstrospectionResult.active = true
+          actions:
+            - kind: SendActivity
+              id: sendActivity_m0CrTO
+              activity: |-
+                Welcome.
+                Your Okta authenticator has identified you as {Topic.VarInstrospectionResult.username}. 
+
+      elseActions:
+        - kind: SendActivity
+          id: sendActivity_wVCs3V
+          activity: Welcome. Your authentication token is {System.User.AccessToken}.
+
+    - kind: SendActivity
+      id: sendActivity_blHfEa
+      activity: Welcome {System.User.DisplayName}. Your Id is {System.User.Id}.
