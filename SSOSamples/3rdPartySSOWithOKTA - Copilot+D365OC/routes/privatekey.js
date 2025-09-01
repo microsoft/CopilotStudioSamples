@@ -43,12 +43,12 @@ router.get('/', async function(req, res){
         "sub": "66cb446f-5e43-ea11-a812-000d3a24c087", //contactid in Dynamics
         "preferred_username": omnichannelResponseBody.username,
         "phone_number": "",
-        "given_name": "Vineet",
-        "family_name": "Kaul",
+        "given_name": "",
+        "family_name": "",
         "email": omnichannelResponseBody.username,
         "iat": secondsSinceEpoch,
         "exp": secondsSinceEpoch + oneHour,
-        "iss": "copilot-d365-gqh5b8fwfnepdbdv.westus-01.azurewebsites.net"
+        "iss": process.env.AZURE_DEFAULT_DOMAIN
     };
     console.log("This is the sample payload to Omnichannel:", jwtPayloadSample);
 

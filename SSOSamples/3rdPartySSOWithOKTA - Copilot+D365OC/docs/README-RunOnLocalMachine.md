@@ -83,7 +83,7 @@ This sample app demonstrates unified SSO with Copilot Agent and D365 Omnichannel
 8. Open browser and type in URL `https://<static_website_url>/public.key`. The browser should display public key definition.
 
 <p  align="center">
-<img  src="images/PublicKey.png"  alt="Open browser and type in URL `https://<Default 	domain>/publickey`. The browser should display public key definition."  width="600px">
+<img  src="images/PublicKey.png"  alt="Open browser and type in URL `https://<Default 	domain>/publickey`. The browser should display public key definition."  width="400px">
 <br>
 </p>
 
