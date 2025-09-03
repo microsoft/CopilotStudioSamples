@@ -8,7 +8,7 @@ import pytest_asyncio
 from deepeval.metrics import GEval
 from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from testinglib.copilot_client import CopilotStudioClient
-from microsoft.agents.core.models import ActivityTypes
+from microsoft_agents.activity import ActivityTypes
 
 # Load test cases from CSV
 def load_test_cases_from_csv():

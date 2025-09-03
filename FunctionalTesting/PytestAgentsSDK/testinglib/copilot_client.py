@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from msal import PublicClientApplication
-from microsoft.agents.copilotstudio.client import CopilotClient
-from microsoft.agents.core.models import ActivityTypes
+from microsoft_agents.copilotstudio.client import CopilotClient
+#from microsoft_agents.activity import ActivityTypes
 
 from testinglib.config import McsConnectionSettings
 from testinglib.msal_cache_plugin import get_msal_token_cache

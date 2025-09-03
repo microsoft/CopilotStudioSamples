@@ -48,6 +48,8 @@ You will need to register an application in Azure for the SDK to authenticate wi
   - Choose **APIs my organization uses**, then search for **Power Platform API**
   - Choose **Delegated permissions**, then add `CopilotStudio.Copilots.Invoke`
 
+> Note: If the Power Platform API doesn't appear, visibility can be stale — run the refresh script in the [Microsoft docs](https://learn.microsoft.com/en-us/power-platform/admin/programmability-authentication-v2?tabs=powershell#step-2-configure-api-permissions).
+
 ### **5. Authentication and Agent details**
 
 Create a `.env` file (you can copy from `.env.template`) and populate it with your MSAL and Copilot Studio agent configuration:
