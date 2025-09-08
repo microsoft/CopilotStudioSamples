@@ -2,6 +2,8 @@
 
 Sample solution showing how to index the content of a SharePoint library into a Copilot Studio agent as knowledge source files, along with a workaround to get nice citations that point to the source files in SharePoint.
 
+**Edit: this is now an out-of-the-box capability in Copilot Studio, make sure to check [this documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-unstructured-data) before implementing this code sample.**
+
 ## Benefits for this approach:
 1.	Faster latency to get response.
 1.	Better indexing to search for content and summarize answers.
