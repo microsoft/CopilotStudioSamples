@@ -1,8 +1,9 @@
 # Copilot SDK (client)
-git+https://github.com/microsoft/Agents-for-python.git@main#subdirectory=libraries/Client/microsoft-agents-copilotstudio-client
+git+https://github.com/microsoft/Agents-for-python.git@main#subdirectory=libraries/microsoft-agents-copilotstudio-client
 
-# Core SDK
-git+https://github.com/microsoft/Agents-for-python.git@main#subdirectory=libraries/Core/microsoft-agents-core
+
+# Activity SDK
+git+https://github.com/microsoft/Agents-for-python.git@main#subdirectory=libraries/microsoft-agents-activity
 
 # Test dependencies
 pytest
