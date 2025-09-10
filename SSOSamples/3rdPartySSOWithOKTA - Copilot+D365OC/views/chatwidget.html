@@ -6,6 +6,7 @@
 </head>
 
 <body>
+    
     <div id="okta-signin-container"></div>
     <div id="chat-container">
         <div id="header">
@@ -14,6 +15,8 @@
         <button id="sign-out-button" onclick=signOut()>Sign Out</button>
         <div id="webchat"> </div>
     </div>
+    <div id="error-message"></div>
+    <div id="process-message"></div>
 
     <script id="Microsoft_Omnichannel_LCWidget" src="https://oc-cdn-ocprod.azureedge.net/livechatwidget/scripts/LiveChatBootstrapper.js"
         data-app-id="7216ae4d-b1e5-4085-b0fc-78c0d7688ccf" data-lcw-version="prod" data-org-id="dfedbedc-a5e5-4a31-9d41-477e30b29694"
@@ -38,8 +41,14 @@
         const appName = "My Awesome App";
 
         getPrivateData();
+        ShowProcessMessage("Loading login console....", "process-message");
+
         // Sign out and redirect to sign out page
         function signOut() {
+            console.log("Signing out...");
+            ShowProcessMessage("Signing out. You would be redirected to login.", "process-message");
+            oktaToken = null;
+            Microsoft.Omnichannel.LiveChatWidget.SDK.closeChat();
             oktaSignIn.authClient.signOut({
                 clearTokensBeforeRedirect: true,
                 postLogoutRedirectUri: `${defaultdomain}/signout` // The signout page URL, 'https://<Default domain>/signout.html'
@@ -52,10 +61,18 @@
 
         });
 
+        async function ShowProcessMessage(message, controlname) {
+            document.getElementById(controlname).style.display = "block";
+            document.getElementById(controlname).innerText = message;
+            await new Promise(resolve => setTimeout(resolve, 4000)); // Wait for 3 seconds
+            document.getElementById(controlname).style.display = "none";
+        }
+        
         window.addEventListener("lcw:onMaximize", function handleWidgetMaximizeEvent(){ // Handle the live chat widget maximize event
             console.log("Widget maximized");
             if (oktaToken == undefined) {
-                alert("User is not authenticated");
+                console.log("User is not authenticated");
+                ShowProcessMessage("Error: You are not authenticated. Please sign in.", "error-message");
                 Microsoft.Omnichannel.LiveChatWidget.SDK.closeChat();
         }
         });
@@ -73,7 +90,8 @@
                 scopes: ['openid', 'email', 'profile'],
                 storage: 'sessionStorage'
             }
-        });
+            });
+
             // If the user is already authenticated, render the chat widget
             // If the user isn't authentictated, render the OKTA login widget first
             oktaSignIn.authClient.token.getUserInfo().then(function (user) {
@@ -82,8 +100,8 @@
                 oktaToken = oktaSignIn.authClient.getAccessToken();
             }, function (error) {
                 console.log('User is not authenticated - rendering the login widget first');
+                ShowProcessMessage("User is not authenticated - rendering the login widget.", "process-message");
                 //alert (document.getElementById("Microsoft_Omnichannel_LCWidget").getAttribute("data-hide-chat-button"));
-
                 oktaSignIn.showSignInToGetTokens({
                     el: '#okta-signin-container'
                 }).then(function (tokens) {
@@ -94,16 +112,14 @@
                     console.log('Authentication successful - rendering chat widget');
                 }).catch(function (err) {
                     console.log('error logging in', err);
+                    ShowProcessMessage(err.message, "error-message");
                 });
             });
-
         });
 
         window.addEventListener("lcw:ready", function signInOmnichannel() {
             console.log("LCW Ready triggered----");
-            setTimeout(function() {
-                //your code to be executed after 5 seconds
-            }, 5000);
+        
             Microsoft.Omnichannel.LiveChatWidget.SDK.closeChat();
             window.Microsoft.Omnichannel.LiveChatWidget.SDK.setBotAuthTokenProvider(async (botTokenUrl, callback) => {
             const urlSearchParams = new URLSearchParams(botTokenUrl);
@@ -129,14 +145,16 @@
             };
 
             console.log("Payload for login into Copilot Studio:", payload);
+            ShowProcessMessage("Token returned by Okta....", "process-message");
 
             try {
                 const botAuthResponse = await fetch(botTokenUrl, payload); // Posts Auth Token to Bot directly
-
                 // Sign in through Bot is successful
                 if (botAuthResponse.status === 200) {
                 signInIds.push(signInId); // Track authenticated sign-in card
                 callback({ show: false }); // Hide card
+                console.log("CPS Auth Response:", botAuthResponse);
+                ShowProcessMessage("Copilot authentication response:" + botAuthResponse.statusText, "process-message");
                 return;
                 }
 
@@ -146,32 +164,44 @@
                 } else {
                 // Other condition handling
                 }
-                console.log("Bot Auth Response:", botAuthResponse);
+                console.log("CPS Auth Response:", botAuthResponse);
+                ShowProcessMessage("Copilot authentication response:" + botAuthResponse.statusText, "process-message");
                 return;
             } catch (error) {
                 // Handle error if needed
+                console.error("Authentication failed:", error);
+                ShowProcessMessage("Copilot authentication failed:" + error.message, "error-message");
+                callback({ show: true });  // Show sign-in card by default
             }
             // If the authentication fails, show the sign-in card
-            console.error("Authentication failed:", error);
+            // console.error("Authentication failed:", error);
             callback({ show: true });  // Show sign-in card by default
         })
         });
 
         auth.getAuthenticationToken = function(callback) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                callback(xhttp.responseText);
-            }
-        };
-        xhttp.onerror = function(error) {
-            callback(null);
-        };
-        //Replace this with a call to your token generating service
-        xhttp.open("GET",`${defaultdomain}/privatekey`, true);
-        console.log("Sending token to Omnichannel: " + oktaToken);
-        xhttp.setRequestHeader("Authorization", "Bearer " + oktaToken);
-        xhttp.send();
+        try
+            {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    callback(xhttp.responseText);
+                }
+            };
+            xhttp.onerror = function(error) {
+                callback(null);
+            };
+            //Replace this with a call to your token generating service
+            xhttp.open("GET",`${defaultdomain}/privatekey`, true);
+            console.log("Sending token to Omnichannel: " + oktaToken);
+            ShowProcessMessage("Sending token to Omnichannel....", "process-message");
+            xhttp.setRequestHeader("Authorization", "Bearer " + oktaToken);
+            xhttp.send();
+        }
+        catch (error) {
+            console.error("Error occurred while sending token:", error);
+            ShowProcessMessage("Error occurred while sending token:" + error.message, "error-message");
+        }
     };
 
         // Example using Fetch API in client-side JavaScript
@@ -200,8 +230,12 @@
     }
 
     async function renderChatWidget() {
+        setTimeout(function() {
+                //your code to be executed after 5 seconds
+            }, 5000);
         document.getElementById('chat-container').style.visibility = 'visible';
         document.getElementById('sign-out-button').style.visibility = 'visible';
+        ShowProcessMessage("Authentication successful.", "process-message");
     }
 
     </script>

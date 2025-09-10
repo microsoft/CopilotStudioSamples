@@ -23,8 +23,8 @@ D365 Omnichannel -->> Chat Widget: 10. Return auth confirmation.
 
 ## Detailed instructions
 
-- [Run locally](</SSOSamples/3rdPartySSOWithOKTA - Copilot%2BD365OC/docs/README-RunOnAzure.md>)
-- [Run on Azure](</SSOSamples/3rdPartySSOWithOKTA - Copilot%2BD365OC/docs/README-RunOnAzure.md>)
+- [Run locally](</docs/README-RunOnAzure.md>)
+- [Run on Azure](</docs/README-RunOnLocalMachine.md>)
 
 ## Authors
 
