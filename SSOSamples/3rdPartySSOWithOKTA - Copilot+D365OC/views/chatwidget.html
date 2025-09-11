@@ -31,7 +31,6 @@
 
     <script>
         let oktaSignIn;
-        let oktaToken;
         let botTokenUrl = "";
         let defaultdomain = "";
         let clientId = "";
@@ -47,7 +46,7 @@
         function signOut() {
             console.log("Signing out...");
             ShowProcessMessage("Signing out. You would be redirected to login.", "process-message");
-            oktaToken = null;
+            sessionStorage.removeItem("oktaToken");
             Microsoft.Omnichannel.LiveChatWidget.SDK.closeChat();
             oktaSignIn.authClient.signOut({
                 clearTokensBeforeRedirect: true,
@@ -70,9 +69,9 @@
         
         window.addEventListener("lcw:onMaximize", function handleWidgetMaximizeEvent(){ // Handle the live chat widget maximize event
             console.log("Widget maximized");
-            if (oktaToken == undefined) {
+            if (sessionStorage.getItem("oktaToken") == undefined) {
                 console.log("User is not authenticated");
-                ShowProcessMessage("Error: You are not authenticated. Please sign in.", "error-message");
+                ShowProcessMessage("Error: User is not authenticated. Please sign in.", "error-message");
                 Microsoft.Omnichannel.LiveChatWidget.SDK.closeChat();
         }
         });
@@ -97,10 +96,11 @@
             oktaSignIn.authClient.token.getUserInfo().then(function (user) {
                 console.log('User is already authenticated - rendering the chat widget');
                 renderChatWidget();
-                oktaToken = oktaSignIn.authClient.getAccessToken();
+                // oktaToken = oktaSignIn.authClient.getAccessToken();
+                sessionStorage.setItem("oktaToken", oktaSignIn.authClient.getAccessToken());
             }, function (error) {
                 console.log('User is not authenticated - rendering the login widget first');
-                ShowProcessMessage("User is not authenticated - rendering the login widget.", "process-message");
+                ShowProcessMessage("User is not authenticated - rendering the login widget.", "error-message");
                 //alert (document.getElementById("Microsoft_Omnichannel_LCWidget").getAttribute("data-hide-chat-button"));
                 oktaSignIn.showSignInToGetTokens({
                     el: '#okta-signin-container'
@@ -108,7 +108,8 @@
                     oktaSignIn.authClient.tokenManager.setTokens(tokens);
                     oktaSignIn.remove();
                     renderChatWidget();
-                    oktaToken = oktaSignIn.authClient.getAccessToken();
+                    // oktaToken = oktaSignIn.authClient.getAccessToken();
+                    sessionStorage.setItem("oktaToken", oktaSignIn.authClient.getAccessToken());
                     console.log('Authentication successful - rendering chat widget');
                 }).catch(function (err) {
                     console.log('error logging in', err);
@@ -133,7 +134,7 @@
             signInIds.push(signInId);
 
             const data = {
-                token: oktaToken
+                token: sessionStorage.getItem("oktaToken")
             };
 
             const payload = {
@@ -145,7 +146,7 @@
             };
 
             console.log("Payload for login into Copilot Studio:", payload);
-            ShowProcessMessage("Token returned by Okta....", "process-message");
+            ShowProcessMessage("Signing into Copilot Studio....", "process-message");
 
             try {
                 const botAuthResponse = await fetch(botTokenUrl, payload); // Posts Auth Token to Bot directly
@@ -154,7 +155,7 @@
                 signInIds.push(signInId); // Track authenticated sign-in card
                 callback({ show: false }); // Hide card
                 console.log("CPS Auth Response:", botAuthResponse);
-                ShowProcessMessage("Copilot authentication response:" + botAuthResponse.statusText, "process-message");
+                // ShowProcessMessage("Copilot authentication response:" + botAuthResponse.statusText, "process-message");
                 return;
                 }
 
@@ -163,14 +164,18 @@
                 return;
                 } else {
                 // Other condition handling
+                // ShowProcessMessage("Message from Copilot Studio:" + botAuthResponse, "process-message");
+                signInIds.push(signInId);
+                callback({ show: false }); // Hide card
                 }
                 console.log("CPS Auth Response:", botAuthResponse);
-                ShowProcessMessage("Copilot authentication response:" + botAuthResponse.statusText, "process-message");
+                // ShowProcessMessage("Copilot authentication response:" + botAuthResponse.statusText, "process-message");
                 return;
             } catch (error) {
                 // Handle error if needed
                 console.error("Authentication failed:", error);
                 ShowProcessMessage("Copilot authentication failed:" + error.message, "error-message");
+                signInIds.push(signInId);
                 callback({ show: true });  // Show sign-in card by default
             }
             // If the authentication fails, show the sign-in card
@@ -193,9 +198,9 @@
             };
             //Replace this with a call to your token generating service
             xhttp.open("GET",`${defaultdomain}/privatekey`, true);
-            console.log("Sending token to Omnichannel: " + oktaToken);
-            ShowProcessMessage("Sending token to Omnichannel....", "process-message");
-            xhttp.setRequestHeader("Authorization", "Bearer " + oktaToken);
+            console.log("Sending token to Omnichannel: " + sessionStorage.getItem("oktaToken"));
+            ShowProcessMessage("Signing into Omnichannel....", "process-message");
+            xhttp.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("oktaToken"));
             xhttp.send();
         }
         catch (error) {
@@ -214,11 +219,11 @@
             if (!response.ok) {
                 // Handle unauthorized access or other errors
                 console.error('Failed to fetch private data:', response.statusText);
+                ShowProcessMessage("Error occurred while fetching private data:" + response.statusText, "error-message");
                 return;
             }
 
             const data = await response.json();
-            botTokenUrl = data.botTokenUrl;
             defaultdomain = data.defaultdomain;
             clientId = data.clientId;
             baseUrl = data.baseUrl;
@@ -236,6 +241,7 @@
         document.getElementById('chat-container').style.visibility = 'visible';
         document.getElementById('sign-out-button').style.visibility = 'visible';
         ShowProcessMessage("Authentication successful.", "process-message");
+        ShowProcessMessage("Click Let's Chat to start chatting.", "process-message");
     }
 
     </script>

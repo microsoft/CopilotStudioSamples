@@ -22,7 +22,7 @@ router.get('/', async function(req, res){
     const yourOktaClientID = process.env.OKTA_CLIENT_ID;
     const privateKEY = process.env.PRIVATE_KEY.replace(/\\n/g,"\n");
 
-    console.log("This is the private key:", privateKEY);
+    // console.log("This is the private key:", privateKEY);
     // Get the payload from Okta based on the Okta token.
     console.log("This is the url:", `${yourOktaDomain}/oauth2/${authorizationServerId}/v1/introspect?token=${authHeaderToken}&client_id=${yourOktaClientID}`);
     
@@ -46,15 +46,15 @@ router.get('/', async function(req, res){
         "given_name": "",
         "family_name": "",
         "email": omnichannelResponseBody.username,
-        "iat": secondsSinceEpoch,
-        "exp": secondsSinceEpoch + oneHour,
-        "iss": process.env.AZURE_DEFAULT_DOMAIN
+        "iat": omnichannelResponseBody.iat, // secondsSinceEpoch,
+        "exp": omnichannelResponseBody.exp, // secondsSinceEpoch + oneHour,
+        "iss": omnichannelResponseBody.iss
     };
     console.log("This is the sample payload to Omnichannel:", jwtPayloadSample);
 
     var token = jwt.sign(JSON.stringify(jwtPayloadSample), privateKEY, signOptions);
 
-    console.log("This is the signed token:", token);
+    // console.log("This is the signed token:", token);
 
     res.charset = 'utf-8'
     res.set({

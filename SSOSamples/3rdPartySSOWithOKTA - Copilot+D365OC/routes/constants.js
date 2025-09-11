@@ -7,7 +7,6 @@ require("dotenv").config();
 /* GET home page. */
 router.get('/', function(req, res){
     const appconstants = {
-    botTokenURL: process.env.COPILOT_BOT_TOKEN_URL,
     defaultdomain: process.env.AZURE_DEFAULT_DOMAIN,
     clientId: process.env.OKTA_CLIENT_ID,
     baseUrl: process.env.OKTA_ORG_URL

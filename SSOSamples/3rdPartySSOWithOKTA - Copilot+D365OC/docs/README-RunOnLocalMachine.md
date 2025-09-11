@@ -207,7 +207,6 @@ This sample app demonstrates unified SSO with Copilot Agent and D365 Omnichannel
 	| Placeholder | Value |
 	|--|--|
 	| AZURE_DEFAULT_DOMAIN| `http://localhost:5000`|
-	| COPILOT_BOT_TOKEN_URL| In the Copilot Studio select **Channels** and **Web App**. Copy the **Connection String** value. |
 	| OKTA_ORG_URL| `https://{yourOktaDomain}.okta.com`|
 	| OKTA_CLIENT_ID| The Client ID of the OKTA application noted above.|
 	| OKTA_SCOPES| `okta.users.read`|
