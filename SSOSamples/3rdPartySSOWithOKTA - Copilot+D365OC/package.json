@@ -1,0 +1,23 @@
+{
+  "name": "d365ccauth",
+  "version": "1.0.0",
+  "description": "A POC for OAuth mechanism into D365 CC application. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "keywords": [
+    "D365"
+  ],
+  "author": "Vineet Kaul",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/identity": "^4.10.2",
+    "@azure/keyvault-keys": "^4.10.0",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^2.7.0"
+  }
+}

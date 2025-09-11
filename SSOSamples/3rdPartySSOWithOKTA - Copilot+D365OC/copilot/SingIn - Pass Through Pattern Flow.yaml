@@ -1,0 +1,19 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnSignIn
+  id: main
+  actions:
+    - kind: ConditionGroup
+      id: conditionGroup_ypjGKL
+      conditions:
+        - id: conditionItem_7XYIIR
+          condition: =System.SignInReason = SignInReason.SignInRequired
+
+    - kind: OAuthInput
+      id: gOjhZA
+      title: Login
+      text: Say Hi to start conversation.
+
+    - kind: SendActivity
+      id: sendActivity_R5RkRv
+      activity: Welcome. Your authentication token is {System.User.AccessToken}.

@@ -1,0 +1,101 @@
+body {
+    height: 100%;
+}
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        #header {
+            background-color: rgb(11, 85, 106);
+            color: rgb(255, 255, 255);
+            font-weight: 600;
+            height: 48px;
+            padding: 0px 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #subheader {
+            background-color: rgb(243, 242, 241);
+            padding: 7px 13px;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        a {
+            color: rgb(0, 90, 158);
+        }
+
+        a:hover {
+            color: rgb(0, 69, 120);
+        }
+
+        #webchat {
+            position: fixed;
+            height: calc(100% - 75px);
+            width: 100%;
+            top: 75px;
+            overflow: hidden;
+            visibility: hidden;
+        }
+
+        #process-message {
+        border: 1px solid #01200b; /* Red border */
+        padding: 10px; /* Spacing around the text */
+        background-color: #4dd989; /* Light red background */
+        color: #1c1c1c; /* Red text color */
+        text-align: center; /* Horizontally center the text */
+        margin: 10px auto; /* Center the block element horizontally with some margin */
+        max-width: 80%; /* Limit the width of the error message */
+        display: flex; /* Enable flexbox for vertical alignment */
+        align-items: center; /* Vertically center the content within the flex container */
+        justify-content: center; /* Horizontally center content in flex container */
+        min-height: 40px; /* Ensure a minimum height for vertical centering effect */
+        display: none; /* Initially hide the error message */
+        font-family: "Lucida Console", "Courier New", monospace;
+        font-weight: bold;
+        font-size: 24px;
+        }
+
+        #error-message {
+        border: 1px solid #cc0033; /* Red border */
+        padding: 10px; /* Spacing around the text */
+        background-color: #ffe6e6; /* Light red background */
+        color: #cc0033; /* Red text color */
+        text-align: center; /* Horizontally center the text */
+        margin: 10px auto; /* Center the block element horizontally with some margin */
+        max-width: 80%; /* Limit the width of the error message */
+        display: flex; /* Enable flexbox for vertical alignment */
+        align-items: center; /* Vertically center the content within the flex container */
+        justify-content: center; /* Horizontally center content in flex container */
+        min-height: 40px; /* Ensure a minimum height for vertical centering effect */
+        display: none; /* Initially hide the error message */
+        font-family: "Lucida Console", "Courier New", monospace;
+        font-weight: bold;
+        font-size: 24px;
+        }
+
+        #sign-out-button {
+            font-size: 16px;
+            border: none;
+            color: black;
+            cursor: pointer;
+            visibility: hidden;
+            position: fixed;
+            top: 5px;
+            right: 10px;
+            /* Add the following lines */
+            display: inline-block;
+            width: auto;
+            padding: 10px 20px;
+            /* Adjust as needed */
+            border-radius: 5px;
+        }
+
+    #chat-container {
+        visibility: hidden;
+        }
