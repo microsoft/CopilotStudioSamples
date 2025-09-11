@@ -23,8 +23,8 @@ D365 Omnichannel -->> Chat Widget: 10. Return auth confirmation.
 
 ## Detailed instructions
 
-- [Run locally](</docs/README-RunOnAzure.md>)
-- [Run on Azure](</docs/README-RunOnLocalMachine.md>)
+- [Run locally](<docs/README-RunOnAzure.md>)
+- [Run on Azure](<docs/README-RunOnLocalMachine.md>)
 
 ## Authors
 
