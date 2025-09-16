@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<workdayEntityConfigurationTemplate>
+	<scenario name="HRWorkdayHCMEmployeeGetHomeContactInformation">
+		<apiRequests>
+			<apiRequest>
+				<authType>User</authType>
+				<endpoint>
+					<request>msdyn_HRWorkdayHCMEmployeeGetHomeContactInformationRequest</request>
+					<serviceName>Human_Resources</serviceName>
+					<version>v42.0</version>
+				</endpoint>
+				<responseProperties>
+					<property>
+						<extractPath>//*[local-name()='Phone_Information_Data']</extractPath>
+						<key>PhoneInformation</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()='Email_Information_Data']</extractPath>
+						<key>EmailInformation</key>
+					</property>
+					<property>
+						<extractPath>//@*[local-name()='Formatted_Address']</extractPath>
+						<key>HomeAddress</key>
+					</property>
+				</responseProperties>
+			</apiRequest>
+		</apiRequests>
+	</scenario>
+	<requestTemplates>
+		<requestTemplate name="msdyn_HRWorkdayHCMEmployeeGetHomeContactInformationRequest">
+			<bsvc:Get_Change_Home_Contact_Information_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v42.0">
+				<bsvc:Request_References>
+					<bsvc:Person_Reference>
+						<bsvc:ID bsvc:type="Employee_ID">{Employee_ID}</bsvc:ID>
+					</bsvc:Person_Reference>
+				</bsvc:Request_References>
+				<bsvc:Response_Filter>
+					<bsvc:As_Of_Effective_Date>{As_Of_Effective_Date}</bsvc:As_Of_Effective_Date>
+					<bsvc:Page>1</bsvc:Page>
+					<bsvc:Count>999</bsvc:Count>
+				</bsvc:Response_Filter>
+				<bsvc:Request_Criteria_Data>
+					<bsvc:Person_Type_Criteria_Data>
+						<bsvc:Include_Academic_Affiliates>false</bsvc:Include_Academic_Affiliates>
+						<bsvc:Include_External_Committee_Members>false</bsvc:Include_External_Committee_Members>
+						<bsvc:Include_External_Student_Records>false</bsvc:Include_External_Student_Records>
+						<bsvc:Include_Student_Prospect_Records>false</bsvc:Include_Student_Prospect_Records>
+						<bsvc:Include_Student_Records>false</bsvc:Include_Student_Records>
+						<bsvc:Include_Workers>true</bsvc:Include_Workers>
+					</bsvc:Person_Type_Criteria_Data>	
+				</bsvc:Request_Criteria_Data>
+			</bsvc:Get_Change_Home_Contact_Information_Request>
+		</requestTemplate>
+	</requestTemplates>
+</workdayEntityConfigurationTemplate>
