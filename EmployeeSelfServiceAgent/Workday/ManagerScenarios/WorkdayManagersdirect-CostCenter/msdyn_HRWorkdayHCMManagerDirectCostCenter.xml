@@ -1,0 +1,56 @@
+<workdayEntityConfigurationTemplate>
+	<scenario name="GetManagerDirectCostCenter">
+		<apiRequests>
+			<apiRequest>
+				<authType>User</authType>
+				<endpoint>
+					<request>Tempalte_ManagerDirectCostCenter_GetWorkersManagerRequest</request>
+					<serviceName>Human_Resources</serviceName>
+					<version>v42.0</version>
+				</endpoint>
+				<responseProperties>
+					<property>
+						<extractPath>//*[local-name()='Worker_Data']/*[local-name()='Worker_ID']/text()</extractPath>
+						<key>WorkerID</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()='Worker_Data']/*[local-name()='Personal_Data']/*[local-name()='Name_Data']/*[local-name()='Legal_Name_Data']</extractPath>
+						<key>LegalNameData</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()='Worker_Organization_Data'][*[local-name()='Organization_Data']/*[local-name()='Organization_Type_Reference']/*[local-name()='ID'][@*[local-name()='type']='Organization_Type_ID' and text()='Cost_Center']]/*[local-name()='Organization_Data']/*[local-name()='Organization_Code']/text()</extractPath>
+						<key>CostCenterCode</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()='Worker_Organization_Data'][*[local-name()='Organization_Data']/*[local-name()='Organization_Type_Reference']/*[local-name()='ID'][@*[local-name()='type']='Organization_Type_ID' and text()='Cost_Center']]/*[local-name()='Organization_Data']/*[local-name()='Organization_Name']/text()</extractPath>
+						<key>CostCenterName</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()='Worker_Data']/*[local-name()='Employment_Data']/*[local-name()='Worker_Job_Data']/*[local-name()='Position_Data']/*[local-name()='Position_ID']/text()</extractPath>
+						<key>PositionID</key>
+					</property>
+				</responseProperties>
+			</apiRequest>
+		</apiRequests>
+	</scenario>
+	<requestTemplates>
+		<requestTemplate name="Tempalte_ManagerDirectCostCenter_GetWorkersManagerRequest">
+			<bsvc:Get_Workers_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v41.0">
+				<bsvc:Request_Criteria>
+					<bsvc:Organization_Reference bsvc:Descriptor="Organization_Reference_ID">
+						<bsvc:ID bsvc:type="Organization_Reference_ID">{ManagerOrgId}</bsvc:ID>
+					</bsvc:Organization_Reference>
+				</bsvc:Request_Criteria>
+				<bsvc:Response_Filter>
+					<bsvc:As_Of_Effective_Date>{As_Of_Effective_Date}</bsvc:As_Of_Effective_Date>
+				</bsvc:Response_Filter>
+				<bsvc:Response_Group>
+					<bsvc:Include_Organizations>true</bsvc:Include_Organizations>
+					<bsvc:Exclude_Cost_Centers>false</bsvc:Exclude_Cost_Centers>
+					<bsvc:Include_Personal_Information>true</bsvc:Include_Personal_Information>
+					<bsvc:Include_Employment_Information>true</bsvc:Include_Employment_Information>
+				</bsvc:Response_Group>
+			</bsvc:Get_Workers_Request>
+		</requestTemplate>
+	</requestTemplates>
+</workdayEntityConfigurationTemplate>

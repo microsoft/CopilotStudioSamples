@@ -1,0 +1,63 @@
+<workdayEntityConfigurationTemplate>
+	<scenario name="GetJobTaxonomy">
+		<apiRequests>
+			<apiRequest>
+				<authType>User</authType>
+				<endpoint>
+					<request>msdyn_HRWorkdayHCMManagerJobTaxonomy_GetWorkersManagerRequest</request>
+					<serviceName>Human_Resources</serviceName>
+					<version>v41.0</version>
+				</endpoint>
+				<responseProperties>
+					<property>
+						<extractPath>//*[local-name()='Worker_Data']/*[local-name()='Worker_ID']/text()</extractPath>
+						<key>WorkerID</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()='Worker_Data']/*[local-name()='Personal_Data']/*[local-name()='Name_Data']/*[local-name()='Legal_Name_Data']/*[local-name()='Name_Detail_Data']/*[local-name()='First_Name']/text()
+						</extractPath>
+						<key>FirstName</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()='Worker_Data']/*[local-name()='Personal_Data']/*[local-name()='Name_Data']/*[local-name()='Legal_Name_Data']/*[local-name()='Name_Detail_Data']/*[local-name()='Last_Name']/text()</extractPath>
+						<key>LastName</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()="Position_Title"]/text()</extractPath>
+						<key>JobTitle</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()="Business_Title"]/text()</extractPath>
+						<key>BusinessTitle</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()="Job_Profile_Name"]/text()</extractPath>
+						<key>JobProfile</key>
+					</property>
+					<property>
+						<extractPath>//*[local-name()='Job_Profile_Summary_Data']/*[local-name()='Job_Family_Reference']/*[local-name()='ID' and @*[local-name()='type']='Job_Family_ID']/text()</extractPath>
+						<key>JobFamilyId</key>
+					</property>
+				</responseProperties>
+			</apiRequest>
+		</apiRequests>
+	</scenario>
+	<requestTemplates>
+		<requestTemplate name="msdyn_HRWorkdayHCMManagerJobTaxonomy_GetWorkersManagerRequest">
+			<bsvc:Get_Workers_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v41.0">
+				<bsvc:Request_Criteria>
+					<bsvc:Organization_Reference bsvc:Descriptor="Organization_Reference_ID">
+						<bsvc:ID bsvc:type="Organization_Reference_ID">{ManagerOrgId}</bsvc:ID>
+					</bsvc:Organization_Reference>
+				</bsvc:Request_Criteria>
+				<bsvc:Response_Filter>
+					<bsvc:As_Of_Effective_Date>{As_Of_Effective_Date}</bsvc:As_Of_Effective_Date>
+				</bsvc:Response_Filter>
+				<bsvc:Response_Group>
+					<bsvc:Include_Employment_Information>true</bsvc:Include_Employment_Information>
+					<bsvc:Include_Personal_Information>true</bsvc:Include_Personal_Information>
+				</bsvc:Response_Group>
+			</bsvc:Get_Workers_Request>
+		</requestTemplate>
+	</requestTemplates>
+</workdayEntityConfigurationTemplate>

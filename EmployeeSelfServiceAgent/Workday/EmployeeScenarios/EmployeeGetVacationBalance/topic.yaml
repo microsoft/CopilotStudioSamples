@@ -1,0 +1,54 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  You will respond to requests about the total time off balance of the user making the request. This data is retrieved from Workday. You will respond to the user based on which piece of data they are asking for. This data exclusively belongs to the user making the request. There is no data for anyone else. Do not respond to questions about other people's data.
+
+  Example invalid requests:
+  "What is my manager's vacation balance?"
+  "What is my sister's vacation balance?"
+
+  Example valid requests:
+  "What is my vacation balance?"
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - What is my vacation balance?
+      - How much time off can I take?
+      - what is my workday vacation balance?
+
+  actions:
+    - kind: BeginDialog
+      id: Y74Om4
+      displayName: Redirect to Workday Get Common Execution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetVacationBalance
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: SearchAndSummarizeContent
+      id: igank3
+      userInput: =Topic.workdayResponse
+      additionalInstructions: Only reply back with the Vacation Balance. Format the response in in friendly way and make sure to tie it back directly to the orginal question of the user. ({System.Activity.Text}). Never include the "Plan ID".
+      customDataSource:
+        searchResults: |
+          =Table({Content: Topic.workdayResponse})
+
+inputType: {}
+outputType:
+  properties:
+    finalizedData:
+      displayName: finalizedData
+      type:
+        kind: Record
+        properties:
+          CostCenterCode: String
+          CostCenterName: String
+          EmployeeName: String
