@@ -1,4 +1,14 @@
 kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: AsOfEffectiveDate
+    description: The as-of effective date (YYYY-MM-DD) to use when retrieving vacation balances. If the user includes a date in their prompt, the NLU should populate this automatically.
+    entity: DateTimePrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
 modelDescription: |-
   You will respond to requests about the total time off balance of the user making the request. This data is retrieved from Workday. You will respond to the user based on which piece of data they are asking for. This data exclusively belongs to the user making the request. There is no data for anyone else. Do not respond to questions about other people's data.
 
@@ -18,12 +28,67 @@ beginDialog:
       - what is my workday vacation balance?
 
   actions:
+    - kind: SetVariable
+      id: setVariable_8qSSM1
+      variable: Topic.date
+      value: =Text(Today(), "yyyy-MM-dd")
+
+    - kind: ConditionGroup
+      id: ask_effective_date_if_blank
+      conditions:
+        - id: isBlank
+          condition: =IsBlank(Topic.AsOfEffectiveDate)
+          actions:
+            - kind: AdaptiveCardPrompt
+              id: askDateCard1
+              displayName: Select As-Of Date
+              card: |-
+                ={
+                  type: "AdaptiveCard",
+                  '$schema': "https://adaptivecards.io/schemas/adaptive-card.json",
+                  version: "1.5",
+                  body: [
+                    {
+                      type: "TextBlock",
+                      text: "Which date would you like to check your vacation balance for?",
+                      weight: "Bolder",
+                      wrap: true
+                    },
+                    {
+                      type: "Input.Date",
+                      id: "asOfDate",
+                      label: "Select date",
+                      value: Topic.date
+                    }
+                  ],
+                  actions: [
+                    {
+                      type: "Action.Submit",
+                      title: "Submit"
+                    }
+                  ]
+                }
+              output:
+                binding:
+                  actionSubmitId: Topic.actionSubmitId
+                  asOfDate: Topic.asOfDate
+
+              outputType:
+                properties:
+                  actionSubmitId: String
+                  asOfDate: Date
+
+    - kind: SetVariable
+      id: ensure_effective_date2
+      variable: Topic.AsOfEffectiveDate
+      value: =If(IsBlank(Topic.AsOfEffectiveDate), DateTimeValue(Text(Today(), "yyyy-MM-dd")), Topic.AsOfEffectiveDate)
+
     - kind: BeginDialog
-      id: Y74Om4
+      id: Y74Om43
       displayName: Redirect to Workday Get Common Execution
       input:
         binding:
-          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Topic.AsOfEffectiveDate, "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMEmployeeGetVacationBalance
 
       dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
@@ -34,14 +99,20 @@ beginDialog:
           workdayResponse: Topic.workdayResponse
 
     - kind: SearchAndSummarizeContent
-      id: igank3
+      id: igank32
       userInput: =Topic.workdayResponse
-      additionalInstructions: Only reply back with the Vacation Balance. Format the response in in friendly way and make sure to tie it back directly to the orginal question of the user. ({System.Activity.Text}). Never include the "Plan ID".
+      additionalInstructions: Only reply back with the Vacation Balance. Format the response in in friendly way and make sure to tie it back directly to the orginal question of the user. ({System.Activity.Text}). Never include the "Plan ID". Add the effective date in the response always.
       customDataSource:
         searchResults: |
           =Table({Content: Topic.workdayResponse})
 
-inputType: {}
+inputType:
+  properties:
+    AsOfEffectiveDate:
+      displayName: AsOfEffectiveDate
+      description: The effective date to use when retrieving vacation balances (YYYY-MM-DD). Defaults to today's date if not provided.
+      type: DateTime
+
 outputType:
   properties:
     finalizedData:
