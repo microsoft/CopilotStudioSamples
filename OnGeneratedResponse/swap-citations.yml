@@ -5,9 +5,14 @@ beginDialog:
   condition: =CountRows(System.Response.Citations)>0
   actions:
     - kind: SetVariable
+      id: setVariable_xHJ4lf
+      variable: Topic.Var1
+      value: =System.Response.FormattedText
+
+    - kind: SetVariable
       id: setVariable_wtNwaw
       variable: Topic.externalWebsiteURL
-      value: https://yourwebsite.com/citations/
+      value: https://yourwebsite.it/files/
 
     - kind: SetVariable
       id: setVariable_9IFwdP
@@ -31,72 +36,27 @@ beginDialog:
                     "[" & Text(Value) & "]: " & If(
                         IsBlank(currentRecord.Url),
                         If(
-                            Left(
-                                currentRecord.Name,
-                                8
-                            ) = "https://",
-                            Substitute(
-                                currentRecord.Name,
-                                " ",
-                                "%20"
-                            ),
-                            Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20") &
-                            //  
+                            Left(currentRecord.Name,8)="https://",
+                            Substitute(currentRecord.Name," ","%20"),
+                            Substitute((Topic.externalWebsiteURL & currentRecord.Name)," ","%20") &
                             If(
-                                // check if cited source is a PDF
                                 EndsWith(currentRecord.Name,".pdf"),
-                                // add page for PDFs
                                 "#page=" & Mid(
                                     currentRecord.Text,
-                                    Find("<page value=", currentRecord.Text
-                                    ) + Len("<page value=") + 1,
-                                    Find(
-                                        ">",
-                                        currentRecord.Text
-                                    ) - Len("<page value=")-3
+                                    Find("<page value=",currentRecord.Text)+Len("<page value=")+1,
+                                    Find(">",currentRecord.Text)-Len("<page value=")-3
                                 )
                             )
-                            //Text(currentRecord.Id)
                         ),
                         currentRecord.Url
                     ) & " " & """" &
                     Substitute(
                         If(
-                            Find(
-                                "?",
-                                Last(
-                                    Split(
-                                        currentRecord.Name,
-                                        "/"
-                                    )
-                                ).Value
-                            ) > 0,
-                            Left(
-                                Last(
-                                    Split(
-                                        currentRecord.Name,
-                                        "/"
-                                    )
-                                ).Value,
-                                Find(
-                                    "?",
-                                    Last(
-                                        Split(
-                                            currentRecord.Name,
-                                            "/"
-                                        )
-                                    ).Value
-                                )
-                            ),
-                            Last(
-                                Split(
-                                    currentRecord.Name,
-                                    "/"
-                                )
-                            ).Value
+                            Find("?",Last(Split(currentRecord.Name,"/")).Value)>0,
+                            Left(Last(Split(currentRecord.Name,"/")).Value,Find("?",Last(Split(currentRecord.Name,"/")).Value)),
+                            Last(Split(currentRecord.Name,"/")).Value
                         ),
-                        "%20",
-                        " "
+                        "%20"," "
                     ) & """"
                 //end logic
                 ),
@@ -106,7 +66,12 @@ beginDialog:
 
     - kind: SendActivity
       id: sendActivity_i4mW3G
-      activity: "{Left(System.Response.FormattedText, Find(\"[1]:\", System.Response.FormattedText) + -1) & Text(Topic.CitationsSnip)}"
+      activity: |-
+        {If(
+            System.Activity.ChannelId = "msteams",
+            System.Response.FormattedText & Char(10) & Char(10) & Text(Topic.CitationsSnip),
+            Left(System.Response.FormattedText, Find("[1]:", System.Response.FormattedText) + -1) & Char(10) & Char(10) & Text(Topic.CitationsSnip)
+        )}
 
     - kind: SetVariable
       id: setVariable_jVzQGX
