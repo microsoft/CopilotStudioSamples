@@ -32,8 +32,7 @@
         <wd:Enter_Time_Off_Data>
           <wd:Worker_Reference>
             <wd:ID wd:type="Employee_ID">{Employee_ID}</wd:ID>
-          </wd:Worker_Reference>
-          <!-- One entry per date -->
+          </wd:Worker_Reference>          
           <wd:Enter_Time_Off_Entry_Data>
             <wd:Date>{Time_Off_Date}</wd:Date>
             <wd:Requested>{Hours}</wd:Requested>

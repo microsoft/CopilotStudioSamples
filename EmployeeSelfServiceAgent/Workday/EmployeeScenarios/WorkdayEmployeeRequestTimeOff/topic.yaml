@@ -1,18 +1,37 @@
 kind: AdaptiveDialog
-modelDescription: |
-  - You will respond only to requests related to submitting a Time Off entry for the user making the request.
-  - All time off data is retrieved from and updated through Workday, and pertains exclusively to the requesting user.
-  - This topic may prompt the user for input if they are requesting to submit time off for themselves.
-  - Do not respond to questions about other people's data.
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: TimeOffDate
+    description: Date of time off (yyyy-mm-dd)
+    entity: DateTimePrebuiltEntity
+    shouldPromptUser: false
 
-  Example valid requests:
-  "Request 8 hours vacation on 2025-09-15"
-  "Take a floating holiday next Friday for 8 hours"
-  "PTO duty on 2025-09-08, 4 hours, add a note 'personal work'"
+  - kind: AutomaticTaskInput
+    propertyName: ReasonText
+    description: Reason for time off (free texsdt)
+    shouldPromptUser: false
+
+  - kind: AutomaticTaskInput
+    propertyName: EmployeeName
+    description: The name of the employee to fetch data for.
+    entity: PersonNamePrebuiltEntity
+    shouldPromptUser: false
+
+modelDescription: |-
+  You will respond only to requests related to requesting time off for the user making the request.
+  All time off requests are submitted to Workday (Absence_Management) and pertain exclusively to the requesting user.
+  This topic may prompt the user for input (date and reason) if they are requesting time off for themselves.
+  This data exclusively belongs to the user making the request. Do not respond to questions about other people's data.
 
   Example invalid requests:
-  "Submit time off for my manager"
-  "Enter vacation for [EmployeeName]"
+  "Request time off for my manager"
+  "Request time off for my sister"
+  "Request time off for [EmployeeName]"
+
+  Example valid requests:
+  "Request time off"
+  "I need to submit time off"
+  "Please request time off on 2025-09-15 because of a family event"
 beginDialog:
   kind: OnRecognizedIntent
   id: main
@@ -32,143 +51,107 @@ beginDialog:
       variable: Topic.WebsiteMessage
       value: =Env.WorkdayWebsiteRedirectMessage
 
-    - kind: SetVariable
-      id: setDefaultHours
-      variable: Topic.hours
-      value: =If(IsBlank(Topic.hours), 8, Topic.hours)
-
-    - kind: AdaptiveCardPrompt
-      id: requestTimeOffCard
-      displayName: Request Time Off
-      card: |-
-        {
-          "type": "AdaptiveCard",
-          "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
-          "version": "1.5",
-          "body": [
-            {
-              "type": "TextBlock",
-              "text": "Request to take Time Off",
-              "weight": "Bolder",
-              "size": "Medium",
-              "wrap": true,
-              "color": "Accent"
-            },
-            {
-              "type": "TextBlock",
-              "text": "Fill out the details below. Fields may be pre-filled from your request.",
-              "wrap": true
-            },
-            {
-              "type": "Input.Date",
-              "id": "timeOffDate",
-              "label": "Date",
-              "isRequired": true,
-              "errorMessage": "Please select a date"
-            },
-            {
-              "type": "Input.Number",
-              "id": "hours",
-              "label": "Number of Hours",
-              "min": 0.5,
-              "max": 24
-            },
-            {
-              "type": "Input.ChoiceSet",
-              "id": "reason",
-              "label": "Reason",
-              "isRequired": true,
-              "errorMessage": "Please choose a reason",
-              "choices": [
-                {
-                  "title": "Vacation",
-                  "value": "Vacation_Hours"
+    - kind: ConditionGroup
+      id: need_inputs
+      conditions:
+        - id: always_true
+          condition: true
+          actions:
+            - kind: AdaptiveCardPrompt
+              id: collect_time_off
+              displayName: Ask date and reason for time off
+              card: |-
+                ={
+                  type: "AdaptiveCard",
+                  '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                  version: "1.3",
+                  body: [
+                    {
+                      type: "TextBlock",
+                      text: "Request Time Off",
+                      weight: "Bolder",
+                      size: "Medium",
+                      wrap: true,
+                      color: "Accent"
+                    },
+                    {
+                      type: "TextBlock",
+                      text: "Enter the date and the reason for your time off request.",
+                      wrap: true
+                    },
+                    {
+                  type: "Input.ChoiceSet",
+                  id: "timeOffType",
+                  label: "Type of Time Off",
+                  style: "compact",
+                  isRequired: true,
+                  errorMessage: "Please select a type.",
+                  choices: [
+                    { title: "Floating Holiday", value: "Floating_Holiday_Hours" },
+                    { title: "Vacation", value: "Vacation_Hours" },
+                    { title: "Sick", value: "Sick_Hours" }
+                  ]
                 },
-                {
-                  "title": "Floating Holiday",
-                  "value": "Floating_Holiday_Hours"
-                },
-                {
-                  "title": "Paid Leave",
-                  "value": "Paid_Time_Off_Adjustment_Hours"
+                    {
+                      type: "Input.Date",
+                      id: "timeOffDate",
+                      label: "Date",
+                      isRequired: true,
+                      errorMessage: "Please select a date.",
+                      value: If(IsBlank(Topic.TimeOffDate) || Topic.TimeOffDate < Today(), "",Text(Topic.TimeOffDate,"yyyy-MM-dd"))
+                    },
+                    {
+                      type: "Input.Text",
+                      id: "reasonText",
+                      placeholder: "Reason for time off",
+                      label: "Reason",
+                      isRequired: true,
+                      maxLength: 500,
+                      errorMessage: "Reason is required.",
+                      value: Topic.ReasonText
+                    }
+                  ],
+                  actions: [
+                    { type: "Action.Submit", title: "Submit" },
+                    { type: "Action.Submit", title: "Cancel", associatedInputs: "none" }
+                  ]
                 }
-              ],
-              "value": "=If(!IsBlank(Topic.reason), Topic.reason, \"\")"
-            },
-            {
-              "type": "Input.Text",
-              "id": "comment",
-              "label": "Comment",
-              "isMultiline": true,
-              "placeholder": "Optional note for your approver"
-            }
-          ],
-          "actions": [
-            {
-              "type": "Action.Submit",
-              "title": "Submit",
-              "data": {
-                "actionId": "Submit"
-              }
-            },
-            {
-              "type": "Action.Submit",
-              "title": "Cancel",
-              "associatedInputs": "none",
-              "data": {
-                "actionId": "Cancel"
-              }
-            }
-          ]
-        }
-      output:
-        binding:
-          actionId: Topic.actionId
-          comment: Topic.comment
-          hours: Topic.hours
-          reason: Topic.reason
-          timeOffDate: Topic.timeOffDate
+              output:
+                binding:
+                  actionSubmitId: Topic.actionSubmitId
+                  reasonText: Topic.reasonText
+                  timeOffDate: Topic.timeOffDate
+                  timeOffType: Topic.timeOffType
 
-      outputType:
-        properties:
-          actionId: String
-          comment: String
-          hours: Number
-          reason: String
-          timeOffDate: DateTime
+              outputType:
+                properties:
+                  actionSubmitId: String
+                  reasonText: String
+                  timeOffDate: String
+                  timeOffType: String
 
     - kind: ConditionGroup
-      id: handleCancel
+      id: handle_cancel
       conditions:
-        - id: isCancel
-          condition: =Topic.actionId = "Cancel"
+        - id: cancel_pressed
+          condition: =Topic.actionSubmitId = "Cancel"
           actions:
             - kind: SendActivity
-              id: cancelMsg
+              id: cancel_msg
               activity: Your request has been cancelled. Is there anything else you need help with?
 
             - kind: CancelAllDialogs
-              id: cancelAllOnCancel
-
-    - kind: SetVariable
-      id: mapReasonTitle
-      variable: Topic.reasonTitle
-      value: =If(Topic.reason = "Vacation_Hours", "Vacation",If(Topic.reason = "Floating_Holiday_Hours", "Floating Holiday",If(Topic.reason = "Paid_Time_Off_Adjustment_Hours", "Paid Leave", "Unknown")        )      )
-
-    - kind: SetVariable
-      id: setRequestString
-      variable: Topic.requestString
-      value: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Time_Off_Date}"",""value"":""" & Text(Topic.timeOffDate,"yyyy-MM-dd") & """},{""key"":""{Hours}"",""value"":""" & Text(Topic.hours) & """},{""key"":""{Reason_ID}"",""value"":""" & Topic.reason & """},{""key"":""{Comment}"",""value"":""" & Coalesce(Topic.comment, "") & """}]}"
+              id: cancel_all
 
     - kind: BeginDialog
-      id: callWorkday
+      id: execute_workday
       displayName: Redirect to Workday System Get Common Execution
       input:
         binding:
-          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Time_Off_Date}"",""value"":""" & Text(Topic.timeOffDate,"yyyy-MM-dd") & """},{""key"":""{Hours}"",""value"":""" & Text(Topic.hours) & """},{""key"":""{Reason_ID}"",""value"":""" & Topic.reason & """},{""key"":""{Comment}"",""value"":""" & Coalesce(Topic.comment, "") & """}]}"
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Time_Off_Date}"",""value"":""" & Topic.timeOffDate & """},{""key"":""{Comment}"",""value"":""" & Topic.reasonText & """},{""key"":""{Reason_ID}"",""value"":""" & Topic.timeOffType & """},{""key"":""{Hours}"",""value"":""8""}]}"
           scenarioName: msdyn_HRWorkdayAbsenceEnterTimeOff_EnterTimeOffInfo
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
@@ -176,48 +159,38 @@ beginDialog:
           workdayResponse: Topic.workdayResponse
 
     - kind: ConditionGroup
-      id: outcome
+      id: report_result
       conditions:
         - id: failed
           condition: =Topic.isSuccess = false
           actions:
             - kind: SendActivity
-              id: failMsg
+              id: failure_msg
               activity: An error occurred and your time off request was not submitted.
 
       elseActions:
         - kind: SendActivity
-          id: successMsg
-          activity: "Your time off request has been submitted for {Text(Topic.timeOffDate,\"yyyy-MM-dd\")}   & {Text(Topic.hours)} hours & Reason: {Topic.reasonTitle}  & Comment: {Topic.comment}"
+          id: success_msg
+          activity: Your time off request has been submitted. {Topic.WebsiteMessage}
 
         - kind: CancelAllDialogs
-          id: endDialog
+          id: end_dialogs
 
 inputType:
   properties:
-    comment:
-      displayName: comment
-      description: Comment supporting the request.
-      type: String
-
     EmployeeName:
       displayName: EmployeeName
       description: The name of the employee to fetch data for.
       type: String
 
-    hours:
-      displayName: hours
-      description: Number of hours requested for the date.
-      type: Number
-
-    reason:
-      displayName: reason
-      description: Time off reason identifier.
+    ReasonText:
+      displayName: ReasonText
+      description: Reason for time off (free text)
       type: String
 
-    timeOffDate:
-      displayName: timeOffDate
-      description: The date for the time off request (YYYY-MM-DD).
+    TimeOffDate:
+      displayName: TimeOffDate
+      description: Date of time off (yyyy-mm-dd)
       type: DateTime
 
 outputType: {}
