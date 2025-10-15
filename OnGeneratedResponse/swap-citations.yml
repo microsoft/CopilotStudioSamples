@@ -12,7 +12,7 @@ beginDialog:
     - kind: SetVariable
       id: setVariable_wtNwaw
       variable: Topic.externalWebsiteURL
-      value: https://yourwebsite.it/files/
+      value: https://yourwebsite.com/citations/
 
     - kind: SetVariable
       id: setVariable_9IFwdP
@@ -36,15 +36,28 @@ beginDialog:
                     "[" & Text(Value) & "]: " & If(
                         IsBlank(currentRecord.Url),
                         If(
-                            Left(currentRecord.Name,8)="https://",
-                            Substitute(currentRecord.Name," ","%20"),
-                            Substitute((Topic.externalWebsiteURL & currentRecord.Name)," ","%20") &
+                            Left(
+                                currentRecord.Name,
+                                8
+                            ) = "https://",
+                            Substitute(
+                                currentRecord.Name,
+                                " ",
+                                "%20"
+                            ),
+                            Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20") &
                             If(
+                                // check if cited source is a PDF
                                 EndsWith(currentRecord.Name,".pdf"),
+                                // add page for PDFs
                                 "#page=" & Mid(
                                     currentRecord.Text,
-                                    Find("<page value=",currentRecord.Text)+Len("<page value=")+1,
-                                    Find(">",currentRecord.Text)-Len("<page value=")-3
+                                    Find("<page value=", currentRecord.Text
+                                    ) + Len("<page value=") + 1,
+                                    Find(
+                                        ">",
+                                        currentRecord.Text
+                                    ) - Len("<page value=")-3
                                 )
                             )
                         ),
@@ -52,11 +65,41 @@ beginDialog:
                     ) & " " & """" &
                     Substitute(
                         If(
-                            Find("?",Last(Split(currentRecord.Name,"/")).Value)>0,
-                            Left(Last(Split(currentRecord.Name,"/")).Value,Find("?",Last(Split(currentRecord.Name,"/")).Value)),
-                            Last(Split(currentRecord.Name,"/")).Value
+                            Find(
+                                "?",
+                                Last(
+                                    Split(
+                                        currentRecord.Name,
+                                        "/"
+                                    )
+                                ).Value
+                            ) > 0,
+                            Left(
+                                Last(
+                                    Split(
+                                        currentRecord.Name,
+                                        "/"
+                                    )
+                                ).Value,
+                                Find(
+                                    "?",
+                                    Last(
+                                        Split(
+                                            currentRecord.Name,
+                                            "/"
+                                        )
+                                    ).Value
+                                )
+                            ),
+                            Last(
+                                Split(
+                                    currentRecord.Name,
+                                    "/"
+                                )
+                            ).Value
                         ),
-                        "%20"," "
+                        "%20",
+                        " "
                     ) & """"
                 //end logic
                 ),
