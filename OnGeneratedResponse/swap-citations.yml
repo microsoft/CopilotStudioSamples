@@ -47,8 +47,11 @@ beginDialog:
                             ),
                             Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20") &
                             If(
-                                // check if cited source is a PDF
-                                EndsWith(currentRecord.Name,".pdf"),
+                                // check if cited source is a PDF and we have page data available
+                                And(
+                                    EndsWith(currentRecord.Name, ".pdf"),
+                                    StartsWith(currentRecord.Text, "<page value=")
+                                ),
                                 // add page for PDFs
                                 "#page=" & Mid(
                                     currentRecord.Text,
