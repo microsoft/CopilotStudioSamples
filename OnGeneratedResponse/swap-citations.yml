@@ -12,7 +12,7 @@ beginDialog:
     - kind: SetVariable
       id: setVariable_wtNwaw
       variable: Topic.externalWebsiteURL
-      value: https://yourwebsite.com/citations/
+      value: 
 
     - kind: SetVariable
       id: setVariable_9IFwdP
@@ -32,40 +32,8 @@ beginDialog:
                             Value
                         )
                     },
-                //begin logic
-                    "[" & Text(Value) & "]: " & If(
-                        IsBlank(currentRecord.Url),
-                        If(
-                            Left(
-                                currentRecord.Name,
-                                8
-                            ) = "https://",
-                            Substitute(
-                                currentRecord.Name,
-                                " ",
-                                "%20"
-                            ),
-                            Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20") &
-                            If(
-                                // check if cited source is a PDF and we have page data available
-                                And(
-                                    EndsWith(currentRecord.Name, ".pdf"),
-                                    StartsWith(currentRecord.Text, "<page value=")
-                                ),
-                                // add page for PDFs
-                                "#page=" & Mid(
-                                    currentRecord.Text,
-                                    Find("<page value=", currentRecord.Text
-                                    ) + Len("<page value=") + 1,
-                                    Find(
-                                        ">",
-                                        currentRecord.Text
-                                    ) - Len("<page value=")-3
-                                )
-                            )
-                        ),
-                        currentRecord.Url
-                    ) & " " & """" &
+                    // Begin logic - Create Markdown link format for Teams
+                    "[" & Text(Value) & "] [" &
                     Substitute(
                         If(
                             Find(
@@ -92,7 +60,7 @@ beginDialog:
                                             "/"
                                         )
                                     ).Value
-                                )
+                                ) - 1
                             ),
                             Last(
                                 Split(
@@ -103,8 +71,44 @@ beginDialog:
                         ),
                         "%20",
                         " "
-                    ) & """"
-                //end logic
+                    ) & "](" &
+                    If(
+                        IsBlank(currentRecord.Url),
+                        If(
+                            Left(
+                                currentRecord.Name,
+                                8
+                            ) = "https://",
+                            Substitute(
+                                currentRecord.Name,
+                                " ",
+                                "%20"
+                            ),
+                            Substitute((Topic.externalWebsiteURL & currentRecord.Name), " ", "%20") &
+                            If(
+                                // Check if cited source is a PDF or DOCX and we have page data available
+                                And(
+                                    Or(
+                                        EndsWith(currentRecord.Name, ".pdf"),
+                                        EndsWith(currentRecord.Name, ".docx")
+                                    ),
+                                    StartsWith(currentRecord.Text, "<page value=")
+                                ),
+                                // Add page anchor for PDFs and DOCX files
+                                "#page=" & Mid(
+                                    currentRecord.Text,
+                                    Find("<page value=", currentRecord.Text) + Len("<page value=") + 1,
+                                    Find(
+                                        ">",
+                                        currentRecord.Text
+                                    ) - Len("<page value=") - 3
+                                ),
+                                ""
+                            )
+                        ),
+                        currentRecord.Url
+                    ) & ")"
+                    // End logic
                 ),
                 Char(10) & Char(10)
             )
@@ -123,6 +127,5 @@ beginDialog:
       id: setVariable_jVzQGX
       variable: System.ContinueResponse
       value: false
-
 inputType: {}
 outputType: {}
