@@ -1,0 +1,83 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  This topic provides a way to send feedback to the coworkers.
+
+  Some of the valid requests are as follows:
+
+  give feedback
+  share feedback for a colleague
+  submit peer feedback
+  feedback for employee
+  I want to appreciate my teammate
+  report feedback about coworker
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - send feedback about workday
+      - give feedback on workday
+      - workday feedback
+      - report issue with workday
+      - share thoughts on workday
+      - submit comments for workday
+      - provide input on workday experience
+      - suggest improvements for workday
+      - complain about workday
+
+  actions:
+    - kind: Question
+      id: Question_KkmuHF
+      variable: Topic.varEmployeeId
+      prompt: What is the _Employee ID_ of the colleague you want to give feedback for?
+      entity: StringPrebuiltEntity
+
+    - kind: ConditionGroup
+      id: ConditionGroup_8NOr8O
+      conditions:
+        - id: ConditionItem_GLZBTd
+          condition: =!IsBlank(Topic.varEmployeeId)
+          actions:
+            - kind: Question
+              id: Question_ZGYUYN
+              variable: Topic.FeedbackText
+              prompt: Please enter your feedback for your coworker.
+              entity: StringPrebuiltEntity
+
+            - kind: BeginDialog
+              id: Za15eH
+              displayName: Redirect to Workday Get Common Execution
+              input:
+                binding:
+                  parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """}, {""key"":""{Employee_ID_Of_Receiver}"",""value"":"""& Topic.varEmployeeId & """}, {""key"":""{Comment}"",""value"":""" & Topic.FeedbackText & """}]}"
+                  scenarioName: msdyn_HRWorkdayHCMEmployeeGiveFeedback
+
+              dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+              output:
+                binding:
+                  errorResponse: Topic.errorResponse
+                  isSuccess: Topic.isSuccess
+                  workdayResponse: Topic.workdayResponse
+
+            - kind: ConditionGroup
+              id: conditionGroup_r9LEup
+              conditions:
+                - id: conditionItem_XVznZc
+                  condition: =IsBlank(Topic.errorResponse) && Topic.isSuccess = true
+                  actions:
+                    - kind: SendActivity
+                      id: sendActivity_ISzuar
+                      activity: Feedback is sent successfully
+
+              elseActions:
+                - kind: SendActivity
+                  id: sendActivity_qhWHOF
+                  activity: There is a failure in sending the feedback {Topic.errorResponse}
+
+      elseActions:
+        - kind: SendActivity
+          id: SendActivity_jLD6lX
+          activity: You cannot send feedback to yourself.
+
+inputType: {}
+outputType: {}
