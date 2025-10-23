@@ -1,0 +1,165 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRedirect
+  id: main
+  actions:
+    - kind: SetVariable
+      id: setVariable_rDQ3EZ
+      variable: Topic.CountryCode
+      value: =Global.ESS_UserContext_Country_Code
+
+    - kind: SetVariable
+      id: setVariable_wNGkRp
+      variable: Topic.IsCountryCodeValid
+      value: =And(!IsBlank(Topic.CountryCode), !IsMatch(Topic.CountryCode, ""), !IsMatch(Topic.CountryCode, "''"))
+
+    - kind: HttpRequestAction
+      id: PqB360
+      url: |-
+        =Concatenate(Env.fac_DiningServiceApiUrl, "/api/v2/cafes/list?officeLocationRadius=50",
+        If(Topic.IsCountryCodeValid, "&countryCode=" & Topic.CountryCode))
+      headers:
+        clientSource: =System.Activity.ChannelId
+        Content-Type: application/json
+        x-ms-obo-scope: =Env.fac_DiningServiceApiOboScope
+
+      errorHandling:
+        kind: ContinueOnErrorBehavior
+        statusCode: Topic.CafesListResponseStatusCode
+
+      requestTimeoutInMilliseconds: 90000
+      response: Topic.CafesListResponse
+      responseSchema:
+        kind: Record
+        properties:
+          count: Number
+          items:
+            type:
+              kind: Table
+              properties:
+                buildingId: String
+                buildingName: String
+                cafeId: Number
+                cityName: Blank
+                coordinates:
+                  type:
+                    kind: Record
+                    properties:
+                      latitude: Number
+                      longitude: Number
+
+                countryCode: Blank
+                currencyName: String
+                currencySymbol: String
+                disclaimer: Blank
+                id: String
+                imageUrl: String
+                legacyBuildingId: Number
+                location:
+                  type:
+                    kind: Record
+                    properties:
+                      coordinates:
+                        type:
+                          kind: Table
+                          properties:
+                            Value: Number
+
+                      latitude: Number
+                      longitude: Number
+                      type: String
+
+                mealPeriods:
+                  type:
+                    kind: Table
+                    properties:
+                      customPeriod: Blank
+                      endsOn: String
+                      hoursOfOperation: String
+                      id: String
+                      name: String
+                      startsOn: String
+                      timeStamp: String
+
+                name: String
+                onlineAvailabilityCapability: String
+                percentOrdersForSixtyDays: Number
+                regionId: String
+                serviceHours: String
+                stateOrProvinceCode: Blank
+                stateOrProvinceName: Blank
+                timestamp: String
+
+          metadata: Blank
+
+    - kind: ConditionGroup
+      id: conditionGroup_R9eHgz
+      conditions:
+        - id: conditionItem_nAOxBE
+          condition: =!IsBlank(Topic.CafesListResponse.items) And CountRows(Topic.CafesListResponse.items) > 0
+          actions:
+            - kind: SetVariable
+              id: setVariable_Qx1AzM
+              variable: Topic.CafesCount
+              value: =Topic.CafesListResponse.count
+
+            - kind: SetVariable
+              id: setVariable_YpU0zY
+              variable: Topic.CafesList
+              value: |-
+                =ForAll(
+                    Topic.CafesListResponse.items,
+                    {
+                        id: ThisRecord.id,
+                        name: ThisRecord.name,
+                        buildingId: ThisRecord.buildingId,
+                        buildingName: ThisRecord.buildingName,
+                        cafeId: ThisRecord.cafeId,
+                        onlineAvailabilityCapability: ThisRecord.onlineAvailabilityCapability
+                    }
+                )
+
+      elseActions:
+        - kind: SetVariable
+          id: setVariable_gW0pM5
+          variable: Topic.CafesCount
+          value: 0
+
+        - kind: ParseValue
+          id: wrGfId
+          variable: Topic.CafesList
+          valueType:
+            kind: Table
+            properties:
+              count: Number
+              items:
+                type:
+                  kind: Table
+
+          value: "{ count: 0, items: [] }"
+
+inputType: {}
+outputType:
+  properties:
+    CafesCount:
+      displayName: CafesCount
+      description: Number of cafes returned
+      type: Number
+
+    CafesList:
+      displayName: CafesList
+      description: List of cafes with essential fields only
+      type:
+        kind: Table
+        properties:
+          buildingId: String
+          buildingName: String
+          cafeId: Number
+          id: String
+          name: String
+          onlineAvailabilityCapability: String
+
+    CafesListResponseStatusCode:
+      displayName: CafesListResponseStatusCode
+      description: HTTP status code from the API call (blank if successful)
+      type: Number
