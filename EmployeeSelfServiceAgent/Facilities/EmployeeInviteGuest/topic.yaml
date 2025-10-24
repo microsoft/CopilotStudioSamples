@@ -1,0 +1,465 @@
+kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: InviteOperation
+    name: InviteOperation
+    description: |-
+      InviteOperation indicates the type of invite operation the user wants to perform. If user wants to invite a guest, the InviteOperation will be "create". If user wants to modify an existing invite, the InviteOperation will be "modify". If user wants to cancel an existing invite, the InviteOperation will be "delete". If not sure of the operation the InviteOperation will be 'create'.
+      Examples 
+      query - "I want to invite a guest to the office"; InviteOperation value - "create"
+      query - "Hi, I created an invite in the morning and want to make changes to the invite. Can you help me with that?"; InviteOperation value - "modify"
+      query - "Hi, I created an invite in the morning and want to cancel the invite now. Can you help me with that?"; InviteOperation - "delete"
+      query - "I want to bring my family to the office, how can I do that?"; InviteOperation value - "create"
+    entity: StringPrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 1
+      defaultValue: create
+
+  - kind: AutomaticTaskInput
+    propertyName: IsGroup
+    description: |-
+      IsGroup indicates whether the user explicitly wants to create invite for more than 1 person. If the user wants to create invite for more than 1 person, then IsGroup will be true, else false. 
+      Examples
+      query - "Hi, can you help me create an invite for a group of 10 people who want to visit the office campus?"; IsGroup value - true
+      query - "i want to invite someone to compus tomorrow"; IsGroup value - false
+    entity: BooleanPrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 1
+      defaultValue: false
+
+modelDescription: |-
+  You must obey the below instructions strictly to respond back:
+  1. This topic provides a way for users to invite guests to the office. Invoke it when users explicitly ask for inviting or registering guest or giving temporary access to the guest. Prompt examples - "How can I bring my guest to the office?", "I want to invite my wife to the office".
+  2. For general queries use search first. Do NOT use this topic when user is looking for information OR doesn’t want to invite their guests right away. Prompt examples - “How to bring my family to office?", "Can I bring some friends to show them the Redmond campus?". In such cases, use knowledge source to respond. 
+  4. InviteOperation indicates the type of invite operation user wants to perform. Default value - 'create'.
+  5. IsGroup indicates whether user wants to invite a group. Default value - false.
+  6. Don't invoke this topic directly
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+  actions:
+    - kind: SetVariable
+      id: setVariable_bg3a56
+      variable: Topic.InvitePrompt
+      value: =System.Activity.Text
+
+    - kind: ConditionGroup
+      id: conditionGroup_mY70tm
+      conditions:
+        - id: conditionItem_Px7hVx
+          condition: =Topic.ConfirmVisitCreation = false
+          actions:
+            - kind: CancelAllDialogs
+              id: J33Tbt
+
+        - id: conditionItem_6IWS10
+          condition: =Topic.InviteOperation = "modify"
+          actions:
+            - kind: SendActivity
+              id: sendActivity_G7lAXK
+              activity: Sorry, at this moment I can only help creating new invites and can’t make any changes to the ones already created.
+
+            - kind: CancelAllDialogs
+              id: 0y4pxu
+
+        - id: conditionItem_wpn1ZW
+          condition: =Topic.InviteOperation = "delete"
+          actions:
+            - kind: SendActivity
+              id: sendActivity_0o2I8w
+              activity: I'm sorry, I can't cancel invitations on your behalf yet.
+
+            - kind: CancelAllDialogs
+              id: nQsydI
+
+        - id: conditionItem_J2VrDd
+          condition: =Topic.IsGroup = true
+          actions:
+            - kind: SendActivity
+              id: sendActivity_79mKGA
+              activity: I'm sorry, I can't create group invites yet. Do you want to create individual invites instead?
+
+            - kind: CancelAllDialogs
+              id: 8wIsfB
+
+      elseActions:
+        - kind: Question
+          id: question_xeabQu
+          interruptionPolicy:
+            allowInterruption: true
+
+          variable: Topic.ConfirmVisitCreation
+          prompt: |-
+            Sure! I can help you send an invitation with instructions to get campus access.
+            Do you want to get started?
+          entity:
+            kind: BooleanPrebuiltEntity
+            sensitivityLevel: None
+
+    - kind: ConditionGroup
+      id: conditionGroup_otVyKX
+      conditions:
+        - id: conditionItem_Uaf0XW
+          condition: =Topic.ConfirmVisitCreation = true
+
+      elseActions:
+        - kind: CancelAllDialogs
+          id: 1FUATC
+
+    - kind: HttpRequestAction
+      id: U2mNrG
+      displayName: Get all buildings
+      url: =Concatenate("<API Base URL>", "/all-buildings")
+      headers:
+        Content-Type: application/json
+        x-ms-obo-scope: ="<API Scope>"
+
+      errorHandling:
+        kind: ContinueOnErrorBehavior
+        statusCode: Topic.BuildingFetchResponseCode
+
+      response: Global.AllBuildings
+      responseSchema:
+        kind: Table
+        properties:
+          buildingId: String
+          buildingName: String
+          gmtZone: String
+
+    - kind: SetVariable
+      id: setVariable_sMIfJD
+      variable: Topic.BuildingNameList
+      value: =ShowColumns(Global.AllBuildings, 'buildingName')
+
+    - kind: ConditionGroup
+      id: conditionGroup_wcwG6b
+      conditions:
+        - id: conditionItem_YVovSN
+          condition: =!IsBlank(Topic.BuildingFetchResponseCode)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_yBh0aZ
+              activity: I’m sorry, I’m having trouble processing your request. Waiting a bit before trying again might help.
+
+            - kind: CancelAllDialogs
+              id: phCIJN
+
+    - kind: AnswerQuestionWithAI
+      id: kdksll
+      autoSend: false
+      variable: Topic.MeetingTypeAuto
+      userInput: =Topic.InvitePrompt
+      additionalInstructions: |-
+        **Instructions for Responding:**
+
+        Your task is to identify the purpose of a visitor's meeting based on the user’s input and return one of the following exact values: **Business, Interview, Personal, Classified, Contractual Work**.
+        Follow the rules below:
+        1. If the input includes "business", "stakeholder", or suggests a work-related visit, return: Business
+        2. If the input includes "interview", "interviewee", or suggests the visitor is coming for an interview, return: Interview
+        3. If the input includes "friend", "family", "kids", "husband", "wife", "parents", or suggests the visitor is a personal guest, return: Personal
+        4. If the input includes "classified", return: Classified
+        5. If the input includes "contractual work", "contractual", "contract", or "vendor", return: Contractual Work
+        6. If none of the above words or indications are present, return: Personal
+
+        **Important Rules:**
+        - Only respond with one of these exact values: **Business, Interview, Personal, Classified, Contractual Work**
+        - Do **not** include quotes, punctuation, or any additional text
+        - Do **not** explain or summarize
+        - Do **not** ask follow-up questions
+
+        **Examples:**
+        - Input: "My wife is coming to visit" → Output: Personal
+        - Input: "Interview candidate arriving tomorrow" → Output: Interview
+        - Input: "Vendor from Infosys visiting for contract discussion" → Output: Contractual Work
+        - Input: "Visitor for quarterly stakeholder sync" → Output: Business
+
+    - kind: AnswerQuestionWithAI
+      id: kdkslm
+      autoSend: false
+      variable: Topic.LocationAuto
+      userInput: =Topic.InvitePrompt
+      additionalInstructions: |-
+        **Instructions for Responding:**
+
+        If the user specifies an office building name or location where they want to invite their guest, then return the location. For example, if the user says - "I want to invite my friend Aakash Gupta Hyd campus 1.", then the location will be Hyd campus 1. If location is not specified then just respond with an empty string, DO NOT SAY ANYTHING ELSE.
+
+    - kind: AnswerQuestionWithAI
+      id: kdksln
+      autoSend: false
+      variable: Topic.BuildingNameAuto
+      userInput: =Topic.LocationAuto
+      additionalInstructions: |-
+        Your task is to return the closest matching building name from the {Topic.BuildingNameList} list, based on the user input.
+
+        The following rules must be strictly followed.
+        IMPORTANT: Your response must be ONLY one of the valid buildingName from Global.AllBuildings. Do NOT return anything else — no extra text, no formatting, no punctuation, no quotes. Just the building name exactly as it appears in the list.
+
+        Step 1: If the input is empty or only whitespace, return an empty string.
+
+        Step 2: If the input includes a building number, normalize it to the number and return the building name from {Topic.BuildingNameList} that exactly matches that number.
+
+        Step 3: If no number or location matches, use fuzzy matching to find the most similar building name.
+
+        Final and very important Rule: Your output must be ONLY the building names from {Topic.BuildingNameList}. Do NOT include any extra message, quote marks, labels, or explanation.
+        Examples:
+        - Input: "Register my guest for office visit at Building 1" → Output: 1
+
+    - kind: SetVariable
+      id: setVariable_K7d7Se
+      variable: Topic.BuildingIdAuto
+      value: =LookUp(Global.AllBuildings, buildingName = Topic.BuildingNameAuto, buildingId)
+
+    - kind: SetVariable
+      id: setVariable_5cKrcS
+      displayName: Set Meeting type
+      variable: Topic.MeetingType
+      value: =["Business","Interview","Personal","Classified","Contractual Work"]
+
+    - kind: AdaptiveCardPrompt
+      id: 7X2gXM
+      repeatCount: 1
+      card: |-
+        ={
+          type: "AdaptiveCard",
+          version: "1.5",
+          '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+          body: [
+            {
+              type: "TextBlock",
+              text: "Alright, can you please help me with the following details about your invite along with guest details?",
+              wrap: true,
+              weight: "Bolder",
+              size: "default",
+              separator: true
+            },
+            {
+              type: "Input.ChoiceSet",
+              id: "meetingType",
+              label: "Select the invite type that suits your purpose.",
+              style: "expanded",
+              isRequired: true,
+              errorMessage: "Meeting purpose selection is required",
+              value: Topic.MeetingTypeAuto,
+              choices: ForAll(
+                Topic.MeetingType,
+                {
+                  title: ThisRecord.Value,
+                  value: ThisRecord.Value
+                }
+              )
+            },
+            {
+              type: "Input.ChoiceSet",
+              id: "buildingName",
+              label: "Where do you want to meet your guest?",
+              placeholder: "Select a building",
+              style: "compact",
+              isRequired: true,
+              value: Topic.BuildingIdAuto,
+              errorMessage: "Building selection is required",
+              choices: ForAll(
+                Global.AllBuildings,
+                {
+                  title: ThisRecord.buildingName,
+                  value: ThisRecord.buildingId
+                }
+              )
+            },
+            {
+              type: "Input.Text",
+              id: "guestFirstName",
+              label: "Guest first name",
+              placeholder: "Enter here",
+              isRequired: true,
+              errorMessage: "First name is required"
+            },
+            {
+              type: "Input.Text",
+              id: "guestLastName",
+              label: "Guest last name",
+              placeholder: "Enter here",
+              isRequired: true,
+              errorMessage: "Last name is required"
+            },
+            {
+              type: "Input.Text",
+              id: "guestEmail",
+              label: "Guest email address",
+              placeholder: "Enter email address",
+              style: "Email",
+              isRequired: true,
+              regex: "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$",
+              errorMessage: "Please enter a valid email address"
+            },
+            {
+              type: "Container",
+              items: [
+                {
+                  type: "TextBlock",
+                  text: "Start date & time",
+                  wrap: true,
+                  spacing: "none"
+                },
+                {
+                  type: "ColumnSet",
+                  spacing: "none",
+                  columns: [
+                    {
+                      type: "Column",
+                      width: "stretch",
+                      items: [
+                        {
+                          type: "Input.Date",
+                          id: "startDate",
+                          value: Text(Today(), "yyyy-mm-dd")
+                        }
+                      ]
+                    },
+                    {
+                      type: "Column",
+                      width: "stretch",
+                      items: [
+                        {
+                          type: "Input.Time",
+                          id: "startTime"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              type: "Input.ChoiceSet",
+              id: "visitDuration",
+              label: "Duration of the visit (hours)",
+              style: "compact",
+              value: "1",
+              errorMessage: "Please select the visit duration (hours)",
+              choices: [
+                { title: "1", value: "1" },
+                { title: "2", value: "2" },
+                { title: "3", value: "3" },
+                { title: "4", value: "4" },
+                { title: "5", value: "5" },
+                { title: "6", value: "6" },
+                { title: "7", value: "7" },
+                { title: "8", value: "8" },
+                { title: "9", value: "9" },
+                { title: "10", value: "10" }
+              ]
+            }
+          ],
+          actions: [
+            {
+              type: "Action.Submit",
+              id: "createVisit",
+              title: "Submit",
+              associatedInputs: "auto"
+            }
+          ]
+        }
+      output:
+        binding:
+          actionSubmitId: Topic.actionSubmitId
+          buildingName: Topic.buildingName
+          guestEmail: Topic.guestEmail
+          guestFirstName: Topic.guestFirstName
+          guestLastName: Topic.guestLastName
+          meetingType: Topic.meetingType
+          startDate: Topic.startDate
+          startTime: Topic.startTime
+          submitAction: Topic.submitAction
+          visitDuration: Topic.visitDuration
+
+      outputType:
+        properties:
+          actionSubmitId: String
+          buildingName: String
+          guestEmail: String
+          guestFirstName: String
+          guestLastName: String
+          meetingType: String
+          startDate: String
+          startTime: String
+          submitAction: String
+          visitDuration: Number
+
+    - kind: SetVariable
+      id: setVariable_y9BRaO
+      variable: Topic.selectedBuildingTimeZone
+      value: =LookUp(Global.AllBuildings, buildingId = Topic.buildingName, gmtZone)
+
+    - kind: HttpRequestAction
+      id: WWrVO3
+      displayName: HTTP Request
+      method: Put
+      url: =Concatenate("<API Base URL>","/GMS/invite")
+      headers:
+        Content-Type: application/json
+        x-ms-obo-scope: ="<API Scope>"
+
+      body:
+        kind: JsonRequestContent
+        content: |-
+          ={
+              guestFirstName: Topic.guestFirstName,
+              guestLastName: Topic.guestLastName,
+              buildingName: Topic.buildingName,
+              guestEmail: Topic.guestEmail,
+              meetingType: Topic.meetingType,
+              visitDurationHours:Topic.visitDuration,
+              startDate: Topic.startDate,
+              startTime: Topic.startTime,
+              gmtZone: Topic.selectedBuildingTimeZone
+          }
+
+      errorHandling:
+        kind: ContinueOnErrorBehavior
+        statusCode: Topic.InviteVisitorsResponseCode
+
+    - kind: ConditionGroup
+      id: conditionGroup_3kWXq0
+      conditions:
+        - id: conditionItem_tiC2Vb
+          condition: =!IsBlank(Topic.InviteVisitorsResponseCode)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_FZ1qor
+              activity: I’m sorry, I’m having trouble processing your request. Waiting a bit before trying again might help.
+
+            - kind: CancelAllDialogs
+              id: 0NZ6fK
+
+    - kind: SetVariable
+      id: setVariable_AQNJBh
+      variable: Topic.selectedBuildingName
+      value: =LookUp(Global.AllBuildings, buildingId = Topic.buildingName, buildingName)
+
+    - kind: SendActivity
+      id: sendActivity_cIbnAU
+      activity: |-
+        {Topic.guestFirstName}'s visit has been created.
+
+    - kind: CancelAllDialogs
+      id: OZRfY5
+
+inputType:
+  properties:
+    InviteOperation:
+      displayName: InviteOperation
+      type: String
+
+    IsGroup:
+      displayName: IsGroup
+      description: |-
+        IsGroup indicates whether the user explicitly wants to create invite for more than 1 person. If the user wants to create invite for more than 1 person, then IsGroup will be true, else false. 
+        Examples
+        query - "Hi, can you help me create an invite for a group of 10 people who want to visit the office campus?"; IsGroup value - true
+        query - "I want to invite someone to compus tomorrow"; IsGroup value - false
+      type: Boolean
+
+outputType: {}

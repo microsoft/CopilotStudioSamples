@@ -1,0 +1,10 @@
+<botcomponent schemaname="msdyn_copilotforemployeeselfservice.topic.Fac-InviteGuests">
+  <componenttype>9</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Fac-InviteGuests</name>
+  <parentbotid>
+    <schemaname>msdyn_copilotforemployeeselfservice</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>
