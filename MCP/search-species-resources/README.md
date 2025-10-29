@@ -10,6 +10,24 @@ A Model Context Protocol (MCP) server demonstrating enterprise-ready resource ac
 
 In enterprise scenarios, MCP servers often expose large numbers of resources. Rather than forcing the orchestrator to enumerate and filter through all of them, we use tools to mediate access and return the right resource based on context. Search is one way to do this, but tools can use any logic—filtering by category, user permissions, recency, or business rules—to determine which resource to return.
 
+### How It Works
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Agent as Copilot Studio Agent
+    participant Tool as searchSpecies Tool
+    participant Resource as MCP Resource
+    
+    User->>Agent: Ask question
+    Agent->>Tool: Call with search terms
+    Tool->>Tool: Execute search logic
+    Tool-->>Agent: Return resource link
+    Agent->>Resource: Fetch resource content
+    Resource-->>Agent: Return content
+    Agent-->>User: Provide answer
+```
+
 **Example Code:**
 
 First, we register resources dynamically:

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+
 
 import express, { Request, Response } from 'express';
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
