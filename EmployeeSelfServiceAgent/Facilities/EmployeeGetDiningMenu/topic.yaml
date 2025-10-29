@@ -1,0 +1,209 @@
+kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: CafeName
+    description: The name of a Microsoft campus cafe.
+    entity: StringPrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+  - kind: AutomaticTaskInput
+    propertyName: StationName
+    description: The specific food station within a cafe (e.g., grill, salad bar, sandwich station, pizza, sushi, beverage station)
+    entity: StringPrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+modelDisplayName: Fac Dining Get Menus Query
+modelDescription: |-
+  This topic triggers when a user asks about menus for a cafe, food hall, or station. It extracts two optional inputs: cafe name {Topic.CafeName} and station name {Topic.StationName} from the user input
+
+    Example trigger phrases:
+    - "Show me the menus"
+    - "Show menus at Cafe 34"
+    - "What's available at One Esterra?"
+    - "Menus at Food Hall 9"
+    - "Show me menus at cafe 86"
+    - "Show me menus at 34 and grill"
+    - "What's available at FlatTop in cafe 86?"
+
+    If both slots are filled, show the menu. If the input is ambiguous or only one input is provided, prompt for clarification whether they meant a Cafe or a Station. Display output from {Topic.FullMenu} variable in a readable format. Do not show options to modify/add to order or menu item images. Also show the {Topic.CafeStationUrl} value as a deeplink at the end.
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+  actions:
+    - kind: ConditionGroup
+      id: conditionGroup_ctWG9q
+      conditions:
+        - id: conditionItem_cNnDkv
+          condition: =!IsBlank(Topic.CafeName) && !IsBlank(Topic.StationName)
+
+      elseActions:
+        - kind: ConditionGroup
+          id: conditionGroup_lIH0Fy
+          conditions:
+            - id: conditionItem_ulojMj
+              condition: =IsBlank(Topic.CafeName)
+              actions:
+                - kind: BeginDialog
+                  id: tRBy2i
+                  input: {}
+                  dialog: msdyn_copilotforemployeeselfservice.topic.FacDiningSelectCafe
+                  output:
+                    binding:
+                      CafeName: Topic.CafeName
+
+        - kind: BeginDialog
+          id: vQljTl
+          input:
+            binding:
+              UserQuery: =Topic.CafeName
+
+          dialog: msdyn_copilotforemployeeselfservice.topic.FacDiningSearchCafesQuery
+          output:
+            binding:
+              CafeId: Topic.CafeId
+              CafeName: Topic.CafeName
+              MatchCount: Topic.MatchCount
+              MatchedCafes: Topic.MatchedCafes
+              ResultType: Topic.ResultType
+              SearchConfidence: Topic.SearchConfidence
+
+        - kind: ConditionGroup
+          id: conditionGroup_nlB1BR
+          conditions:
+            - id: conditionItem_EUeGo4
+              condition: =Topic.SearchConfidence >= 0.8
+              actions:
+                - kind: SetVariable
+                  id: setVariable_6aYWPj
+                  variable: Topic.CafeName
+                  value: =First(Topic.MatchedCafes).name
+
+            - id: conditionItem_OI8jtL
+              condition: =Topic.MatchCount = 0
+              actions:
+                - kind: BeginDialog
+                  id: Kget1R
+                  input: {}
+                  dialog: msdyn_copilotforemployeeselfservice.topic.FacDiningSelectCafe
+                  output:
+                    binding:
+                      CafeName: Topic.CafeName
+
+          elseActions:
+            - kind: BeginDialog
+              id: TlDkbq
+              input:
+                binding:
+                  MatchedCafes: =Topic.MatchedCafes
+                  SearchQuery: =Topic.CafeName
+
+              dialog: msdyn_copilotforemployeeselfservice.topic.FacDiningHandleMultipleCafeMatches_JAK
+              output:
+                binding:
+                  CafeId: Topic.CafeId
+                  CafeName: Topic.CafeName
+
+        - kind: BeginDialog
+          id: FBSbkY
+          input:
+            binding:
+              CafeName: =Topic.CafeName
+
+          dialog: msdyn_copilotforemployeeselfservice.topic.FacDiningGetCafeStations
+          output:
+            binding:
+              StationId: Topic.StationId
+              StationName: Topic.StationName
+
+    - kind: BeginDialog
+      id: BCJa2r
+      input:
+        binding:
+          CafeName: =Topic.CafeName
+          StationName: =Topic.StationName
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.FacDiningDisplayMenus
+      output:
+        binding:
+          CafeStationMenus: Topic.FullMenu
+
+    - kind: SetVariable
+      id: setVariable_T2Lksz
+      variable: Topic.CafeId
+      value: =First(Topic.FullMenu.items).cafeId
+
+    - kind: SetVariable
+      id: setVariable_8TRgPN
+      variable: Topic.StationId
+      value: =First(Topic.FullMenu.items).stationId
+
+    - kind: SetVariable
+      id: setVariable_fkzpWm
+      variable: Topic.CafeStationUrl
+      value: |-
+        =Concatenate(
+            Env.fac_DiningWebAppUrl,
+            "/cafe/",
+            Topic.CafeId,
+            "/station/",
+            Topic.StationId
+        )
+
+inputType:
+  properties:
+    CafeName:
+      displayName: CafeName
+      description: The name of a Microsoft campus cafe.
+      type: String
+
+    StationName:
+      displayName: StationName
+      description: The specific food station within a cafe (e.g., grill, salad bar, sandwich station, pizza, sushi, beverage station)
+      type: String
+
+outputType:
+  properties:
+    CafeStationUrl:
+      displayName: CafeStationUrl
+      description: The URL for browsing cafe stations
+      type: String
+
+    FullMenu:
+      displayName: FullMenu
+      description: The full menu for the cafe and station
+      type:
+        kind: Record
+        properties:
+          count: Number
+          items:
+            type:
+              kind: Table
+              properties:
+                cafeId: String
+                cafeName: String
+                id: String
+                isAvailableOnline: Boolean
+                items:
+                  type:
+                    kind: Table
+                    properties:
+                      calories: Number
+                      category: String
+                      description: String
+                      id: String
+                      isAvailableOnline: Boolean
+                      name: String
+                      price: Number
+
+                name: String
+                stationId: String
+                stationName: String
+
+          metadata: Blank

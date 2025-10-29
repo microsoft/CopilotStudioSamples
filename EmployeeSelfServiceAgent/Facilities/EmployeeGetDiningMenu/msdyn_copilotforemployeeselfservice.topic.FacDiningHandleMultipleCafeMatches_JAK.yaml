@@ -1,0 +1,215 @@
+kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: MatchedCafes
+    description: Cafes that matched user's search term
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+  - kind: AutomaticTaskInput
+    propertyName: SearchQuery
+    description: User's search query
+    entity: StringPrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+modelDisplayName: Fac Dining Handle Multiple Cafe Matches
+modelDescription: This topic handles multiple matches for the provided cafe name
+beginDialog:
+  kind: OnRedirect
+  id: main
+  actions:
+    - kind: SetVariable
+      id: setVariable_0gVXLI
+      variable: Topic.MatchCount
+      value: =CountRows(Topic.MatchedCafes)
+
+    - kind: SetVariable
+      id: setVariable_ibw6Fx
+      variable: Topic.CafeSelectionOptions
+      value: |-
+        =Filter(
+            ForAll(Topic.MatchedCafes, 
+                { 
+                    name: name,
+                    cafeId: id,
+                    buildingName: buildingName,
+                    DisplayName: Concatenate(
+                        name, 
+                        " (Building ", buildingName,")")
+                }
+            ), 
+            !IsBlank(name)
+        )
+
+    - kind: ConditionGroup
+      id: conditionGroup_BAeZlG
+      conditions:
+        - id: conditionItem_fJDo4P
+          condition: =Topic.MatchCount >= 20
+          actions:
+            - kind: AdaptiveCardPrompt
+              id: zcc1CC
+              interruptionPolicy:
+                allowInterruption: false
+
+              repeatCount: 0
+              card: |-
+                ={
+                  type: "AdaptiveCard",
+                  '$schema': "https://adaptivecards.io/schemas/adaptive-card.json",
+                  version: "1.5",
+                  body: [
+                    {
+                      type: "Container",
+                      items: [
+                        {
+                          type: "TextBlock",
+                          text: "Select a Cafe",
+                          size: "Medium",
+                          weight: "Bolder",
+                          wrap: true
+                        },
+                        {
+                          type: "TextBlock",
+                          text: "Choose from the cafes below:",
+                          wrap: true,
+                          spacing: "Small",
+                          isSubtle: true
+                        },
+                        {
+                          type: "Input.ChoiceSet",
+                          id: "SelectedCafeId",
+                          errorMessage: "Please select a cafe",
+                          spacing: "Medium",
+                          label: "Available Cafes",
+                          placeholder: "Select a cafe...",
+                          isRequired: true,
+                          style: "compact",
+                          choices: ForAll(Topic.CafeSelectionOptions, { 
+                            title: DisplayName,
+                            value: cafeId
+                          })
+                        },
+                        {
+                          type: "ActionSet",
+                          actions: [
+                            {
+                              type: "Action.Submit",
+                              title: "Submit",
+                              style: "positive",
+                              tooltip: "Submit cafe selection"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              output:
+                binding:
+                  SelectedCafeId: Topic.SelectedCafeId
+
+              outputType:
+                properties:
+                  SelectedCafeId: String
+
+            - kind: SetVariable
+              id: setVariable_fWNxAM
+              variable: Topic.SelectedCafe
+              value: =LookUp(Topic.CafeSelectionOptions, cafeId = Topic.SelectedCafeId)
+
+            - kind: SetVariable
+              id: setVariable_rRiFb8
+              variable: Topic.CafeId
+              value: =Topic.SelectedCafe.cafeId
+
+            - kind: SetVariable
+              id: setVariable_srA11r
+              variable: Topic.CafeName
+              value: =Topic.SelectedCafe.name
+
+      elseActions:
+        - kind: ConditionGroup
+          id: conditionGroup_J2gQky
+          conditions:
+            - id: conditionItem_nxnYzD
+              condition: =Topic.MatchCount = 1
+              displayName: If Cafe Match Count is equal to 1
+              actions:
+                - kind: SetVariable
+                  id: setVariable_5XfLnK
+                  variable: Topic.CafeId
+                  value: =First(Topic.CafeSelectionOptions).cafeId
+
+                - kind: SetVariable
+                  id: setVariable_fdTO9v
+                  variable: Topic.CafeName
+                  value: =First(Topic.CafeSelectionOptions).name
+
+          elseActions:
+            - kind: Question
+              id: YKYyKq
+              interruptionPolicy:
+                allowInterruption: true
+
+              variable: init:Topic.UserSelectedCafe
+              prompt: |-
+                I found {Topic.MatchCount} cafes matching your search term {Topic.SearchQuery}.
+
+                {Char (10) & Concat(
+                    Topic.CafeSelectionOptions,
+                    "- " & Text(DisplayName) & Char(10)
+                )}
+
+                Please reply with the **full name of the cafe** you're interested in.
+              defaultValue: =Blank()
+              entity:
+                kind: DynamicClosedListEntity
+                items: =Topic.CafeSelectionOptions
+
+            - kind: SetVariable
+              id: 5WcFGI
+              variable: Topic.CafeId
+              value: =Topic.UserSelectedCafe.cafeId
+
+            - kind: SetVariable
+              id: FkL5uU
+              variable: Topic.CafeName
+              value: =Topic.UserSelectedCafe.name
+
+inputType:
+  properties:
+    MatchedCafes:
+      displayName: MatchedCafes
+      description: Cafes that matched user's search term
+      type:
+        kind: Table
+        properties:
+          buildingId: String
+          buildingName: String
+          cafeId: Number
+          id: String
+          name: String
+          onlineAvailabilityCapability: String
+
+    SearchQuery:
+      displayName: SearchQuery
+      description: User's search query
+      type: String
+
+outputType:
+  properties:
+    CafeId:
+      displayName: CafeId
+      description: The ID of the cafe user selected
+      type: String
+
+    CafeName:
+      displayName: CafeName
+      description: The name of the cafe user selected
+      type: String
