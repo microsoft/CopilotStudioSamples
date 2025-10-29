@@ -23,8 +23,9 @@ The Copilot Studio implementation guide covers these chapters:
 - Security, monitoring & governance
 - Application lifecycle management
 - Analytics & KPIs
+- Licensing and capacity
+- Testing agents
 - Dynamics 365 Omnichannel (optional)
-- Copilot Studio Kit
 
 # Version history
 
