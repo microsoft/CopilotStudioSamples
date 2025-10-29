@@ -124,11 +124,6 @@ devtunnel host -p 3000 --allow-anonymous
 
 ## Example Usage
 
-**User:** "Tell me about endangered species in Africa"  
-→ Calls `searchSpecies` with "endangered africa"  
-→ Returns African Elephant resource  
-→ Copilot provides rich answer
-
 **User:** 
 ```
 search for info on pandas
