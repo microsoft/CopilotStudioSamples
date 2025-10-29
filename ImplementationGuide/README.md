@@ -16,15 +16,15 @@ Use this URL to download the latest version of the guide: [aka.ms/CopilotStudioI
 The Copilot Studio implementation guide covers these chapters:
 - Overview of the project
 - Architecture overview
-- Language understanding
-- AI functionalities
+- Language & orchestration
+- AI capabilities
 - Integrations
 - Channels, clients, and hand off
 - Security, monitoring & governance
 - Application lifecycle management
 - Analytics & KPIs
-- Gaps & top requests
 - Dynamics 365 Omnichannel (optional)
+- Copilot Studio Kit
 
 # Version history
 
