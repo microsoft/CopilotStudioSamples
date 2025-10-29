@@ -1,0 +1,175 @@
+kind: AdaptiveDialog
+modelDescription: "This tool can handle queries like these: create facilities request, open a facilities ticket, start a new facilities request."
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - create facilities request
+      - open a facilities ticket
+      - start a new facilities request
+      - file a facilities complaint
+      - Help me with a workspace problem
+      - Something is wrong in the building
+      - Create a ticket for facilities
+      - Request maintenance for office
+      - Report a broken chair/light/door
+      - I need to submit a facilities request
+
+  actions:
+    - kind: SetVariable
+      id: setVariable_Z2HdOA
+      variable: Topic.ProblemDescription
+      value: =System.Activity.Text
+
+    - kind: SendActivity
+      id: sendActivity_uEi72P
+      activity: "Thanks for the details you've shared so far. I’ll review the information to determine if everything needed to submit your facilities request is already available. "
+
+    - kind: InvokeAIBuilderModelAction
+      id: invokeAIBuilderModelAction_inqoh4
+      input:
+        binding:
+          Facilities_20Description: =Topic.ProblemDescription
+
+      output:
+        binding:
+          predictionOutput: Topic.ProblemLocation
+
+      aIModelId: 0bde30fa-b6bd-42f3-a9b6-d58c47ca2065
+
+    - kind: InvokeAIBuilderModelAction
+      id: invokeAIBuilderModelAction_3wGDBR
+      input:
+        binding:
+          Categories: ="HVAC, Electrical, Plumbing, Maintenance"
+          Problem_20Description: =Topic.ProblemDescription
+
+      output:
+        binding:
+          predictionOutput: Topic.ProblemCategory
+
+      aIModelId: 49e40e64-a630-4692-a82b-4f88522eba41
+
+    - kind: AdaptiveCardPrompt
+      id: "sendActivity_CtL3qw      "
+      card: |-
+        ={
+          type: "AdaptiveCard",
+          '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+          version: "1.5",
+          body: [
+            {
+              type: "TextBlock",
+              text: "Details of your Service Request",
+              wrap: true,
+              style: "heading"
+            },
+            {
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.Text",
+                      id: "ProblemCategory",
+                      label: "Problem Category:",
+                      value: Topic.ProblemCategory.text,
+                      weight: "bolder",
+                      isRequired: true,
+                      errorMessage: "Fill required details"
+                    }            
+                  ]
+                }
+              ]
+            },    
+            {
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.Text",
+                      id: "ProblemLocation",
+                      label: "Problem Location:",
+                      value: Topic.ProblemLocation.text,
+                      weight: "bolder",
+                      isRequired: true,
+                      errorMessage: "Fill required details"
+                    }            
+                  ]
+                }
+              ]
+            },
+            {
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.Text",
+                      id: "ProblemDescription",
+                      label: "Problem Description:",
+                      value: Topic.ProblemDescription,
+                      weight: "bolder",
+                      isRequired: true,
+                      errorMessage: "Fill required details"
+                    }            
+                  ]
+                }
+              ]
+            }
+          ],
+          actions: [
+            {
+              type: "Action.Submit",  
+              title: "Submit"
+            },
+            {
+              type: "Action.Submit",
+              title: "Cancel",
+              associatedInputs: "none"
+            }
+          ]
+        }
+      output:
+        binding:
+          actionSubmitId: Topic.actionSubmitId
+
+      outputType:
+        properties:
+          actionSubmitId: String
+
+    - kind: ConditionGroup
+      id: conditionGroup_guZXij
+      conditions:
+        - id: conditionItem_NnWEYN
+          condition: =Topic.actionSubmitId = "Submit"
+          actions:
+            - kind: InvokeFlowAction
+              id: invokeFlowAction_qSOIaY
+              input:
+                binding:
+                  text: =Topic.ProblemCategory.text
+                  text_1: =Topic.ProblemLocation.text
+                  text_2: =Topic.ProblemDescription
+
+              output:
+                binding:
+                  problemticket: Topic.ProblemTicket
+
+              flowId: 521ce2a6-daaa-f011-bbd2-0022480b25f5
+
+      elseActions:
+        - kind: SendActivity
+          id: sendActivity_BaWHYn
+          activity: Let us know how can we help.
+
+inputType: {}
+outputType: {}
