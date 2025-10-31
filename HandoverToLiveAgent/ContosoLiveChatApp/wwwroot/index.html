@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contoso Live Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 700px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: #0078d4;
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .chat-history {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.outgoing {
+            justify-content: flex-end;
+        }
+
+        .message.incoming {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.outgoing .message-bubble {
+            background: #0078d4;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.incoming .message-bubble {
+            background: #e4e6eb;
+            color: #050505;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-info {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #d0d0d0;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #messageInput:focus {
+            border-color: #0078d4;
+        }
+
+        #sendButton {
+            padding: 12px 24px;
+            background: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #sendButton:hover {
+            background: #005a9e;
+        }
+
+        #sendButton:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            Contoso Live Chat
+        </div>
+        <div class="chat-history" id="chatHistory">
+            <div class="loading">Loading messages...</div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="messageInput" placeholder="Type your message..." />
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chatHistory');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        let hasReceivedMessage = false;
+
+        // Disable send button initially
+        sendButton.disabled = true;
+        messageInput.disabled = true;
+        messageInput.placeholder = "";
+
+        // Load messages on page load
+        loadMessages();
+
+        // Poll for new messages every 2 seconds
+        setInterval(loadMessages, 2000);
+
+        // Send message on button click
+        sendButton.addEventListener('click', sendMessage);
+
+        // Send message on Enter key
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        async function loadMessages() {
+            try {
+                const response = await fetch('/api/chat/messages');
+                if (!response.ok) {
+                    throw new Error('Failed to load messages');
+                }
+                
+                const messages = await response.json();
+                displayMessages(messages);
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                showError('Failed to load messages. Please refresh the page.');
+            }
+        }
+
+        function displayMessages(messages) {
+            if (messages.length === 0) {
+                chatHistory.innerHTML = '<div class="loading">No messages yet. Waiting for first incoming message...</div>';
+                return;
+            }
+
+            // Check if there's any incoming message
+            const hasIncoming = messages.some(msg => msg.direction === 1);
+            if (hasIncoming && !hasReceivedMessage) {
+                hasReceivedMessage = true;
+                sendButton.disabled = false;
+                messageInput.disabled = false;
+                messageInput.placeholder = "Type your message...";
+            }
+
+            chatHistory.innerHTML = '';
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${message.direction === 0 ? 'outgoing' : 'incoming'}`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                
+                const text = document.createElement('div');
+                text.textContent = message.text;
+                
+                const info = document.createElement('div');
+                info.className = 'message-info';
+                const time = new Date(message.timestamp).toLocaleTimeString();
+                info.textContent = `${message.sender} • ${time}`;
+                
+                bubble.appendChild(text);
+                bubble.appendChild(info);
+                messageDiv.appendChild(bubble);
+                chatHistory.appendChild(messageDiv);
+            });
+
+            // Scroll to bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text || !hasReceivedMessage) return;
+
+            // Disable input while sending
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+
+            try {
+                const response = await fetch('/api/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+
+                // Clear input
+                messageInput.value = '';
+                
+                // Reload messages
+                await loadMessages();
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showError('Failed to send message. Please try again.');
+            } finally {
+                // Re-enable input only if we've received a message
+                if (hasReceivedMessage) {
+                    sendButton.disabled = false;
+                    messageInput.disabled = false;
+                    messageInput.focus();
+                }
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            chatHistory.insertBefore(errorDiv, chatHistory.firstChild);
+            
+            // Remove error after 5 seconds
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+    </script>
+</body>
+</html>
