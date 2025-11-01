@@ -1,161 +1,112 @@
 # Biological Species MCP Server
 
-A Model Context Protocol (MCP) server demonstrating enterprise-ready resource access patterns for Microsoft Copilot Studio.
+An MCP server demonstrating resource discovery through tools. Copilot Studio always accesses resources through tools, not directly - a design motivated by enterprise environments with large-scale resource catalogs.
 
-## Key Concept: Tool-Mediated Resource Access
+## Architecture
 
-**Important**: Copilot Studio's orchestrator does **not directly call MCP resources**. Resources must be returned through tool calls.
+**How Copilot Studio accesses MCP resources:**
+- Copilot Studio uses tools to discover resources (never enumerates all resources directly)
+- Tools return filtered resource references (e.g., search returns 5 matches)
+- Agent evaluates references and selectively reads chosen resources
+- Design enables scalability for enterprise systems with large resource catalogs
 
-### Why This Pattern?
+**Note:** The MCP protocol supports direct resource enumeration, but Copilot Studio's architecture always uses tool-based discovery.
 
-In enterprise scenarios, MCP servers often expose large numbers of resources. Rather than forcing the orchestrator to enumerate and filter through all of them, we use tools to mediate access and return the right resource based on context. Search is one way to do this, but tools can use any logic—filtering by category, user permissions, recency, or business rules—to determine which resource to return.
+This server implements a simple search pattern with fuzzy matching.
 
-### How It Works
+## Available Tools
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Agent as Copilot Studio Agent
-    participant Tool as searchSpecies Tool
-    participant Resource as MCP Resource
-    
-    User->>Agent: Ask question
-    Agent->>Tool: Call with search terms
-    Tool->>Tool: Execute search logic
-    Tool-->>Agent: Return resource link
-    Agent->>Resource: Fetch resource content
-    Resource-->>Agent: Return content
-    Agent-->>User: Provide answer
+- **`searchSpeciesData`** - Fuzzy search returning up to 5 matching resource references
+- **`listSpecies`** - Returns JSON array of all species (id, commonName, scientificName, conservationStatus)
+
+## Available Resources
+
+- 5 species with text overviews and images
+- 8 total resources (5 text, 3 images)
+
 ```
-
-**Example Code:**
-
-First, we register resources dynamically:
-```typescript
-// Register each species as a resource
-SPECIES_RESOURCES.forEach((species) => {
-  server.registerResource(
-    species.id,
-    `species:///${species.id}`,
-    {
-      title: `${species.commonName} (${species.scientificName})`,
-      description: species.description,
-      mimeType: 'text/plain'
-    },
-    async (uri) => ({
-      contents: [{
-        uri: uri.href,
-        text: formatSpeciesText(species)
-      }]
-    })
-  );
-});
-```
-
-Then, our search tool returns [resource links](https://modelcontextprotocol.io/specification/2025-06-18/server/tools#resource-links) to guide the agent:
-```typescript
-server.tool("searchSpecies", ..., async ({ searchTerms }) => {
-  const results = fuse.search(searchTerms);
-  const species = results[0].item;
-  
-  // Return resource link
-  return {
-    content: [{
-      type: "resource",
-      resource: {
-        uri: `species:///${species.id}`,
-        mimeType: "text/plain",
-        text: formatSpeciesText(species)
-      }
-    }]
-  };
-});
+src/
+├── index.ts              # Server entry point
+├── types.ts              # TypeScript types
+├── data/
+│   ├── species.ts        # Species data (5 species)
+│   └── resources.ts      # Resource definitions (8 resources)
+├── assets/               # PNG images
+└── utils/                # Utilities (datetime, formatting, image encoding)
 ```
 
 ## Quick Start
 
-### 1. Install & Build
+### Prerequisites
+
+- Node.js 18+
+- [Dev Tunnels CLI](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started)
+- Copilot Studio access
+
+### 1. Install and Build
+
 ```bash
 npm install
 npm run build
-npm start
 ```
 
-### 2. Create Dev Tunnel (Anonymous)
+### 2. Start Server
 
-**VS Code (Recommended):**
-1. Open Ports panel (View → Terminal → Ports)
-2. Forward port 3000
-3. Set visibility to **Public**
-4. Copy the HTTPS URL
+```bash
+npm start
+# or
+npm run dev
+```
 
-**Or via CLI:**
+Server runs on `http://localhost:3000/mcp`
+
+### 3. Create Dev Tunnel
+
+**VS Code:**
+1. Ports panel → Forward Port → 3000
+2. Right-click → Port Visibility → Public
+3. Copy HTTPS URL
+
+**CLI:**
 ```bash
 devtunnel host -p 3000 --allow-anonymous
 ```
 
-### 3. Configure Copilot Studio
+**Important:** URL format is `https://abc123-3000.devtunnels.ms/mcp` (port in hostname with hyphen, not colon)
 
-1. Go to [Copilot Studio](https://copilotstudio.microsoft.com)
-2. Open your agent
-3. Navigate to **Tools** → **+ Add a tool**
-4. Select **New tool** → **Model Context Protocol**
-5. In the MCP onboarding wizard, enter:
-   - **Server name:** `Biological Species MCP`
-   - **Server description:**
-     ```
-     MCP server providing search capabilities for biological species information 
-     including habitat, diet, conservation status, and interesting facts. 
-     Supports fuzzy keyword search.
-     ```
-   - **Server URL:** `https://your-tunnel-url-3000.devtunnels.ms/mcp`
-     
-   > [!IMPORTANT]
-   > **⚠️ Double-check your tunnel URL format!**
-   > 
-   > ✅ **CORRECT:** `https://abc123-3000.devtunnels.ms/mcp`  
-   > ❌ **WRONG:** `https://abc123.devtunnels.ms:3000/mcp`
-   > 
-   > If you use the wrong format, the connection will fail. The port must be embedded in the hostname with a hyphen.
+### 4. Configure Copilot Studio
 
-6. **Authentication type:** Select **None**
-7. Click **Create**
+1. Navigate to Tools → Add tool → Model Context Protocol
+2. Configure:
+   - **Server URL:** `https://your-tunnel-3000.devtunnels.ms/mcp`
+   - **Authentication:** None
+3. Click Create
 
-
-## Example Usage
-
-**User:** "Tell me about endangered species in Africa"  
-→ Calls `searchSpecies` with "endangered africa"  
-→ Returns African Elephant resource  
-→ Copilot provides rich answer
-
-**User:** 
-```
-search for info on pandas
-```
-
-The agent calls `searchSpecies("pandas")` → Returns Red Panda resource → Agent responds:
+## Example Queries
 
 ```
-Red Panda (Ailurus fulgens)
-The red panda is a small arboreal mammal native to the eastern Himalayas...
-Conservation Status: Endangered
+What species do you have?
+→ Calls listSpecies()
+
+Tell me about butterflies
+→ Calls searchSpeciesData("butterflies") → Returns Monarch Butterfly resources
+
+Show me a blue whale photo
+→ Calls searchSpeciesData("blue whale photo") → Returns image resource
 ```
 
-**User:** 
-```
-what about sharks?
-```
+## Development
 
-The agent calls `searchSpecies("sharks")` → Returns Great White Shark resource → Agent responds:
+### Adding Species
 
-```
-Great White Shark (Carcharodon carcharias)
-The world's largest predatory fish. These apex predators can grow up to 6 meters...
-Conservation Status: Vulnerable
-```
+1. Add to `src/data/species.ts`
+2. Add PNG to `src/assets/`
+3. Add resources to `src/data/resources.ts`
+4. Rebuild: `npm run build`
 
+## Resources
 
-## License
-
-MIT
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk)
+- [MCP in Copilot Studio][(https://copilotstudio.microsoft.com](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp))
+- [Dev Tunnels](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/overview)

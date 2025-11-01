@@ -1,305 +1,265 @@
 import express, { Request, Response } from 'express';
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from 'zod';
 import Fuse from 'fuse.js';
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+  ReadResourceRequestSchema,
+  ListResourcesRequestSchema,
+  SubscribeRequestSchema,
+  UnsubscribeRequestSchema
+} from "@modelcontextprotocol/sdk/types.js";
+import { zodToJsonSchema } from "zod-to-json-schema";
+import { SPECIES_DATA } from './data/species.js';
+import { RESOURCES } from './data/resources.js';
+import { timestamp, formatSpeciesText } from './utils/utils.js';
 
-// Define our hardcoded resources about biological species
-interface Species {
-  id: string;
-  commonName: string;
-  scientificName: string;
-  description: string;
-  habitat: string;
-  diet: string;
-  conservationStatus: string;
-  interestingFacts: string[];
-  tags: string[];
-}
+const app = express();
+app.use(express.json());
 
-const SPECIES_RESOURCES: Species[] = [
+// Create the MCP server once (reused across requests)
+const server = new Server(
   {
-    id: "african-elephant",
-    commonName: "African Elephant",
-    scientificName: "Loxodonta africana",
-    description: "The African elephant is the largest living terrestrial animal. Adult males can reach up to 4 meters in height and weigh up to 7,000 kg. They are distinguished by their large ears, which help dissipate heat in the African climate.",
-    habitat: "African savannas, forests, and deserts across sub-Saharan Africa",
-    diet: "Herbivore - grasses, leaves, bark, fruit, and roots. Can consume up to 150 kg of vegetation daily.",
-    conservationStatus: "Endangered",
-    interestingFacts: [
-      "Elephants have the longest pregnancy of any mammal - 22 months",
-      "They can recognize themselves in mirrors, showing self-awareness",
-      "African elephants communicate through infrasound that can travel several kilometers",
-      "Their tusks are actually elongated incisor teeth made of ivory"
-    ],
-    tags: ["mammal", "herbivore", "endangered", "africa", "savanna", "large-animal"]
+    name: "biological-species-mcp-server",
+    version: "1.0.0",
   },
   {
-    id: "monarch-butterfly",
-    commonName: "Monarch Butterfly",
-    scientificName: "Danaus plexippus",
-    description: "The Monarch butterfly is famous for its distinctive orange and black wing pattern and its incredible multi-generational migration. They are one of the few insects that make a trans-continental migration.",
-    habitat: "North America, with migration routes between Mexico/California and Canada/United States",
-    diet: "Larvae feed exclusively on milkweed plants; adults feed on nectar from various flowers",
-    conservationStatus: "Vulnerable",
-    interestingFacts: [
-      "Their migration can span up to 4,800 km (3,000 miles)",
-      "It takes 3-4 generations to complete the full migration cycle",
-      "Milkweed makes them toxic to most predators",
-      "They use the Earth's magnetic field and sun position for navigation"
-    ],
-    tags: ["insect", "butterfly", "migration", "herbivore", "north-america", "endangered"]
-  },
-  {
-    id: "great-white-shark",
-    commonName: "Great White Shark",
-    scientificName: "Carcharodon carcharias",
-    description: "The great white shark is the world's largest predatory fish. These apex predators can grow up to 6 meters in length and have up to 300 serrated triangular teeth arranged in several rows.",
-    habitat: "Coastal surface waters in all major oceans, particularly in temperate and subtropical regions",
-    diet: "Carnivore - marine mammals (seals, sea lions), fish, sea turtles, and carrion",
-    conservationStatus: "Vulnerable",
-    interestingFacts: [
-      "Can detect a single drop of blood in 100 liters of water",
-      "Their teeth are constantly replaced throughout their lifetime",
-      "Can breach completely out of the water when hunting seals",
-      "Great whites can live up to 70 years or more"
-    ],
-    tags: ["fish", "shark", "carnivore", "marine", "predator", "vulnerable"]
-  },
-  {
-    id: "red-panda",
-    commonName: "Red Panda",
-    scientificName: "Ailurus fulgens",
-    description: "The red panda is a small arboreal mammal native to the eastern Himalayas. Despite their name and appearance, red pandas are not closely related to giant pandas - they're in their own unique family, Ailuridae.",
-    habitat: "Temperate forests in the Himalayas, at elevations between 2,200-4,800 meters",
-    diet: "Primarily bamboo (95% of diet), but also eggs, birds, insects, and small mammals",
-    conservationStatus: "Endangered",
-    interestingFacts: [
-      "They have a false thumb - an extended wrist bone that helps grip bamboo",
-      "Red pandas sleep 17 hours a day, often in trees",
-      "Their thick fur and bushy tail help them stay warm in cold mountain climates",
-      "They use their tail for balance and as a blanket in cold weather"
-    ],
-    tags: ["mammal", "herbivore", "endangered", "asia", "himalaya", "arboreal"]
-  },
-  {
-    id: "poison-dart-frog",
-    commonName: "Poison Dart Frog",
-    scientificName: "Dendrobatidae (family)",
-    description: "Poison dart frogs are a family of brightly colored frogs found in Central and South America. Their vibrant colors warn predators of their toxic skin. Indigenous peoples used their poison for hunting darts, hence the name.",
-    habitat: "Tropical rainforests of Central and South America, near streams and on the forest floor",
-    diet: "Carnivore - primarily ants, termites, and small arthropods. Their toxicity comes from their diet.",
-    conservationStatus: "Varies by species - some critically endangered",
-    interestingFacts: [
-      "Captive-bred frogs are not poisonous as they don't have access to the insects that provide toxins",
-      "Males carry tadpoles on their backs to water sources",
-      "The golden poison dart frog has enough toxin to kill 10 adult humans",
-      "Their bright colors are an example of aposematic coloration (warning colors)"
-    ],
-    tags: ["amphibian", "frog", "carnivore", "tropical", "rainforest", "toxic", "endangered"]
-  }
-];
-
-const server = new McpServer({
-  name: "biological-species-mcp-server",
-  version: "1.0.0",
-  description: "MCP server for accessing information about biological species. Provides a search tool to find species based on questions or keywords."
-});
-
-// Helper function to format species data as text
-function formatSpeciesText(species: Species): string {
-  return `Common Name: ${species.commonName}
-Scientific Name: ${species.scientificName}
-
-Description:
-${species.description}
-
-Habitat:
-${species.habitat}
-
-Diet:
-${species.diet}
-
-Conservation Status: ${species.conservationStatus}
-
-Interesting Facts:
-${species.interestingFacts.map((fact, i) => `${i + 1}. ${fact}`).join('\n')}
-
-Tags: ${species.tags.join(', ')}`;
-}
-
-// Configure Fuse.js for fuzzy searching
-const fuse = new Fuse(SPECIES_RESOURCES, {
-  keys: [
-    { name: 'commonName', weight: 2 },
-    { name: 'scientificName', weight: 1.5 },
-    { name: 'description', weight: 1 },
-    { name: 'habitat', weight: 0.8 },
-    { name: 'diet', weight: 0.8 },
-    { name: 'conservationStatus', weight: 0.5 },
-    { name: 'tags', weight: 1.5 },
-    { name: 'interestingFacts', weight: 0.7 }
-  ],
-  threshold: 0.4, // Lower = more strict matching (0-1)
-  includeScore: true,
-  minMatchCharLength: 2
-});
-
-// Register static resources for each species
-SPECIES_RESOURCES.forEach((species) => {
-  server.registerResource(
-    species.id,
-    `species:///${species.id}`,
-    {
-      title: `${species.commonName} (${species.scientificName})`,
-      description: species.description,
-      mimeType: 'text/plain'
+    capabilities: {
+      resources: { subscribe: true },
+      tools: {},
     },
-    async (uri) => ({
-      contents: [
-        {
-          uri: uri.href,
-          text: formatSpeciesText(species)
-        }
-      ]
-    })
-  );
-});
-
-// Tool: Search for species based on a question
-server.tool(
-  "searchSpecies",
-  "Search for biological species using lexical search terms (keywords). Supports fuzzy matching across species names, habitat, diet, conservation status, and other attributes. Returns a resource link to the most relevant species.",
-  {
-    searchTerms: z.string().describe("Lexical search keywords to find relevant species (e.g., 'endangered africa', 'butterfly migration', 'marine predator')"),
-  },
-  async ({ searchTerms }) => {
-    // Use Fuse.js for fuzzy search
-    const results = fuse.search(searchTerms);
-
-    if (results.length === 0) {
-      const availableSpecies = SPECIES_RESOURCES.map(
-        (s) => `- ${s.commonName} (${s.scientificName}): ${s.description.substring(0, 100)}...`
-      ).join("\n");
-      
-      return {
-        content: [{
-          type: "text",
-          text: `No relevant species found for: "${searchTerms}"\n\nAvailable species:\n${availableSpecies}`
-        }]
-      };
-    }
-
-    const species = results[0].item;
-    
-    // Return resource link to the found species
-    return {
-      content: [
-        {
-          type: "resource",
-          resource: {
-            uri: `species:///${species.id}`,
-            mimeType: "text/plain",
-            text: formatSpeciesText(species)
-          }
-        }
-      ]
-    };
   }
 );
 
-const app = express();
+// Tool input schemas
+const SearchSpeciesDataSchema = z.object({
+  searchTerms: z.string().describe("keywords to search for facts about species")
+});
 
-app.use(express.json());
+const ListSpeciesSchema = z.object({});
 
-const transport: StreamableHTTPServerTransport =
-  new StreamableHTTPServerTransport({
-    sessionIdGenerator: undefined, 
-  });
-
-const setupServer = async () => {
-  await server.connect(transport);
+// Configure Fuse.js for fuzzy searching
+const fuseOptions = {
+  keys: ['name', 'description'],
+  threshold: 0.4, // 0 = exact match, 1 = match anything
+  includeScore: true,
+  minMatchCharLength: 2
 };
 
-// Helper to format timestamp
-function timestamp(): string {
-  return new Date().toISOString().substring(11, 23); 
-}
+const fuse = new Fuse(RESOURCES, fuseOptions);
 
-// Helper to get emoji for method type
-function getMethodEmoji(method: string): string {
-  if (method.startsWith('tools/')) return '🔧';
-  if (method.startsWith('resources/')) return '📚';
-  if (method.startsWith('notifications/')) return '🔔';
-  if (method === 'initialize') return '🚀';
-  return '📡';
-}
+// Handler: List available tools
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools: [
+      {
+        name: "searchSpeciesData",
+        description: "Search for species resources by title keywords. Returns up to 5 matching resource links (text, images, data packages).",
+        inputSchema: zodToJsonSchema(SearchSpeciesDataSchema),
+      },
+      {
+        name: "listSpecies",
+        description: "Get a list of all available species names in the database.",
+        inputSchema: zodToJsonSchema(ListSpeciesSchema),
+      },
+    ],
+  };
+});
 
-app.post("/mcp", async (req: Request, res: Response) => {
-  const method = req.body?.method;
-  if (method) {
-    const emoji = getMethodEmoji(method);
-    console.log(`${timestamp()} ${emoji} ${method}`);
+// Handler: Call tool
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  if (name === "searchSpeciesData") {
+    const validatedArgs = SearchSpeciesDataSchema.parse(args);
+    const { searchTerms } = validatedArgs;
+
+    console.log(`${timestamp()} 🔍 Client called tool: searchSpeciesData with terms '${searchTerms}'`);
+
+    // Use Fuse.js for fuzzy search
+    const searchResults = fuse.search(searchTerms);
+    
+    if (searchResults.length === 0) {
+      console.log(`${timestamp()} ⚠️  No resources found for client search: "${searchTerms}"`);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `No resources found matching: "${searchTerms}". Try keywords like 'butterfly', 'panda', 'photo', 'overview', or 'data'.`,
+          },
+        ],
+      };
+    }
+
+    // Return top 5 results
+    const results = searchResults.slice(0, 5).map(result => result.item);
+    console.log(`${timestamp()} ✅ Returning ${results.length} matching resources to client`);
+
+    const content: any[] = [
+      {
+        type: "text",
+        text: `Found ${results.length} resource(s) matching "${searchTerms}":\n\n${results.map((r, i) => `${i + 1}. ${r.name}`).join('\n')}`,
+      },
+    ];
+
+    // Add resource references
+    results.forEach(resource => {
+      content.push({
+        type: "resource_link",
+        uri: resource.uri,
+        name: resource.name,
+        description: resource.description,
+        mimeType: resource.mimeType,
+        annotations: {
+          audience: ["assistant"],
+          priority: 0.8
+        }
+      });
+    });
+
+    return { content };
   }
+
+  if (name === "listSpecies") {
+    console.log(`${timestamp()} 📋 Client called tool: listSpecies`);
+
+    // Get only species names
+    const speciesNames = SPECIES_DATA.map(species => species.commonName);
+
+    console.log(`${timestamp()} ✅ Returning ${speciesNames.length} species names to client`);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(speciesNames, null, 2),
+        },
+      ],
+    };
+  }
+
+  throw new Error(`Unknown tool: ${name}`);
+});
+
+// Handler: List resources
+server.setRequestHandler(ListResourcesRequestSchema, async () => {
+  console.log(`${timestamp()} 📋 Client requesting list of all ${RESOURCES.length} resources`);
   
+  return {
+    resources: RESOURCES.map(r => ({
+      uri: r.uri,
+      name: r.name,
+      description: r.description,
+      mimeType: r.mimeType,
+    }))
+  };
+});
+
+// Handler: Read resource
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  const uri = request.params.uri;
+
+  console.log(`${timestamp()} 📖 Client reading resource: ${uri}`);
+
+  // Find the resource
+  const resource = RESOURCES.find(r => r.uri === uri);
+  
+  if (!resource) {
+    throw new Error(`Unknown resource: ${uri}`);
+  }
+
+  const species = SPECIES_DATA.find(s => s.id === resource.speciesId);
+  
+  if (!species) {
+    throw new Error(`Species not found for resource: ${uri}`);
+  }
+
+  console.log(`${timestamp()} 📄 Client requested: ${species.commonName} - ${resource.resourceType}`);
+
+  // Return content based on resource type
+  if (resource.resourceType === 'text') {
+    const content = formatSpeciesText(species);
+    console.log(`${timestamp()} 📝 Returning text content to client (${content.length} characters)`);
+    
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: "text/plain",
+          text: content,
+        },
+      ],
+    };
+  }
+
+  if (resource.resourceType === 'image') {
+    console.log(`${timestamp()} 🖼️  Returning image to client for ${species.commonName}`);
+    
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: "image/png",
+          blob: species.image,
+        },
+      ],
+    };
+  }
+
+  throw new Error(`Unknown resource type: ${resource.resourceType}`);
+});
+
+// Handler: Subscribe to resource updates
+server.setRequestHandler(SubscribeRequestSchema, async (request) => {
+  const { uri } = request.params;
+  console.log(`${timestamp()} 🔔 Client subscribed to: ${uri}`);
+  return {};
+});
+
+// Handler: Unsubscribe from resource updates
+server.setRequestHandler(UnsubscribeRequestSchema, async (request) => {
+  const { uri } = request.params;
+  console.log(`${timestamp()} 🔕 Client unsubscribed from: ${uri}`);
+  return {};
+});
+
+// Handle MCP requests (stateless mode)
+app.post('/mcp', async (req: Request, res: Response) => {
   try {
+    // Create new transport for each request to prevent request ID collisions
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: undefined,
+      enableJsonResponse: true
+    });
+
+    res.on('close', () => {
+      transport.close();
+    });
+
+    await server.connect(transport);
     await transport.handleRequest(req, res, req.body);
   } catch (error) {
-    console.error(`${timestamp()} ❌ Error:`, error);
+    console.error(`${timestamp()} Error handling MCP request:`, error);
     if (!res.headersSent) {
       res.status(500).json({
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         error: {
           code: -32603,
-          message: "Internal server error",
+          message: 'Internal server error'
         },
-        id: null,
+        id: null
       });
     }
   }
 });
 
-app.get("/mcp", async (req: Request, res: Response) => {
-  res.writeHead(405).end(
-    JSON.stringify({
-      jsonrpc: "2.0",
-      error: {
-        code: -32000,
-        message: "Method not allowed.",
-      },
-      id: null,
-    })
-  );
+const PORT = parseInt(process.env.PORT || '3000');
+app.listen(PORT, () => {
+  console.log(`${timestamp()} 🚀 Species MCP Server running on http://localhost:${PORT}/mcp`);
+  console.log(`${timestamp()} 📚 Loaded ${SPECIES_DATA.length} species and ${RESOURCES.length} resources`);
+}).on('error', error => {
+  console.error(`${timestamp()} Server error:`, error);
+  process.exit(1);
 });
-
-app.delete("/mcp", async (req: Request, res: Response) => {
-  res.writeHead(405).end(
-    JSON.stringify({
-      jsonrpc: "2.0",
-      error: {
-        code: -32000,
-        message: "Method not allowed.",
-      },
-      id: null,
-    })
-  );
-});
-
-const PORT = process.env.PORT || 3000;
-setupServer()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log('\n' + '='.repeat(60));
-      console.log('🌿 Biological Species MCP Server');
-      console.log('='.repeat(60));
-      console.log(`📡 Server listening on port ${PORT}`);
-      console.log(`🔗 Endpoint: http://localhost:${PORT}/mcp`);
-      console.log(`📚 Resources: ${SPECIES_RESOURCES.length} species available`);
-      console.log(`🔧 Tool: searchSpecies`);
-      console.log('='.repeat(60) + '\n');
-    });
-  })
-  .catch((error) => {
-    console.error("Failed to set up the server:", error);
-    process.exit(1);
-  });
