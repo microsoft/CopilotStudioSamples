@@ -108,5 +108,5 @@ Show me a blue whale photo
 
 - [Model Context Protocol](https://modelcontextprotocol.io/)
 - [MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk)
-- [MCP in Copilot Studio][(https://copilotstudio.microsoft.com](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp))
+- [MCP in Copilot Studio][(https://copilotstudio.microsoft.com](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp)
 - [Dev Tunnels](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/overview)
