@@ -14,15 +14,124 @@ An MCP server demonstrating resource discovery through tools. Copilot Studio alw
 
 This server implements a simple search pattern with fuzzy matching.
 
-## Available Tools
+## How It Works
 
-- **`searchSpeciesData`** - Fuzzy search returning up to 5 matching resource references
-- **`listSpecies`** - Returns JSON array of all species (id, commonName, scientificName, conservationStatus)
+**1. Define Your Resources**
 
-## Available Resources
+Resources are dynamically generated from a species database:
 
-- 5 species with text overviews and images
-- 8 total resources (5 text, 3 images)
+```typescript
+// Species data with details
+export const SPECIES_DATA: Species[] = [
+  {
+    id: "monarch-butterfly",
+    commonName: "Monarch Butterfly",
+    scientificName: "Danaus plexippus",
+    description: "Famous for its distinctive orange and black wing pattern...",
+    habitat: "North America, with migration routes...",
+    diet: "Larvae feed on milkweed; adults feed on nectar",
+    conservationStatus: "Vulnerable",
+    interestingFacts: [...],
+    tags: ["insect", "butterfly", "migration"],
+    image: encodeImage("butterfly.png")
+  },
+  // ... more species
+];
+
+// Resources generated from species data
+export const RESOURCES: SpeciesResource[] = [
+  {
+    uri: "species://blue-whale/overview",
+    name: "Blue Whale Overview",
+    description: "Comprehensive information about blue whales",
+    mimeType: "text/plain",
+    speciesId: "blue-whale",
+    resourceType: "text"
+  },
+  {
+    uri: "species://blue-whale/photo",
+    name: "Blue Whale Photo",
+    description: "High-resolution photo of a blue whale",
+    mimeType: "image/png",
+    speciesId: "blue-whale",
+    resourceType: "image"
+  },
+  // ... more resources
+];
+```
+
+This generates 8 resources from 5 species (5 text overviews + 3 images).
+
+**2. Implement Search Tool**
+
+The `searchSpeciesData` tool uses Fuse.js for fuzzy matching and returns `resource_link` references:
+
+```typescript
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  if (request.params.name === "searchSpeciesData") {
+    const searchResults = fuse.search(searchTerms);
+    const topResults = searchResults.slice(0, 5);
+
+    // Return resource references, not full content
+    const content = [
+      {
+        type: "text",
+        text: `Found ${topResults.length} resources matching "${searchTerms}"`
+      }
+    ];
+
+    topResults.forEach(result => {
+      content.push({
+        type: "resource_link",
+        uri: result.item.uri,
+        name: result.item.name,
+        description: result.item.description,
+        mimeType: result.item.mimeType,
+        annotations: {
+          audience: ["assistant"],
+          priority: 0.8
+        }
+      });
+    });
+
+    return { content };
+  }
+});
+```
+
+**3. Handle Resource Reads**
+
+When the agent sends `resources/read` requests, your server provides the full content:
+
+```typescript
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  const uri = request.params.uri;
+  const resource = RESOURCES.find(r => r.uri === uri);
+  const species = SPECIES_DATA.find(s => s.id === resource.speciesId);
+
+  if (resource.resourceType === 'text') {
+    return {
+      contents: [{
+        uri,
+        mimeType: "text/plain",
+        text: formatSpeciesText(species)
+      }]
+    };
+  }
+
+  if (resource.resourceType === 'image') {
+    return {
+      contents: [{
+        uri,
+        mimeType: "image/png",
+        blob: species.image  // Base64-encoded PNG
+      }]
+    };
+  }
+});
+```
+
+## Sample Structure
 
 ```
 src/
