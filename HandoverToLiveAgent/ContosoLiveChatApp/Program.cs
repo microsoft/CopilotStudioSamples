@@ -16,12 +16,12 @@ var app = builder.Build();
 
 // Validate webhook configuration
 var webhookUrl = app.Configuration["WebhookSettings:OutgoingWebhookUrl"];
-if (string.IsNullOrWhiteSpace(webhookUrl) || webhookUrl == "https://your-webhook-endpoint.com/api/messages")
-{
-    throw new InvalidOperationException(
-        "Invalid webhook configuration. Please set a valid 'WebhookSettings:OutgoingWebhookUrl' in appsettings.json. " +
-        "The default placeholder value 'https://your-webhook-endpoint.com/api/messages' is not allowed.");
-}
+// if (string.IsNullOrWhiteSpace(webhookUrl) || webhookUrl == "https://your-webhook-endpoint.com/api/messages")
+// {
+//     throw new InvalidOperationException(
+//         "Invalid webhook configuration. Please set a valid 'WebhookSettings:OutgoingWebhookUrl' in appsettings.json. " +
+//         "The default placeholder value 'https://your-webhook-endpoint.com/api/messages' is not allowed.");
+// }
 
 app.Logger.LogInformation("Webhook URL configured: {WebhookUrl}", webhookUrl);
 

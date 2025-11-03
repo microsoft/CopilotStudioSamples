@@ -180,7 +180,7 @@
         // Disable send button initially
         sendButton.disabled = true;
         messageInput.disabled = true;
-        messageInput.placeholder = "";
+        messageInput.placeholder = "Waiting for first message...";
 
         // Load messages on page load
         loadMessages();
@@ -219,7 +219,7 @@
                 return;
             }
 
-            // Check if there's any incoming message
+            // Check if there's any incoming message and enable input
             const hasIncoming = messages.some(msg => msg.direction === 1);
             if (hasIncoming && !hasReceivedMessage) {
                 hasReceivedMessage = true;
@@ -284,7 +284,7 @@
                 console.error('Error sending message:', error);
                 showError('Failed to send message. Please try again.');
             } finally {
-                // Re-enable input only if we've received a message
+                // Re-enable input if we have received a message
                 if (hasReceivedMessage) {
                     sendButton.disabled = false;
                     messageInput.disabled = false;

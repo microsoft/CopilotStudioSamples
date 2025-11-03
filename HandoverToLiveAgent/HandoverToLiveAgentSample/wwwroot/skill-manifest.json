@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schemas.botframework.com/schemas/skills/skill-manifest-2.0.0.json",
+    "$id": "handoff-skill",
+    "name": "Handoff Skill",
+    "version": "1.0.0",
+    "description": "Handoff skill for Copilot Studio sample",
+    "publisherName": "Microsoft",
+    "copyright": "Copyright (c) Microsoft. All rights reserved.",
+    "license": "",
+    "tags": [
+        "handoff"
+    ],
+    "endpoints": [
+        {
+            "name": "default",
+            "protocol": "BotFrameworkV3",
+            "description": "Default endpoint for the Handoff Skill",
+            "endpointUrl": "https://td7k9vbg-5001.euw.devtunnels.ms/api/messages",
+            "msAppId": "dd48c5ae-fa3d-4bfd-a747-734b5279f470"
+        }
+    ],
+    "activities": {
+        "sendMessage": {
+            "type": "message",
+            "description": "Sends a message to the Contoso Live Chat",
+            "value": {
+                "$ref": "#/definitions/messageInput"
+            }
+        },
+        "endOfConversation": {
+            "name": "endOfConversation",
+            "type": "event",
+            "description": "End a conversation with the Contoso Live Chat",
+            "value": {
+                "$ref": "#/definitions/endOfConversationInput"
+            }
+        }
+    },
+    "definitions": {
+        "messageInput": {
+            "type": "object",
+            "properties": {
+                "ProblemDescription": {
+                    "type": "string"
+                }
+            }
+        },
+        "endOfConversationInput": {
+            "type": "object",
+            "properties": {
+            }
+        }
+    }
+}

@@ -56,18 +56,18 @@ public class ChatController : ControllerBase
         }
     }
 
-    // POST: api/chat/receive - Receive a message (from remote party)
+    // POST: api/chat/receive - Receive a message (from  Copilot Studio )
     [HttpPost("receive")]
     public ActionResult ReceiveMessage([FromBody] ReceiveMessageRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Text))
+        if (string.IsNullOrWhiteSpace(request.Message))
         {
             return BadRequest(new { error = "Message text cannot be empty" });
         }
 
         var message = new ChatMessage
         {
-            Text = request.Text,
+            Text = request.Message,
             Sender = request.Sender ?? "Remote",
             Direction = MessageDirection.Incoming,
             Timestamp = DateTime.UtcNow
@@ -87,6 +87,6 @@ public class SendMessageRequest
 
 public class ReceiveMessageRequest
 {
-    public string Text { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
     public string? Sender { get; set; }
 }
