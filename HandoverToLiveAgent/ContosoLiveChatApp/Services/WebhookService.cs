@@ -14,7 +14,7 @@ public class WebhookService
         _logger = logger;
     }
 
-    public async Task<bool> SendMessageAsync(ChatMessage message)
+    public async Task<Tuple<int?, string>> SendMessageAsync(ChatMessage message)
     {
         try
         {
@@ -23,7 +23,7 @@ public class WebhookService
             if (string.IsNullOrEmpty(webhookUrl))
             {
                 _logger.LogWarning("Webhook URL is not configured");
-                return false;
+                return new Tuple<int?, string>(null, "Webhook URL is not configured");
             }
 
             var json = JsonSerializer.Serialize(message);
@@ -34,18 +34,19 @@ public class WebhookService
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Message sent successfully to webhook: {MessageId}", message.Id);
-                return true;
+                return new Tuple<int?, string>((int)response.StatusCode, null);
             }
             else
             {
                 _logger.LogWarning("Failed to send message to webhook. Status: {StatusCode}", response.StatusCode);
-                return false;
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                return new Tuple<int?, string>((int)response.StatusCode, errorMessage);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending message to webhook");
-            return false;
+            return new Tuple<int?, string>(null, ex.Message);
         }
     }
 }

@@ -86,6 +86,12 @@
             border-bottom-right-radius: 4px;
         }
 
+        .message.outgoing.failed .message-bubble {
+            background: #d32f2f;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
         .message.incoming .message-bubble {
             background: #e4e6eb;
             color: #050505;
@@ -176,6 +182,8 @@
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         let hasReceivedMessage = false;
+        let lastMessageCount = 0;
+        let failedMessagesMap = new Map(); // Store failed messages with timestamps
 
         // Disable send button initially
         sendButton.disabled = true;
@@ -215,7 +223,9 @@
 
         function displayMessages(messages) {
             if (messages.length === 0) {
-                chatHistory.innerHTML = '<div class="loading">No messages yet. Waiting for first incoming message...</div>';
+                if (lastMessageCount === 0) {
+                    chatHistory.innerHTML = '<div class="loading">No messages yet. Waiting for first incoming message...</div>';
+                }
                 return;
             }
 
@@ -228,30 +238,80 @@
                 messageInput.placeholder = "Type your message...";
             }
 
-            chatHistory.innerHTML = '';
-            messages.forEach(message => {
+            // Remove expired failed messages (older than 5 seconds)
+            const now = Date.now();
+            for (let [id, data] of failedMessagesMap.entries()) {
+                if (now - data.timestamp > 5000) {
+                    failedMessagesMap.delete(id);
+                }
+            }
+
+            // Only update if message count changed or there are failed messages to show
+            if (messages.length === lastMessageCount && failedMessagesMap.size === 0) {
+                return;
+            }
+            
+            const shouldScroll = chatHistory.scrollTop + chatHistory.clientHeight >= chatHistory.scrollHeight - 30;
+
+            if (messages.length < lastMessageCount) { // Messages were cleared or reloaded
+                chatHistory.innerHTML = '';
+            }
+            lastMessageCount = messages.length;
+
+            // Remove existing failed messages from DOM to re-add them at the end
+            document.querySelectorAll('.message.failed').forEach(el => el.remove());
+
+            const existingMessages = chatHistory.querySelectorAll('.message:not(.failed)');
+            
+            messages.forEach((message, index) => {
+                if (index >= existingMessages.length) {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${message.direction === 0 ? 'outgoing' : 'incoming'}`;
+                    
+                    const bubble = document.createElement('div');
+                    bubble.className = 'message-bubble';
+                    
+                    const text = document.createElement('div');
+                    text.textContent = message.text;
+                    
+                    const info = document.createElement('div');
+                    info.className = 'message-info';
+                    const time = new Date(message.timestamp).toLocaleTimeString();
+                    info.textContent = `${message.sender} • ${time}`;
+                    
+                    bubble.appendChild(text);
+                    bubble.appendChild(info);
+                    messageDiv.appendChild(bubble);
+                    chatHistory.appendChild(messageDiv);
+                }
+            });
+
+            // Re-add failed messages at the end
+            failedMessagesMap.forEach((data, id) => {
                 const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${message.direction === 0 ? 'outgoing' : 'incoming'}`;
+                messageDiv.className = 'message outgoing failed';
+                messageDiv.dataset.failedId = id;
                 
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
                 
-                const text = document.createElement('div');
-                text.textContent = message.text;
+                const messageText = document.createElement('div');
+                messageText.textContent = data.text;
                 
                 const info = document.createElement('div');
                 info.className = 'message-info';
-                const time = new Date(message.timestamp).toLocaleTimeString();
-                info.textContent = `${message.sender} • ${time}`;
+                info.textContent = `Failed: ${data.error}`;
                 
-                bubble.appendChild(text);
+                bubble.appendChild(messageText);
                 bubble.appendChild(info);
                 messageDiv.appendChild(bubble);
                 chatHistory.appendChild(messageDiv);
             });
 
-            // Scroll to bottom
-            chatHistory.scrollTop = chatHistory.scrollHeight;
+            // Scroll to bottom only if user was already at the bottom
+            if (shouldScroll) {
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
         }
 
         async function sendMessage() {
@@ -272,17 +332,32 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to send message');
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMessage = errorData.error || 'Failed to send message';
+                    throw new Error(errorMessage);
                 }
 
-                // Clear input
+                // Clear input only on success
                 messageInput.value = '';
                 
-                // Reload messages
+                // Reload messages to display the sent message
                 await loadMessages();
             } catch (error) {
                 console.error('Error sending message:', error);
-                showError('Failed to send message. Please try again.');
+                
+                // Add failed message to map with timestamp
+                const failedId = Date.now().toString();
+                failedMessagesMap.set(failedId, {
+                    text: text,
+                    error: error.message || 'Failed to send message',
+                    timestamp: Date.now()
+                });
+                
+                // Clear input after showing failed message
+                messageInput.value = '';
+                
+                // Trigger immediate display update
+                await loadMessages();
             } finally {
                 // Re-enable input if we have received a message
                 if (hasReceivedMessage) {
@@ -291,6 +366,29 @@
                     messageInput.focus();
                 }
             }
+        }
+
+        function addFailedMessage(text, errorMessage) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message outgoing failed';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            
+            const messageText = document.createElement('div');
+            messageText.textContent = text;
+            
+            const info = document.createElement('div');
+            info.className = 'message-info';
+            info.textContent = `Failed: ${errorMessage}`;
+            
+            bubble.appendChild(messageText);
+            bubble.appendChild(info);
+            messageDiv.appendChild(bubble);
+            chatHistory.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
         function showError(message) {

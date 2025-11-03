@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HandoverToLiveAgent.LiveChat;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/livechat")]
 public class LiveChatWebhookController : ControllerBase
 {
     private readonly ILogger<LiveChatWebhookController> _logger;
@@ -13,14 +13,21 @@ public class LiveChatWebhookController : ControllerBase
         _logger = logger;
     }
 
-    // POST: api/messages
+    // POST: api/livechat/messages
     // Used to receive webhook messages from the Live Chat system
-    [HttpPost]
+    [HttpPost("messages")]
     public ActionResult ReceiveMessage([FromBody] MessageRequest request)
     {
         _logger.LogDebug("Full message details: {@Request}", request);
-
-        throw new NotImplementedException("Processing incoming live chat messages is not implemented yet.");
+        try
+        {
+            throw new NotImplementedException("Processing incoming live chat messages is not implemented yet.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing live chat message");
+            return StatusCode(500, ex.Message);
+        }
 
         return Ok(new
         {

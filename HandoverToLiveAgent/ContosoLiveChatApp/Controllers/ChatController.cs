@@ -40,19 +40,18 @@ public class ChatController : ControllerBase
             Timestamp = DateTime.UtcNow
         };
 
-        // Add to chat history
-        _chatService.AddMessage(message);
+        // Send to webhook first
+        var (statusCode, errorMessage) = await _webhookService.SendMessageAsync(message);
 
-        // Send to webhook
-        var success = await _webhookService.SendMessageAsync(message);
-
-        if (success)
+        if (statusCode.HasValue && statusCode >= 200 && statusCode < 300)
         {
+            // Only add to chat history if webhook send was successful
+            _chatService.AddMessage(message);
             return Ok(new { message = "Message sent successfully", messageId = message.Id });
         }
         else
         {
-            return StatusCode(500, new { error = "Failed to send message to webhook" });
+            return StatusCode(statusCode ?? 500, new { error = errorMessage });
         }
     }
 
