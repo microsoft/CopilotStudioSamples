@@ -12,11 +12,13 @@ public class CopilotStudioAgent : AgentApplication
 {
     private readonly ILogger<CopilotStudioAgent> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IConversationManager _conversationManager;
 
     public CopilotStudioAgent(AgentApplicationOptions options, ILogger<CopilotStudioAgent> logger, IServiceScopeFactory scopeFactory) : base(options)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
+     
 
         OnActivity(ActivityTypes.Message, OnMessageAsync);
         OnActivity(ActivityTypes.Event, OnEventAsync);
@@ -27,6 +29,7 @@ public class CopilotStudioAgent : AgentApplication
         _logger.LogInformation("Copilot event received: {EventName}", turnContext.Activity.Name);
         using var scope = _scopeFactory.CreateScope();
         var liveChatService = scope.ServiceProvider.GetRequiredService<ILiveChatService>();
+        
 
         if (turnContext.Activity.Name == "endOfConversation")
         {
@@ -60,11 +63,37 @@ public class CopilotStudioAgent : AgentApplication
 
         using var scope = _scopeFactory.CreateScope();
         var liveChatService = scope.ServiceProvider.GetRequiredService<ILiveChatService>();
+        var conversationManager = scope.ServiceProvider.GetRequiredService<IConversationManager>();
+
+
         if (turnContext.Activity.ChannelId != "msteams")
         {
             _logger.LogError("Unsupported channel ID for proactive messages: {ChannelId}", turnContext.Activity.ChannelId);
             return;
         }
+
+        /// Proactive message setup
+        await conversationManager.UpsertProactiveConversation(conversationId, turnContext.Activity);
+        var testId = await conversationManager.TEST_GetCConversationId(conversationId);
+
+        //var mapping = await conversationManager.GetMappingByCopilotConversationId(conversationId);
+
+        if (IConversationManager.Mapping1 == null)
+        {
+
+            _logger.LogError("NO MAPPING FOUND!");
+            throw new Exception("No mapping found!");
+        }
+
+        // if (mapping == null)
+        // {
+        //     _logger.LogWarning("No mapping found for Copilot conversation ID: {ConversationId}", conversationId);
+        //     //todo we should support userId from both sides so we can support more than as single live conversation
+        //     var mapping = conversationManager.CreateMappingForConversationId(conversationId, testId);
+
+        //     conversationManager.UpdateMapping(mapping);
+        // }
+        ///---end proactive message setup
 
         await liveChatService.SendMessageAsync(message, userName);
         _logger.LogInformation("Message sent to live chat");

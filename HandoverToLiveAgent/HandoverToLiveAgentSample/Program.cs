@@ -4,6 +4,7 @@ using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Extensions.Options;
 using HandoverToLiveAgent.LiveChat;
 using Microsoft.Agents.CopilotStudio;
+using HandoverToLiveAgent.CopilotStudio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,9 @@ builder.Services.AddHttpClient();
 
 // Add services to the container.
 //builder.Services.AddControllers();
-//builder.Services.AddHttpClient<HandoverToLiveAgent.LiveChat.ILiveChatService, HandoverToLiveAgent.LiveChat.LiveChatService>();
+//builder.Services.AddHttpClient<ILiveChatService, LiveChatService>();
+builder.Services.AddSingleton<IConversationManager, ConversationManager>();
+builder.Services.AddSingleton<IProactiveMessenger, MsTeamsProactiveMessage>();
 
 
 // Agents SDK setup
