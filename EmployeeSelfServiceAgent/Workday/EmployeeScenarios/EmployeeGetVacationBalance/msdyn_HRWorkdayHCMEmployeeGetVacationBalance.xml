@@ -4,7 +4,7 @@
       <apiRequest>
         <authType>User</authType>
         <endpoint>
-          <request>Template_GetTimeOffBalances_Request</request>
+          <request>msdyn_HRWorkdayHCMEmployeeGetVacationBalance</request>
           <serviceName>Absence_Management</serviceName>
           <version>v42.0</version>
         </endpoint>
@@ -64,7 +64,7 @@
   </scenario>
 
   <requestTemplates>
-    <requestTemplate name="Template_GetTimeOffBalances_Request">
+    <requestTemplate name="msdyn_HRWorkdayHCMEmployeeGetVacationBalance">
       <bsvc:Get_Time_Off_Plan_Balances_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v42.0">
         
   

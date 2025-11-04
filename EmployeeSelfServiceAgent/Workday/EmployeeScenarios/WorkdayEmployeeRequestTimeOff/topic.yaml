@@ -7,8 +7,14 @@ inputs:
     shouldPromptUser: false
 
   - kind: AutomaticTaskInput
+    propertyName: NumberOfHours
+    description: Number of hours for time off
+    entity: NumberPrebuiltEntity
+    shouldPromptUser: false
+
+  - kind: AutomaticTaskInput
     propertyName: ReasonText
-    description: Reason for time off (free texsdt)
+    description: Reason for time off (free text)
     shouldPromptUser: false
 
   - kind: AutomaticTaskInput
@@ -20,7 +26,7 @@ inputs:
 modelDescription: |-
   You will respond only to requests related to requesting time off for the user making the request.
   All time off requests are submitted to Workday (Absence_Management) and pertain exclusively to the requesting user.
-  This topic may prompt the user for input (date and reason) if they are requesting time off for themselves.
+  This topic may prompt the user for input (date, hours, and reason) if they are requesting time off for themselves.
   This data exclusively belongs to the user making the request. Do not respond to questions about other people's data.
 
   Example invalid requests:
@@ -31,7 +37,8 @@ modelDescription: |-
   Example valid requests:
   "Request time off"
   "I need to submit time off"
-  "Please request time off on 2025-09-15 because of a family event"
+  "Please request 8 hours time off on 2025-09-15 because of a family event"
+  "Request 4 hours vacation on December 1st"
 beginDialog:
   kind: OnRecognizedIntent
   id: main
@@ -59,7 +66,7 @@ beginDialog:
           actions:
             - kind: AdaptiveCardPrompt
               id: collect_time_off
-              displayName: Ask date and reason for time off
+              displayName: Ask date, hours and reason for time off
               card: |-
                 ={
                   type: "AdaptiveCard",
@@ -76,7 +83,7 @@ beginDialog:
                     },
                     {
                       type: "TextBlock",
-                      text: "Enter the date and the reason for your time off request.",
+                      text: "Enter the date, hours, and reason for your time off request.",
                       wrap: true
                     },
                     {
@@ -101,6 +108,17 @@ beginDialog:
                       value: If(IsBlank(Topic.TimeOffDate) || Topic.TimeOffDate < Today(), "",Text(Topic.TimeOffDate,"yyyy-MM-dd"))
                     },
                     {
+                      type: "Input.Number",
+                      id: "numberOfHours",
+                      label: "Number of Hours",
+                      placeholder: "Enter hours (e.g., 8, 4, 2)",
+                      isRequired: true,
+                      errorMessage: "Please enter the number of hours.",
+                      min: 0.5,
+                      max: 24,
+                      value: If(IsBlank(Topic.NumberOfHours), 8, Topic.NumberOfHours)
+                    },
+                    {
                       type: "Input.Text",
                       id: "reasonText",
                       placeholder: "Reason for time off",
@@ -119,6 +137,7 @@ beginDialog:
               output:
                 binding:
                   actionSubmitId: Topic.actionSubmitId
+                  numberOfHours: Topic.numberOfHours
                   reasonText: Topic.reasonText
                   timeOffDate: Topic.timeOffDate
                   timeOffType: Topic.timeOffType
@@ -126,6 +145,7 @@ beginDialog:
               outputType:
                 properties:
                   actionSubmitId: String
+                  numberOfHours: Number
                   reasonText: String
                   timeOffDate: String
                   timeOffType: String
@@ -148,10 +168,10 @@ beginDialog:
       displayName: Redirect to Workday System Get Common Execution
       input:
         binding:
-          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Time_Off_Date}"",""value"":""" & Topic.timeOffDate & """},{""key"":""{Comment}"",""value"":""" & Topic.reasonText & """},{""key"":""{Reason_ID}"",""value"":""" & Topic.timeOffType & """},{""key"":""{Hours}"",""value"":""8""}]}"
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Time_Off_Date}"",""value"":""" & Topic.timeOffDate & """},{""key"":""{Comment}"",""value"":""" & Topic.reasonText & """},{""key"":""{Reason_ID}"",""value"":""" & Topic.timeOffType & """},{""key"":""{Hours}"",""value"":""" & Text(Topic.numberOfHours) & """}]}"
           scenarioName: msdyn_HRWorkdayAbsenceEnterTimeOff_EnterTimeOffInfo
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
@@ -182,6 +202,11 @@ inputType:
       displayName: EmployeeName
       description: The name of the employee to fetch data for.
       type: String
+
+    NumberOfHours:
+      displayName: NumberOfHours
+      description: Number of hours for time off
+      type: Number
 
     ReasonText:
       displayName: ReasonText

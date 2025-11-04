@@ -81,7 +81,7 @@ beginDialog:
     - kind: SetVariable
       id: ensure_effective_date2
       variable: Topic.AsOfEffectiveDate
-      value: =If(IsBlank(Topic.AsOfEffectiveDate), DateTimeValue(Text(Today(), "yyyy-MM-dd")), Topic.AsOfEffectiveDate)
+      value: =If(IsBlank(Topic.AsOfEffectiveDate), DateTimeValue(Topic.asOfDate), Topic.AsOfEffectiveDate)
 
     - kind: BeginDialog
       id: Y74Om43
