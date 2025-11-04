@@ -25,7 +25,7 @@ public class CopilotStudioConversationMapping
 public interface IConversationManager
 {
     Task UpsertProactiveConversation(string copilotConversationId, IActivity activity);
-    Task UpdateServiceUrlMapping(CopilotStudioConversationMapping mapping, IActivity activity);
+    void UpdateServiceUrlMapping(CopilotStudioConversationMapping mapping, IActivity activity);
     Task<string?> TEST_GetCConversationId(string liveChatConversationId);
     public static CopilotStudioConversationMapping? Mapping1 { get; set; } = null;
 }
@@ -101,7 +101,7 @@ public class ConversationManager : IConversationManager
         return Task.CompletedTask;
     }
 
-    public async Task UpdateServiceUrlMapping(CopilotStudioConversationMapping mapping, IActivity activity)
+    public void UpdateServiceUrlMapping(CopilotStudioConversationMapping mapping, IActivity activity)
     {
         if (mapping?.ProactiveConversation is { } cref)
         {
@@ -173,7 +173,6 @@ public class ConversationManager : IConversationManager
                 }
             }
         }
-        return;
     }
 
     private string ResolveSmbaRegion(string? url)

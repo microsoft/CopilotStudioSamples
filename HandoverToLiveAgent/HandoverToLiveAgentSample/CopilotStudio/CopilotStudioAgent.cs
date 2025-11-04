@@ -12,7 +12,6 @@ public class CopilotStudioAgent : AgentApplication
 {
     private readonly ILogger<CopilotStudioAgent> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly IConversationManager _conversationManager;
 
     public CopilotStudioAgent(AgentApplicationOptions options, ILogger<CopilotStudioAgent> logger, IServiceScopeFactory scopeFactory) : base(options)
     {
