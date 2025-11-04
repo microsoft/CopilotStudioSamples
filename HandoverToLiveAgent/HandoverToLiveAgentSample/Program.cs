@@ -8,7 +8,6 @@ using HandoverToLiveAgent.CopilotStudio;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure to host on port 5001
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(5001);
@@ -20,11 +19,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpClient();
 
 // Add services to the container.
-//builder.Services.AddControllers();
-//builder.Services.AddHttpClient<ILiveChatService, LiveChatService>();
 builder.Services.AddSingleton<IConversationManager, ConversationManager>();
 builder.Services.AddSingleton<IProactiveMessenger, MsTeamsProactiveMessage>();
-
 
 // Agents SDK setup
 builder.Services.AddHttpClient();
@@ -34,17 +30,6 @@ builder.AddAgent<HandoverToLiveAgent.CopilotStudio.CopilotStudioAgent>();
 builder.Services.AddSingleton<Microsoft.Agents.Storage.IStorage, Microsoft.Agents.Storage.MemoryStorage>();
 // Ensure AgentApplicationOptions is available for AgentApplication-based skills
 builder.Services.AddSingleton<Microsoft.Agents.Builder.App.AgentApplicationOptions>();
-
-// CORS
-// builder.Services.AddCors(options =>
-// {
-//     options.AddDefaultPolicy(policy =>
-//     {
-//         policy.AllowAnyOrigin()
-//               .AllowAnyMethod()
-//               .AllowAnyHeader();
-//     });
-// });
 
 var app = builder.Build();
 
