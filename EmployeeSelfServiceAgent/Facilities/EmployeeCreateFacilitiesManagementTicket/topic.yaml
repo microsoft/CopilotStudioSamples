@@ -28,6 +28,7 @@ beginDialog:
 
     - kind: InvokeAIBuilderModelAction
       id: invokeAIBuilderModelAction_inqoh4
+      displayName: Prompt Location
       input:
         binding:
           Facilities_20Description: =Topic.ProblemDescription
@@ -40,6 +41,7 @@ beginDialog:
 
     - kind: InvokeAIBuilderModelAction
       id: invokeAIBuilderModelAction_3wGDBR
+      displayName: Prompt Category
       input:
         binding:
           Categories: ="HVAC, Electrical, Plumbing, Maintenance"
