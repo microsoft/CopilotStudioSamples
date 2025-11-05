@@ -10,7 +10,7 @@ namespace HandoverToLiveAgent.CopilotStudio;
 
 public interface IProactiveMessenger
 {
-    Task SendTextAsync(ProactiveConversation reference, string message, string? userName = null, CancellationToken ct = default);
+    Task SendTextAsync(ConversationMapping reference, string message, string? userName = null, CancellationToken ct = default);
 }
 
 public class MsTeamsProactiveMessage : IProactiveMessenger
@@ -27,7 +27,7 @@ public class MsTeamsProactiveMessage : IProactiveMessenger
         _configuration = serviceProvider.GetService(typeof(IConfiguration)) as IConfiguration;
     }
 
-    public async Task SendTextAsync(ProactiveConversation reference, string message, string? userName = null, CancellationToken ct = default)
+    public async Task SendTextAsync(ConversationMapping reference, string message, string? userName = null, CancellationToken ct = default)
     {
         if (_channelAdapter == null)
         {

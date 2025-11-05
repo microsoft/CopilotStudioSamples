@@ -4,51 +4,64 @@ using Microsoft.Agents.Core.Models;
 
 namespace HandoverToLiveAgent.CopilotStudio;
 
-public class ProactiveConversation
-{
-    public string ConversationId { get; set; } = string.Empty;
-    public string UserId { get; set; } = string.Empty;
-    public string? ChannelId { get; set; }
-    public string? ServiceUrl { get; set; }
-    public string? BotId { get; set; }
-    public string? BotName { get; set; }
-}
-
-public class CopilotStudioConversationMapping
-{
-    public string ConversationId { get; set; } = string.Empty;
-    public string UserId { get; set; } = string.Empty;
-    public ProactiveConversation ProactiveConversation { get; set; } = new();
-}
-
-
 public interface IConversationManager
 {
-    Task UpsertProactiveConversation(string copilotConversationId, IActivity activity);
-    void UpdateServiceUrlMapping(CopilotStudioConversationMapping mapping, IActivity activity);
-    Task<string?> TEST_GetCConversationId(string liveChatConversationId);
-    public static CopilotStudioConversationMapping? Mapping1 { get; set; } = null;
+    Task<ConversationMapping?> GetMapping(string id);
+    Task<ConversationMapping?> UpsertMappingByCopilotConversationId(IActivity activity, string liveChatConversationId);
+    Task RemoveMappingByCopilotConversationId(string id);
 }
 
 public class ConversationManager : IConversationManager
 {
     private readonly ILogger<ConversationManager> _logger;
     private readonly IConfiguration _config;
+    private static readonly Dictionary<string, ConversationMapping> _mappingsByCopilotId = new();
+    private static readonly Dictionary<string, ConversationMapping> _mappingsByLiveChatId = new();
     public ConversationManager(IConfiguration config, ILogger<ConversationManager> logger)
     {
         _config = config;
         _logger = logger;
     }
 
-    public Task<string?> TEST_GetCConversationId(string liveChatConversationId){
-        return Task.FromResult<string?>(Guid.Empty.ToString());
+    public async Task<ConversationMapping?> GetMapping(string id)
+    {
+        _logger.LogInformation("Retrieving mapping for CopilotConversationId={CopilotConversationId}", id);
+        if (_mappingsByCopilotId.TryGetValue(id, out var mapping))
+        {
+            return await Task.FromResult(mapping);
+        }
+        if (_mappingsByLiveChatId.TryGetValue(id, out mapping))
+        {
+            return await Task.FromResult(mapping);
+        }
+        return await Task.FromResult<ConversationMapping?>(null);
     }
 
-    public Task UpsertProactiveConversation(string copilotConversationId, IActivity activity)
+    public Task RemoveMappingByCopilotConversationId(string id)
     {
-        var cref = new ProactiveConversation
+        _logger.LogInformation("Removing mapping for CopilotConversationId={CopilotConversationId}", id);
+        _mappingsByCopilotId.Remove(id);
+        _mappingsByLiveChatId.Remove(id);
+        return Task.CompletedTask;
+    }
+
+    public async Task<ConversationMapping?> UpsertMappingByCopilotConversationId(IActivity activity, string liveChatConversationId)
+    {
+        _logger.LogInformation("Storing mapping: CopilotConversationId={CopilotConversationId}, LiveChatConversationId={LiveChatConversationId}", activity.Conversation?.Id, liveChatConversationId);
+
+        var mapping = await UpsertProactiveConversation(activity.Conversation!.Id, activity);
+        mapping!.LiveChatConversationId = liveChatConversationId;
+        _mappingsByCopilotId[activity.Conversation!.Id] = mapping;
+        _mappingsByLiveChatId[liveChatConversationId] = mapping;
+
+        return mapping;
+    }
+
+    private async Task<ConversationMapping?> UpsertProactiveConversation(string copilotConversationId, IActivity activity)
+    {
+        var mapping = new ConversationMapping
         {
-            ConversationId = copilotConversationId
+            CopilotConversationId = copilotConversationId
         };
 
         var userId = activity.From?.Id ?? "unknown-user";
@@ -58,9 +71,24 @@ public class ConversationManager : IConversationManager
 
         var region = ResolveSmbaRegion(serviceUrl);
         var tenantId = ResolveTenantId();
-        if (string.IsNullOrWhiteSpace(cref.UserId) && !string.IsNullOrWhiteSpace(userId)) cref.UserId = userId;
-        if (string.IsNullOrWhiteSpace(cref.ChannelId) && !string.IsNullOrWhiteSpace(activity.ChannelId)) cref.ChannelId = activity.ChannelId;
-        if (string.IsNullOrWhiteSpace(cref.ServiceUrl))
+        
+        if (string.IsNullOrWhiteSpace(mapping.UserId) && !string.IsNullOrWhiteSpace(userId))
+        {
+            mapping.UserId = userId; 
+        }
+        if (string.IsNullOrWhiteSpace(mapping.ChannelId) && !string.IsNullOrWhiteSpace(activity.ChannelId)) 
+        {
+            mapping.ChannelId = activity.ChannelId; 
+        }
+        if (string.IsNullOrWhiteSpace(mapping.BotId) && !string.IsNullOrWhiteSpace(activity.Recipient?.Id))
+        {
+          mapping.BotId = activity.Recipient!.Id;
+        }
+        if (string.IsNullOrWhiteSpace(mapping.BotName) && !string.IsNullOrWhiteSpace(activity.Recipient?.Name))
+        {
+            mapping.BotName = activity.Recipient!.Name;
+        }
+        if (string.IsNullOrWhiteSpace(mapping.ServiceUrl))
         {
             var su = serviceUrl;
             // If Teams channel is reporting a PVA runtime URL, prefer SMBA for proactive continuation
@@ -72,107 +100,12 @@ public class ConversationManager : IConversationManager
                 var smba = !string.IsNullOrWhiteSpace(tenantId)
                     ? $"https://smba.trafficmanager.net/{region}/{tenantId}/"
                     : "https://smba.trafficmanager.net/teams/";
-                _logger.LogInformation("[Proactive][RefCapture] Overriding PVA ServiceUrl to SMBA for Teams channel. From={From} To={To} ConvId={ConversationId}", su, smba, cref.ConversationId);
+                _logger.LogInformation("[Proactive][RefCapture] Overriding PVA ServiceUrl to SMBA for Teams channel. From={From} To={To} ConvId={ConversationId}", su, smba, mapping.CopilotConversationId);
                 su = smba;
             }
-            if (!string.IsNullOrWhiteSpace(su)) cref.ServiceUrl = su;
+            if (!string.IsNullOrWhiteSpace(su)) mapping.ServiceUrl = su;
         }
-        if (string.IsNullOrWhiteSpace(cref.BotId) && !string.IsNullOrWhiteSpace(activity.Recipient?.Id)) cref.BotId = activity.Recipient!.Id;
-            if (string.IsNullOrWhiteSpace(cref.BotName) && !string.IsNullOrWhiteSpace(activity.Recipient?.Name)) cref.BotName = activity.Recipient!.Name;
-
-        //_cache.Set(key, cref, TimeSpan.FromHours(24));
-        //TODO
-        if(IConversationManager.Mapping1 == null)
-        {
-            IConversationManager.Mapping1 = new CopilotStudioConversationMapping
-            {
-                ConversationId = copilotConversationId,
-                UserId = userId,
-                ProactiveConversation = cref
-            };
-        }
-        else
-        {
-            IConversationManager.Mapping1.ConversationId = copilotConversationId;
-            IConversationManager.Mapping1.UserId = userId;
-            IConversationManager.Mapping1.ProactiveConversation = cref;
-        }
-        //
-        return Task.CompletedTask;
-    }
-
-    public void UpdateServiceUrlMapping(CopilotStudioConversationMapping mapping, IActivity activity)
-    {
-        if (mapping?.ProactiveConversation is { } cref)
-        {
-            var region = ResolveSmbaRegion(activity.ServiceUrl);
-            var tenantId = ResolveTenantId();
-            bool changed = false;
-            if (string.IsNullOrEmpty(cref.ChannelId) && activity.ChannelId is { } channelId)
-            {
-                cref.ChannelId = channelId;
-                changed = true;
-            }
-            if (string.IsNullOrEmpty(cref.ServiceUrl))
-            {
-                string? su = null;
-                // 1. Primary: Activity.ServiceUrl
-                if (!string.IsNullOrWhiteSpace(activity.ServiceUrl))
-                {
-                    su = activity.ServiceUrl;
-                    _logger.LogDebug("[Proactive][RefCapture] Captured ServiceUrl from Activity.ServiceUrl={ServiceUrl} ConvId={ConversationId}", su, cref.ConversationId);
-                }
-                // 2. Secondary: RelatesTo.ServiceUrl (some adapters populate here on skill replies)
-                else if (!string.IsNullOrWhiteSpace(activity.RelatesTo?.ServiceUrl))
-                {
-                    su = activity.RelatesTo.ServiceUrl;
-                    _logger.LogInformation("[Proactive][RefCapture] Using RelatesTo.ServiceUrl={ServiceUrl} ConvId={ConversationId}", su, cref.ConversationId);
-                }
-                // Teams-specific: if PVA runtime URL appears for Teams channel, prefer SMBA
-                if (!string.IsNullOrWhiteSpace(su)
-                    && string.Equals(activity.ChannelId, "msteams", StringComparison.OrdinalIgnoreCase)
-                    && su.Contains("pvaruntime", StringComparison.OrdinalIgnoreCase)
-                    && !su.Contains("smba.trafficmanager.net", StringComparison.OrdinalIgnoreCase))
-                {
-                    var smba = !string.IsNullOrWhiteSpace(tenantId)
-                        ? $"https://smba.trafficmanager.net/{region}/{tenantId}/"
-                        : "https://smba.trafficmanager.net/teams/";
-                    _logger.LogInformation("[Proactive][RefCapture] Overriding PVA ServiceUrl to SMBA for Teams channel. From={From} To={To} ConvId={ConversationId}", su, smba, cref.ConversationId);
-                    su = smba;
-                }
-                // 3. Fallback: Static Teams global endpoint (only if still unknown)
-                if (string.IsNullOrWhiteSpace(su))
-                {
-                    su = "https://smba.trafficmanager.net/teams/"; // safe generic; real continuation normally needs exact host instance
-                    _logger.LogInformation("[Proactive][RefCapture] ServiceUrl absent; applying generic fallback {ServiceUrl} ConvId={ConversationId}", su, cref.ConversationId);
-                }
-                cref.ServiceUrl = su;
-                changed = true;
-            }
-            if (string.IsNullOrEmpty(cref.BotId) && activity.Recipient?.Id is { } bid)
-            {
-                cref.BotId = bid;
-                changed = true;
-            }
-            if (string.IsNullOrEmpty(cref.BotName) && activity.Recipient?.Name is { } bname)
-            {
-                cref.BotName = bname;
-                changed = true;
-            }
-            //TODO
-            if (changed)
-            {
-                if (IConversationManager.Mapping1 != null)
-                {
-                    IConversationManager.Mapping1.ProactiveConversation = cref;
-                    //await UpdateMapping(mapping);
-                }
-                else
-                {
-                    IConversationManager.Mapping1 = mapping;
-                }
-            }
-        }
+        return await Task.FromResult(mapping);
     }
 
     private string ResolveSmbaRegion(string? url)
@@ -190,4 +123,15 @@ public class ConversationManager : IConversationManager
         var tid = _config["Connections:default:Settings:TenantId"];
         return string.IsNullOrWhiteSpace(tid) ? null : tid;
     }
+}
+
+public class ConversationMapping
+{
+    public string CopilotConversationId { get; set; } = string.Empty;
+    public string LiveChatConversationId { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+    public string? ChannelId { get; set; }
+    public string? ServiceUrl { get; set; }
+    public string? BotId { get; set; }
+    public string? BotName { get; set; }
 }
