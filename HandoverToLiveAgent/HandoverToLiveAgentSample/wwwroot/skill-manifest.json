@@ -27,12 +27,20 @@
                 "$ref": "#/definitions/messageInput"
             }
         },
-        "endOfConversation": {
-            "name": "endOfConversation",
+        "endConversation": {
+            "name": "endConversation",
             "type": "event",
             "description": "End a conversation with the Contoso Live Chat",
             "value": {
-                "$ref": "#/definitions/endOfConversationInput"
+                "$ref": "#/definitions/endConversationInput"
+            }
+        },
+        "startConversation": {
+            "name": "startConversation",
+            "type": "event",
+            "description": "Start a conversation with the Contoso Live Chat",
+            "resultValue": {
+                "$ref": "#/definitions/startConversationOutput"
             }
         }
     },
@@ -40,14 +48,28 @@
         "messageInput": {
             "type": "object",
             "properties": {
+                "LiveChatConversationId": {
+                    "type": "string"
+                },
                 "ProblemDescription": {
                     "type": "string"
                 }
             }
         },
-        "endOfConversationInput": {
+        "endConversationInput": {
             "type": "object",
             "properties": {
+                "LiveChatConversationId": {
+                    "type": "string"
+                }
+            }
+        },
+        "startConversationOutput": {
+            "type": "object",
+            "properties": {
+                "LiveChatConversationId": {
+                    "type": "string"
+                }
             }
         }
     }

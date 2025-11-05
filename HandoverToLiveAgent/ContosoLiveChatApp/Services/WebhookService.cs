@@ -34,7 +34,7 @@ public class WebhookService
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Message sent successfully to webhook: {MessageId}", message.Id);
-                return new Tuple<int?, string>((int)response.StatusCode, null);
+                return new Tuple<int?, string>((int)response.StatusCode, string.Empty);
             }
             else
             {

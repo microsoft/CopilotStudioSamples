@@ -23,7 +23,6 @@ builder.Services.AddSingleton<IConversationManager, ConversationManager>();
 builder.Services.AddSingleton<IProactiveMessenger, MsTeamsProactiveMessage>();
 
 // Agents SDK setup
-builder.Services.AddHttpClient();
 builder.AddAgentApplicationOptions();
 builder.AddAgent<HandoverToLiveAgent.CopilotStudio.CopilotStudioAgent>();
 // Agents storage for conversation state
@@ -44,11 +43,9 @@ if (!app.Environment.IsDevelopment() && hasHttpsBinding)
     app.UseHttpsRedirection();
 }
 
-// app.UseCors();
 app.UseStaticFiles();
-// app.UseRouting();
-// Bot middleware is configured via the Bot Adapter, not ASP.NET pipeline. None registered here for local run.
-// app.UseAuthorization();
+app.UseDefaultFiles();
+app.UseRouting();
 app.MapControllers();
 
 // Agents endpoint: /api/messages for incoming messages and activities from Copilot Studio skills

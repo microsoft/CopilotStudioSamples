@@ -27,15 +27,19 @@ public class LiveChatWebhookController : ControllerBase
         try
         {
 
-            //contoso conv id?
             var contosoUserName = request.Sender;
-            var contosoMessage = request.Text;
+            var contosoMessage = request.Message;
+            var liveChatConversationId = request.ConversationId;
             _logger.LogInformation("Received message from Live Chat. Sender: {Sender}, Text: {Text}", contosoUserName, contosoMessage);
 
-            // Find corresponding Copilot Studio conversation
-            //var mapping = await _conversationManager.GetMappingByZendeskConversationId(zendeskConversationId);
-            var testid = _conversationManager.TEST_GetCConversationId(request.Id); //get contoso sessions id?
-            await _proactiveMessenger.SendTextAsync(IConversationManager.Mapping1!.ProactiveConversation, contosoMessage, contosoUserName);
+            var mapping = await _conversationManager.GetMapping(liveChatConversationId);
+            if (mapping == null)
+            {
+                _logger.LogError("No mapping found for Live Chat conversation ID: {LiveChatConversationId}", liveChatConversationId);
+                throw new Exception("No mapping found for conversation. Make sure a Copilot Studio conversation has been started.");
+            }
+            // proactive messages are only supported in MS Teams channel
+            await _proactiveMessenger.SendTextAsync(mapping, contosoMessage, contosoUserName);
             _logger.LogInformation("Proactive message sent to Copilot Studio for user: {UserName}", contosoUserName);
 
         }
@@ -56,8 +60,8 @@ public class LiveChatWebhookController : ControllerBase
 
 public class MessageRequest
 {
-    public string Id { get; set; } = string.Empty;
-    public string Text { get; set; } = string.Empty;
+    public string ConversationId { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
     public string Sender { get; set; } = string.Empty;
     public DateTime Timestamp { get; set; }
 }

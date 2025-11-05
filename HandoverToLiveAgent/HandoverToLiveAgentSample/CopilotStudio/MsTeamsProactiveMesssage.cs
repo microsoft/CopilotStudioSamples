@@ -34,7 +34,7 @@ public class MsTeamsProactiveMessage : IProactiveMessenger
             _logger.LogWarning("Channel adapter is not available. Cannot send proactive message.");
             return;
         }
-        
+
         var effectiveServiceUrl = reference.ServiceUrl!;
         var channelId = reference.ChannelId;
 
@@ -44,36 +44,37 @@ public class MsTeamsProactiveMessage : IProactiveMessenger
             _logger.LogWarning("Could not resolve App ID for service URL: {ServiceUrl}", effectiveServiceUrl);
             return;
         }
-       
+
         if (!string.Equals(channelId, "msteams", StringComparison.OrdinalIgnoreCase)
             && effectiveServiceUrl.Contains("smba.trafficmanager.net", StringComparison.OrdinalIgnoreCase))
         {
-            _logger.LogWarning("Non-Teams channel with SMBA ServiceUrl. Using as-is. Conv={ConversationId} Ch={ChannelId} ServiceUrl={ServiceUrl}", reference.ConversationId, channelId, effectiveServiceUrl);
+            _logger.LogWarning("Non-Teams channel with SMBA ServiceUrl. Using as-is. Conv={ConversationId} Ch={ChannelId} ServiceUrl={ServiceUrl}", reference.CopilotConversationId, channelId, effectiveServiceUrl);
         }
-        _logger.LogInformation("Sending proactive message to Teams user: {UserName}, Conv={ConversationId} Ch={ChannelId} ServiceUrl={ServiceUrl}", userName, reference.ConversationId, channelId, effectiveServiceUrl);
+        _logger.LogInformation("Sending proactive message to Teams user: {UserName}, Conv={ConversationId} Ch={ChannelId} ServiceUrl={ServiceUrl}", userName, reference.CopilotConversationId, channelId, effectiveServiceUrl);
 
         try
         {
-            //TODO
-            var sdkRef = new Microsoft.Agents.Core.Models.ConversationReference
+            var sdkRef = new ConversationReference
             {
                 Agent = new ChannelAccount { Id = reference.BotId },
                 ChannelId = channelId!,
                 ServiceUrl = effectiveServiceUrl,
-                Conversation = new ConversationAccount { Id = reference.ConversationId }
+                Conversation = new ConversationAccount { Id = reference.CopilotConversationId }
             };
             await _channelAdapter.ContinueConversationAsync(
-           appId,
-           sdkRef,
-           async (turnContext, token) =>
-           {
-               await turnContext.SendActivityAsync(message, cancellationToken: token);
-           },
-           ct);
+                appId,
+                sdkRef,
+                async (turnContext, token) =>
+                {
+                    var msg = $"**{userName}**: {message}";
+                    _logger.LogInformation("Proactive message content: {Message}", msg);
+                    await turnContext.SendActivityAsync(msg, cancellationToken: token);
+                },
+            ct);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error sending proactive message to Teams user: {UserName}", reference.ConversationId);
+            _logger.LogError(ex, "Error sending proactive message to Teams user: {UserName}", reference.CopilotConversationId);
             throw;
         }
 

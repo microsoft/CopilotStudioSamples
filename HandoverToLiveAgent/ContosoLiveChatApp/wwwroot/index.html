@@ -39,6 +39,18 @@
             border-radius: 12px 12px 0 0;
             font-size: 20px;
             font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .conversation-id {
+            font-size: 12px;
+            opacity: 0.8;
+            font-weight: 400;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
         }
 
         .chat-history {
@@ -166,7 +178,8 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            Contoso Live Chat
+            <span>Contoso Live Chat</span>
+            <span class="conversation-id" id="conversationId">No conversation</span>
         </div>
         <div class="chat-history" id="chatHistory">
             <div class="loading">Loading messages...</div>
@@ -181,9 +194,12 @@
         const chatHistory = document.getElementById('chatHistory');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
+        const conversationIdElement = document.getElementById('conversationId');
+        let chatMessage = '<div class="loading">No messages yet. Waiting for first incoming message...</div>';
         let hasReceivedMessage = false;
         let lastMessageCount = 0;
         let failedMessagesMap = new Map(); // Store failed messages with timestamps
+        let currentConversationId = null;
 
         // Disable send button initially
         sendButton.disabled = true;
@@ -214,7 +230,14 @@
                 }
                 
                 const messages = await response.json();
+                
                 displayMessages(messages);
+
+                // Check if current conversation has ended (no messages for this conversation ID)
+                if (currentConversationId && messages.length === 0) {
+                    // Conversation has ended, reset UI
+                    resetConversation();
+                }
             } catch (error) {
                 console.error('Error loading messages:', error);
                 showError('Failed to load messages. Please refresh the page.');
@@ -224,13 +247,19 @@
         function displayMessages(messages) {
             if (messages.length === 0) {
                 if (lastMessageCount === 0) {
-                    chatHistory.innerHTML = '<div class="loading">No messages yet. Waiting for first incoming message...</div>';
+                    chatHistory.innerHTML = chatMessage;
                 }
                 return;
             }
 
-            // Check if there's any incoming message and enable input
-            const hasIncoming = messages.some(msg => msg.direction === 1);
+            // Extract conversation ID from the first message and update display
+            if (messages.length > 0 && !currentConversationId) {
+                currentConversationId = messages[0].conversationId;
+                conversationIdElement.textContent = `ID: ${currentConversationId}`;
+            }
+
+            // Check if there's any incoming message (from Remote sender) and enable input
+            const hasIncoming = messages.some(msg => msg.sender !== "Contoso Support");
             if (hasIncoming && !hasReceivedMessage) {
                 hasReceivedMessage = true;
                 sendButton.disabled = false;
@@ -266,13 +295,14 @@
             messages.forEach((message, index) => {
                 if (index >= existingMessages.length) {
                     const messageDiv = document.createElement('div');
-                    messageDiv.className = `message ${message.direction === 0 ? 'outgoing' : 'incoming'}`;
+                    // Outgoing if from Contoso Support, incoming if from others
+                    messageDiv.className = `message ${message.sender === "Contoso Support" ? 'outgoing' : 'incoming'}`;
                     
                     const bubble = document.createElement('div');
                     bubble.className = 'message-bubble';
                     
                     const text = document.createElement('div');
-                    text.textContent = message.text;
+                    text.textContent = message.message;
                     
                     const info = document.createElement('div');
                     info.className = 'message-info';
@@ -316,7 +346,7 @@
 
         async function sendMessage() {
             const text = messageInput.value.trim();
-            if (!text || !hasReceivedMessage) return;
+            if (!text || !hasReceivedMessage || !currentConversationId) return;
 
             // Disable input while sending
             sendButton.disabled = true;
@@ -328,7 +358,10 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ text })
+                    body: JSON.stringify({ 
+                        message: text,
+                        conversationId: currentConversationId 
+                    })
                 });
 
                 if (!response.ok) {
@@ -389,6 +422,22 @@
             
             // Scroll to bottom
             chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function resetConversation() {
+            // Reset conversation state
+            currentConversationId = null;
+            conversationIdElement.textContent = 'No conversation';
+            
+            // Disable input
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+            messageInput.placeholder = "Waiting for first message...";
+            hasReceivedMessage = false;
+            lastMessageCount = 0;
+            failedMessagesMap.clear();
+            chatMessage = '<div class="loading">User has ended the conversation. Waiting for new conversation...</div>';
+            chatHistory.innerHTML = chatMessage;
         }
 
         function showError(message) {
