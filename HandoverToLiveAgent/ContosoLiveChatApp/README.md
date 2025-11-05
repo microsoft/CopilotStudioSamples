@@ -1,52 +1,36 @@
 # Contoso Live Chat App
 
-A simple ASP.NET Core live chat application with webhook integration.
-
-## Features
-
-- Real-time chat interface with message history
-- Send messages to a preconfigured webhook endpoint
-- Receive messages from remote parties via POST endpoint
-- Clean, modern UI with responsive design
-- In-memory message storage
+A simple live chat application designed as mock live agent handover scenarios with Copilot Studio. This application simulates a live chat support system that can receive conversations from Copilot Studio and send messages back.
 
 ## Project Structure
 
 ```
 ContosoLiveChatApp/
 ├── Controllers/
-│   └── ChatController.cs          # API endpoints for chat operations
+│   └── ChatController.cs          # API endpoints for chat operations (used by Copilot Studio agent)
 ├── Models/
 │   └── ChatMessage.cs             # Chat message data model
 ├── Services/
-│   ├── ChatService.cs             # In-memory chat history management
-│   └── WebhookService.cs          # Outgoing webhook sender
+│   ├── ChatStorageService.cs      # Conversation-based message storage
+│   └── WebhookService.cs          # Outgoing webhook sender (send messages to Copilot Studio agent)
 ├── wwwroot/
-│   └── index.html                 # Chat UI
+│   └── index.html                 # Chat UI with conversation management
 ├── Program.cs                     # Application entry point
 ├── appsettings.json              # Configuration (webhook URL)
-└── ContosoLiveChatApp.csproj     # Project file
 ```
 
 ## Configuration
 
-**⚠️ IMPORTANT:** Before running the application, you **must** configure a valid webhook URL in `appsettings.json`:
+Configure the webhook URL in `appsettings.json`:
 
 ```json
 {
   "WebhookSettings": {
-    "OutgoingWebhookUrl": "https://your-webhook-endpoint.com/api/messages"
+    "OutgoingWebhookUrl": "http://localhost:5001/api/livechat/messages"
   }
 }
 ```
-
-Replace `https://your-webhook-endpoint.com/api/messages` with your actual webhook endpoint URL.
-
-**The application will not start if:**
-- The webhook URL is not set (empty or null)
-- The webhook URL is still set to the default placeholder value
-
-This validation ensures you don't accidentally run the application with an invalid webhook configuration.
+This endpoint points to the Copilot Studio agent skill URL. The default configuration assumes the HandoverToLiveAgentSample is running on port 5001.
 
 ## Running the Application
 
@@ -67,88 +51,42 @@ http://localhost:5000
 
 ## API Endpoints
 
-### 1. Get All Messages
-- **Endpoint**: `GET /api/chat/messages`
-- **Description**: Retrieves all chat messages
-- **Response**: Array of ChatMessage objects
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/chat/start` | Start a new conversation, returns `conversationId` |
+| `GET` | `/api/chat/messages?conversationId={id}` | Get messages for a conversation |
+| `POST` | `/api/chat/send` | Send message to Copilot Studio via webhook |
+| `POST` | `/api/chat/receive` | Receive message from Copilot Studio |
+| `POST` | `/api/chat/end` | End conversation and clear from memory |
 
-### 2. Send Message
-- **Endpoint**: `POST /api/chat/send`
-- **Description**: Sends a message from the user (forwards to webhook)
-- **Request Body**:
-```json
-{
-  "text": "Your message here"
-}
+## Architecture
+
+### API Flow
+
+```mermaid
+sequenceDiagram
+    participant CS as Copilot Studio
+    participant API as Chat API
+    participant Storage as ChatStorageService
+    participant UI as Live Chat UI
+    
+    CS->>API: POST /api/chat/start
+    API-->>CS: conversationId
+    
+    Note over API,Storage: Conversation Active
+    
+    CS->>API: POST /api/chat/receive (from MCS)
+    API->>Storage: Store message
+    Storage-->>UI: Display message
+    
+    UI->>API: POST /api/chat/send (message)
+    API->>Storage: Store message
+    API->>CS: Forward via webhook (to MCS)
+    CS-->>UI: Message delivered
+    
+    Note over CS,UI: Messages exchanged...
+    
+    CS->>API: POST /api/chat/end
+    API->>Storage: Clear conversation
+    API-->>CS: Conversation ended
 ```
-- **Response**:
-```json
-{
-  "message": "Message sent successfully",
-  "messageId": "guid"
-}
-```
-
-### 3. Receive Message
-- **Endpoint**: `POST /api/chat/receive`
-- **Description**: Receives incoming messages from remote parties
-- **Request Body**:
-```json
-{
-  "text": "Incoming message",
-  "sender": "Remote Party Name"
-}
-```
-- **Response**:
-```json
-{
-  "message": "Message received successfully",
-  "messageId": "guid"
-}
-```
-
-## Usage
-
-### Sending Messages (User Interface)
-1. Type your message in the input field at the bottom
-2. Click the "Send" button or press Enter
-3. The message will be displayed in the chat history
-4. The message will be sent to the configured webhook endpoint
-
-### Receiving Messages (Via API)
-Remote parties can send messages to your chat by making a POST request to:
-```
-POST http://localhost:5000/api/chat/receive
-Content-Type: application/json
-
-{
-  "text": "Hello from remote party",
-  "sender": "Agent Name"
-}
-```
-
-The message will automatically appear in the chat history.
-
-## Testing the Webhook
-
-To test the webhook functionality without a real endpoint, you can use services like:
-- [webhook.site](https://webhook.site) - Provides a temporary webhook URL
-- [RequestBin](https://requestbin.com) - Inspect HTTP requests
-- [ngrok](https://ngrok.com) - Create a tunnel to your local machine
-
-## Notes
-
-- Messages are stored in-memory and will be lost when the application restarts
-- The chat automatically polls for new messages every 2 seconds
-- The UI is responsive and works on mobile devices
-- All timestamps are in UTC
-
-## Future Enhancements
-
-Consider adding:
-- Database persistence for messages
-- WebSocket/SignalR for real-time updates
-- User authentication
-- Message delivery confirmation
-- File attachments support
-- Typing indicators
