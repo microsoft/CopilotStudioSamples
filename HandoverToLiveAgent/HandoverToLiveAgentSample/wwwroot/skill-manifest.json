@@ -15,8 +15,8 @@
             "name": "default",
             "protocol": "BotFrameworkV3",
             "description": "Default endpoint for the Handoff Skill",
-            "endpointUrl": "https://td7k9vbg-5001.euw.devtunnels.ms/api/messages",
-            "msAppId": "715f8840-74e2-443d-a7df-50efb2ac7b1c"
+            "endpointUrl": "https://<YOUR-TUNNEL-ID>-5001.euw.devtunnels.ms/api/messages",
+            "msAppId": "<YOUR-AGENT-APP-ID>",
         }
     ],
     "activities": {
