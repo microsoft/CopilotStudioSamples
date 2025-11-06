@@ -16,7 +16,7 @@
             "protocol": "BotFrameworkV3",
             "description": "Default endpoint for the Handoff Skill",
             "endpointUrl": "https://td7k9vbg-5001.euw.devtunnels.ms/api/messages",
-            "msAppId": "dd48c5ae-fa3d-4bfd-a747-734b5279f470"
+            "msAppId": "715f8840-74e2-443d-a7df-50efb2ac7b1c"
         }
     ],
     "activities": {
