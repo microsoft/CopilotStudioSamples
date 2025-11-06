@@ -51,7 +51,7 @@ beginDialog:
         binding:
           EmployeeName: =Topic.EmployeeName
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemAccessCheck
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemAccessCheck
 
     - kind: SetVariable
       id: set_website_message
@@ -171,7 +171,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Time_Off_Date}"",""value"":""" & Topic.timeOffDate & """},{""key"":""{Comment}"",""value"":""" & Topic.reasonText & """},{""key"":""{Reason_ID}"",""value"":""" & Topic.timeOffType & """},{""key"":""{Hours}"",""value"":""" & Text(Topic.numberOfHours) & """}]}"
           scenarioName: msdyn_HRWorkdayAbsenceEnterTimeOff_EnterTimeOffInfo
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse

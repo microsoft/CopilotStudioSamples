@@ -35,7 +35,7 @@ beginDialog:
         binding:
           EmployeeName: =Topic.EmployeeName
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemAccessCheck
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemAccessCheck
 
     - kind: BeginDialog
       id: 3bFDxH
@@ -45,7 +45,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMEmployeeGetGovernmentIds
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
@@ -99,7 +99,7 @@ beginDialog:
           IsTableEmpty: =IsBlank(Global.CountryNameLookupTable)
           ReferenceDataKey: ISO_3166-1_Alpha-2_Code
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemRefreshReferenceData
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
 
     - kind: BeginDialog
       id: Xoydcu
@@ -109,7 +109,7 @@ beginDialog:
           IsTableEmpty: =IsBlank(Global.GovernmentIdTypeLookupTable)
           ReferenceDataKey: Government_ID_Type_ID
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemRefreshReferenceData
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
 
     - kind: SetVariable
       id: setVariable_ZYrAxQ

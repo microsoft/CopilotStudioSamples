@@ -52,7 +52,7 @@ beginDialog:
                   parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """}, {""key"":""{Employee_ID_Of_Receiver}"",""value"":"""& Topic.varEmployeeId & """}, {""key"":""{Comment}"",""value"":""" & Topic.FeedbackText & """}]}"
                   scenarioName: msdyn_HRWorkdayHCMEmployeeGiveFeedback
 
-              dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+              dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
               output:
                 binding:
                   errorResponse: Topic.errorResponse
