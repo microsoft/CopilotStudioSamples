@@ -32,7 +32,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMEmployeeGetJobTaxonomy
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
@@ -91,7 +91,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{Job_Family_ID}"",""value"":""" & Topic.transformResponse.JobFamilyId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMEmployeeGetJobTaxonomyGeneric
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
