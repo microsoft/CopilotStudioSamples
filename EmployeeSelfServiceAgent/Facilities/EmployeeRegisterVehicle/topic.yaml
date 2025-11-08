@@ -1,0 +1,854 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  You must obey the below instructions strictly to respond back:
+  1. This topic provides a way for users to register their vehicles to avail parking service at Microsoft. Invoke it when users explicitly ask for registering their vehicles. Prompt examples - "How can I register my vehicle for parking on campus?", "I want to register my vehicle".
+  2. For general queries use search first. Do NOT use this topic when user is looking for information OR doesn’t want to register right away. Prompt examples - “How to avail parking facilities on campus?", "Can I park my vehicle on campus?". In such cases, use knowledge source to respond. Don't invoke this topic directly
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+  actions:
+    - kind: SetVariable
+      id: setVariable_JRbdfA
+      variable: Topic.CountryCode
+      value: |
+        =If(
+            IsBlank(Global.ESS_UserContext_Country_Code) || Global.ESS_UserContext_Country_Code = """""",
+            "USA",
+            Global.ESS_UserContext_Country_Code
+        )
+
+    - kind: SetVariable
+      id: setVariable_r1hTPQ
+      variable: Topic.CountryCode
+      value: |
+        =Switch(
+            Topic.CountryCode,
+            "USA", "US",
+            "IND", "IN",
+            Topic.CountryCode
+        )
+
+    - kind: ConditionGroup
+      id: conditionGroup_YDr3lq
+      conditions:
+        - id: conditionItem_qQNaEO
+          condition: =Topic.CountryCode in Env.fac_ParkingSupportedRegions
+
+      elseActions:
+        - kind: SendActivity
+          id: sendActivity_M32iRm
+          activity: I'm sorry, Currently ESS Parking Experience is only available for the Redmond and India regions.
+
+        - kind: CancelAllDialogs
+          id: v44vPr
+
+    - kind: HttpRequestAction
+      id: YgLBPA
+      displayName: Get Config Values
+      url: =Concatenate(Env.fac_ParkingServiceApiurl,"/v1.0/config/region/",Topic.CountryCode,"?label=WebUI")
+      headers:
+        x-ms-obo-scope: =Env.fac_ParkingServiceApiOboScope
+
+      errorHandling:
+        kind: ContinueOnErrorBehavior
+        statusCode: Topic.GetConfigResponseErrorCode
+        errorResponseBody: Topic.GetConfigResponseError
+
+      response: Topic.ConfigResponse
+      responseSchema:
+        kind: Record
+        properties:
+          items:
+            type:
+              kind: Table
+              properties:
+                content_type: String
+                etag: String
+                key: String
+                label: String
+                last_modified: String
+                locked: Boolean
+                tags:
+                  type:
+                    kind: Record
+
+                value: String
+
+    - kind: ConditionGroup
+      id: conditionGroup_rBS5DI
+      conditions:
+        - id: conditionItem_E5yK9y
+          condition: =!IsBlank(Topic.GetConfigResponseErrorCode)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_RGvaUx
+              activity: I’m sorry, I’m having trouble processing your request. Waiting a bit before trying again might help.
+
+            - kind: CancelAllDialogs
+              id: ycuHBJ
+
+    - kind: SetVariable
+      id: setVariable_oCZ0bR
+      variable: Topic.VehicleTypes
+      value: |-
+        =	
+        Split(
+            Coalesce(
+                Text(
+                    LookUp(
+                        Table(ParseJSON(LookUp(Topic.ConfigResponse.items, key = "ParkingService:Config:RegionConfig").value)),
+                        Text(ThisRecord.Value.regionId) = Topic.CountryCode,
+                        ThisRecord.Value.vehicleTypeList
+                    )
+                ),
+                ""
+            ),
+            ","
+        )
+
+    - kind: SetVariable
+      id: setVariable_8KrqjU
+      variable: Topic.RegistrationTypes
+      value: |
+        =Split(
+            Coalesce(
+                Text(
+                    LookUp(
+                        Table(ParseJSON(LookUp(Topic.ConfigResponse.items, key = "ParkingService:Config:RegionConfig").value)),
+                        Text(ThisRecord.Value.regionId) = Topic.CountryCode
+                    ).Value.registrationTypeList
+                ),
+                ""
+            ),
+            ","
+        )
+
+    - kind: SetVariable
+      id: setVariable_ihHVJY
+      variable: Topic.FuelTypes
+      value: |
+        =Split(
+            Coalesce(
+                Text(
+                    LookUp(
+                        Table(ParseJSON(LookUp(Topic.ConfigResponse.items, key = "ParkingService:Config:RegionConfig").value)),
+                        Text(ThisRecord.Value.regionId) = Topic.CountryCode
+                    ).Value.fuelTypeList
+                ),
+                ""
+            ),
+            ","
+        )
+
+    - kind: SetVariable
+      id: setVariable_9RSwkB
+      variable: Topic.Colors
+      value: =Split(Coalesce(LookUp(Topic.ConfigResponse.items, key = "ParkingService:Registration:Color").value, ""), ",")
+
+    - kind: SetVariable
+      id: setVariable_lg86dE
+      variable: Topic.States
+      value: |
+        =Split(Coalesce(LookUp(Topic.ConfigResponse.items, key = "ParkingService:Registration:State").value, ""), ",")
+
+    - kind: SetVariable
+      id: setVariable_ga5j6l
+      variable: Topic.ParkingLocations
+      value: |
+        =Split(Coalesce(LookUp(Topic.ConfigResponse.items, key = "ParkingService:Registration:Location").value, ""), ",")
+
+    - kind: ConditionGroup
+      id: conditionGroup_7qSenN
+      conditions:
+        - id: conditionItem_DloMUX
+          condition: =Topic.CountryCode = "US"
+          actions:
+            - kind: AdaptiveCardPrompt
+              id: CAHHYJ
+              card: |-
+                ={
+                  type: "AdaptiveCard",
+                  version: "1.5",
+                  '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                  speak: "Register your vehicle by filling out all required fields, then press the Register Vehicle button.",
+
+                  body: [
+                    {
+                      type: "TextBlock",
+                      text: "Alright, can you please help me with the following details about your vehicle?",
+                      weight: "Bolder",
+                      size: "default",
+                      wrap: true,
+                      separator:true
+                    },
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "vehicleType",
+                      label: "Vehicle Type",
+                      isRequired: true,
+                      style:"filtered",
+                      errorMessage: "Select a vehicle type.",
+                      choices: ForAll(
+                        Topic.VehicleTypes,
+                        {
+                          title: ThisRecord.Value,
+                          value: ThisRecord.Value
+                        }
+                      ),
+                      value: "Car"
+                    },
+                    {
+                      type: "ColumnSet",
+                      spacing: "Medium",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Text",
+                              id: "make",
+                              label: "Make",
+                              placeholder: "e.g. Toyota",
+                              isRequired: true,
+                              errorMessage: "Enter the vehicle make.",
+                              regex: "^[A-Za-z0-9 ]{1,30}$",
+                              maxLength: 30
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Text",
+                              id: "model",
+                              label: "Model",
+                              placeholder: "e.g. Camry",
+                              isRequired: true,
+                              errorMessage: "Enter the vehicle model.",
+                              regex: "^[A-Za-z0-9 ]{1,30}$",
+                              maxLength: 30
+                            }
+                          ]
+                        }
+                      ]
+                    },
+
+                    {
+                      type: "ColumnSet",
+                      spacing: "Medium",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.ChoiceSet",
+                              id: "year",
+                              label: "Year",
+                              choices: ForAll(
+                                Sequence(52, Year(Today()) - 50),
+                                {
+                                  title: Text(Value),
+                                  value: Text(Value)
+                                }
+                              ),
+                              isRequired: true,
+                              errorMessage: "Select a year.",
+                              value: Text(Year(Today()))
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "ColumnSet",
+                              spacing: "None",
+                              columns: [
+                                {
+                                  type: "Column",
+                                  width: "stretch",
+                                  items: [
+                                    {
+                                      type: "Input.ChoiceSet",
+                                      id: "color",
+                                      label: "Color",
+                                      choices: ForAll(
+                                        Topic.Colors,
+                                        {
+                                          title: ThisRecord.Value,
+                                          value: ThisRecord.Value
+                                        }
+                                      ),
+                                      isRequired: true,
+                                      style:"filtered",
+                                      errorMessage: "Select a color."
+                                    }
+                                  ]
+                                },
+                                {
+                                  type: "Column",
+                                  width: "auto",
+                                  items: [
+                                    {
+                                      type: "Icon",
+                                      size: "xxSmall",
+                                      name: "Info",
+                                      selectAction: {
+                                        type: "Action.Popover",
+                                        title: "Info",
+                                        tooltip: "Choose the colour that best matches your vehicle's exterior."
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+
+                    {
+                      type: "ColumnSet",
+                      spacing: "Medium",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "ColumnSet",
+                              spacing: "None",
+                              columns: [
+                                {
+                                  type: "Column",
+                                  width: "stretch",
+                                  items: [
+                                    {
+                                      type: "Input.Text",
+                                      id: "licensePlate",
+                                      label: "License Plate #",
+                                      placeholder: "e.g. ABC1234",
+                                      isRequired: true,
+                                      errorMessage: "Alphanumeric only, up to 10 characters.",
+                                      regex: "^[A-Za-z0-9]{1,10}$",
+                                      maxLength: 10
+                                    }
+                                  ]
+                                },
+                                {
+                                  type: "Column",
+                                  width: "auto",
+                                  items: [
+                                    {
+                                      type: "Icon",
+                                      size: "xxSmall",
+                                      name: "Info",
+                                      selectAction: {
+                                        type: "Action.Popover",
+                                        title: "Info",
+                                        tooltip: "Alphanumeric only, no spaces or special characters, up to 10 characters."
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+
+                    {
+                      type: "ColumnSet",
+                      spacing: "Medium",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.ChoiceSet",
+                              id: "state",
+                              label: "State/Province",
+                              choices: ForAll(
+                                Topic.States,
+                                {
+                                  title: ThisRecord.Value,
+                                  value: ThisRecord.Value
+                                }
+                              ),
+                              isRequired: true,
+                              style:"filtered",
+                              errorMessage: "Select a state or province."
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.ChoiceSet",
+                              id: "parkingLocation",
+                              label: "Parking Location",
+                              choices: ForAll(
+                                Topic.ParkingLocations,
+                                {
+                                  title: ThisRecord.Value,
+                                  value: ThisRecord.Value
+                                }
+                              ),
+                              isRequired: true,
+                              style:"filtered",
+                              errorMessage: "Choose a parking location."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "registrationType",
+                      label: "Registration Type",
+                      choices: ForAll(
+                        Topic.RegistrationTypes,
+                        {
+                          title: ThisRecord.Value,
+                          value: ThisRecord.Value
+                        }
+                      ),
+                      isRequired: true,
+                      style:"filtered",
+                      errorMessage: "Select a registration type.",
+                      value: "Personal"
+                    },
+                    {
+                      type: "Input.Toggle",
+                      id: "policyAccepted",
+                      label:"Parking Policy",
+                      title: "I have read and understood the [GWS Facilities Policy on Parking and Driving on site](https://microsoft.sharepoint.com/sites/mspolicy/SitePages/PolicyProcedure.aspx?policyprocedureid=MSPOLICY-510345001-5)",
+                      isRequired: true,
+                      errorMessage: "You must accept the GWS Facilities Policy to proceed.",
+                      valueOn: "true",
+                      valueOff: "false"
+                    }
+                  ],
+
+                  actions: [
+                    {
+                      type: "Action.Submit",
+                      id: "submitVehicleRegistration",
+                      title: "Register Vehicle",
+                      associatedInputs: "auto"
+                    }
+                  ]
+                }
+              output:
+                binding:
+                  actionSubmitId: Topic.actionSubmitId
+                  color: Topic.color
+                  licensePlate: Topic.licensePlate
+                  make: Topic.make
+                  model: Topic.model
+                  parkingLocation: Topic.parkingLocation
+                  policyAccepted: Topic.policyAccepted
+                  registrationType: Topic.registrationType
+                  state: Topic.state
+                  submitAction: Topic.submitAction
+                  vehicleType: Topic.vehicleType
+                  year: Topic.year
+
+              outputType:
+                properties:
+                  actionSubmitId: String
+                  color: String
+                  licensePlate: String
+                  make: String
+                  model: String
+                  parkingLocation: String
+                  policyAccepted: Boolean
+                  registrationType: String
+                  state: String
+                  submitAction: String
+                  vehicleType: String
+                  year: Number
+
+        - id: conditionItem_JgQTAe
+          condition: =Topic.CountryCode = "IN"
+          actions:
+            - kind: AdaptiveCardPrompt
+              id: ah00tZ
+              card: |-
+                ={
+                  type: "AdaptiveCard",
+                  version: "1.5",
+                  '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                  speak: "Register your vehicle by filling out all required fields, then press the Register Vehicle button.",
+
+                  body: [
+                    {
+                      type: "TextBlock",
+                      text: "Alright, can you please help me with the following details about your vehicle?",
+                      weight: "Bolder",
+                      size: "default",
+                      wrap: true,
+                      separator:true
+                    },
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "vehicleType",
+                      label: "Vehicle Type",
+                      isRequired: true,
+                      errorMessage: "Select a vehicle type.",
+                      style:"filtered",
+                      choices: ForAll(
+                        Topic.VehicleTypes,
+                        {
+                          title: ThisRecord.Value,
+                          value: ThisRecord.Value
+                        }
+                      ),
+                      value: "Car"
+                    },
+                    {
+                      type: "ColumnSet",
+                      spacing: "Medium",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Text",
+                              id: "make",
+                              label: "Make",
+                              placeholder: "e.g. Toyota",
+                              isRequired: true,
+                              errorMessage: "Enter the vehicle make.",
+                              regex: "^[A-Za-z0-9 ]{1,30}$",
+                              maxLength: 30
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Text",
+                              id: "model",
+                              label: "Model",
+                              placeholder: "e.g. Camry",
+                              isRequired: true,
+                              errorMessage: "Enter the vehicle model.",
+                              regex: "^[A-Za-z0-9 ]{1,30}$",
+                              maxLength: 30
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      type: "ColumnSet",
+                      spacing: "Medium",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Text",
+                              id: "color",
+                              placeholder: "Enter vehicle color",
+                              label:"Color",
+                              isRequired: true,
+                              errorMessage: "Enter a color."
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.ChoiceSet",
+                              id: "registrationType",
+                              label: "Registration Type",
+                              choices: ForAll(
+                                Topic.RegistrationTypes,
+                                {
+                                  title: ThisRecord.Value,
+                                  value: ThisRecord.Value
+                                }
+                              ),
+                              isRequired: true,
+                              style:"filtered",
+                              errorMessage: "Select a registration type.",
+                              value: "Personal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      type: "Input.Text",
+                      id: "licensePlate",
+                      label: "Registration Number",
+                      placeholder: "Enter license number",
+                      isRequired: true,
+                      errorMessage: "Alphanumeric only, up to 10 characters.",
+                      regex: "^[A-Za-z0-9]{1,10}$",
+                      maxLength: 10
+                    },
+                    {
+                      type: "ColumnSet",
+                      spacing: "Medium",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.ChoiceSet",
+                              id: "fuelType",
+                              label: "Fuel Type",
+                              choices: ForAll(
+                                Topic.FuelTypes,
+                                {
+                                  title: ThisRecord.Value,
+                                  value: ThisRecord.Value
+                                }
+                              ),
+                              isRequired: true,
+                              style:"filtered",
+                              value:"Petrol",
+                              errorMessage: "Select a fuel type."
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Text",
+                              id: "contactNumber",
+                              label: "Contact Number",
+                              placeholder: "e.g. 9876543210",
+                              errorMessage: "Enter a valid contact number.",
+                              regex: "^[0-9]{10}$",
+                              maxLength: 10
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      type: "ColumnSet",
+                      spacing: "Medium",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Text",
+                              id: "ownerFirstName",
+                              label: "Owner First Name",
+                              placeholder: "First name",
+                              isRequired: true,
+                              errorMessage: "Enter owner's first name.",
+                              regex: "^[A-Za-z ]{1,50}$",
+                              maxLength: 50,
+                              value:Global.ESS_UserContext_Employee_Firstname
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Text",
+                              id: "ownerLastName",
+                              label: "Owner Last Name",
+                              placeholder: "Last name",
+                              isRequired: true,
+                              errorMessage: "Enter owner's last name.",
+                              regex: "^[A-Za-z ]{1,50}$",
+                              maxLength: 50,
+                              value: Global.ESS_UserContext_Employee_Lastname
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      type: "Input.Toggle",
+                      id: "disabilityRequirement",
+                      title: "Do you have disability related specific requirements",
+                      valueOn: "true",
+                      valueOff: "false",
+                      value: "false"
+                    },
+                    {
+                      type: "Input.Toggle",
+                      id: "policyAccepted",
+                      title: "I have read and understood the [GWS Facilities Policy on Parking and Driving on site](https://microsoft.sharepoint.com/sites/globalsecurity/SitePages/Regions-Asia-India-Parking.aspx)",
+                      isRequired: true,
+                      label:"Parking Policy",
+                      errorMessage: "You must accept the parking policy to proceed.",
+                      valueOn: "true",
+                      valueOff: "false"
+                    }
+                  ],
+
+                  actions: [
+                    {
+                      type: "Action.Submit",
+                      id: "submitVehicleRegistration",
+                      title: "Register Vehicle",
+                      associatedInputs: "auto"
+                    }
+                  ]
+                }
+              output:
+                binding:
+                  actionSubmitId: Topic.actionSubmitId
+                  color: Topic.color
+                  contactNumber: Topic.contactNumber
+                  disabilityRequirement: Topic.disabilityRequirement
+                  fuelType: Topic.fuelType
+                  licensePlate: Topic.licensePlate
+                  make: Topic.make
+                  model: Topic.model
+                  ownerFirstName: Topic.ownerFirstName
+                  ownerLastName: Topic.ownerLastName
+                  policyAccepted: Topic.policyAccepted
+                  registrationType: Topic.registrationType
+                  submitAction: Topic.submitAction
+                  vehicleType: Topic.vehicleType
+                  year: Topic.year
+
+              outputType:
+                properties:
+                  actionSubmitId: String
+                  color: String
+                  contactNumber: String
+                  disabilityRequirement: Boolean
+                  fuelType: String
+                  licensePlate: String
+                  make: String
+                  model: String
+                  ownerFirstName: String
+                  ownerLastName: String
+                  policyAccepted: Boolean
+                  registrationType: String
+                  submitAction: String
+                  vehicleType: String
+                  year: Number
+
+      elseActions:
+        - kind: CancelAllDialogs
+          id: mVwi5b
+
+    - kind: HttpRequestAction
+      id: z9HM8p
+      displayName: Create Vehicle Registration
+      method: Post
+      url: =Concatenate(Env.fac_ParkingServiceApiurl,"/v1.0/vehicle-ess/region/",Topic.CountryCode,"/registration")
+      headers:
+        Content-Type: application/json
+        x-ms-obo-scope: =Env.fac_ParkingServiceApiOboScope
+
+      body:
+        kind: JsonRequestContent
+        content: |-
+          ={
+              user:{
+                  firstName: Global.ESS_UserContext_Employee_Firstname,
+                  lastName: Global.ESS_UserContext_Employee_Lastname,
+                  userAlias: Global.ESS_UserContext_Alias
+              },
+              vehicleRegistration:[{
+                  expireInDays:0,
+                  parkingLocation: If(Topic.CountryCode = "IN", "HYD", Topic.parkingLocation),
+                  permitNumber:"Unassigned",
+                  registrationType:Topic.registrationType,
+                  contactNumber: Coalesce(Topic.contactNumber,""),
+                  disability: Coalesce(Topic.disabilityRequirement,false),
+                  parkingStickerCollected: false,
+                  vehicleInfo:{
+                      chauffer:{},
+                      color:Topic.color,
+                      fuelType:Coalesce(Topic.fuelType,"Unknown"),
+                      licensePlate: Topic.licensePlate,
+                      make:Topic.make,
+                      model:Topic.model,
+                      ownerFirstName:Topic.ownerFirstName,
+                      ownerLastName:Topic.ownerLastName,
+                      vehicleLocation:{
+                          state:If(Topic.CountryCode = "IN", "TG", Topic.state)
+                      },
+                      vehicleType:Topic.vehicleType,
+                      year: If(Topic.CountryCode = "IN", 0, Topic.year)
+                  }
+              }]
+          }
+
+      errorHandling:
+        kind: ContinueOnErrorBehavior
+        statusCode: Topic.CreateVehicleRegistrationErrorResponseCode
+        errorResponseBody: Topic.CreateVehicleRegistrationErrorResponseBody
+
+    - kind: ConditionGroup
+      id: conditionGroup_eB38Qw
+      conditions:
+        - id: conditionItem_b2qhx5
+          condition: =!IsBlank(Topic.CreateVehicleRegistrationErrorResponseCode) && Topic.CreateVehicleRegistrationErrorResponseCode = 409
+          actions:
+            - kind: SendActivity
+              id: sendActivity_okgbkF
+              activity: I'm sorry, looks like this license plate number is already registered. Can you please try again.
+
+            - kind: SetVariable
+              id: setVariable_bcp4W1
+              variable: Topic.CreateVehicleRegistrationErrorResponseCode
+              value: =Blank()
+
+            - kind: SetVariable
+              id: setVariable_xDVhff
+              variable: Topic.CreateVehicleRegistrationErrorResponseBody
+              value: =Blank()
+
+            - kind: GotoAction
+              id: lTFcAb
+              actionId: setVariable_ga5j6l
+
+        - id: conditionItem_uVt3va
+          condition: =!IsBlank(Topic.CreateVehicleRegistrationErrorResponseCode)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_Ee537H
+              activity: Sorry, I'm having trouble processing your request, please try again after sometime.
+
+            - kind: CancelAllDialogs
+              id: d1dVpR
+
+    - kind: SendActivity
+      id: sendActivity_Vvrqha
+      activity: Thanks for sharing the details, your vehicle is now registered. Let me know if I can help you with anything else.
+
+    - kind: CancelAllDialogs
+      id: pYAWSJ
+
+inputType: {}
+outputType: {}
