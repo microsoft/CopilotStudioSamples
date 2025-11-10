@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Next-Gen Incident Desk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/@azure/msal-browser@4.13.1/lib/msal-browser.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "@microsoft/agents-copilotstudio-client": "https://unpkg.com/@microsoft/agents-copilotstudio-client@1.1.0-alpha.58/dist/src/browser.mjs"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="background">
+        <div class="blob blob-one"></div>
+        <div class="blob blob-two"></div>
+        <div class="orb orb-one"></div>
+        <div class="orb orb-two"></div>
+    </div>
+
+    <header class="topbar">
+        <div class="brand">
+            <span class="brand-mark">PP</span>
+            <span class="brand-text">PPCC Ticket Portal</span>
+        </div>
+        <a class="cta" href="#new-ticket">Raise a Ticket</a>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <h1>Hyper-intelligent ticketing, one agent away.</h1>
+                <p>
+                    Feed our AI-native ITSM engine and let it unravel the root cause, urgency, 
+                    and best responder in seconds thanks to Copilot Studio. Craft your
+                    description, we decode the rest.
+                </p>
+                <a class="hero-button" href="#new-ticket">Submit an Issue</a>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="pulse"></div>
+                <div class="card card-one">
+                    <h3>Auto Insights</h3>
+                    <p>Intent detection &amp; responder routing.</p>
+                </div>
+                <div class="card card-two">
+                    <h3>Resolution Boost</h3>
+                    <p>90% faster assignment, fewer escalations.</p>
+                </div>
+                <div class="floating-chip">
+                    <span class="chip-dot"></span>
+                    <span>AI Ops Ready</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="new-ticket" class="form-section">
+            <div class="form-card">
+                <div class="form-headline">
+                    <h2>Open a new support request</h2>
+                    <p>
+                        Keep the title sharp. Use the long description to narrate the full
+                        story – our Copilot Studio Agent will ingests it to extract signals, timelines,
+                        stakeholders, and impact automatically.
+                    </p>
+                </div>
+                <form id="ticket-form" novalidate>
+                    <label class="input-group">
+                        <span>Short title</span>
+                        <input type="text" name="shortTitle" id="shortTitle" placeholder="e.g. VPN outage for remote teams" required maxlength="120" />
+                    </label>
+                    <label class="input-group">
+                        <span>Long description</span>
+                        <textarea name="longDescription" id="longDescription" rows="6" placeholder="Walk us through the affected systems, time stamps, and any experiments you already ran. Our AI will autodetect what matters." required></textarea>
+                        <small class="helper-text">This narrative fuels our Copilot Studio auto-triage engine.</small>
+                    </label>
+                    <label class="input-group input-group--api-key" hidden>
+                        <span>Azure OpenAI key</span>
+                        <input type="password" name="apiKey" id="apiKey" placeholder="Paste your Azure OpenAI key" value="SAMPLE-KEY-HERE" autocomplete="off" />
+                        <small class="helper-text">Secured locally for this session only.</small>
+                    </label>
+                    <button type="submit" class="submit-button">Raise Ticket</button>
+                    <div id="thinking" class="thinking" hidden>
+                        <div class="thinking-spinner" aria-hidden="true"></div>
+                        <div class="thinking-content">
+                            <span class="thinking-label">Copilot is thinking</span>
+                            <div id="thinking-updates" class="thinking-updates" aria-live="polite"></div>
+                        </div>
+                    </div>
+                </form>
+                <div id="status" class="status" role="status" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; <span id="year">2025</span> PPCC Microsoft Demo. Built for proactive operations.</p>
+    </footer>
+
+    <script src="script.js" type="module"></script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+{
+  "name": "@microsoft/agents-copilotstudio-client",
+  "version": "0.1.0",
+  "homepage": "https://github.com/microsoft/Agents-for-js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/Agents-for-js.git"
+  },
+  "author": {
+    "name": "Microsoft",
+    "email": "agentssdk@microsoft.com",
+    "url": "https://aka.ms/Agents"
+  },
+  "description": "Microsoft Copilot Studio Client for JavaScript. Copilot Studio Client.",
+  "keywords": [
+    "Agents",
+    "copilotstudio",
+    "powerplatform"
+  ],
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "browser": {
+    "os": "./src/browser/os.ts",
+    "crypto": "./src/browser/crypto.ts"
+  },
+  "scripts": {
+    "build:browser": "esbuild --platform=browser --target=es2019 --format=esm --bundle --sourcemap --minify --outfile=dist/src/browser.mjs src/index.ts"
+  },
+  "dependencies": {
+    "@microsoft/agents-activity": "file:../agents-activity",
+    "eventsource-client": "^1.2.0",
+    "rxjs": "7.8.2",
+    "uuid": "^11.1.0"
+  },
+  "license": "MIT",
+  "files": [
+    "README.md",
+    "dist/src",
+    "src",
+    "package.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": {
+        "browser": "./dist/src/browser.mjs",
+        "default": "./dist/src/index.js"
+      },
+      "require": {
+        "default": "./dist/src/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
