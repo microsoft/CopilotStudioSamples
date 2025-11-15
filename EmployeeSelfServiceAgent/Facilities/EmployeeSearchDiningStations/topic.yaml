@@ -1,0 +1,156 @@
+kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: StationCategory
+    description: Get specific station category/cuisine from the user input. Example if the user asks "Show me Italian food" then the StationCategory is "Italian". If the user asks "Show me American cuisine" then the StationCategory is "American". If the user asks "Show me Indian food", then the StationCategory is "Indian". When the user asks "Show me the places serving desserts", the StationCategory is "dessert".
+    entity: StringPrebuiltEntity
+    shouldPromptUser: true
+    inputSettings:
+      unrecognizedPrompt:
+        activity: Enter station category/cuisine. For example "Show me Indian food" or "Show me American cuisine"
+        mode: Strict
+
+modelDescription: |-
+  This topic lets user search for stations offering specific cuisine/category. 
+  The user can say "Where can I find Italian cuisine?" or "Show me stations where they serve Asian food" or "Show me the places serving american food" etc. In these examples, Italian, Asian, and American are the cuisines/categories.
+  Extract response from variable "SearchStationsApiResponse". Provide response to the user in a human readable form. Format it properly so it looks clean and readable. Use **only** data values from the variable named "SearchStationsApiResponse." 
+  If you are displaying "SearchStationsApiResponse" variable as a response, make sure to number them.
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+  actions:
+    - kind: ConditionGroup
+      id: conditionGroup_uofKmm
+      conditions:
+        - id: conditionItem_6DTeNL
+          condition: =IsBlank(Topic.StationCategory)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_1Q1Jfw
+              activity: I’m sorry, I couldn't process your request to get today’s dining information. Please visit [Microsoft Dining]({Concatenate(Env.fac_DiningWebAppUrl, "/?clientSource=", System.Activity.ChannelId)}) .
+
+            - kind: EndDialog
+              id: INSnmF
+
+    - kind: SetVariable
+      id: setVariable_NQspD3
+      variable: Topic.StationCategory
+      value: =Trim(Topic.StationCategory)
+
+    - kind: SetVariable
+      id: setVariable_kawISX
+      variable: Topic.SearchStationsApiUrl
+      value: =Concatenate(Env.fac_DiningServiceApiUrl, "/api/v2/search/stations?keyword=", Topic.StationCategory, "&ianaTimezoneId=America/Los_Angeles&select=CafeName,StationName,CafeId,StationId")
+
+    - kind: HttpRequestAction
+      id: KkQBqZ
+      url: =Topic.SearchStationsApiUrl
+      headers:
+        clientSource: =System.Activity.ChannelId
+        Content-Type: application/json
+        x-ms-obo-scope: =Env.fac_DiningServiceApiOboScope
+
+      requestTimeoutInMilliseconds: 70000
+      response: Topic.SearchStationsApiResponse
+      responseSchema:
+        kind: Table
+        properties:
+          CafeId: String
+          CafeName: String
+          CanPurchaseItemsOnline: Boolean
+          GeneralTags:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          Station_Description: String
+          StationId: String
+          StationName: String
+
+    - kind: ConditionGroup
+      id: conditionGroup_vSZaNW
+      conditions:
+        - id: conditionItem_q0OQaM
+          condition: =IsEmpty(Topic.SearchStationsApiResponse) || IsBlank(Topic.SearchStationsApiResponse)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_Bo4hVW
+              activity: I'm sorry, I was unable to find any dining information for {Topic.StationCategory} cuisine. Visit here to check [Microsoft Dining]({Concatenate(Env.fac_DiningWebAppUrl, "/?clientSource=", System.Activity.ChannelId)})
+
+            - kind: EndDialog
+              id: S1EvAT
+
+    - kind: EndDialog
+      id: LxO6II
+
+    - kind: SendActivity
+      id: sendActivity_r5Xbs9
+      activity:
+        value: =Env.fac_DiningWebAppUrl
+        text:
+          - Here are some stations I found that might be serving the type of food you might like.
+        attachments:
+          - kind: AdaptiveCardTemplate
+            cardContent: |-
+              ={
+                type: "AdaptiveCard",
+                '$schema': "https://adaptivecards.io/schemas/adaptive-card.json",
+                version: "1.5",
+                speak: "This container contains a list of cafes and stations. Use navigation keys.",
+                body: [
+                  {
+                    type: "Container",
+                    items: ForAll(Topic.SearchStationsApiResponse,
+                      {
+                        type: "Container",
+                        items: [
+                          {
+                            type: "TextBlock",
+                            text: CafeName,
+                            weight: "Bolder",
+                            size: "Medium",
+                            wrap: true
+                          },
+                          {
+                            type: "TextBlock",
+                            text: Concatenate("[",StationName, "](",Env.fac_DiningWebAppUrl,"/cafe/",CafeId,"/station/",StationId,")")
+                          }
+                        ]
+                      }
+                    )
+                  }
+                ]
+              }
+
+    - kind: EndConversation
+      id: pYEcde
+
+inputType:
+  properties:
+    StationCategory:
+      displayName: StationCategory
+      description: Get specific station category/cuisine from the user input. Example if the user asks "Show me Italian food" then the StationCategory is "Italian". If the user asks "Show me American cuisine" then the StationCategory is "American". If the user asks "Show me Indian food", then the StationCategory is "Indian". When the user asks "Show me the places serving desserts", the StationCategory is "dessert".
+      type: String
+
+outputType:
+  properties:
+    SearchStationsApiResponse:
+      displayName: SearchStationsApiResponse
+      type:
+        kind: Table
+        properties:
+          CafeId: String
+          CafeName: String
+          CanPurchaseItemsOnline: Boolean
+          GeneralTags:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          Station_Description: String
+          StationId: String
+          StationName: String
+          StationURL: String
