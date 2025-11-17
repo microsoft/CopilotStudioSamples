@@ -89,7 +89,7 @@ class AgentProcessor:
             yield (
                 gr.update(interactive=False),
                 gr.update(interactive=True),
-                "Processing " + str(linecount) + " records.",
+                "STARTED PROCESSING " + str(linecount) + " UTTERANCE(S).",
                 0,
                 0,
                 0,
@@ -112,12 +112,12 @@ class AgentProcessor:
                         # Construct the filename with a desired extension
                         filename = f"{action.conversation.id}_{timestamp_str}.csv"
                         # index=False prevents writing the DataFrame index as a column in the CSV
-                        resultsdf.to_csv(f"./data/{filename}", index=False)
+                        resultsdf.to_csv(f"./data/{filename}", sep=',', index=None, quotechar='"', encoding='utf-8')
                         print(f"CSV file '{filename}' created successfully.")
                         yield (
                             gr.update(interactive=True),
                             gr.update(interactive=True),  
-                            "Processed " + str(linecount) + " of " + str(len(resultsdf)) + " records for conversation " + action.conversation.id,
+                            "PROCESSING " + str(linecount) + " of " + str(len(resultsdf)) + " UTTERANCE(S) FOR CONVERSATION " + action.conversation.id,
                             resultsdf['Time'].mean().round(2),
                             resultsdf['Time'].median().round(2),
                             resultsdf['Time'].max().round(2),
@@ -198,7 +198,7 @@ class AgentProcessor:
             yield (
                 gr.update(interactive=True),
                 gr.update(interactive=True),
-                "Processed " + str(linecount) + " of " + str(len(resultsdf)) + " records for conversation " + action.conversation.id,
+                "PROCESSED " + str(linecount) + " of " + str(linecount) + " UTTERANCE(S) FOR CONVERSATION " + action.conversation.id,
                 resultsdf['Time'].mean().round(2),
                 resultsdf['Time'].median().round(2),
                 resultsdf['Time'].max().round(2),

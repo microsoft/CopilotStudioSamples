@@ -102,12 +102,13 @@ async def ainput(string: str) -> str:
       
 with gr.Blocks(theme='shivi/calm_seafoam') as demo:
     with gr.Row():
-        gr.Markdown("# Copilot Studio Agent Performance Studio")
+        gr.Markdown("# Copilot Studio Response Analysis Tool")
 
     with gr.Tab("Statistics"):
         with gr.Row():
             btn = gr.Button("Start Test Run", variant="primary")
         
+        gr.Markdown("## Process Status")
         with gr.Row():    
             process_status = gr.Textbox(label="Process Status", interactive=False)
         gr.Markdown("## Response Statistics")
@@ -132,12 +133,16 @@ with gr.Blocks(theme='shivi/calm_seafoam') as demo:
             gr.Markdown("## Query Response / Time Data")
         with gr.Row():
             frame_output = gr.DataFrame(wrap=True,  # Enable text wrapping within cells
-                                        label="Query Response / Time Data", column_widths={"Response": "300px"}, show_search=True)
+                                        label="Query Response / Time Data", 
+                                        column_widths=["3%", "30%", "45%", "11%", "11%"], 
+                                        show_search="filter")
         with gr.Row():
             gr.Markdown("## LLM Planner Steps Data")
         with gr.Row():    
             frameai_output = gr.DataFrame(wrap=True,  # Enable text wrapping within cells
-                                        label="LLM Planner Steps Data")
+                                        label="LLM Planner Steps Data", 
+                                        column_widths=["3%", "20%", "10%", "25%", "12%", "30%"], 
+                                        show_search="filter")
 
     proc = AgentProcessor("AgentProcessor", create_client())
 
@@ -158,7 +163,6 @@ with gr.Blocks(theme='shivi/calm_seafoam') as demo:
                  dev_corr,
                  output_plot_whisker]
         )
-    
     
 if __name__ == "__main__":
     demo.launch()
