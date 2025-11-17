@@ -1,0 +1,5 @@
+python-dotenv
+msal
+aiohttp
+microsoft-agents-activity
+microsoft-agents-copilotstudio-client
