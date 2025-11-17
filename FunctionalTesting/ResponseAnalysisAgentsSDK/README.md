@@ -1,6 +1,6 @@
-# CopilotStudio Client
+# Copilot Studio Response Analysis Tool
 
-## Prerequisite
+## Prerequisite.
 
 To set up this sample, you will need the following:
 
@@ -8,21 +8,14 @@ To set up this sample, you will need the following:
 2. An Agent Created in Microsoft Copilot Studio or access to an existing Agent.
 3. Ability to Create an Application Identity in Azure for a Public Client/Native App Registration Or access to an existing Public Client/Native App registration with the `CopilotStudio.Copilots.Invoke` API Permission assigned. 
 
-## Prerequisites
-
-- [Python](https://www.python.org/) version 3.9 or higher
-- [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
-- An Agent created in Microsoft CopilotStudio or access to an existing Agent.
-- Ability to create an Application Identity in Azure for a public client/native App Registration or access to an existing one with the `CopilotStudio.Copilots.Invoke` API persmission assigned.
-
-## Authentication
+## Authentication.
 
 The CopilotStudio Client requires a User Token to operate. For this sample, we are using a user interactive flow to get the user token for the application ID created above. Other flows are allowed.
 
 > [!Important]
 > The token is cached in the user machine in `.local_token_cache.json`
 
-## Create an Agent in Copilot Studio
+## Create an Agent in Copilot Studio.
 
 1. Create an Agent in [Copilot Studio](https://copilotstudio.microsoft.com)
     1. Publish your newly created Copilot
@@ -30,7 +23,7 @@ The CopilotStudio Client requires a User Token to operate. For this sample, we a
         1. Schema name
         2. Environment Id
 
-## Create an Application Registration in Entra ID
+## Create an Application Registration in Entra ID.
 
 This step will require permissions to create application identities in your Azure tenant. For this sample, you will create a Native Client Application Identity, which does not have secrets.
 
@@ -58,7 +51,7 @@ This step will require permissions to create application identities in your Azur
 > [!TIP]
 > If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
 
-## Instructions - Configure the Example Application
+## Instructions - Configure the Copilot Studio Response Analysis Tool.
 
 With the above information, you can now run the client `CopilostStudioClient` sample.
 
@@ -72,14 +65,23 @@ With the above information, you can now run the client `CopilostStudioClient` sa
   COPILOTSTUDIOAGENT__AGENTAPPID="" # App ID of the App Registration used to login, this should be in the same tenant as the CopilotStudio environment.
 ```
 
-3. After installing the dependencies with `pip install -r requirements.txt`, run the CopilotStudioClient sample using
+3. Run `pip install -r requirements.txt` to install all dependencies. 
 
+4. List all the utterances sequentially in the `/data/input.txt` file. Marke the end of the file with "exit".
+    <p  align="center">
+        <img  src="img/DataSet.png"  alt="input data or utterances."  width="600px">
+        <br>
+	</p> 
+
+## Instructions - Run the Copilot Studio Response Analysis Tool.
+
+1. Configure the values based on what was recorded during the setup phase. 
 ```sh
 python -m src.main
 ```
 
 This should challenge you to login and connect to the Copilot Studio Hosted agent, allowing you to communicate via a console interface.
 
-## Further Reading
+## Instructions - Interpret the Copilot Studio Response Analysis Tool.
 
 For more information on logging configuration, see the logging section in the Quickstart Agent sample README.
