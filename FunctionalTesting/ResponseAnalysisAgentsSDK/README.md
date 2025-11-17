@@ -10,7 +10,7 @@ To set up this sample, you will need the following:
 
 ## Authentication.
 
-The CopilotStudio Client requires a User Token to operate. For this sample, we are using a user interactive flow to get the user token for the application ID created above. Other flows are allowed.
+The Copilot Studio Response Analysis Tool requires a User Token to operate. For this sample, we are using a user interactive flow to get the user token for the application ID created above. Other flows are allowed.
 
 > [!Important]
 > The token is cached in the user machine in `.local_token_cache.json`
@@ -53,7 +53,7 @@ This step will require permissions to create application identities in your Azur
 
 ## Instructions - Configure the Copilot Studio Response Analysis Tool.
 
-With the above information, you can now run the client `CopilostStudioClient` sample.
+With the above information, you can now run the `Copilot Studio Response Analysis Tool` sample.
 
 1. Open the `env.TEMPLATE` file and rename it to `.env`.
 2. Configure the values based on what was recorded during the setup phase.
@@ -67,7 +67,8 @@ With the above information, you can now run the client `CopilostStudioClient` sa
 
 3. Run `pip install -r requirements.txt` to install all dependencies. 
 
-4. List all the utterances sequentially in the `/data/input.txt` file. Marke the end of the file with "exit".
+4. List the test utterances sequentially in the `/data/input.txt` file. Marke the end of the file with "exit".
+    
     <p  align="center">
         <img  src="img/DataSet.png"  alt="input data or utterances."  width="600px">
         <br>
