@@ -1,5 +1,63 @@
 # Copilot Studio Response Analysis Tool
 
+## Purpose.
+
+## Interpretion - Copilot Studio Response Analysis Tool
+
+### Statistics Tab 
+#### Metrics And Response Time Analysis: 
+
+   <p  align="center">
+        <img  src="img/Screen-Statistics.png"  alt="StartTestRun">
+        <br>
+   </p> 
+
+| Metric | Description | Purpose | 
+| :------- | :---------- | :---------- |
+| **Mean** | The average response time across all responses. | Gives an overall sense of typical performance but can be skewed by very high or low values.
+| **Median** | The middle value when all response times are arranged in ascending order. | Represents the central tendency and is less affected by outliers than the mean. Useful for understanding the “typical” response time.
+| **Max** |  The longest response time recorded during the test run. | Highlights the worst-case scenario for latency, which is critical for identifying performance bottlenecks.
+| **Min** | The shortest response time recorded during the test run. | Shows the best-case performance and can indicate the system’s potential under optimal conditions.
+| **Standard Deviation** | Measures how much response times vary from the average. | Helps assess consistency—low SD means stable performance, high SD indicates fluctuating response times.
+| **Token Correlation** | Represents the correlation between Cresponse time and the number of tokens in response. | Indicate orchestrator efficiency—higher cost may indicate longer responses or slower performance.
+
+| Chart | Description |
+| :------- | :---------- |
+| **Line Chart** | Shows how Copilot Agent response time changes across individual queries to identify spikes or trends. |
+| **Box Plot** | Summarizes overall response time distribution, highlighting consistency and outliers for performance benchmarking. |
+
+### Data Tab:
+#### Query Response / Time Data: A per‑query ledger linking the user prompt, the agent’s full reply, its latency, and output size to diagnose performance.
+
+   <p  align="center">
+        <img  src="img/Screen-Data-Query.png"  alt="Screen-Data">
+        <br>
+   </p>
+
+| Metric | Description | 
+| :------- | :---------- | 
+| **Serial** | Sequence number of the query in the run. | 
+| **Query** | Exact user prompt/utterance. | 
+| **Response** | Agent’s generated reply (full text). | 
+| **Min** | Latency to produce the response (typically in seconds or ms). | 
+| **Char** | Output length indicator (character count). | 
+
+#### LLM Planner Steps Data: A step‑by‑step trace of the agent’s planning, tools, and arguments that explains how each response was produced
+
+   <p  align="center">
+        <img  src="img/Screen-Data-Planner.png"  alt="Screen-Data">
+        <br>
+   </p>
+
+| Metric | Description | 
+| :------- | :---------- | 
+| **Serial** | Sequence number matching the query above. | 
+| **Query** | Exact user prompt/utterance. | 
+| **PlannerStep** | Named step decided by orchestrator. | 
+| **Thought** | Model’s internal reasoning summary for the step (high-level) | 
+| **Tool** | Action or connector invoked. | 
+| **Arguments** | Parameters passed / revieved. | 
+
 ## Prerequisite.
 
 To set up this sample, you will need the following:
@@ -84,27 +142,26 @@ python -m src.main
 2. The command displays the local URL hosting the ap. 
 
     <p  align="center">
-        <img  src="img/RunningURL.png"  alt="input data or utterances."  width="600px">
+        <img  src="img/RunningURL.png"  alt="RunningURL"  width="600px">
         <br>
 	</p> 
 
-3. Copy the URL and paste in browser and load application. 
+3. Copy the URL in browser and load application. 
 
     <p  align="center">
-        <img  src="img/URLLoad.png"  alt="input data or utterances."  width="500px" height="35">
+        <img  src="img/URLLoad.png"  alt="URLLoad">
         <br>
 	</p> 
 
-4. Click `Start Test Run` on the console.
+4. Click `Start Test Run` on the console. This initiates a session for a test utterances.
 
     <p  align="center">
-        <img  src="img/StartTestRun.png"  alt="input data or utterances."  width="75px" height="50">
+        <img  src="img/StartTestRun.png"  alt="StartTestRun">
         <br>
 	</p> 
 
 > [!Important]
 > Cross check test utterances are sequentially listed in the `/data/input.txt` file.
 
-## Instructions - Interpret the Copilot Studio Response Analysis Tool.
-
-1. Click `Start Test Run` on the console.
+> [!TIP]
+> If the tool is properly setup, `Process Status` displays the current state of processing, including the number of utterances analyzed and conversation identifiers.
