@@ -67,7 +67,7 @@ With the above information, you can now run the `Copilot Studio Response Analysi
 
 3. Run `pip install -r requirements.txt` to install all dependencies. 
 
-4. List the test utterances sequentially in the `/data/input.txt` file. Marke the end of the file with "exit".
+4. List test utterances sequentially in the `/data/input.txt` file. Marke the end of the file with "exit".
     
     <p  align="center">
         <img  src="img/DataSet.png"  alt="input data or utterances."  width="600px">
@@ -76,13 +76,35 @@ With the above information, you can now run the `Copilot Studio Response Analysi
 
 ## Instructions - Run the Copilot Studio Response Analysis Tool.
 
-1. Configure the values based on what was recorded during the setup phase. 
+1. Run the Copilot Studio Response Analysis Tool using. This should challenge you to login and connect to the Copilot Studio Hosted agent
+
 ```sh
 python -m src.main
 ```
+2. The command displays the local URL hosting the ap. 
 
-This should challenge you to login and connect to the Copilot Studio Hosted agent, allowing you to communicate via a console interface.
+    <p  align="center">
+        <img  src="img/RunningURL.png"  alt="input data or utterances."  width="600px">
+        <br>
+	</p> 
+
+3. Copy the URL and paste in browser and load application. 
+
+    <p  align="center">
+        <img  src="img/URLLoad.png"  alt="input data or utterances."  width="500px" height="35">
+        <br>
+	</p> 
+
+4. Click `Start Test Run` on the console.
+
+    <p  align="center">
+        <img  src="img/StartTestRun.png"  alt="input data or utterances."  width="75px" height="50">
+        <br>
+	</p> 
+
+> [!Important]
+> Cross check test utterances are sequentially listed in the `/data/input.txt` file.
 
 ## Instructions - Interpret the Copilot Studio Response Analysis Tool.
 
-For more information on logging configuration, see the logging section in the Quickstart Agent sample README.
+1. Click `Start Test Run` on the console.
