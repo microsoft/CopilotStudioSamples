@@ -1,8 +1,15 @@
 # Copilot Studio Response Analysis Tool
 
-## Purpose.
+## Purpose: 
+Provide a **lightweight, developer-friendly tool** to - 
+- Measure Copilot Agent **response-time performance** and correlate it with output size/tokens.
+- Get **metrics** (Mean, Median, Max, Min, Standard Deviation) and **visual charts** to understand Copilot Agent response time trends and variability.
+- Aggregated **real-time metrics, charts and tables** to spot spikes, drift, and outliers across single conversation.
+- **Trace planner steps: tool invocations, and arguments** to view and validate dynamic plan composition.
+    - Each planner step includes **Thought, Tool, and Arguments**, which together explain why the agent chose a path and how it executed it.
+    - **Compare planner steps across queries** highlights tool calls and reasoning.
 
-## Interpretion - Copilot Studio Response Analysis Tool
+## Interpretion:
 
 ### 1. Statistics Tab: 
 :mag_right: Provides an overview of Copilot Agent performance metrics, including response time summaries (Mean, Median, Max, Min), variability (Standard Deviation), token correlation, and visual charts for trends and distribution.
@@ -29,14 +36,9 @@
 | **Box Plot** | Summarizes overall response time distribution, highlighting consistency and outliers for performance benchmarking. |
 
 ### 2. Data Tab:
-Displays detailed per-query information, including the user’s prompt, Copilot Agent response, response time, output size, and step-by-step planner actions with tools and arguments—used for debugging, performance analysis, 
+Displays detailed per-query information, including the user’s prompt, Copilot Agent response, response time, output size, and step-by-step planner actions with tools and arguments—used for debugging and performance analysis.
 
 #### Query Response / Time Data: A per‑query ledger linking the user prompt, the agent’s full reply, its latency, and output size to diagnose performance.
-
-   <p  align="center">
-        <img  src="img/Screen-Data-Query.png"  alt="Screen-Data">
-        <br>
-   </p>
 
 | Metric | Description | 
 | :------- | :---------- | 
@@ -46,12 +48,12 @@ Displays detailed per-query information, including the user’s prompt, Copilot 
 | **Min** | Latency to produce the response (typically in seconds or ms). | 
 | **Char** | Output length indicator (character count). | 
 
-#### LLM Planner Steps Data: A step‑by‑step trace of the agent’s planning, tools, and arguments that explains how each response was produced
-
-   <p  align="center">
-        <img  src="img/Screen-Data-Planner.png"  alt="Screen-Data">
+<p  align="center">
+        <img  src="img/Screen-Data-Query.png"  alt="Screen-Data">
         <br>
    </p>
+
+#### LLM Planner Steps Data: A step‑by‑step trace of the agent’s planning, tools, and arguments that explains how each response was produced
 
 | Metric | Description | 
 | :------- | :---------- | 
@@ -62,7 +64,12 @@ Displays detailed per-query information, including the user’s prompt, Copilot 
 | **Tool** | Action or connector invoked. | 
 | **Arguments** | Parameters passed / revieved. | 
 
-## Prerequisite.
+<p  align="center">
+        <img  src="img/Screen-Data-Query.png"  alt="Screen-Data">
+        <br>
+   </p>
+
+## Prerequisite:
 
 To set up this sample, you will need the following:
 
@@ -70,14 +77,14 @@ To set up this sample, you will need the following:
 2. An Agent Created in Microsoft Copilot Studio or access to an existing Agent.
 3. Ability to Create an Application Identity in Azure for a Public Client/Native App Registration Or access to an existing Public Client/Native App registration with the `CopilotStudio.Copilots.Invoke` API Permission assigned. 
 
-## Authentication.
+## Authentication:
 
 The Copilot Studio Response Analysis Tool requires a User Token to operate. For this sample, we are using a user interactive flow to get the user token for the application ID created above. Other flows are allowed.
 
 > [!Important]
 > The token is cached in the user machine in `.local_token_cache.json`
 
-## Create an Agent in Copilot Studio.
+## Step 1. Create an Agent in Copilot Studio.
 
 1. Create an Agent in [Copilot Studio](https://copilotstudio.microsoft.com)
     1. Publish your newly created Copilot
@@ -85,7 +92,7 @@ The Copilot Studio Response Analysis Tool requires a User Token to operate. For 
         1. Schema name
         2. Environment Id
 
-## Create an Application Registration in Entra ID.
+## Step 2. Create an Application Registration in Entra ID.
 
 This step will require permissions to create application identities in your Azure tenant. For this sample, you will create a Native Client Application Identity, which does not have secrets.
 
@@ -113,7 +120,7 @@ This step will require permissions to create application identities in your Azur
 > [!TIP]
 > If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
 
-## Instructions - Configure the Copilot Studio Response Analysis Tool.
+## Step 3. Configure the Copilot Studio Response Analysis Tool.
 
 With the above information, you can now run the `Copilot Studio Response Analysis Tool` sample.
 
@@ -136,7 +143,7 @@ With the above information, you can now run the `Copilot Studio Response Analysi
         <br>
 	</p> 
 
-## Instructions - Run the Copilot Studio Response Analysis Tool.
+## Step 4. Run the Copilot Studio Response Analysis Tool.
 
 1. Run the Copilot Studio Response Analysis Tool using. This should challenge you to login and connect to the Copilot Studio Hosted agent
 
