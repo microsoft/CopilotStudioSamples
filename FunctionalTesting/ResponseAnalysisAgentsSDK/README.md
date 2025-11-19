@@ -184,7 +184,10 @@ python -m src.main
 > `Start Test Run` button woudl be disabled till completion of the session.
 
 > [!TIP]
-> Data file can be changed or altered after each session and session re-executed.
+> Utterances in the data file can be updated or altered after each session and the session re-executed.
 
 > [!TIP]
 > After each test run, the tool automatically generates a CSV file containing all queries, their responses, and corresponding response times. The file is stored in the `/data/` directory for easy access.
+
+> [!TIP]
+> If any utterances appear to be missing in the result, restart the tool and start a new session.
