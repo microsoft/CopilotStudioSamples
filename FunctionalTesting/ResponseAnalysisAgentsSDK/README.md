@@ -2,12 +2,13 @@
 
 ## Purpose: 
 Provide a **lightweight, developer-friendly tool** to - 
-- Measure Copilot Agent **response-time performance** and correlate it with output size/tokens.
+- :telescope: Measure Copilot Agent **response-time performance** and correlate it with output size/tokens.
 - Get **metrics** (Mean, Median, Max, Min, Standard Deviation) and **visual charts** to understand Copilot Agent response time trends and variability.
 - Aggregated **real-time metrics, charts and tables** to spot spikes, drift, and outliers across single conversation.
 - **Trace planner steps: tool invocations, and arguments** to view and validate dynamic plan composition.
     - Each planner step includes **Thought, Tool, and Arguments**, which together explain why the agent chose a path and how it executed it.
     - **Compare planner steps across queries** highlights tool calls and reasoning.
+- Automatically generates a CSV file containing all queries, their responses, and corresponding response times.
 
 ## Interpretion:
 
@@ -65,7 +66,7 @@ Displays detailed per-query information, including the user’s prompt, Copilot 
 | **Arguments** | Parameters passed / revieved. | 
 
 <p  align="center">
-        <img  src="img/Screen-Data-Query.png"  alt="Screen-Data">
+        <img  src="img/Screen-Data-Planner.png"  alt="Screen-Data">
         <br>
    </p>
 
@@ -164,7 +165,7 @@ python -m src.main
         <br>
 	</p> 
 
-4. Click `Start Test Run` on the console. This initiates a session for a test utterances.
+4. Click `Start Test Run` button the console. This initiates a test run for a test utterances. The tool uses M365 Agent SDK to send utterance in `/data/input.txt` file and recieve response and logs for representation.
 
     <p  align="center">
         <img  src="img/StartTestRun.png"  alt="StartTestRun">
@@ -176,3 +177,6 @@ python -m src.main
 
 > [!TIP]
 > If the tool is properly setup, `Process Status` displays the current state of processing, including the number of utterances analyzed and conversation identifiers.
+> `Start Test Run` button woudl be disabled till completion of the session.
+> Data file can be changed or altered after each session and session re-executed.
+> After each test run, the tool automatically generates a CSV file containing all queries, their responses, and corresponding response times. The file is stored in the `/data/` directory for easy access.
