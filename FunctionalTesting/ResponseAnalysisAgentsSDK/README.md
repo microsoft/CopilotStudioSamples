@@ -4,13 +4,15 @@
 
 ## Interpretion - Copilot Studio Response Analysis Tool
 
-### Statistics Tab 
-#### Metrics And Response Time Analysis: 
+### Statistics Tab: 
+:joy: Provides an overview of Copilot Agent performance metrics, including response time summaries (Mean, Median, Max, Min), variability (Standard Deviation), token correlation, and visual charts for trends and distribution.
 
    <p  align="center">
         <img  src="img/Screen-Statistics.png"  alt="StartTestRun">
         <br>
    </p> 
+
+#### <center>*Metrics And Response Time Analysis:*</center> 
 
 | Metric | Description | Purpose | 
 | :------- | :---------- | :---------- |
