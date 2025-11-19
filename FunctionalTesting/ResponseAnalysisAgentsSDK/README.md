@@ -4,16 +4,15 @@
 
 ## Interpretion - Copilot Studio Response Analysis Tool
 
-### Statistics Tab: 
-:joy: Provides an overview of Copilot Agent performance metrics, including response time summaries (Mean, Median, Max, Min), variability (Standard Deviation), token correlation, and visual charts for trends and distribution.
+### 1. Statistics Tab: 
+:mag_right: Provides an overview of Copilot Agent performance metrics, including response time summaries (Mean, Median, Max, Min), variability (Standard Deviation), token correlation, and visual charts for trends and distribution.
 
    <p  align="center">
         <img  src="img/Screen-Statistics.png"  alt="StartTestRun">
         <br>
    </p> 
 
-#### <center>*Metrics And Response Time Analysis:*</center> 
-
+#### <center>*Response Statistics:*</center> 
 | Metric | Description | Purpose | 
 | :------- | :---------- | :---------- |
 | **Mean** | The average response time across all responses. | Gives an overall sense of typical performance but can be skewed by very high or low values.
@@ -23,12 +22,15 @@
 | **Standard Deviation** | Measures how much response times vary from the average. | Helps assess consistency—low SD means stable performance, high SD indicates fluctuating response times.
 | **Token Correlation** | Represents the correlation between Cresponse time and the number of tokens in response. | Indicate orchestrator efficiency—higher cost may indicate longer responses or slower performance.
 
+#### <center>*Response Time Analysis:*</center> 
 | Chart | Description |
 | :------- | :---------- |
 | **Line Chart** | Shows how Copilot Agent response time changes across individual queries to identify spikes or trends. |
 | **Box Plot** | Summarizes overall response time distribution, highlighting consistency and outliers for performance benchmarking. |
 
-### Data Tab:
+### 2. Data Tab:
+Displays detailed per-query information, including the user’s prompt, Copilot Agent response, response time, output size, and step-by-step planner actions with tools and arguments—used for debugging, performance analysis, 
+
 #### Query Response / Time Data: A per‑query ledger linking the user prompt, the agent’s full reply, its latency, and output size to diagnose performance.
 
    <p  align="center">
