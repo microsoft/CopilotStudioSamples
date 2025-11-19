@@ -8,7 +8,7 @@ Provide a **lightweight, developer-friendly tool** to -
 - **Trace planner steps: tool invocations, and arguments** to view and validate dynamic plan composition. :computer:
     - Each planner step includes **Thought, Tool, and Arguments**, which together explain why the agent chose a path and how it executed it.
     - **Compare planner steps across queries** highlights tool calls and reasoning.
-- Automatically generates a CSV file containing all queries, their responses, and corresponding response times. :floppy_disk:
+- Automatically **generates a CSV file** containing all queries, their responses, and corresponding response times. :floppy_disk:
 
 ## Interpretion:
 
