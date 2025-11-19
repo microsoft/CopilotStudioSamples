@@ -39,7 +39,8 @@ Provides an overview of Copilot Agent performance metrics, including response ti
 ### 2. Data Tab :calendar:
 Displays detailed per-query information, including the user’s prompt, Copilot Agent response, response time, output size, and step-by-step planner actions with tools and arguments—used for debugging and performance analysis.
 
-#### Query Response / Time Data: A per‑query ledger linking the user prompt, the agent’s full reply, its latency, and output size to diagnose performance.
+#### Query Response / Time Data: 
+A per‑query ledger linking the user prompt, the agent’s full reply, its latency, and output size to diagnose performance.
 
 | Metric | Description | 
 | :------- | :---------- | 
@@ -54,7 +55,8 @@ Displays detailed per-query information, including the user’s prompt, Copilot 
         <br>
    </p>
 
-#### LLM Planner Steps Data: A step‑by‑step trace of the agent’s planning, tools, and arguments that explains how each response was produced.
+#### LLM Planner Steps Data: 
+A step‑by‑step trace of the agent’s planning, tools, and arguments that explains how each response was produced.
 
 | Metric | Description | 
 | :------- | :---------- | 
@@ -177,6 +179,9 @@ python -m src.main
 
 > [!TIP]
 > If the tool is properly setup, `Process Status` displays the current state of processing, including the number of utterances analyzed and conversation identifiers.
+
 > `Start Test Run` button woudl be disabled till completion of the session.
+
 > Data file can be changed or altered after each session and session re-executed.
+
 > After each test run, the tool automatically generates a CSV file containing all queries, their responses, and corresponding response times. The file is stored in the `/data/` directory for easy access.
