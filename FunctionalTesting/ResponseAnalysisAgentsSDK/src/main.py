@@ -134,7 +134,7 @@ with gr.Blocks(theme='shivi/calm_seafoam') as demo:
         with gr.Row():
             frame_output = gr.DataFrame(wrap=True,  # Enable text wrapping within cells
                                         label="Query Response / Time Data", 
-                                        column_widths=["3%", "25%", "50%", "11%", "11%"], 
+                                        column_widths=["5%", "25%", "50%", "10%", "10%"], 
                                         show_search="filter")
         with gr.Row():
             gr.Markdown("## LLM Planner Steps Data")

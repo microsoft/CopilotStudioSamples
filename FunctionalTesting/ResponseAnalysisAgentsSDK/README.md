@@ -179,9 +179,12 @@ python -m src.main
 
 > [!TIP]
 > If the tool is properly setup, `Process Status` displays the current state of processing, including the number of utterances analyzed and conversation identifiers.
+
 > [!TIP]
 > `Start Test Run` button woudl be disabled till completion of the session.
+
 > [!TIP]
 > Data file can be changed or altered after each session and session re-executed.
+
 > [!TIP]
 > After each test run, the tool automatically generates a CSV file containing all queries, their responses, and corresponding response times. The file is stored in the `/data/` directory for easy access.

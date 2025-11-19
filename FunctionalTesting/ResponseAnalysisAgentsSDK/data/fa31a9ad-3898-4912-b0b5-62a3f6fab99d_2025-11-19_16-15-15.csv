@@ -1,0 +1,165 @@
+Serial,Query,Response,Time,Char-Len
+1,How do I recover a locked account?,"Here are the steps to recover a locked account:
+
+**1. Use the Account Recovery Option:**
+- Go to the login page of the service.
+- Click on **“Forgot Password”** or **“Account Recovery”**.
+- Enter your registered email address or username.
+- Check your email for a recovery link or verification code.
+- Follow the instructions to reset your password or verify your identity.
+- If prompted, answer security questions or provide additional verification details.
+- Create a new password that meets security requirements and log in with your new credentials.[1]
+
+**2. Wait for Lockout Period (if applicable):**
+- Some accounts unlock automatically after 15–30 minutes. You can try logging in again after this period.
+- If you have two-factor authentication enabled, ensure you have access to your secondary verification method.[2]
+
+**3. Contact Support if Automated Recovery Fails:**
+- Prepare your full name, registered email, username, and any recent activity details for identity verification.
+- Contact support via official channels (phone, email, or live chat) listed on the support portal.
+- A support agent will guide you through the verification process and help restore access.[3]
+
+[1]: https://support.fabrikam.com/articles/recover-locked-account ""Steps to Recover a Locked Account""
+[2]: https://support.fabrikam.com/articles/prevent-account-lockout ""Preventing Account Lockouts and What to Do If Locked Out""
+[3]: https://support.fabrikam.com/articles/contact-support-locked-account ""Contacting Support for Locked Account Recovery""",34.36,1536
+2,What's the status of INC0007001?,"An error has occurred.
+Error code: ConnectorRequestFailure
+Conversation Id: fa31a9ad-3898-4912-b0b5-62a3f6fab99d
+Time (UTC): 2025-11-19T10:43:12.354Z.",6.72,150
+3,How do I change my username?,"Sorry, something unexpected happened. We’re looking into it. Error code: SystemError. Conversation ID: fa31a9ad-3898-4912-b0b5-62a3f6fab99d. Time (UTC): 11/19/2025 10:43:56 AM.",1.4,176
+4,What should I do if I suspect unauthorized access to my account?,"If you suspect unauthorized access to your account, follow these steps:
+
+**1. Change Your Password Immediately:**
+- Log in to your account (if possible) and update your password to a strong, unique one.
+- If you cannot log in, use the **Forgot Password** option to reset it.
+
+**2. Enable Two-Factor Authentication (2FA):**
+- Go to your account security settings and activate 2FA for an extra layer of protection.
+
+**3. Review Account Activity:**
+- Check your recent login history and connected devices.
+- Remove any unfamiliar devices or sessions.
+
+**4. Update Security Information:**
+- Ensure your recovery email and phone number are correct.
+- Update security questions if applicable.
+
+**5. Scan Your Devices:**
+- Run antivirus and anti-malware scans on your devices to ensure they are not compromised.
+
+**6. Report the Incident:**
+- Contact your organization's IT support or the service provider immediately.
+- Provide details such as suspicious login times, IP addresses, and any unauthorized changes.
+
+**7. Monitor for Further Issues:**
+- Keep an eye on your account and email for unusual activity or alerts.
+
+Taking these steps quickly can help prevent further unauthorized access and protect your data.",7.84,1209
+5,How do I manage my notification preferences?,"Here’s how you can manage your notification preferences:
+
+**1. Log in to Your Account:**
+- Go to the website or app where your account is registered.
+
+**2. Access Notification Settings:**
+- Navigate to **Settings** or **Account Settings**.
+- Look for a section labeled **Notifications** or **Preferences**.
+
+**3. Customize Notifications:**
+- You’ll typically see options for email, SMS, and push notifications.
+- Enable or disable notifications by toggling the switches or checkboxes.
+- Some platforms allow you to choose specific categories (e.g., promotions, security alerts, updates).
+
+**4. Save Changes:**
+- After making your selections, click **Save** or **Apply** to confirm your preferences.
+
+**5. Disable All Notifications (Optional):**
+- If you want to stop all notifications, look for an option like **Turn Off All Notifications** or **Unsubscribe from All**.
+
+**6. Verify Changes:**
+- Check your email or app to ensure the changes have taken effect.
+
+Would you like me to also include steps for managing notifications on mobile apps specifically?",7.81,1057
+6,How can I link multiple accounts?,"Here are the instructions to link multiple accounts:
+
+**Prerequisites:**
+- Ensure you have login credentials for all accounts you want to link.
+- Verify that the platform supports account linking and that your accounts meet any eligibility requirements (e.g., same email domain, active status).
+
+**Steps to Link Multiple Accounts:**
+1. **Log in to Your Primary Account:**
+   - Go to the platform’s website or app and sign in with the account you want to designate as the primary account.
+
+2. **Access Account Settings:**
+   - Navigate to **Settings** or **Account Management**.
+   - Look for an option like **Linked Accounts**, **Connections**, or **Account Linking**.
+
+3. **Initiate Linking Process:**
+   - Click on **Link Account** or **Add Account**.
+   - You may be prompted to select the type of account you want to link (e.g., another user account, social media, or service account).
+
+4. **Authenticate the Secondary Account:**
+   - Enter the login credentials for the secondary account.
+   - Complete any required verification steps, such as entering a code sent to your email or phone.
+
+5. **Confirm and Save:**
+   - Review the linked accounts list to ensure the new account appears.
+   - Click **Save** or **Confirm** to finalize the linking process.
+
+6. **Test the Link:**
+   - Log out and log back in to verify that you can switch between accounts or access combined features as intended.
+
+Would you like me to also include steps for unlinking accounts if needed?",8.31,1474
+7,How can I clear my browser cache?,"Sorry, something unexpected happened. We’re looking into it. Error code: SystemError. Conversation ID: fa31a9ad-3898-4912-b0b5-62a3f6fab99d. Time (UTC): 11/19/2025 10:44:59 AM.",1.44,176
+8,How do I report a bug or technical problem?,"Here’s how you can report a bug or technical problem:
+
+**1. Gather Information:**
+- Note the issue details: what you were doing when it occurred, error messages, and steps to reproduce.
+- Take screenshots or screen recordings if possible.
+
+**2. Access the Support Portal:**
+- Log in to your organization’s support portal or help desk system.
+- Navigate to the **Report a Problem** or **Submit a Ticket** section.
+
+**3. Submit the Bug Report:**
+- Fill in the required fields such as:
+  - **Title/Subject:** Brief description of the issue.
+  - **Description:** Detailed explanation, including steps to reproduce and expected vs. actual results.
+  - **Attachments:** Upload screenshots, logs, or files that help illustrate the problem.
+
+**4. Provide Contact Information:**
+- Ensure your email and phone number are correct so support can reach you for updates.
+
+**5. Submit and Track:**
+- Click **Submit** to send the report.
+- Note the ticket or reference number for tracking progress.
+
+**6. Contact Support (if urgent):**
+- Use the official support phone number or live chat for immediate assistance.
+
+Would you like me to also include a template for writing an effective bug report?",8.57,1181
+8,How do I report a bug or technical problem?,"Here’s how you can report a bug or technical problem:
+
+**1. Gather Key Details:**
+- Document what you were doing when the issue occurred.
+- Note any error messages and steps to reproduce the problem.
+- Capture screenshots or screen recordings if possible.
+
+**2. Go to the Support Portal:**
+- Log in to your organization’s help desk or support portal.
+- Navigate to **Report a Problem** or **Submit a Ticket**.
+
+**3. Fill Out the Bug Report:**
+- **Title:** Provide a short, clear description of the issue.
+- **Description:** Include detailed steps to reproduce, expected vs. actual results, and any relevant context.
+- **Attachments:** Upload screenshots, logs, or files that illustrate the problem.
+
+**4. Provide Contact Information:**
+- Ensure your email and phone number are correct for follow-up.
+
+**5. Submit and Track:**
+- Submit the report and note the ticket or reference number for tracking.
+
+**6. For Urgent Issues:**
+- Contact support via phone or live chat for immediate assistance.
+
+Would you like me to also provide a **template for writing an effective bug report**?",16.34,1080

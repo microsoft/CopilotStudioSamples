@@ -75,6 +75,7 @@ class AgentProcessor:
     async def ask_question_file(self):
         try:
             linecount = 0
+            querycounter = 0
             act = self.connection.start_conversation(True)
             print("\nSuggested Actions: ")
             async for action in act:
@@ -104,15 +105,16 @@ class AgentProcessor:
                 # Iterate through each line in the file
             with (open('./data/input.txt', 'r', encoding='utf-8') as file):
                 for line in file:
-                    # Process each line (e.g., print it, manipulate it)
+                    time.sleep(10)  # Process each line (e.g., print it, manipulate it)
                     query = line.strip() # .strip() removes leading/trailing whitespace, including the newline character
-                    print(f" - {query}")
+                    querycounter = 1 if querycounter == 0 else querycounter + 1
+                    print(f" - {query}" + " : Processing line " + str(querycounter) + " of " + str(linecount))
                     if query in ["exit", "quit", "EXIT"]:
                         timestamp_str = time.strftime("%Y-%m-%d_%H-%M-%S")
                         # Construct the filename with a desired extension
                         filename = f"{action.conversation.id}_{timestamp_str}.csv"
                         # index=False prevents writing the DataFrame index as a column in the CSV
-                        resultsdf.to_csv(f"./data/{filename}", sep=',', index=None, quotechar='"', encoding='utf-8')
+                        resultsdf.to_csv(f"./data/{filename}", sep=',', index=False, quotechar='"', encoding='utf-8')
                         print(f"CSV file '{filename}' created successfully.")
                         yield (
                             gr.update(interactive=True),
@@ -126,72 +128,71 @@ class AgentProcessor:
                             resultsdf.sort_index(),
                             resultsdf.sort_index(),
                             self.merge_dataframes(resultsaidf.sort_index()),
-                            resultsdf['Char-Len'].corr(resultsdf['Time']),
+                            resultsdf['Char-Len'].corr(resultsdf['Time']) if len(resultsdf) > 1 else 0,
                             self.generate_boxplot(resultsdf['Time']) if not resultsdf.empty else plt.figure()
                         )
                         print("Exiting...")
                         break
                     if query not in ["exit", "quit", "EXIT"]:
+                        print(f" - {query}" + " : Sending to agent...")
                         start_time = time.perf_counter()
                         replies = self.connection.ask_question(query, action.conversation.id)
                         async for reply in replies:
                             if reply.type == ActivityTypes.event:  
-                                print(f" - {reply}")
-                                # ['Serial', 'Query', 'PlannerStep', 'Thought', 'Tool', 'Arguments']
+                                print(f": Receiving activity from agent...")   # print(f" - {reply}")
                                 if reply.value_type == "DynamicPlanReceived":
-                                    resultsaidf.loc[len(resultsaidf)] = [len(resultsaidf) + 1, 
+                                    resultsaidf.loc[len(resultsaidf)] = [querycounter, 
                                                                          query, 
                                                                          reply.value_type, 
                                                                          self.extract_and_format_json_data(reply.value['toolDefinitions'], ['displayName', 'description']),
                                                                          self.extract_and_format_json_data(reply.value['toolDefinitions'], ['schemaName']) +  self.extract_and_format_json_data_without_keys(reply.value['steps']),
                                                                          '']
                                 if reply.value_type == "DynamicPlanStepTriggered":
-                                    resultsaidf.loc[len(resultsaidf)] = [len(resultsaidf) + 1, 
+                                    resultsaidf.loc[len(resultsaidf)] = [querycounter, 
                                                                          query, 
                                                                          reply.value_type, 
                                                                          reply.value['thought'], 
                                                                          reply.value['taskDialogId'], 
                                                                          '']
                                 elif reply.value_type == "DynamicPlanStepBindUpdate":
-                                    resultsaidf.loc[len(resultsaidf)] = [len(resultsaidf) + 1, 
+                                    resultsaidf.loc[len(resultsaidf)] = [querycounter, 
                                                                          query, 
                                                                          reply.value_type, 
                                                                          '', 
                                                                          reply.value['taskDialogId'], 
                                                                          str(reply.value['arguments'])]
                                 elif reply.value_type == "DynamicPlanStepFinished":
-                                    resultsaidf.loc[len(resultsaidf)] = [len(resultsaidf) + 1, 
+                                    resultsaidf.loc[len(resultsaidf)] = [querycounter, 
                                                                          query, 
                                                                          reply.value_type, 
                                                                          '', 
                                                                          reply.value['taskDialogId'], 
                                                                          '']    
                             elif reply.type == ActivityTypes.message:
-                                print(f"\n{reply.text}")
+                                print(f" - {reply.text}" + " : Receiving reply from agent...")   
+                                end_time = time.perf_counter()   
+                                elapsed_time = end_time - start_time
+                                print(f"Total time taken: {elapsed_time:.6f} seconds")
+                                resultsdf.loc[len(resultsdf)] = [querycounter, query, reply.text, elapsed_time.__round__(2), 0 if reply.text is None else len(reply.text)]
+                                yield (
+                                    gr.update(interactive=False),
+                                    gr.update(interactive=True),
+                                    "Processing " + str(len(resultsdf)) + " of " + str(linecount) + " records for conversation " + action.conversation.id,
+                                    resultsdf['Time'].mean().round(2),
+                                    resultsdf['Time'].median().round(2),
+                                    resultsdf['Time'].max().round(2),
+                                    resultsdf['Time'].min().round(2),
+                                    resultsdf['Time'].std().round(2),
+                                    resultsdf.sort_index(),
+                                    resultsdf.sort_index(),
+                                    self.merge_dataframes(resultsaidf.sort_index()),
+                                    resultsdf['Char-Len'].corr(resultsdf['Time']),
+                                    self.generate_boxplot(resultsdf['Time']) if not resultsdf.empty else plt.figure()
+                                )
+                                print(f" - Reply recorded: ")
                                 if reply.suggested_actions:
                                     for action in reply.suggested_actions.actions:
                                         print(f" - {action.title}")
-                                if reply.text is not None and reply.type == ActivityTypes.message:
-                                    print(f"\n{reply.text}" + "\n --- Final Response ---\n")        
-                                    end_time = time.perf_counter()
-                                    elapsed_time = end_time - start_time
-                                    print(f"Total time taken: {elapsed_time:.6f} seconds")
-                                    resultsdf.loc[len(resultsdf)] = [len(resultsdf) + 1, query, reply.text, elapsed_time.__round__(2), len(reply.text)]
-                                    yield (
-                                        gr.update(interactive=False),
-                                        gr.update(interactive=True),
-                                        "Processing " + str(len(resultsdf)) + " of " + str(linecount) + " records for conversation " + action.conversation.id,
-                                        resultsdf['Time'].mean().round(2),
-                                        resultsdf['Time'].median().round(2),
-                                        resultsdf['Time'].max().round(2),
-                                        resultsdf['Time'].min().round(2),
-                                        resultsdf['Time'].std().round(2),
-                                        resultsdf.sort_index(),
-                                        resultsdf.sort_index(),
-                                        self.merge_dataframes(resultsaidf.sort_index()),
-                                        resultsdf['Char-Len'].corr(resultsdf['Time']),
-                                        self.generate_boxplot(resultsdf['Time']) if not resultsdf.empty else plt.figure()
-                                    )
                             elif reply.type == ActivityTypes.end_of_conversation:
                                 print("\nEnd of conversation.")
                                 break
@@ -207,7 +208,7 @@ class AgentProcessor:
                 resultsdf.sort_index(),
                 resultsdf.sort_index(),
                 self.merge_dataframes(resultsaidf.sort_index()),
-                resultsdf['Char-Len'].corr(resultsdf['Time']),
+                resultsdf['Char-Len'].corr(resultsdf['Time']) if len(resultsdf) > 1 else 0,
                 self.generate_boxplot(resultsdf['Time']) if not resultsdf.empty else plt.figure()
             )   
         except Exception as e:

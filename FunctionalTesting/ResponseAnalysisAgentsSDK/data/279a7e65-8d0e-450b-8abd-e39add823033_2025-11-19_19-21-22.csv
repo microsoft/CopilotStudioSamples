@@ -1,0 +1,11 @@
+Serial,Query,Response,Time,Char-Len
+1,What are our strategic priorities for the next quarter?,,5.24,0
+6,How do I recover a locked account?,"An error has occurred.
+Error code: ConnectorRequestFailure
+Conversation Id: 279a7e65-8d0e-450b-8abd-e39add823033
+Time (UTC): 2025-11-19T13:51:11.682Z.",7.34,150
+7,What's the status of INC0007001?,"An error has occurred.
+Error code: ConnectorRequestFailure
+Conversation Id: 279a7e65-8d0e-450b-8abd-e39add823033
+Time (UTC): 2025-11-19T13:51:18.002Z.",6.19,150
+8,What are the top 3 blockers?,,5.48,0

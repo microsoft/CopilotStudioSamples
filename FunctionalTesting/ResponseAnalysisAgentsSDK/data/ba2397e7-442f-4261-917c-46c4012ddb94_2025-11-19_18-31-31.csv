@@ -1,0 +1,30 @@
+Serial,Query,Response,Time,Char-Len
+6,How do I recover a locked account?,"Here are the detailed steps to recover a locked account:
+
+**1. Self-Service Recovery Options:**
+- Go to the login page and click on **“Forgot Password”** or **“Account Locked”**.
+- Enter your registered email address or username.
+- Check your email (including spam/junk folders) for a recovery code and enter it on the recovery page.
+- Follow the prompts to reset your password with a strong, unique password.
+
+**2. Password Reset Steps:**
+- Use the **Account Recovery** tool on the login page.
+- Verify your identity via email or phone number as prompted.
+- After successful verification, reset your password and log in.
+- For added security, enable two-factor authentication after regaining access.
+
+**3. Escalation Procedures:**
+- If you do not receive the recovery email or cannot complete the automated process, submit a support ticket.
+- Provide proof of identity (such as account details or security questions) for manual verification.
+- If you suspect suspicious activity caused the lockout, contact the security team immediately for further investigation.
+
+Regularly update your password and keep your recovery information current to prevent future lockouts.[1]​[2]​[3]
+
+[1]: https://support.techsecure.com/articles/recover-locked-account ""Steps to Recover a Locked Account""
+[2]: https://support.techsecure.com/articles/account-lockout-recovery ""Account Lockout: Causes and Recovery Options""
+[3]: https://support.techsecure.com/articles/prevent-recover-account-lockout ""Preventing and Recovering from Account Lockouts""",44.25,1527
+6,How do I recover a locked account?,"{""explanation_of_tool_call"":""The user’s request for account recovery has been fully addressed with detailed steps and escalation procedures, and the response has already been provided in text."",""}",48.52,196
+7,What's the status of INC0007001?,"An error has occurred.
+Error code: ConnectorRequestFailure
+Conversation Id: ba2397e7-442f-4261-917c-46c4012ddb94
+Time (UTC): 2025-11-19T13:01:28.441Z.",6.66,150
