@@ -1,14 +1,14 @@
-# Copilot Studio Response Analysis Tool
+# Copilot Studio Response Analysis Tool :computer:
 
 ## Purpose: 
 Provide a **lightweight, developer-friendly tool** to - 
-- :telescope: Measure Copilot Agent **response-time performance** and correlate it with output size/tokens.
-- Get **metrics** (Mean, Median, Max, Min, Standard Deviation) and **visual charts** to understand Copilot Agent response time trends and variability.
-- Aggregated **real-time metrics, charts and tables** to spot spikes, drift, and outliers across single conversation.
-- **Trace planner steps: tool invocations, and arguments** to view and validate dynamic plan composition.
+- Measure Copilot Agent **response-time performance** and correlate it with output size/tokens. :telescope: 
+- Get **metrics** (Mean, Median, Max, Min, Standard Deviation) and **visual charts** to understand Copilot Agent response time trends and variability. :movie_camera: 
+- Aggregated **real-time metrics, charts and tables** to spot spikes, drift, and outliers across single conversation. :bar_chart:
+- **Trace planner steps: tool invocations, and arguments** to view and validate dynamic plan composition. :computer:
     - Each planner step includes **Thought, Tool, and Arguments**, which together explain why the agent chose a path and how it executed it.
     - **Compare planner steps across queries** highlights tool calls and reasoning.
-- Automatically generates a CSV file containing all queries, their responses, and corresponding response times.
+- Automatically generates a CSV file containing all queries, their responses, and corresponding response times. :floppy_disk:
 
 ## Interpretion:
 
