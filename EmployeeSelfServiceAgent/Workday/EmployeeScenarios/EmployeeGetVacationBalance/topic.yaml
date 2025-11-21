@@ -98,13 +98,12 @@ beginDialog:
           isSuccess: Topic.isSuccess
           workdayResponse: Topic.workdayResponse
 
-    - kind: SearchAndSummarizeContent
+    - kind: AnswerQuestionWithAI
       id: igank32
+      autoSend: false
+      variable: Topic.VacationBalance
       userInput: =Topic.workdayResponse
-      additionalInstructions: Only reply back with the Vacation Balance. Format the response in in friendly way and make sure to tie it back directly to the orginal question of the user. ({System.Activity.Text}). Never include the "Plan ID". Add the effective date in the response always.
-      customDataSource:
-        searchResults: |
-          =Table({Content: Topic.workdayResponse})
+      additionalInstructions: Do not show citation. Display each vacation balances in a separate line and highlight vacation name. Only reply back with the Vacation Balance. Format the response in in friendly way and make sure to tie it back directly to the orginal question of the user. ({System.Activity.Text}). Display ({Topic.asOfDate}) with the message as of.  Never include the "Plan ID".
 
 inputType:
   properties:
@@ -123,3 +122,7 @@ outputType:
           CostCenterCode: String
           CostCenterName: String
           EmployeeName: String
+
+    VacationBalance:
+      displayName: VacationBalance
+      type: String
