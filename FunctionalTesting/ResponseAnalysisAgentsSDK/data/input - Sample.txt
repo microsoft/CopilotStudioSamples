@@ -1,0 +1,58 @@
+How do I reset my account password?
+What are the steps to update my billing information?
+How can I troubleshoot connectivity issues with the XYZ system?
+What is the process to request a refund?
+How do I configure email notifications in the ABC platform?
+What are the system requirements for installing the DEF software?
+How can I export my data from the GHI application?
+What security measures does the JKL service implement?
+How do I integrate the MNO API with my existing system?
+Where can I find user manuals and documentation for the PQR product?​1
+What were the key revenue drivers for the last quarter?
+How did our sales performance compare to the previous year?
+What are the current trends in our market segment?
+What operational challenges did we face last month?
+Are there any significant risks that could impact our business in the next quarter?
+How are we addressing supply chain disruptions?
+What feedback have we received from our top customers?
+How is our customer satisfaction rating trending?
+What are the key achievements of our team this month?
+How do I create a new account?
+How can I reset my password?
+How do I update my email address?
+How do I delete my account?
+How can I enable two-factor authentication?
+How do I change my username?
+What should I do if I suspect unauthorized access to my account?
+How do I manage my notification preferences?
+How can I link multiple accounts?
+What are our strategic priorities for the next quarter?
+What resources do we need to achieve our goals?
+How can we improve our support for remote teams?
+How do I recover a locked account?
+IT Troubleshooting & Technical Support 11. How do I troubleshoot login issues? 
+What should I do if the website is not loading? 
+How can I clear my browser cache?
+How do I report a bug or technical problem?
+How do I update the software to the latest version?
+What are the system requirements for using the platform?
+How do I enable cookies and JavaScript?
+How can I reset my app settings?
+How do I check for service outages?
+How do I contact technical support?
+1. How do I use the dashboard?
+How can I customize my profile?
+What integrations are available?
+How do I export my data?
+How do I set up notifications and alerts?
+How can I place an order?
+What payment methods do you accept?
+Can I change or cancel my order?
+What is your return policy?
+How do I track my shipment?
+What happens if my product arrives damaged?
+Do you ship internationally?
+How long does delivery take?
+Can I purchase gift cards?
+Is there a warranty on products?
+exit
