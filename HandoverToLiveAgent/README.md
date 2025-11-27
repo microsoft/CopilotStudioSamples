@@ -29,6 +29,7 @@ The sample consists of the following elements:
     
     Take note of the `connect via browser` endpoint, it should look like `https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms`
 
+1. Create new App Registration `LiveChatSample` in your Micrsofot Entra ID and note its AppId and new Secret
 
 1. In a new terminal, run the `.\HandoverToLiveAgentSample\HandoverToLiveAgentSample.csproj` skill hosting app
 
@@ -47,21 +48,23 @@ The sample consists of the following elements:
 1. Import HandoverAgentSample.zip to your Dataverse environment. 
 During the import you will be asked to fill in environment variables:
     - `[Contoso Agent] Handoff Skill endpointUrl`: override value with `https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms/api/messages`
-    - `[Contoso Agent] Handoff Skill msAppId`: will have to be updated after solution import 
+    - `[Contoso Agent] Handoff Skill msAppId`: use your new app registration AppId 
 
     ![env variables](./.img/solution_import.png)    
 
 1. After solution import is finished, go to `https://copilotstudio.microsoft.com/`, open `Contoso Agent`. Go to "Settings" > "Advanced" > "Metadata" and note the `Agent App ID`
 
-1. Go to Azure Portal and in Entra ID find `App Registration` with `Application Client ID` that is the same as the `Agent App ID`. Go to "Branding & properties" and in the "Home page URL" save the same value as in the environment variable (`https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms/api/messages`)
+1. In the same app registration, create and note a new secret in "Certificates & secrets" 
+
+1. Go to [appsettings.json](./HandoverToLiveAgentSample/appsettings.json) and set "TenantId", "ClientId" and "Secret" under `CopilotStudioBot` connection from the previous app registration (automatically created Copilot app registration)
+
+1. In the same [appsettings.json](./HandoverToLiveAgentSample/appsettings.json) "TenantId", "ClientId" and "Secret" under `LiveChat` connection using you newly created app registration `LiveChatSample`
+
+1. For the `LiveChatSample` App Registration, go to "Branding & properties" and in the "Home page URL" save the same value as in the environment variable (`https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms/api/messages`) 
 
     ![app registration](./.img/app_registration_setup.png)   
 
-1. In the same app registration, create and note a new secret in "Certificates & secrets" 
-
-1. Go to [appsettings.json](./HandoverToLiveAgentSample/appsettings.json) and set "TenantId", "ClientId" and "Secret" from the previous app registration
-
-1. Go to [skill-manifest.json](./HandoverToLiveAgentSample/wwwroot/skill-manifest.json) and replace "endpointUrl" and "msAppId" with `https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms/api/messages` and the app registration client ID used earlier. Don't forget to restart the app after changing config files.
+1. Go to [skill-manifest.json](./HandoverToLiveAgentSample/wwwroot/skill-manifest.json) and replace "endpointUrl" and "msAppId" with `https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms/api/messages` and the `LiveChatSample` app registration AppId. Don't forget to restart the app after changing config files.
 
 1. On the Copilot Studio page, publish the agent and add it to the "Teams and Microsoft 365 Copilot" channel. 
 

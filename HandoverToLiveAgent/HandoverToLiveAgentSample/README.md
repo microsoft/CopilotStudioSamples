@@ -21,7 +21,7 @@ HandoverToLiveAgentSample/
 
 ## Configuration
 
-Configure authentication and live chat settings in `appsettings.json`:
+Configure authentication and live chat settings in `appsettings.json`. This sample supports using 2 separate app registrations for different service URL patterns:
 
 ```json
 {
@@ -29,6 +29,15 @@ Configure authentication and live chat settings in `appsettings.json`:
     "BaseUrl": "http://localhost:5000"
   },
   "Connections": {
+    "LiveChat": {
+      "ConnectionType": "AzureAD",
+      "Settings": {
+        "TenantId": "your-tenant-id",
+        "ClientId": "your-custom-service-principal-app-id",
+        "ClientSecret": "your-custom-service-principal-client-secret",
+        "Scopes": ["https://api.botframework.com/.default"]
+      }
+    },
     "CopilotStudioBot": {
       "ConnectionType": "AzureAD",
       "Settings": {
@@ -46,7 +55,7 @@ Configure authentication and live chat settings in `appsettings.json`:
     },
     {
       "ServiceUrl": "https://pvaruntime*",
-      "Connection": "CopilotStudioBot"
+      "Connection": "LiveChat"
     }
   ]
 }
@@ -54,11 +63,18 @@ Configure authentication and live chat settings in `appsettings.json`:
 
 ### Configuration Details
 
-- **LiveChatSettings.BaseUrl**: URL of the live chat application (ContosoLiveChatApp)
+#### LiveChat Connection (Custom Service Principal)
 - **TenantId**: Your Azure AD tenant ID
-- **ClientId**: Your Copilot Studio bot's App ID (Service Principal ID)
+- **ClientId**: App ID of your custom service principal created for the live chat integration
+- **ClientSecret**: Client secret for the custom service principal
+
+#### CopilotStudioBot Connection (Bot App Registration)
+- **TenantId**: Your Azure AD tenant ID (same as above)
+- **ClientId**: Your Copilot Studio bot's App ID
 - **ClientSecret**: Your Copilot Studio bot's client secret
-- **ConnectionsMap**: Maps service URLs to authentication connections for proactive messaging
+
+#### General Settings
+- **LiveChatSettings.BaseUrl**: URL of the live chat application (ContosoLiveChatApp), default: `http://localhost:5000`
 
 ## Running the Application
 
