@@ -1,0 +1,43 @@
+POST https://<YOUR_URL>/a2a/botanical/v1/message:stream
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "2d774031-fdac-4d1b-8b46-bfd7544d1b8e",
+  "method": "message/send",
+  "params": {
+    "message": {
+      "contextId": "ee1e68ee-75fc-42bb-83d7-25fd26e559c3",
+      "kind": "message",
+      "messageId": "573c985e-62b2-cdf3-493a-9f6932b3976d",
+      "metadata": {
+        "copilotstudio.microsoft.com/a2a/chathistory": [
+          {
+            "HasValue": true,
+            "Value": [
+              {
+                "From": "copilots_header_cr4b0_agent1",
+                "Locale": "en-US",
+                "Text": "Hello, I'm A2A Agent Demo, a virtual assistant. Just so you are aware, I sometimes use AI to answer your questions. If you provided a website during creation, try asking me about it! Next try giving me some more knowledge by setting up generative AI.",
+                "Timestamp": "2025-11-26T23:19:28.764Z"
+              },
+              {
+                "From": "",
+                "Locale": "en-US",
+                "Text": "Who does require more sunlight: tomato plant or strawberry plant?\n\n",
+                "Timestamp": "2025-11-26T23:20:21.484Z"
+              }
+            ]
+          }
+        ]
+      },
+      "parts": [
+        {
+          "kind": "text",
+          "text": "Who does require more sunlight: tomato plant or strawberry plant?"
+        }
+      ],
+      "role": "user"
+    }
+  }
+}
