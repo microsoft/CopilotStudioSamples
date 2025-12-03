@@ -1,6 +1,6 @@
 # Showing Agent Reasoning in Custom UIs
 
-> **IMPORTANT!** This is the sample repository for [https://microsoft.github.io/mcscatblog/posts/show-reasoning-agents-sdk/](This article). Follow the article for a more detailed explanation.
+> **IMPORTANT!** This is the sample repository for [This article](https://microsoft.github.io/mcscatblog/posts/show-reasoning-agents-sdk/). Follow the article for a more detailed explanation.
 
 Render Anthropic reasoning traces from Microsoft 365 Copilot Studio agents inside your own UI. This README distills the companion article posted on MCS CAT blog.
 
