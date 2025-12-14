@@ -14,7 +14,7 @@ The sample builds heavily on the [Microsoft 365 Agents SDK Copilot Studio Web Cl
 | [app.sidepane.loader.js](src\Web Resources\sidepaneLoader.js) | JavaScript required to manage the sidepane creation within the Model Driven App, including parameter passing for context |
 | [dataverseHelpers.js](src\Web Resources\sidepaneLoader.js) | JavaScript helper file responsible for fetching various parameters from the Dataverse Web API necessary for login |
 | [icon.svg](src\Web Resources\icon.svg) | An image for the agent |
-| [loading.gif](src\Web Resources\icon.svg) | An image for the agent's loading window |
+| [loading.gif](src\Web Resources\loading.gif) | An image for the agent's loading window |
 
 ## Prerequisites
 
