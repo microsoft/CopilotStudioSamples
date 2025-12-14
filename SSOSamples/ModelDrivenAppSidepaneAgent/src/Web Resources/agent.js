@@ -24,6 +24,7 @@ window.WebChat.renderWebChat(
   document.getElementById('webchat')
 );
 document.querySelector('#webchat > *').focus();
+document.querySelector('#loadingPane').style.display = 'none';
 
 const params = new URLSearchParams(new URLSearchParams(window.location.search).get('data'));
 var recordType = params.get('recordType');

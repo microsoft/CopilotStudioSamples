@@ -14,3 +14,13 @@ body {
   height: 100%;
   width: 100%;
 }
+#loadingPane {
+  height: 100%;
+  width: 100%;
+  padding-top: 20%;
+  background-color: white;
+  text-align: center;  
+  color: rgb(36,36,36);
+  font-size: 14px;
+  font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+}

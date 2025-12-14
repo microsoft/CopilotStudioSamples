@@ -12,11 +12,14 @@ export async function acquireToken (settings) {
       clientId: settings.appClientId,
       authority: `https://login.microsoftonline.com/${settings.tenantId}`,
     },
+    cache: {
+      cacheLocation: "localStorage",
+      storeAuthStateInCookie: true
+    }
   })
 
   // Get username from the Dataverse to provide MSAL with a login hint. 
   // This helps where multiple credentials are available to the browser
-
   var username = await getUsername();
   console.log("Acquired username: ", username);
 
@@ -31,24 +34,7 @@ export async function acquireToken (settings) {
   // it will fall back to loginPopup.
   var response;
 
-  try {
-    const account = await msalInstance.getAccountByUsername(username);
-    if (account != null) {
-      console.log("Attempting silent token acquisition");
-      response = await msalInstance.acquireTokenSilent({
-        ...loginRequest,
-        account: account,
-      })
-      return response.accessToken;
-    }
-  } catch (e) {
-    console.log("Token acquisition failed: ", e);
-    if (!(e instanceof window.msal.InteractionRequiredAuthError)) {
-      throw e;
-    }
-  }
-
-  console.log("Falling back to silent SSO");
+  console.log("Attempting silent SSO");
   try {
     response = await msalInstance.ssoSilent(loginRequest);
     return response.accessToken

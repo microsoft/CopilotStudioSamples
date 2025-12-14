@@ -14,6 +14,7 @@ The sample builds heavily on the [Microsoft 365 Agents SDK Copilot Studio Web Cl
 | [app.sidepane.loader.js](src\Web Resources\sidepaneLoader.js) | JavaScript required to manage the sidepane creation within the Model Driven App, including parameter passing for context |
 | [dataverseHelpers.js](src\Web Resources\sidepaneLoader.js) | JavaScript helper file responsible for fetching various parameters from the Dataverse Web API necessary for login |
 | [icon.svg](src\Web Resources\icon.svg) | An image for the agent |
+| [loading.gif](src\Web Resources\icon.svg) | An image for the agent's loading window |
 
 ## Prerequisites
 
@@ -70,8 +71,7 @@ This step requires permissions to create application identities in your Azure te
    - Enter app id from above during import
 - Publish all customizations
 - ## Needs investigation - are these not solution aware? ##
-   - Go to agent in Copilot studio and add Dataverse as knowledge (contacts and accounts as single knowledge source)
-   - Modify instructions to / reference global variables
+   - Modify instructions to /reference global variables
    - Publish agent
 - Run app (Solutions -> Side Pane Agent Sample -> Apps -> Side Pane Agent Sample -> Play)
 - Open an account or contact record
@@ -86,4 +86,4 @@ This step requires permissions to create application identities in your Azure te
 - A custom event is used within Copilot Studio to provide the agent with the info it needs to ground itself within the current record
 
 **Known Limitations**
-- Doesn't work in InPrivate browsing (if someone can help me figure out why that'd be awesome!)
+- Doesn't work in InPrivate browsing due to [this issue](https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-known-issues-ie-edge-browsers#other-workarounds)
