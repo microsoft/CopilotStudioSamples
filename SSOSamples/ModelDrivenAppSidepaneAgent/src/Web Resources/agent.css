@@ -1,0 +1,16 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+ 
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+#webchat {
+  height: 100%;
+  width: 100%;
+}
