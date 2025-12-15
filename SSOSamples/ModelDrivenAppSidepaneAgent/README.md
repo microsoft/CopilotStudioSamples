@@ -48,7 +48,7 @@ This step requires permissions to create application identities in your Azure te
    - Choose **"Accounts in this organization directory only"**
    - Under **Redirect URI**:
      - Select **"Single-page application"** from the platform dropdown
-     - Enter your model driven app URL (e.g. `https://<<yourorganization>>.crm.dynamics.com`)
+     - Enter your model driven app URL (e.g. `https://{yourorganizationurl.crmx}.dynamics.com`)
    - Click **Register**
 
 3. **Configure API Permissions**
