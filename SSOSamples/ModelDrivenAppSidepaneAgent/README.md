@@ -112,6 +112,8 @@ The agent is aware of the record on display.  To test this, try asking:
    ![alt text](images/sidepaneagent-contexttopic.png)
 
    -  The agent's instructions ensure the agent uses the context information when considering the user's questions.
+   
+   ![alt text](images/sidepaneagent-instructions.png)
 
 **Known Limitations**
 - Doesn't work in InPrivate browsing due to [this issue](https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-known-issues-ie-edge-browsers#other-workarounds)
