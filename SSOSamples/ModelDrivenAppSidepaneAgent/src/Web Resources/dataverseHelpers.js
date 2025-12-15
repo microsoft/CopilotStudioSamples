@@ -3,7 +3,6 @@
  * Licensed under the MIT License.
  */
 
-
 export function getEnvironmentId(){
   return Xrm.Utility.getGlobalContext().organizationSettings.bapEnvironmentId;
 }
@@ -22,9 +21,9 @@ export async function getUsername(){
   var userSettings = Xrm.Utility.getGlobalContext().userSettings;
   console.log("User settings: ",userSettings);
 
-  var id = userSettings.userId
-  id = id.replace("{", "").replace("}", "")
+  var id = userSettings.userId;
+  id = id.replace("{", "").replace("}", "");
   var options = "?$select=domainname";
   var response = await Xrm.WebApi.retrieveRecord("systemuser", id, options);
-  return response.domainname
+  return response.domainname;
 }

@@ -26,6 +26,6 @@ async function openAgent(executionContext) {
 async function closeAgent() {
     var pane = await Xrm.App.sidePanes.getPane(paneId);
     if (pane) {
-        await pane.close()
+        await pane.close();
     }
 }
