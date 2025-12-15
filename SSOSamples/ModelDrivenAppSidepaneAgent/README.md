@@ -48,7 +48,7 @@ This step requires permissions to create application identities in your Azure te
    - Choose **"Accounts in this organization directory only"**
    - Under **Redirect URI**:
      - Select **"Single-page application"** from the platform dropdown
-     - Enter your model driven app URL (e.g., `https://<<yourorganization>>.crm.dynamics.com`)
+     - Enter your model driven app URL (e.g. `https://<<yourorganization>>.crm.dynamics.com`)
    - Click **Register**
 
 3. **Configure API Permissions**
@@ -63,7 +63,7 @@ This step requires permissions to create application identities in your Azure te
 
 4. **Note Required Values**
    - On the **Overview** page, copy and save:
-     - **Application (client) ID** (e.g., `12345678-1234-1234-1234-123456789012`)
+     - **Application (client) ID** (e.g. `12345678-1234-1234-1234-123456789012`)
 
 > [!NOTE] 
 > If you don't see "Power Platform API" in the list, you need to add it to your tenant first. See [Power Platform API Authentication](https://learn.microsoft.com/en-us/power-platform/admin/programmability-authentication-v2) and follow Step 2 to add the API.
@@ -81,7 +81,7 @@ This step requires permissions to create application identities in your Azure te
 
 Access the 'Side Pane Agent Sample' Model Driven App, however you prefer, e.g.:
    - Locating the app in the Solutions area of the Maker portal and pressing Play
-   - Accessing via https://{yourorganizationurl.crmx}.dynamics.com/apps/sidepaneagent
+   - Accessing via `https://{yourorganizationurl.crmx}.dynamics.com/apps/sidepaneagent`
 
 Navigate to Accounts or Contacts using the left hand navigation. Open an account or contact record.
 
