@@ -35,7 +35,7 @@ beginDialog:
         binding:
           EmployeeName: =Topic.EmployeeName
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemAccessCheck
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemAccessCheck
 
     - kind: BeginDialog
       id: B7ae9T
@@ -45,7 +45,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMEmployeeGetEducation
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
@@ -156,7 +156,7 @@ beginDialog:
           IsTableEmpty: =IsBlank(Global.CountryNameLookupTable)
           ReferenceDataKey: ISO_3166-1_Alpha-2_Code
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemRefreshReferenceData
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
 
     - kind: BeginDialog
       id: iM5A5i
@@ -166,7 +166,7 @@ beginDialog:
           IsTableEmpty: =IsBlank(Global.DegreeTypeLookupTable)
           ReferenceDataKey: Degree_ID
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemRefreshReferenceData
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
 
     - kind: BeginDialog
       id: zG3du7
@@ -176,7 +176,7 @@ beginDialog:
           IsTableEmpty: =IsBlank(Global.FieldOfStudyLookupTable)
           ReferenceDataKey: Field_Of_Study_ID
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemRefreshReferenceData
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
 
     - kind: SetVariable
       id: setVariable_nD5Gkb
