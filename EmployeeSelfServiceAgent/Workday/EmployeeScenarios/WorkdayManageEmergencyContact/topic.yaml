@@ -703,7 +703,7 @@ beginDialog:
           input:
             binding:
               parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Adding emergency contact""}]}"
-              scenarioName: msdyn_AddEmergencyContact
+              scenarioName: msdyn_HRWorkdayHCMEmployeeAddEmergencyContact
 
           dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
           output:
