@@ -33,7 +33,7 @@ beginDialog:
     - kind: BeginDialog
       id: dAhS4T
       displayName: Check manager status
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdayManagerCheck
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdayManagerCheck
 
     - kind: BeginDialog
       id: Gt044B
@@ -43,7 +43,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMManagerDirectCompanyCode
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse

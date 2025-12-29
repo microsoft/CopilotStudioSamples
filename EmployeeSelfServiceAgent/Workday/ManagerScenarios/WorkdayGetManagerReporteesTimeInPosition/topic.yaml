@@ -22,7 +22,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{Manager_Org_ID}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """}]}"
           scenarioName: msdyn_GetManagerReportees
 
-      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
