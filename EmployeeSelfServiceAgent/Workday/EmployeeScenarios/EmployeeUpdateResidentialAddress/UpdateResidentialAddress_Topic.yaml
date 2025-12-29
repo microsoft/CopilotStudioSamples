@@ -1,0 +1,637 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  You will respond only to requests related to updating the residential/home address of the user making the request. All address data is retrieved from and updated through Workday, and pertains exclusively to the requesting user. This topic may also prompt the user for input if they are requesting to make a change to their own home address. This data exclusively belongs to the user making the request. There is no data for anyone else. Do not respond to questions about other people's data.
+    
+  Example invalid requests:
+  "Update address for my manager"
+  "Update my sister's home address"
+  "Update [EmployeeName]'s address"
+  "Update address for [EmployeeName]"
+    
+  Example valid requests:
+  "Update my home address"
+  "I want to update my residential address"
+  "Change my address"
+  "Update my street address"
+  "I moved to a new address"
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+
+  actions:
+    # Step 1: Get current residential address
+    - kind: BeginDialog
+      id: getAddress_BeginDialog
+      displayName: Get Current Residential Address
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Now(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetResidentialAddress
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ConditionGroup
+      id: checkGetSuccess
+      conditions:
+        - id: getSuccessCondition
+          condition: =Topic.isSuccess = false
+          actions:
+            - kind: SendActivity
+              id: sendErrorMessage
+              activity: I encountered an error retrieving your current address. Please try again later or contact support.
+
+            - kind: EndDialog
+              id: endOnError
+
+    # Step 2: Parse the response
+    - kind: ParseValue
+      id: parseAddressResponse
+      displayName: Parse address response
+      variable: Topic.addressRecord
+      valueType:
+        kind: Record
+        properties:
+          FormattedAddress:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          AddressID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          CountryCode:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          StateProvinceCode:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          City:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          PostalCode:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          AddressLine1:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          AddressLine2:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          IsPrimary:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          UsageType:
+            type:
+              kind: Table
+              properties:
+                Value: String
+      value: =Topic.workdayResponse
+
+    # Step 3: Transform to table and filter HOME addresses
+    - kind: SetVariable
+      id: setVariable_transformAddresses
+      displayName: Transform addresses to table
+      variable: Topic.addressTable
+      value: |-
+        =ForAll(
+            Sequence(CountRows(Topic.addressRecord.AddressID)),
+            {
+                AddressID: Last(FirstN(Topic.addressRecord.AddressID, Value)).Value,
+                FormattedAddress: Last(FirstN(Topic.addressRecord.FormattedAddress, Value)).Value,
+                CountryCode: Last(FirstN(Topic.addressRecord.CountryCode, Value)).Value,
+                StateProvinceCode: Last(FirstN(Topic.addressRecord.StateProvinceCode, Value)).Value,
+                City: Last(FirstN(Topic.addressRecord.City, Value)).Value,
+                PostalCode: Last(FirstN(Topic.addressRecord.PostalCode, Value)).Value,
+                AddressLine1: Last(FirstN(Topic.addressRecord.AddressLine1, Value)).Value,
+                AddressLine2: Last(FirstN(Topic.addressRecord.AddressLine2, Value)).Value,
+                IsPrimary: If(Last(FirstN(Topic.addressRecord.IsPrimary, Value)).Value = "1", true, false),
+                UsageType: Last(FirstN(Topic.addressRecord.UsageType, Value)).Value
+            }
+        )
+
+    # Filter to only HOME addresses
+    - kind: SetVariable
+      id: setVariable_homeAddresses
+      displayName: Filter to HOME addresses only
+      variable: Topic.homeAddresses
+      value: =Filter(Topic.addressTable, UsageType = "HOME")
+
+    # Step 4: Check if user has existing home addresses
+    - kind: ConditionGroup
+      id: checkExistingAddresses
+      conditions:
+        - id: noAddressesCondition
+          condition: =CountRows(Topic.homeAddresses) = 0
+          actions:
+            - kind: SendActivity
+              id: sendNoAddressMessage
+              activity: You don't have a home address on file. Would you like to add a new one?
+
+            - kind: SetVariable
+              id: setIsNewAddress
+              variable: Topic.isNewAddress
+              value: =true
+
+            - kind: SetVariable
+              id: setSelectedAddressID_New
+              variable: Topic.selectedAddressID
+              value: =""
+
+      elseActions:
+        - kind: SetVariable
+          id: setIsExistingAddress
+          variable: Topic.isNewAddress
+          value: =false
+
+        # Check if single address (auto-select) or multiple (show selection)
+        - kind: ConditionGroup
+          id: checkSingleOrMultipleAddresses
+          conditions:
+            - id: singleAddressCondition
+              condition: =CountRows(Topic.homeAddresses) = 1
+              displayName: Single address - auto-select
+              actions:
+                # Auto-select the only address
+                - kind: SetVariable
+                  id: autoSelectAddress
+                  displayName: Auto-select single address
+                  variable: Topic.selectedAddress
+                  value: =First(Topic.homeAddresses)
+
+                - kind: SetVariable
+                  id: autoSetAddressID
+                  variable: Topic.selectedAddressID
+                  value: =Topic.selectedAddress.AddressID
+
+                - kind: SendActivity
+                  id: sendCurrentAddressMsg
+                  activity: |-
+                    I found your current home address:
+                    
+                    📍 **{Topic.selectedAddress.FormattedAddress}**
+
+          elseActions:
+            # Multiple addresses - show selection card
+            - kind: SetVariable
+              id: buildAddressChoices
+              displayName: Build address selection choices
+              variable: Topic.addressChoices
+              value: |
+                =ForAll(
+                    Topic.homeAddresses,
+                    {
+                        title: If(ThisRecord.IsPrimary, "⭐ ", "") & ThisRecord.FormattedAddress,
+                        value: ThisRecord.AddressID
+                    }
+                )
+
+            # Show address selection card
+            - kind: AdaptiveCardPrompt
+              id: selectAddressCard
+              displayName: Select address to update
+              card: |-
+                ={
+                  type: "AdaptiveCard",
+                  '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                  version: "1.3",
+                  body: [
+                    {
+                      type: "TextBlock",
+                      text: "Update Residential Address",
+                      weight: "Bolder",
+                      size: "Medium",
+                      wrap: true,
+                      color: "Accent"
+                    },
+                    {
+                      type: "TextBlock",
+                      text: "You have " & CountRows(Topic.homeAddresses) & " home addresses. Select the one you want to update.",
+                      wrap: true
+                    },
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "selectedAddress",
+                      label: "Select Address",
+                      style: "expanded",
+                      isRequired: true,
+                      errorMessage: "Please select an address.",
+                      choices: ForAll(Topic.addressChoices, { title: ThisRecord.title, value: ThisRecord.value })
+                    }
+                  ],
+                  actions: [
+                    { type: "Action.Submit", title: "Continue" },
+                    { type: "Action.Submit", title: "Cancel", associatedInputs: "none" }
+                  ]
+                }
+              output:
+                binding:
+                  actionSubmitId: Topic.selectionActionId
+                  selectedAddress: Topic.selectedAddressID
+              outputType:
+                properties:
+                  actionSubmitId: String
+                  selectedAddress: String
+
+            # Handle cancel
+            - kind: ConditionGroup
+              id: handleSelectionCancel
+              conditions:
+                - id: selectionCancelled
+                  condition: =Topic.selectionActionId = "Cancel"
+                  actions:
+                    - kind: SendActivity
+                      id: selectionCancelMsg
+                      activity: Your request has been cancelled. Is there anything else I can help you with?
+                    - kind: CancelAllDialogs
+                      id: selectionCancelAll
+
+            # Get the selected address details
+            - kind: SetVariable
+              id: setSelectedAddress
+              displayName: Set selected address details
+              variable: Topic.selectedAddress
+              value: =LookUp(Topic.homeAddresses, AddressID = Topic.selectedAddressID)
+
+        # Set current address values for form pre-population
+        - kind: SetVariable
+          id: setCurrentAddressLine1
+          variable: Topic.currentAddressLine1
+          value: =Topic.selectedAddress.AddressLine1
+
+        - kind: SetVariable
+          id: setCurrentAddressLine2
+          variable: Topic.currentAddressLine2
+          value: =Topic.selectedAddress.AddressLine2
+
+        - kind: SetVariable
+          id: setCurrentCity
+          variable: Topic.currentCity
+          value: =Topic.selectedAddress.City
+
+        - kind: SetVariable
+          id: setCurrentStateProvince
+          variable: Topic.currentStateProvince
+          value: =Topic.selectedAddress.StateProvinceCode
+
+        - kind: SetVariable
+          id: setCurrentPostalCode
+          variable: Topic.currentPostalCode
+          value: =Topic.selectedAddress.PostalCode
+
+        - kind: SetVariable
+          id: setCurrentCountryCode
+          variable: Topic.currentCountryCode
+          value: =Topic.selectedAddress.CountryCode
+
+        - kind: SetVariable
+          id: setCurrentIsPrimary
+          variable: Topic.currentIsPrimary
+          value: =Topic.selectedAddress.IsPrimary
+
+    # Step 5: Collect new address information using Adaptive Card
+    - kind: AdaptiveCardPrompt
+      id: collectAddressCard
+      displayName: Collect new address information
+      card: |-
+        ={
+            type: "AdaptiveCard",
+            version: "1.5",
+            body: [
+                {
+                    type: "TextBlock",
+                    text: "Update Your Home Address",
+                    weight: "Bolder",
+                    size: "Large"
+                },
+                {
+                    type: "TextBlock",
+                    text: "Please enter your new address details:",
+                    wrap: true
+                },
+                {
+                    type: "Input.Text",
+                    id: "addressLine1",
+                    label: "Address Line 1 *",
+                    placeholder: "Street address",
+                    isRequired: true,
+                    value: If(IsBlank(Topic.currentAddressLine1), "", Topic.currentAddressLine1)
+                },
+                {
+                    type: "Input.Text",
+                    id: "addressLine2",
+                    label: "Address Line 2",
+                    placeholder: "Apt, Suite, Unit, etc. (optional)",
+                    value: If(IsBlank(Topic.currentAddressLine2), "", Topic.currentAddressLine2)
+                },
+                {
+                    type: "Input.Text",
+                    id: "city",
+                    label: "City *",
+                    placeholder: "City",
+                    isRequired: true,
+                    value: If(IsBlank(Topic.currentCity), "", Topic.currentCity)
+                },
+                {
+                    type: "Input.ChoiceSet",
+                    id: "country",
+                    label: "Country *",
+                    isRequired: true,
+                    value: If(IsBlank(Topic.currentCountryCode), "USA", Topic.currentCountryCode),
+                    choices: [
+                        { title: "United States", value: "USA" },
+                        { title: "Canada", value: "CAN" },
+                        { title: "United Kingdom", value: "GBR" },
+                        { title: "Australia", value: "AUS" },
+                        { title: "Germany", value: "DEU" },
+                        { title: "France", value: "FRA" },
+                        { title: "India", value: "IND" },
+                        { title: "Japan", value: "JPN" },
+                        { title: "Mexico", value: "MEX" },
+                        { title: "Brazil", value: "BRA" }
+                    ]
+                },
+                {
+                    type: "Input.ChoiceSet",
+                    id: "stateProvince",
+                    label: "State/Province *",
+                    isRequired: true,
+                    value: If(IsBlank(Topic.currentStateProvince), "", Topic.currentStateProvince),
+                    choices: [
+                        { title: "Alabama", value: "USA-AL" },
+                        { title: "Alaska", value: "USA-AK" },
+                        { title: "Arizona", value: "USA-AZ" },
+                        { title: "Arkansas", value: "USA-AR" },
+                        { title: "California", value: "USA-CA" },
+                        { title: "Colorado", value: "USA-CO" },
+                        { title: "Connecticut", value: "USA-CT" },
+                        { title: "Delaware", value: "USA-DE" },
+                        { title: "Florida", value: "USA-FL" },
+                        { title: "Georgia", value: "USA-GA" },
+                        { title: "Hawaii", value: "USA-HI" },
+                        { title: "Idaho", value: "USA-ID" },
+                        { title: "Illinois", value: "USA-IL" },
+                        { title: "Indiana", value: "USA-IN" },
+                        { title: "Iowa", value: "USA-IA" },
+                        { title: "Kansas", value: "USA-KS" },
+                        { title: "Kentucky", value: "USA-KY" },
+                        { title: "Louisiana", value: "USA-LA" },
+                        { title: "Maine", value: "USA-ME" },
+                        { title: "Maryland", value: "USA-MD" },
+                        { title: "Massachusetts", value: "USA-MA" },
+                        { title: "Michigan", value: "USA-MI" },
+                        { title: "Minnesota", value: "USA-MN" },
+                        { title: "Mississippi", value: "USA-MS" },
+                        { title: "Missouri", value: "USA-MO" },
+                        { title: "Montana", value: "USA-MT" },
+                        { title: "Nebraska", value: "USA-NE" },
+                        { title: "Nevada", value: "USA-NV" },
+                        { title: "New Hampshire", value: "USA-NH" },
+                        { title: "New Jersey", value: "USA-NJ" },
+                        { title: "New Mexico", value: "USA-NM" },
+                        { title: "New York", value: "USA-NY" },
+                        { title: "North Carolina", value: "USA-NC" },
+                        { title: "North Dakota", value: "USA-ND" },
+                        { title: "Ohio", value: "USA-OH" },
+                        { title: "Oklahoma", value: "USA-OK" },
+                        { title: "Oregon", value: "USA-OR" },
+                        { title: "Pennsylvania", value: "USA-PA" },
+                        { title: "Rhode Island", value: "USA-RI" },
+                        { title: "South Carolina", value: "USA-SC" },
+                        { title: "South Dakota", value: "USA-SD" },
+                        { title: "Tennessee", value: "USA-TN" },
+                        { title: "Texas", value: "USA-TX" },
+                        { title: "Utah", value: "USA-UT" },
+                        { title: "Vermont", value: "USA-VT" },
+                        { title: "Virginia", value: "USA-VA" },
+                        { title: "Washington", value: "USA-WA" },
+                        { title: "West Virginia", value: "USA-WV" },
+                        { title: "Wisconsin", value: "USA-WI" },
+                        { title: "Wyoming", value: "USA-WY" },
+                        { title: "District of Columbia", value: "USA-DC" },
+                        { title: "Ontario", value: "CAN-ON" },
+                        { title: "Quebec", value: "CAN-QC" },
+                        { title: "British Columbia", value: "CAN-BC" },
+                        { title: "Alberta", value: "CAN-AB" }
+                    ]
+                },
+                {
+                    type: "Input.Text",
+                    id: "postalCode",
+                    label: "Postal/ZIP Code *",
+                    placeholder: "Postal Code",
+                    isRequired: true,
+                    value: If(IsBlank(Topic.currentPostalCode), "", Topic.currentPostalCode)
+                },
+                {
+                    type: "Input.Toggle",
+                    id: "isPrimary",
+                    title: "Set as primary address",
+                    value: If(Topic.currentIsPrimary = true, "true", "false"),
+                    valueOn: "true",
+                    valueOff: "false"
+                }
+            ],
+            actions: [
+                {
+                    type: "Action.Submit",
+                    title: "Update Address",
+                    data: {
+                        action: "updateAddress"
+                    }
+                },
+                {
+                    type: "Action.Submit",
+                    title: "Cancel",
+                    data: {
+                        action: "cancel"
+                    }
+                }
+            ]
+        }
+      output:
+        binding:
+          addressLine1: Topic.newAddressLine1
+          addressLine2: Topic.newAddressLine2
+          city: Topic.newCity
+          stateProvince: Topic.newStateProvince
+          country: Topic.newCountry
+          postalCode: Topic.newPostalCode
+          isPrimary: Topic.newIsPrimary
+          action: Topic.cardAction
+      outputType:
+        properties:
+          addressLine1: String
+          addressLine2: String
+          city: String
+          stateProvince: String
+          country: String
+          postalCode: String
+          isPrimary: String
+          action: String
+
+    # Step 6: Check if user cancelled
+    - kind: ConditionGroup
+      id: checkCancelAction
+      conditions:
+        - id: cancelCondition
+          condition: =Topic.cardAction = "cancel"
+          actions:
+            - kind: SendActivity
+              id: sendCancelMessage
+              activity: Address update cancelled. No changes were made.
+
+            - kind: EndDialog
+              id: endOnCancel
+
+    # Step 7: Validate required fields
+    - kind: ConditionGroup
+      id: validateFields
+      conditions:
+        - id: missingFieldsCondition
+          condition: =IsBlank(Topic.newAddressLine1) || IsBlank(Topic.newCity) || IsBlank(Topic.newStateProvince) || IsBlank(Topic.newPostalCode)
+          actions:
+            - kind: SendActivity
+              id: sendValidationError
+              activity: Please fill in all required fields (Address Line 1, City, State/Province, and Postal Code).
+
+            - kind: EndDialog
+              id: endOnValidationError
+
+    # Step 8: Show confirmation before update
+    - kind: AdaptiveCardPrompt
+      id: confirmUpdateCard
+      displayName: Confirm address update
+      card: |-
+        ={
+          type: "AdaptiveCard",
+          '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+          version: "1.3",
+          body: [
+            {
+              type: "TextBlock",
+              text: "Confirm Address Update",
+              weight: "Bolder",
+              size: "Medium",
+              wrap: true,
+              color: "Accent"
+            },
+            {
+              type: "TextBlock",
+              text: "Please review your new address details:",
+              wrap: true
+            },
+            {
+              type: "FactSet",
+              facts: [
+                { title: "Address Line 1", value: Topic.newAddressLine1 },
+                { title: "Address Line 2", value: If(IsBlank(Topic.newAddressLine2), "-", Topic.newAddressLine2) },
+                { title: "City", value: Topic.newCity },
+                { title: "State/Province", value: Topic.newStateProvince },
+                { title: "Country", value: Topic.newCountry },
+                { title: "Postal Code", value: Topic.newPostalCode },
+                { title: "Primary Address", value: If(Topic.newIsPrimary = "true", "Yes", "No") }
+              ]
+            },
+            {
+              type: "TextBlock",
+              text: "Do you want to proceed with this update?",
+              wrap: true,
+              weight: "Bolder"
+            }
+          ],
+          actions: [
+            { type: "Action.Submit", title: "Yes, Update Address" },
+            { type: "Action.Submit", title: "Cancel", associatedInputs: "none" }
+          ]
+        }
+      output:
+        binding:
+          actionSubmitId: Topic.confirmActionId
+      outputType:
+        properties:
+          actionSubmitId: String
+
+    - kind: ConditionGroup
+      id: checkConfirmation
+      conditions:
+        - id: notConfirmedCondition
+          condition: =Topic.confirmActionId = "Cancel"
+          actions:
+            - kind: SendActivity
+              id: sendNotConfirmedMessage
+              activity: Address update cancelled. No changes were made.
+
+            - kind: EndDialog
+              id: endOnNotConfirmed
+
+    # Step 9: Call Update API
+    - kind: BeginDialog
+      id: updateAddress_BeginDialog
+      displayName: Update Residential Address
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Event_Effective_Date}"",""value"":"""& Text(Now(), "yyyy-MM-dd") &"""},{""key"":""{Address_ID}"",""value"":""" & Topic.selectedAddressID & """},{""key"":""{Country_Code}"",""value"":""" & Topic.newCountry & """},{""key"":""{State_Province_Code}"",""value"":""" & Topic.newStateProvince & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.newAddressLine1 & """},{""key"":""{Address_Line_2}"",""value"":""" & If(IsBlank(Topic.newAddressLine2), "", Topic.newAddressLine2) & """},{""key"":""{City}"",""value"":""" & Topic.newCity & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.newPostalCode & """},{""key"":""{Is_Primary}"",""value"":""" & If(Topic.newIsPrimary = "true", "true", "false") & """}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeUpdateResidentialAddress
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.updateErrorResponse
+          isSuccess: Topic.updateIsSuccess
+          workdayResponse: Topic.updateWorkdayResponse
+
+    # Step 10: Show result
+    - kind: ConditionGroup
+      id: checkUpdateSuccess
+      conditions:
+        - id: updateSuccessCondition
+          condition: =Topic.updateIsSuccess = true
+          actions:
+            - kind: SendActivity
+              id: sendSuccessMessage
+              activity: |-
+                ✅ Your home address has been successfully updated!
+                
+                **New Address:**
+                {Topic.newAddressLine1}
+                {If(!IsBlank(Topic.newAddressLine2), Topic.newAddressLine2 & Char(10), "")}
+                {Topic.newCity}, {Topic.newStateProvince} {Topic.newPostalCode}
+                {Topic.newCountry}
+
+      elseActions:
+        - kind: SendActivity
+          id: sendUpdateErrorMessage
+          activity: |-
+            ❌ There was an error updating your address. Please try again later or contact support.
+            
+            Error: {Topic.updateErrorResponse}
+
+inputType: {}
+outputType:
+  properties:
+    updateIsSuccess:
+      displayName: Update Success
+      type: Boolean
