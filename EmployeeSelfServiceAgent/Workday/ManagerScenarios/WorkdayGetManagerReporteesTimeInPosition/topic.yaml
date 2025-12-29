@@ -1,0 +1,174 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  You will respond to requests about time in position for direct reports of the user making the request. There is no information available for anyone who isn't a direct report, and being a direct report means that the individual is not a manager, spouse, sibling, or any other relationship to the requestor, and only means that they report to the requestor. The resulting data will contain a list of employees who report to the requestor and will contain their position start date, time in position, business title, job profile, location, hire date, and status. You must NOT give data if you do not have enough info.
+
+
+  Example valid request:
+  "What is the time in position of my direct reports?"
+  "Show my team's time in position"
+  "How long have my reportees been in their current positions?"
+
+  Your output **must** be a nested list in markdown language based on the data contained in the {Topic.workdayResponseTableWithTimeInPosition} variable
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+  actions:
+    - kind: BeginDialog
+      id: jJpz3n
+      displayName: Redirect to Workday Get Common Execution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Manager_Org_ID}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """}]}"
+          scenarioName: msdyn_GetManagerReportees
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ParseValue
+      id: aXVFNu
+      displayName: Parse value to a record
+      variable: Topic.workdayResponseRecord
+      valueType:
+        kind: Record
+        properties:
+          BusinessTitle:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          EmployeeID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          HireDate:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          JobProfile:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          Location:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          Name:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          PositionStartDate:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          Status:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          WorkerType:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+      value: =Topic.workdayResponse
+
+    - kind: SetVariable
+      id: setVariable_ztXmui
+      displayName: Extract data to table
+      variable: Topic.workdayResponseTable
+      value: |-
+        =ForAll(
+            Sequence(CountRows(Topic.workdayResponseRecord.EmployeeID)),
+            {
+                EmployeeID: Last(FirstN(Topic.workdayResponseRecord.EmployeeID, Value)).Value,
+                Name: Last(FirstN(Topic.workdayResponseRecord.Name, Value)).Value,
+                BusinessTitle: Last(FirstN(Topic.workdayResponseRecord.BusinessTitle, Value)).Value,
+                WorkerType: Last(FirstN(Topic.workdayResponseRecord.WorkerType, Value)).Value,
+                JobProfile: Last(FirstN(Topic.workdayResponseRecord.JobProfile, Value)).Value,
+                Location: Last(FirstN(Topic.workdayResponseRecord.Location, Value)).Value,
+                PositionStartDate: Last(FirstN(Topic.workdayResponseRecord.PositionStartDate, Value)).Value,
+                HireDate: Last(FirstN(Topic.workdayResponseRecord.HireDate, Value)).Value,
+                Status: If(Last(FirstN(Topic.workdayResponseRecord.Status, Value)).Value = "1", "Active", "Inactive")
+            }
+        )
+
+    - kind: SetVariable
+      id: setVariable_AddTimeInPosition
+      displayName: Add Time in Position calculations
+      variable: Topic.workdayResponseTableWithTimeInPosition
+      value: |-
+        =ForAll(
+            Topic.workdayResponseTable,
+            With(
+                {
+                    positionDate: DateValue(PositionStartDate),
+                    yearsCalc: RoundDown(DateDiff(DateValue(PositionStartDate), Today(), TimeUnit.Months) / 12, 0),
+                    monthsCalc: Mod(DateDiff(DateValue(PositionStartDate), Today(), TimeUnit.Months), 12),
+                    daysCalc: DateDiff(
+                        DateAdd(DateValue(PositionStartDate), DateDiff(DateValue(PositionStartDate), Today(), TimeUnit.Months), TimeUnit.Months),
+                        Today(),
+                        TimeUnit.Days
+                    )
+                },
+                {
+                    EmployeeID: EmployeeID,
+                    Name: Name,
+                    BusinessTitle: BusinessTitle,
+                    WorkerType: WorkerType,
+                    JobProfile: JobProfile,
+                    Location: Location,
+                    PositionStartDate: PositionStartDate,
+                    HireDate: HireDate,
+                    Status: Status,
+                    TimeInPositionYears: yearsCalc,
+                    TimeInPositionMonths: monthsCalc,
+                    TimeInPositionDays: daysCalc,
+                    TimeInPosition: 
+                        If(yearsCalc > 0, yearsCalc & " year" & If(yearsCalc > 1, "s", "") & " ", "") &
+                        If(monthsCalc > 0, monthsCalc & " month" & If(monthsCalc > 1, "s", "") & " ", "") &
+                        daysCalc & " day" & If(daysCalc <> 1, "s", "")
+                }
+            )
+        )
+
+inputType: {}
+outputType:
+  properties:
+    workdayResponseTableWithTimeInPosition:
+      displayName: workdayResponseTableWithTimeInPosition
+      type:
+        kind: Table
+        properties:
+          BusinessTitle: String
+          EmployeeID: String
+          HireDate: String
+          JobProfile: String
+          Location: String
+          Name: String
+          PositionStartDate: String
+          Status: String
+          TimeInPosition: String
+          TimeInPositionDays: Number
+          TimeInPositionMonths: Number
+          TimeInPositionYears: Number
+          WorkerType: String

@@ -1,0 +1,224 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Respond to user's profile information requests from Workday. Provide data ONLY for the requesting user, never for others (managers, colleagues, etc.).
+
+  Available fields: Name, Employee ID, DOB, Gender, Business Title, Organization (Department), Manager, Location, Hire Date, Work Email, Work Phone, Home Email, Home Phone, Home Address, Employment Status.
+
+  Answer based on which specific data the user asks for. Include relevant fields based on the question.
+
+  Include Continuous Service Date and Length of Service ONLY when user specifically asks about tenure, service length, years of service, or how long they've been with the company.
+
+  Invalid requests: "What is my manager's job title?" "What is my colleague's employee ID?" "What department is John in?"
+  Valid requests: "What is my employee ID?" "What is my job title?" "Show my profile" "What is my work email?" "What is my tenure?" (include service length)
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - What is my profile?
+      - Show my profile
+      - What is my employee ID?
+      - What is my job title?
+      - What is my work email?
+      - What is my manager's name?
+      - Who is my manager?
+      - What department am I in?
+      - What is my organization?
+      - What is my work phone number?
+      - What is my home address?
+      - What is my hire date?
+      - When did I start working here?
+      - What is my tenure?
+      - How long have I been with the company?
+      - What is my length of service?
+      - Am I an active employee?
+      - What is my employment status?
+      - What is my date of birth?
+      - What is my gender?
+      - What is my location?
+      - Where do I work?
+
+  actions:
+    - kind: BeginDialog
+      id: dZAI4Y
+      displayName: Redirect to Workday Get Common Execution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetUserProfile
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ParseValue
+      id: fP9fKn
+      displayName: Parse workdayResponse
+      variable: Topic.parsedWorkdayResponse
+      valueType:
+        kind: Record
+        properties:
+          EmployeeID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          Name:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          DOB:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          Gender:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          BusinessTitle:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          Organization:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          Manager:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          Location:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          HireDate:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          WorkEmail:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          HomeAddress:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          HomeEmail:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          HomePhone:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          WorkPhone:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          Status:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          ContinuousServiceDate:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+      value: =Topic.workdayResponse
+
+    - kind: SetVariable
+      id: setVariable_ServiceDate
+      displayName: Calculate service date values
+      variable: Topic.serviceDateCalc
+      value: =DateValue(First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value)
+
+    - kind: SetVariable
+      id: setVariable_Years
+      displayName: Calculate years
+      variable: Topic.yearsOfService
+      value: =RoundDown(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months) / 12, 0)
+
+    - kind: SetVariable
+      id: setVariable_Months
+      displayName: Calculate months
+      variable: Topic.monthsOfService
+      value: =Mod(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), 12)
+
+    - kind: SetVariable
+      id: setVariable_Days
+      displayName: Calculate days
+      variable: Topic.daysOfService
+      value: =DateDiff(DateAdd(Topic.serviceDateCalc, DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), TimeUnit.Months), Today(), TimeUnit.Days)
+
+    - kind: SetVariable
+      id: setVariable_LHTcFu
+      displayName: Set finalized data
+      variable: Topic.finalizedData
+      value: |-
+        ={
+            EmployeeID: First(Topic.parsedWorkdayResponse.EmployeeID).Value,
+            Name: First(Topic.parsedWorkdayResponse.Name).Value,
+            DOB: First(Topic.parsedWorkdayResponse.DOB).Value,
+            Gender: First(Topic.parsedWorkdayResponse.Gender).Value,
+            BusinessTitle: First(Topic.parsedWorkdayResponse.BusinessTitle).Value,
+            Organization: First(Topic.parsedWorkdayResponse.Organization).Value,
+            Manager: First(Topic.parsedWorkdayResponse.Manager).Value,
+            Location: First(Topic.parsedWorkdayResponse.Location).Value,
+            HireDate: First(Topic.parsedWorkdayResponse.HireDate).Value,
+            WorkEmail: First(Topic.parsedWorkdayResponse.WorkEmail).Value,
+            HomeAddress: First(Topic.parsedWorkdayResponse.HomeAddress).Value,
+            HomeEmail: First(Topic.parsedWorkdayResponse.HomeEmail).Value,
+            HomePhone: First(Topic.parsedWorkdayResponse.HomePhone).Value,
+            WorkPhone: First(Topic.parsedWorkdayResponse.WorkPhone).Value,
+            Status: If(First(Topic.parsedWorkdayResponse.Status).Value = "1", "Active", "Inactive"),
+            ContinuousServiceDate: First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value,
+            LengthOfService: 
+                If(Topic.yearsOfService > 0, Topic.yearsOfService & " year" & If(Topic.yearsOfService > 1, "s", "") & " ", "") &
+                If(Topic.monthsOfService > 0, Topic.monthsOfService & " month" & If(Topic.monthsOfService > 1, "s", "") & " ", "") &
+                Topic.daysOfService & " day" & If(Topic.daysOfService <> 1, "s", "")
+        }
+
+inputType: {}
+outputType:
+  properties:
+    finalizedData:
+      displayName: finalizedData
+      type:
+        kind: Record
+        properties:
+          EmployeeID: String
+          Name: String
+          DOB: String
+          Gender: String
+          BusinessTitle: String
+          Organization: String
+          Manager: String
+          Location: String
+          HireDate: String
+          WorkEmail: String
+          HomeAddress: String
+          HomeEmail: String
+          HomePhone: String
+          WorkPhone: String
+          Status: String
+          ContinuousServiceDate: String
+          LengthOfService: String
