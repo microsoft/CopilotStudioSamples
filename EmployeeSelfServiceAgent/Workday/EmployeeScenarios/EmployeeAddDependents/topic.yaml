@@ -1,0 +1,421 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  You will respond only to requests related to adding or managing dependents for the user making the request.
+  Dependents include spouses, domestic partners, children, and other family members who may be covered under employee benefits.
+  All dependent data is retrieved from and submitted to Workday, and pertains exclusively to the requesting user.
+  This data exclusively belongs to the user making the request. Do not respond to questions about other people's data.
+    
+  Example invalid requests:
+  "Add a dependent for my manager"
+  "Update dependents for [EmployeeName]"
+  "Show dependents for my colleague"
+    
+  Example valid requests:
+  "Add a dependent"
+  "I want to add my child as a dependent"
+  "Add my spouse to my benefits"
+  "Register a new dependent"
+  "I need to add a family member"
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+
+  actions:
+    # Step 1: Fetch reference data for relationship types
+    - kind: ConditionGroup
+      id: checkRelationshipTypes
+      conditions:
+        - id: relationshipTypesUninitialized
+          condition: =IsBlank(Global.RelatedPersonRelationshipLookupTable)
+          displayName: If relationship type picklist is uninitialized
+          actions:
+            - kind: BeginDialog
+              id: fetchRelationshipTypes
+              displayName: Redirect to Workday System Get Reference Data
+              input:
+                binding:
+                  referenceDataKey: Related_Person_Relationship_ID
+              dialog: msdyn_copilotforemployeeselfservicehr.topic.GetReferenceData
+
+    # Step 2: Fetch existing dependents
+    - kind: BeginDialog
+      id: getDependents_BeginDialog
+      displayName: Get Current Dependents
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Now(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetDependents
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ConditionGroup
+      id: checkGetSuccess
+      conditions:
+        - id: getSuccessCondition
+          condition: =Topic.isSuccess = false
+          actions:
+            - kind: SendActivity
+              id: sendErrorMessage
+              activity: I encountered an error retrieving your dependent information. Please try again later or contact support.
+            - kind: EndDialog
+              id: endOnError
+
+    # Step 3: Parse the response
+    - kind: ParseValue
+      id: parseDependentsResponse
+      displayName: Parse dependents response
+      variable: Topic.dependentsRecord
+      valueType:
+        kind: Record
+        properties:
+          DependentID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          DependentWID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          PersonWID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          FullName:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          FirstName:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          LastName:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          DateOfBirth:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          Gender:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          RelationshipTypeID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          IsFullTimeStudent:
+            type:
+              kind: Table
+              properties:
+                Value: String
+          IsDisabled:
+            type:
+              kind: Table
+              properties:
+                Value: String
+      value: =Topic.workdayResponse
+
+    # Step 4: Transform to table (XPath already filters to only actual dependents)
+    - kind: SetVariable
+      id: setVariable_transformDependents
+      displayName: Transform dependents to table
+      variable: Topic.dependentsTable
+      value: |-
+        =ForAll(
+            Sequence(CountRows(Topic.dependentsRecord.DependentID)),
+            {
+                DependentID: Last(FirstN(Topic.dependentsRecord.DependentID, Value)).Value,
+                DependentWID: Last(FirstN(Topic.dependentsRecord.DependentWID, Value)).Value,
+                PersonWID: Last(FirstN(Topic.dependentsRecord.PersonWID, Value)).Value,
+                FullName: Last(FirstN(Topic.dependentsRecord.FullName, Value)).Value,
+                FirstName: Last(FirstN(Topic.dependentsRecord.FirstName, Value)).Value,
+                LastName: Last(FirstN(Topic.dependentsRecord.LastName, Value)).Value,
+                DateOfBirth: Last(FirstN(Topic.dependentsRecord.DateOfBirth, Value)).Value,
+                Gender: Last(FirstN(Topic.dependentsRecord.Gender, Value)).Value,
+                RelationshipType: LookUp(Global.RelatedPersonRelationshipLookupTable, ID = Last(FirstN(Topic.dependentsRecord.RelationshipTypeID, Value)).Value).Referenced_Object_Descriptor,
+                RelationshipTypeID: Last(FirstN(Topic.dependentsRecord.RelationshipTypeID, Value)).Value,
+                IsFullTimeStudent: Last(FirstN(Topic.dependentsRecord.IsFullTimeStudent, Value)).Value = "1",
+                IsDisabled: Last(FirstN(Topic.dependentsRecord.IsDisabled, Value)).Value = "1"
+            }
+        )
+
+    # Step 5: Show existing dependents and option to add new
+    - kind: ConditionGroup
+      id: checkExistingDependents
+      conditions:
+        - id: hasDependentsCondition
+          condition: =CountRows(Topic.dependentsTable) > 0
+          actions:
+            - kind: SendActivity
+              id: sendExistingDependentsMsg
+              activity: |-
+                You currently have **{CountRows(Topic.dependentsTable)}** dependent(s) on file:
+                
+                {Concat(Topic.dependentsTable, "• " & FullName & " (" & RelationshipType & ")" & Char(10))}
+                
+                Let's add a new dependent.
+
+      elseActions:
+        - kind: SendActivity
+          id: sendNoDependentsMsg
+          activity: You don't have any dependents on file yet. Let's add one now.
+
+    # Step 6: Collect dependent information using Adaptive Card
+    - kind: AdaptiveCardPrompt
+      id: collectDependentCard
+      displayName: Collect dependent information
+      card: |-
+        ={
+            type: "AdaptiveCard",
+            '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+            version: "1.3",
+            body: [
+                {
+                    type: "TextBlock",
+                    text: "Add New Dependent",
+                    weight: "Bolder",
+                    size: "Large",
+                    color: "Accent"
+                },
+                {
+                    type: "TextBlock",
+                    text: "Please enter the dependent's information:",
+                    wrap: true
+                },
+                {
+                    type: "Input.Text",
+                    id: "firstName",
+                    label: "First Name",
+                    placeholder: "Enter first name",
+                    isRequired: true
+                },
+                {
+                    type: "Input.Text",
+                    id: "lastName",
+                    label: "Last Name",
+                    placeholder: "Enter last name",
+                    isRequired: true
+                },
+                {
+                    type: "Input.Date",
+                    id: "dateOfBirth",
+                    label: "Date of Birth",
+                    isRequired: true
+                },
+                {
+                    type: "Input.ChoiceSet",
+                    id: "gender",
+                    label: "Gender",
+                    isRequired: true,
+                    choices: [
+                        { title: "Male", value: "Male" },
+                        { title: "Female", value: "Female" },
+                        { title: "Not Declared", value: "Not_Declared" }
+                    ]
+                },
+                {
+                    type: "Input.ChoiceSet",
+                    id: "relationshipType",
+                    label: "Relationship",
+                    isRequired: true,
+                    choices: ForAll(Global.RelatedPersonRelationshipLookupTable, { title: ThisRecord.Referenced_Object_Descriptor, value: ThisRecord.ID })
+                },
+                {
+                    type: "Input.ChoiceSet",
+                    id: "country",
+                    label: "Country",
+                    isRequired: true,
+                    value: "USA",
+                    choices: [
+                        { title: "United States", value: "USA" },
+                        { title: "Canada", value: "CAN" },
+                        { title: "United Kingdom", value: "GBR" },
+                        { title: "Australia", value: "AUS" },
+                        { title: "Germany", value: "DEU" },
+                        { title: "France", value: "FRA" },
+                        { title: "India", value: "IND" }
+                    ]
+                }
+            ],
+            actions: [
+                { type: "Action.Submit", title: "Add Dependent" },
+                { type: "Action.Submit", title: "Cancel", associatedInputs: "none" }
+            ]
+        }
+      output:
+        binding:
+          actionSubmitId: Topic.formActionId
+          firstName: Topic.firstName
+          lastName: Topic.lastName
+          dateOfBirth: Topic.dateOfBirth
+          gender: Topic.gender
+          relationshipType: Topic.relationshipType
+          country: Topic.country
+      outputType:
+        properties:
+          actionSubmitId: String
+          firstName: String
+          lastName: String
+          dateOfBirth: String
+          gender: String
+          relationshipType: String
+          country: String
+
+    # Step 7: Handle cancel
+    - kind: ConditionGroup
+      id: checkCancelAction
+      conditions:
+        - id: cancelCondition
+          condition: =Topic.formActionId = "Cancel"
+          actions:
+            - kind: SendActivity
+              id: sendCancelMessage
+              activity: Request cancelled. No dependent was added. Is there anything else I can help you with?
+            - kind: CancelAllDialogs
+              id: cancelAll
+
+    # Step 8: Validate required fields
+    - kind: ConditionGroup
+      id: validateFields
+      conditions:
+        - id: missingFieldsCondition
+          condition: =IsBlank(Topic.firstName) || IsBlank(Topic.lastName) || IsBlank(Topic.dateOfBirth) || IsBlank(Topic.gender) || IsBlank(Topic.relationshipType)
+          actions:
+            - kind: SendActivity
+              id: sendValidationError
+              activity: Please fill in all required fields (First Name, Last Name, Date of Birth, Gender, and Relationship).
+            - kind: EndDialog
+              id: endOnValidationError
+
+    # Step 9: Set relationship type ID (already comes from lookup table)
+    - kind: SetVariable
+      id: mapRelationshipType
+      displayName: Set relationship type ID
+      variable: Topic.relationshipTypeId
+      value: =Topic.relationshipType
+
+    # Step 10: Show confirmation before adding
+    - kind: AdaptiveCardPrompt
+      id: confirmAddCard
+      displayName: Confirm dependent details
+      card: |-
+        ={
+          type: "AdaptiveCard",
+          '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+          version: "1.3",
+          body: [
+            {
+              type: "TextBlock",
+              text: "Confirm New Dependent",
+              weight: "Bolder",
+              size: "Medium",
+              wrap: true,
+              color: "Accent"
+            },
+            {
+              type: "TextBlock",
+              text: "Please review the dependent details:",
+              wrap: true
+            },
+            {
+              type: "FactSet",
+              facts: [
+                { title: "Name", value: Topic.firstName & " " & Topic.lastName },
+                { title: "Date of Birth", value: Topic.dateOfBirth },
+                { title: "Gender", value: Topic.gender },
+                { title: "Relationship", value: LookUp(Global.RelatedPersonRelationshipLookupTable, ID = Topic.relationshipType).Referenced_Object_Descriptor },
+                { title: "Country", value: Topic.country }
+              ]
+            },
+            {
+              type: "TextBlock",
+              text: "Do you want to add this dependent?",
+              wrap: true,
+              weight: "Bolder"
+            }
+          ],
+          actions: [
+            { type: "Action.Submit", title: "Yes, Add Dependent" },
+            { type: "Action.Submit", title: "Cancel", associatedInputs: "none" }
+          ]
+        }
+      output:
+        binding:
+          actionSubmitId: Topic.confirmActionId
+      outputType:
+        properties:
+          actionSubmitId: String
+
+    - kind: ConditionGroup
+      id: checkConfirmation
+      conditions:
+        - id: notConfirmedCondition
+          condition: =Topic.confirmActionId = "Cancel"
+          actions:
+            - kind: SendActivity
+              id: sendNotConfirmedMessage
+              activity: Request cancelled. No dependent was added.
+            - kind: EndDialog
+              id: endOnNotConfirmed
+
+    # Step 10: Call Add Dependent API
+    - kind: BeginDialog
+      id: addDependent_BeginDialog
+      displayName: Add Dependent to Workday
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Date_Of_Birth}"",""value"":""" & Topic.dateOfBirth & """},{""key"":""{Gender}"",""value"":""" & Topic.gender & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipTypeId & """},{""key"":""{Country_Code}"",""value"":""" & Topic.country & """}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeAddDependent
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.addErrorResponse
+          isSuccess: Topic.addIsSuccess
+          workdayResponse: Topic.addWorkdayResponse
+
+    # Step 11: Show result
+    - kind: ConditionGroup
+      id: checkAddSuccess
+      conditions:
+        - id: addSuccessCondition
+          condition: =Topic.addIsSuccess = true
+          actions:
+            - kind: SendActivity
+              id: sendSuccessMessage
+              activity: |-
+                ✅ **Dependent added successfully!**
+                
+                **{Topic.firstName} {Topic.lastName}** has been added as your **{LookUp(Global.RelatedPersonRelationshipLookupTable, ID = Topic.relationshipType).Referenced_Object_Descriptor}**.
+                
+                Please note that depending on your company's policies, this change may require approval before it takes effect.
+
+      elseActions:
+        - kind: SendActivity
+          id: sendAddErrorMessage
+          activity: |-
+            ❌ There was an error adding the dependent. Please try again later or contact HR support.
+            
+            Error: {Topic.addErrorResponse}
+
+inputType: {}
+outputType:
+  properties:
+    addIsSuccess:
+      displayName: Add Success
+      type: Boolean
