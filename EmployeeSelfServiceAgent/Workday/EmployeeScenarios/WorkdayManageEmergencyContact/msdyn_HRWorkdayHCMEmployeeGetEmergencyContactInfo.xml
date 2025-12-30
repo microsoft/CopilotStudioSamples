@@ -5,13 +5,13 @@
             <apiRequest>
                 <authType>User</authType>
                 <endpoint>
-                    <request>Template_GetEmergencyContactInfoRequest</request>
+                    <request>Template_GetContactInfoRequest</request>
                     <serviceName>Human_Resources</serviceName>
                     <version>v45.0</version>
                 </endpoint>
                 <responseProperties>
                     <property>
-                        <extractPath>//*[local-name()='Related_Person_Data']//*[local-name()='Related_Person']</extractPath>
+                        <extractPath>//*[local-name()='Related_Person_Data']/*[local-name()='Related_Person'][*[local-name()='Emergency_Contact']]</extractPath>
                         <key>EmergencyContacts</key>
                     </property>
                 </responseProperties>
@@ -19,7 +19,7 @@
         </apiRequests>
     </scenario>
     <requestTemplates>
-        <requestTemplate name="Template_GetEmergencyContactInfoRequest">
+        <requestTemplate name="Template_GetContactInfoRequest">
             <bsvc:Get_Workers_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v45.0">
                 <bsvc:Request_References bsvc:Skip_Non_Existing_Instances="false" bsvc:Ignore_Invalid_References="true">
                     <bsvc:Worker_Reference bsvc:Descriptor="Employee_ID">
