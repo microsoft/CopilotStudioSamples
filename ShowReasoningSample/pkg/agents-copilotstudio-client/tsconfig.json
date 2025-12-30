@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "include": [
+      "src/**/*",
+      "package.json"
+    ],
+    "compilerOptions": {
+      "rootDirs": [ "src/", "test/"],
+      "outDir": "dist",
+      "paths": {
+        "@microsoft/*": ["./packages/*"]
+      }
+    }
+  }

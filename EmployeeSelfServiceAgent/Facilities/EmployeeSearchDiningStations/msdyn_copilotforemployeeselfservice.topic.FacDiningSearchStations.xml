@@ -1,0 +1,10 @@
+<botcomponent schemaname="msdyn_copilotforemployeeselfservice.topic.FacDiningSearchStations">
+  <componenttype>9</componenttype>
+  <iscustomizable>1</iscustomizable>
+  <name>Fac Dining Search Stations By Category</name>
+  <parentbotid>
+    <schemaname>msdyn_copilotforemployeeselfservice</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

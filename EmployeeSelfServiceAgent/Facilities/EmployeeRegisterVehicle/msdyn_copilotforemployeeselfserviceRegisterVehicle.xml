@@ -1,0 +1,11 @@
+<botcomponent
+    schemaname="msdyn_copilotforemployeeselfservice.topic.ESSParkingCreateVehicleRegistration">
+    <componenttype>9</componenttype>
+    <iscustomizable>0</iscustomizable>
+    <name>ESS Parking Create Vehicle Registration</name>
+    <parentbotid>
+        <schemaname>msdyn_copilotforemployeeselfservice</schemaname>
+    </parentbotid>
+    <statecode>0</statecode>
+    <statuscode>1</statuscode>
+</botcomponent>
