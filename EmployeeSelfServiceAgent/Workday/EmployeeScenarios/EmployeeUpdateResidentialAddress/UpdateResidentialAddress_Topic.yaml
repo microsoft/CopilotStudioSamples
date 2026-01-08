@@ -322,7 +322,7 @@ beginDialog:
             body: [
                 {
                     type: "TextBlock",
-                    text: "Update Your Home Address",
+                    text: "Update your home address",
                     weight: "Bolder",
                     size: "Large"
                 },
