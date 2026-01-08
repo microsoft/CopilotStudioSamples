@@ -191,7 +191,7 @@ beginDialog:
                     text: "Add New Dependent",
                     weight: "Bolder",
                     size: "Large",
-                    color: "Accent"
+                    color: "Default"
                 },
                 {
                     type: "TextBlock",
@@ -326,7 +326,7 @@ beginDialog:
               weight: "Bolder",
               size: "Medium",
               wrap: true,
-              color: "Accent"
+              color: "Default"
             },
             {
               type: "TextBlock",
