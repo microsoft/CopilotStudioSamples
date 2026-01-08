@@ -334,7 +334,7 @@ beginDialog:
                 {
                     type: "Input.Text",
                     id: "addressLine1",
-                    label: "Address Line 1 *",
+                    label: "Address Line 1 ",
                     placeholder: "Street address",
                     isRequired: true,
                     value: If(IsBlank(Topic.currentAddressLine1), "", Topic.currentAddressLine1)
@@ -349,7 +349,7 @@ beginDialog:
                 {
                     type: "Input.Text",
                     id: "city",
-                    label: "City *",
+                    label: "City ",
                     placeholder: "City",
                     isRequired: true,
                     value: If(IsBlank(Topic.currentCity), "", Topic.currentCity)
@@ -357,7 +357,7 @@ beginDialog:
                 {
                     type: "Input.ChoiceSet",
                     id: "country",
-                    label: "Country *",
+                    label: "Country ",
                     isRequired: true,
                     value: If(IsBlank(Topic.currentCountryCode), "USA", Topic.currentCountryCode),
                     choices: [
@@ -376,7 +376,7 @@ beginDialog:
                 {
                     type: "Input.ChoiceSet",
                     id: "stateProvince",
-                    label: "State/Province *",
+                    label: "State/Province ",
                     isRequired: true,
                     value: If(IsBlank(Topic.currentStateProvince), "", Topic.currentStateProvince),
                     choices: [
@@ -440,7 +440,7 @@ beginDialog:
                 {
                     type: "Input.Text",
                     id: "postalCode",
-                    label: "Postal/ZIP Code *",
+                    label: "Postal/ZIP Code ",
                     placeholder: "Postal Code",
                     isRequired: true,
                     value: If(IsBlank(Topic.currentPostalCode), "", Topic.currentPostalCode)
