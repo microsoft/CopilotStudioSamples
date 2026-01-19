@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+  <control namespace="AgentControls" constructor="ChatControl" version="1.0.7"
+    display-name-key="ChatControl" description-key="Agent Chat" control-type="standard">
+    <external-service-usage enabled="false">
+    </external-service-usage>
+    <!-- property node identifies a specific, configurable piece of data that the control expects
+    from CDS -->
+    <property name="agentTitle" display-name-key="agentTitle" description-key="Agent Title"
+      of-type="SingleLine.Text" usage="bound" required="false" />
+
+    <property name="message" display-name-key="message" description-key="Agent Message"
+      of-type="SingleLine.Text" usage="bound" required="false" />
+    <property name="eventValue" display-name-key="eventValue" description-key="Event Value"
+      of-type="SingleLine.Text" usage="bound" required="false" />
+    <property name="response" display-name-key="response" description-key="Agent Response"
+      of-type="SingleLine.Text" usage="output" />
+    <property name="conversationId" display-name-key="conversationId" description-key="Conversation Id"
+      of-type="SingleLine.Text" usage="output" />
+
+    <property name="disableFileUpload" display-name-key="disableFileUpload"
+      description-key="Disable File Upload" of-type="TwoOptions" usage="bound" required="false" />
+    <property name="styleOptions" display-name-key="styleOptions" description-key="Style Options"
+      of-type="SingleLine.Text" usage="bound" required="true" />
+
+    <property name="appClientId" display-name-key="appClientId" description-key="App Id"
+      of-type="SingleLine.Text" usage="bound" required="true" />
+    <property name="tenantId" display-name-key="tenantId" description-key="Tenant Id"
+      of-type="SingleLine.Text" usage="bound" required="true" />
+    <property name="environmentId" display-name-key="environmentId" description-key="Environment Id"
+      of-type="SingleLine.Text" usage="bound" required="true" />
+    <property name="agentIdentifier" display-name-key="agentIdentifier"
+      description-key="Agent Identifier (schema name)" of-type="SingleLine.Text" usage="bound"
+      required="true" />
+    <property name="username" display-name-key="user" description-key="Current User"
+      pfx-default-value='User().Email' of-type="SingleLine.Text" usage="bound" required="true" />
+
+    <resources>
+      <code path="index.ts" order="1" />
+    </resources>
+  </control>
+</manifest>
