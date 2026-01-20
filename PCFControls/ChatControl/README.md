@@ -48,6 +48,7 @@ This step requires permissions to create application identities in your Azure te
    - Click **App registrations** → **New registration**
    - Provide a **Name** (e.g., "Copilot Studio Chat Control")
    - Choose **"Accounts in this organization directory only"**
+   - Under **Permissions** give this application registration Copilot Studio Invoke permissions 
    - Under **Redirect URI**:
      - Select **"Single-page application"** from the platform dropdown
      - Add the below redirects for the chat control to work when running the app
