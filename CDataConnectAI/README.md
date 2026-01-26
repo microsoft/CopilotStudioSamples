@@ -56,7 +56,7 @@ Before starting, ensure you have access to the following:
 
 - [Microsoft Copilot Studio](https://copilotstudio.microsoft.com/):  To create and manage Copilot agents  
 - [CData Connect AI](https://www.cdata.com/ai/signup/): To expose SaaS and data sources through a single MCP endpoint  
-- (Optional)[Sample Google Sheet Data](https://docs.google.com/spreadsheets/d/1JpzuvwOlGp0FKDBxNgj6XgTDL2awuiZ3Ycs4_SnjJT8/edit?usp=sharing): A sample Google Sheet containing customer data
+- (Optional) [Sample Google Sheet Data](https://docs.google.com/spreadsheets/d/1JpzuvwOlGp0FKDBxNgj6XgTDL2awuiZ3Ycs4_SnjJT8/edit?usp=sharing): A sample Google Sheet containing customer data
 
 ---
 
