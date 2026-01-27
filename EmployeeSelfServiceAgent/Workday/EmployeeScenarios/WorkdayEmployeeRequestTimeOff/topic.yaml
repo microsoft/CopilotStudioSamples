@@ -65,7 +65,7 @@ beginDialog:
                       weight: "Bolder",
                       size: "Medium",
                       wrap: true,
-                      color: "Accent"
+                      color: "Default"
                     },
                     {
                       type: "TextBlock",
