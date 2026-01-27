@@ -44,20 +44,6 @@ beginDialog:
   id: main
   intent: {}
   actions:
-    - kind: BeginDialog
-      id: access_check
-      displayName: Verify access for requested name
-      input:
-        binding:
-          EmployeeName: =Topic.EmployeeName
-
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemAccessCheck
-
-    - kind: SetVariable
-      id: set_website_message
-      variable: Topic.WebsiteMessage
-      value: =Env.WorkdayWebsiteRedirectMessage
-
     - kind: ConditionGroup
       id: need_inputs
       conditions:
@@ -191,7 +177,7 @@ beginDialog:
       elseActions:
         - kind: SendActivity
           id: success_msg
-          activity: Your time off request has been submitted. {Topic.WebsiteMessage}
+          activity: Your time off request has been submitted.
 
         - kind: CancelAllDialogs
           id: end_dialogs
