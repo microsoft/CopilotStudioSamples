@@ -54,6 +54,29 @@
 					<bsvc:Exclude_Companies>false</bsvc:Exclude_Companies>
 					<bsvc:Include_Personal_Information>true</bsvc:Include_Personal_Information>
 					<bsvc:Include_Employment_Information>true</bsvc:Include_Employment_Information>
+					<bsvc:Exclude_Cost_Centers>true</bsvc:Exclude_Cost_Centers>
+					<bsvc:Exclude_Cost_Center_Hierarchies>true</bsvc:Exclude_Cost_Center_Hierarchies>
+					<bsvc:Exclude_Custom_Organizations>true</bsvc:Exclude_Custom_Organizations>
+					<bsvc:Exclude_Regions>true</bsvc:Exclude_Regions>
+					<bsvc:Exclude_Organization_Support_Role_Data>true</bsvc:Exclude_Organization_Support_Role_Data>
+					<bsvc:Exclude_Location_Hierarchies>true</bsvc:Exclude_Location_Hierarchies>
+					<bsvc:Exclude_Company_Hierarchies>true</bsvc:Exclude_Company_Hierarchies>
+					<bsvc:Exclude_Matrix_Organizations>true</bsvc:Exclude_Matrix_Organizations>
+					<bsvc:Exclude_Pay_Groups>true</bsvc:Exclude_Pay_Groups>
+					<bsvc:Exclude_Regions>true</bsvc:Exclude_Regions>
+					<bsvc:Exclude_Region_Hierarchies>true</bsvc:Exclude_Region_Hierarchies>
+					<bsvc:Exclude_Teams>true</bsvc:Exclude_Teams>
+                    <bsvc:Exclude_Custom_Organizations>true</bsvc:Exclude_Custom_Organizations>
+                    <bsvc:Exclude_Funds>true</bsvc:Exclude_Funds>
+                    <bsvc:Exclude_Fund_Hierarchies>true</bsvc:Exclude_Fund_Hierarchies>
+                    <bsvc:Exclude_Grants>true</bsvc:Exclude_Grants>
+                    <bsvc:Exclude_Grant_Hierarchies>true</bsvc:Exclude_Grant_Hierarchies>
+                    <bsvc:Exclude_Business_Units>true</bsvc:Exclude_Business_Units>
+                    <bsvc:Exclude_Business_Unit_Hierarchies>true</bsvc:Exclude_Business_Unit_Hierarchies>
+                    <bsvc:Exclude_Programs>true</bsvc:Exclude_Programs>
+                    <bsvc:Exclude_Program_Hierarchies>true</bsvc:Exclude_Program_Hierarchies>
+                    <bsvc:Exclude_Gifts>true</bsvc:Exclude_Gifts>
+                    <bsvc:Exclude_Gift_Hierarchies>true</bsvc:Exclude_Gift_Hierarchies>
 				</bsvc:Response_Group>
 			</bsvc:Get_Workers_Request>
 		</requestTemplate>
