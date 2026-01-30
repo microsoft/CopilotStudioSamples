@@ -1,0 +1,53 @@
+<workdayEntityConfigurationTemplate>
+    <scenario name="EmployeeEnterTimeOff">
+        <apiRequests>
+            <apiRequest>
+                <authType>User</authType>
+                <endpoint>
+                    <request>msdyn_HRWorkdayAbsenceEnterTimeOff_MultiDay</request>
+                    <serviceName>Absence_Management</serviceName>
+                    <version>v42.0</version>
+                </endpoint>
+                <requestParameters/>
+                <responseProperties>
+                    <property>
+                        <extractPath>//*[local-name()='Time_Off_Event_Reference']/*[local-name()='ID' and @*[local-name()='type']='WID']</extractPath>
+                        <key>Event_WID</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Time_Off_Entry_Reference']</extractPath>
+                        <key>Entry_References</key>
+                    </property>
+                </responseProperties>
+            </apiRequest>
+        </apiRequests>
+    </scenario>
+    <requestTemplates>
+        <requestTemplate name="msdyn_HRWorkdayAbsenceEnterTimeOff_MultiDay">
+            <wd:Enter_Time_Off_Request xmlns:wd="urn:com.workday/bsvc" wd:version="v42.0">
+                <wd:Business_Process_Parameters>
+                    <wd:Auto_Complete>false</wd:Auto_Complete>
+                    <wd:Run_Now>true</wd:Run_Now>
+                    <wd:Discard_On_Exit_Validation_Error>true</wd:Discard_On_Exit_Validation_Error>
+                    <wd:Comment_Data>
+                        <wd:Comment>{timeoff_Comment}</wd:Comment>
+                    </wd:Comment_Data>
+                </wd:Business_Process_Parameters>
+                <wd:Enter_Time_Off_Data>
+                    <wd:Worker_Reference>
+                        <wd:ID wd:type="Employee_ID">{Employee_ID}</wd:ID>
+                    </wd:Worker_Reference>
+                    <!-- REPEATABLE SECTION: Will be duplicated for each date in {timeoff_Dates} -->
+                    <wd:Enter_Time_Off_Entry_Data wd:repeat-for="{timeoff_Dates}" wd:repeat-item="{timeoff_Date}">
+                        <wd:Date>{timeoff_Date}</wd:Date>
+                        <wd:Requested>{timeoff_Hours_Per_Day}</wd:Requested>
+                        <wd:Time_Off_Type_Reference wd:Descriptor="?">
+                            <wd:ID wd:type="Time_Off_Type_ID">{timeoff_Time_Off_Type}</wd:ID>
+                        </wd:Time_Off_Type_Reference>
+                        <wd:Comment>{timeoff_Comment}</wd:Comment>
+                    </wd:Enter_Time_Off_Entry_Data>
+                </wd:Enter_Time_Off_Data>
+            </wd:Enter_Time_Off_Request>
+        </requestTemplate>
+    </requestTemplates>
+</workdayEntityConfigurationTemplate>
