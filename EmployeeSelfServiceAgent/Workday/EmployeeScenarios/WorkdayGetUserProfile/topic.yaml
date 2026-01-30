@@ -1,15 +1,26 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  Respond to user's profile information requests from Workday. Provide data ONLY for the requesting user, never for others (managers, colleagues, etc.).
+  Respond to profile requests from Workday. Data is ONLY for the requesting user.
 
-  Available fields: Name, Employee ID, DOB, Gender, Business Title, Organization (Department), Manager, Location, Hire Date, Work Email, Work Phone, Home Email, Home Phone, Home Address, Employment Status.
+  Start with: "Sure, here's your employee profile from [Workday](https://www.workday.com), your company's HR platform."
 
-  Answer based on which specific data the user asks for. Include relevant fields based on the question.
+  Format with section headers (not bold labels). Structure:
+  
+  Personal information: Name, Employee ID
+  Hiring details: Hire date, Length of service (only if asked about tenure)
+  Role and work: Position, Manager, Location
+  Team and organization: Department
+  Contact information: Work email, Work phone, Personal email, Personal phone, Home address
 
-  Include Continuous Service Date and Length of Service ONLY when user specifically asks about tenure, service length, years of service, or how long they've been with the company.
+  Rules:
+  - Use section headers, bullet lists within sections
+  - Do NOT bold every label
+  - Home address must be a single line, NOT sub-bullets
+  - Exclude DOB/Gender unless specifically asked
+  - For specific questions, answer directly without all sections
+  - End with: "Let me know if you want details about a section or to update your profile."
 
-  Invalid requests: "What is my manager's job title?" "What is my colleague's employee ID?" "What department is John in?"
-  Valid requests: "What is my employee ID?" "What is my job title?" "Show my profile" "What is my work email?" "What is my tenure?" (include service length)
+  Invalid: other people's data. Valid: own profile/email/title/tenure.
 
 beginDialog:
   kind: OnRecognizedIntent
@@ -185,7 +196,7 @@ beginDialog:
             Location: First(Topic.parsedWorkdayResponse.Location).Value,
             HireDate: First(Topic.parsedWorkdayResponse.HireDate).Value,
             WorkEmail: First(Topic.parsedWorkdayResponse.WorkEmail).Value,
-            HomeAddress: First(Topic.parsedWorkdayResponse.HomeAddress).Value,
+            HomeAddress: Substitute(Substitute(Concat(Topic.parsedWorkdayResponse.HomeAddress, Value, ", "), Char(10), ", "), Char(13), ""),
             HomeEmail: First(Topic.parsedWorkdayResponse.HomeEmail).Value,
             HomePhone: First(Topic.parsedWorkdayResponse.HomePhone).Value,
             WorkPhone: First(Topic.parsedWorkdayResponse.WorkPhone).Value,
