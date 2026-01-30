@@ -1,14 +1,14 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  You will respond to requests about time in position for direct reports of the user making the request. There is no information available for anyone who isn't a direct report, and being a direct report means that the individual is not a manager, spouse, sibling, or any other relationship to the requestor, and only means that they report to the requestor. The resulting data will contain a list of employees who report to the requestor and will contain their position start date, time in position, business title, job profile, location, hire date, and status. You must NOT give data if you do not have enough info.
+  Respond to team time-in-position requests from [Workday](https://www.workday.com), an HR platform your company uses.
 
+  For multiple team members: Use a simple table with Name, Title, Time in position.
+  For one team member: Use their name as header with bullet list of details.
 
-  Example valid request:
-  "What is the time in position of my direct reports?"
-  "Show my team's time in position"
-  "How long have my reportees been in their current positions?"
+  Keep responses concise. Do NOT show Status or Hire Date unless asked.
+  End with: "Let me know if you have questions about your team."
 
-  Your output **must** be a nested list in markdown language based on the data contained in the {Topic.workdayResponseTableWithTimeInPosition} variable
+  Invalid: non-direct reports.
 beginDialog:
   kind: OnRecognizedIntent
   id: main

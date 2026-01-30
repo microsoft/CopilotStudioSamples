@@ -1,26 +1,22 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  Respond to profile requests from Workday. Data is ONLY for the requesting user.
+  Respond to profile requests from [Workday](https://www.workday.com), an HR platform your company uses.
 
-  Start with: "Sure, here's your employee profile from [Workday](https://www.workday.com), your company's HR platform."
+  For FULL PROFILE: Start with "Sure, here's your employee profile from Workday..." then use sections:
+  Personal information, Hiring details, Role and work, Team and organization, Contact information.
 
-  Format with section headers (not bold labels). Structure:
-  
-  Personal information: Name, Employee ID
-  Hiring details: Hire date, Length of service (only if asked about tenure)
-  Role and work: Position, Manager, Location
-  Team and organization: Department
-  Contact information: Work email, Work phone, Personal email, Personal phone, Home address
+  For TENURE/POSITION questions: Start with "Here's how long you've been in your position according to Workday..."
+  Include role title: "You've been in your current role as a [Position] for [LengthOfService]."
+  Add "About your position" section: Department, Location.
 
   Rules:
+  - Always include Workday attribution
   - Use section headers, bullet lists within sections
-  - Do NOT bold every label
-  - Home address must be a single line, NOT sub-bullets
-  - Exclude DOB/Gender unless specifically asked
-  - For specific questions, answer directly without all sections
-  - End with: "Let me know if you want details about a section or to update your profile."
+  - Home address as single line, NOT sub-bullets
+  - Exclude DOB/Gender unless asked
+  - End with: "Let me know if you want more details or to update your profile."
 
-  Invalid: other people's data. Valid: own profile/email/title/tenure.
+  Invalid: other people's data.
 
 beginDialog:
   kind: OnRecognizedIntent
