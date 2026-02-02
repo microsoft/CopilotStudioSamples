@@ -1,6 +1,6 @@
 #!/bin/bash
-# Grant Apex class access to the Einstein Bot (Chatbot) permission set
-# This allows Einstein Bot dialogs to call the DirectLine Apex classes
+# Grant Apex class and External Credential access to the Einstein Bot (Chatbot) permission set
+# This allows Einstein Bot dialogs to call the DirectLine Apex classes and use the Named Credential
 
 set -e
 
@@ -52,6 +52,43 @@ for CLASS_NAME in "${APEX_CLASSES[@]}"; do
         echo "  Access granted successfully." || \
         echo "  WARNING: Failed to grant access. You may need to do this manually in Setup."
 done
+
+# Grant External Credential Principal Access
+echo ""
+echo "Granting External Credential Principal access..."
+
+# Get the External Credential ID via Tooling API
+EXT_CRED_QUERY=$(sf data query --query "SELECT Id FROM ExternalCredential WHERE DeveloperName = 'Directline' LIMIT 1" --use-tooling-api --json 2>/dev/null)
+EXT_CRED_ID=$(echo "$EXT_CRED_QUERY" | grep -o '"Id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*: *"//' | sed 's/"//')
+
+if [ -z "$EXT_CRED_ID" ]; then
+    echo "  WARNING: External Credential 'Directline' not found. Was it deployed?"
+else
+    echo "  Found External Credential: $EXT_CRED_ID"
+
+    # Get the Principal ID via Tooling API
+    PRINCIPAL_QUERY=$(sf data query --query "SELECT Id, ParameterName FROM ExternalCredentialParameter WHERE ExternalCredentialId = '$EXT_CRED_ID' AND ParameterType = 'NamedPrincipal' LIMIT 1" --use-tooling-api --json 2>/dev/null)
+    PRINCIPAL_ID=$(echo "$PRINCIPAL_QUERY" | grep -o '"Id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*: *"//' | sed 's/"//')
+
+    if [ -z "$PRINCIPAL_ID" ]; then
+        echo "  WARNING: Principal not found in External Credential."
+    else
+        echo "  Found Principal: $PRINCIPAL_ID"
+
+        # Check if access already exists
+        EXISTING_QUERY=$(sf data query --query "SELECT Id FROM SetupEntityAccess WHERE ParentId = '$PERMSET_ID' AND SetupEntityId = '$PRINCIPAL_ID'" --json 2>/dev/null)
+        EXISTING_ID=$(echo "$EXISTING_QUERY" | grep -o '"Id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*: *"//' | sed 's/"//')
+
+        if [ -n "$EXISTING_ID" ]; then
+            echo "  Principal access already granted."
+        else
+            echo "  Granting Principal access..."
+            sf data create record --sobject SetupEntityAccess --values "ParentId='$PERMSET_ID' SetupEntityId='$PRINCIPAL_ID' SetupEntityType='ExternalCredentialParameter'" > /dev/null 2>&1 && \
+                echo "  Principal access granted successfully." || \
+                echo "  WARNING: Failed to grant Principal access. You may need to do this manually in Setup."
+        fi
+    fi
+fi
 
 echo ""
 echo "Permission grant process complete."

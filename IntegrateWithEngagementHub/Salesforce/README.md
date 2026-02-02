@@ -51,6 +51,7 @@ The deployment script (`deploy.sh` / `deploy.ps1`) performs these steps:
 3. **Deploys External Credential** - Creates the `Directline` External Credential with Custom auth protocol and Authorization header formula
 4. **Deploys Named Credential** - Creates the `Directline` Named Credential pointing to `https://directline.botframework.com`
 5. **Grants Apex Permissions** - Adds the three Apex classes to the `sfdc_chatbot_service_permset` permission set so Einstein Bot can invoke them
+6. **Grants Credential Access** - Adds the `Directline_Principal` to the Chatbot permission set's External Credential Principal Access
 
 ## Manual Configuration Required
 
@@ -63,12 +64,6 @@ After running the deployment script, you must:
    - Set Name: `Token`, Value: `YOUR_DIRECTLINE_SECRET`
    - Save
 
-2. **Grant bot access** to the External Credential:
-   - Go to Setup → Permission Sets → `Chatbot`
-   - Click **External Credential Principal Access** → Edit
-   - Add `Directline - Directline_Principal`
-   - Save
-
-3. **Configure Einstein Bot dialogs** to call the Apex actions
+2. **Configure Einstein Bot dialogs** to call the Apex actions
 
 See the [Microsoft Learn documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/customer-copilot-salesforce) for detailed instructions.
