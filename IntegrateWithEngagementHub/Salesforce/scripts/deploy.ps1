@@ -40,6 +40,8 @@ $TempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.Guid]::NewGuid()
 $ForceApp = Join-Path $TempDir "force-app\main\default"
 New-Item -ItemType Directory -Path "$ForceApp\classes" -Force | Out-Null
 New-Item -ItemType Directory -Path "$ForceApp\remoteSiteSettings" -Force | Out-Null
+New-Item -ItemType Directory -Path "$ForceApp\externalCredentials" -Force | Out-Null
+New-Item -ItemType Directory -Path "$ForceApp\namedCredentials" -Force | Out-Null
 
 # Copy Apex classes and metadata
 Write-Host "Preparing Apex classes..."
@@ -49,6 +51,11 @@ Copy-Item "$ProjectDir\Metadata\classes\*.cls-meta.xml" "$ForceApp\classes\"
 # Copy Remote Site Setting
 Write-Host "Preparing Remote Site Setting..."
 Copy-Item "$ProjectDir\Metadata\remoteSiteSettings\*.xml" "$ForceApp\remoteSiteSettings\"
+
+# Copy External Credential and Named Credential
+Write-Host "Preparing External Credential and Named Credential..."
+Copy-Item "$ProjectDir\Metadata\externalCredentials\*.xml" "$ForceApp\externalCredentials\"
+Copy-Item "$ProjectDir\Metadata\namedCredentials\*.xml" "$ForceApp\namedCredentials\"
 
 # Create sfdx-project.json
 $sfdxProject = @{
@@ -84,9 +91,26 @@ Write-Host "Granting Apex class permissions to Chatbot permission set..."
 Write-Host ""
 Write-Host "=== Next Steps ===" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "The Apex classes and Remote Site Setting have been deployed."
-Write-Host "You must now manually configure the Named Credential in Salesforce Setup."
+Write-Host "The following have been deployed:"
+Write-Host "  - Apex classes (DL_GetConversation, DL_PostActivity, DL_GetActivity)"
+Write-Host "  - Remote Site Setting (directline.botframework.com)"
+Write-Host "  - External Credential (Directline)"
+Write-Host "  - Named Credential (Directline)"
 Write-Host ""
-Write-Host "Follow the instructions in the Microsoft Learn documentation:"
+Write-Host "You must now add your DirectLine secret:"
+Write-Host "  1. Go to Setup > Named Credentials > External Credentials tab"
+Write-Host "  2. Click 'Directline'"
+Write-Host "  3. Under 'Principals', click 'Directline_Principal'"
+Write-Host "  4. Click 'Add' under Authentication Parameters"
+Write-Host "  5. Set Name: 'Token', Value: YOUR_DIRECTLINE_SECRET"
+Write-Host "  6. Save"
+Write-Host ""
+Write-Host "Then grant the bot access to the credential:"
+Write-Host "  1. Go to Setup > Permission Sets > 'Chatbot'"
+Write-Host "  2. Click 'External Credential Principal Access' > Edit"
+Write-Host "  3. Add 'Directline - Directline_Principal'"
+Write-Host "  4. Save"
+Write-Host ""
+Write-Host "For full instructions, see the Microsoft Learn documentation:"
 Write-Host "https://learn.microsoft.com/en-us/microsoft-copilot-studio/customer-copilot-salesforce"
 Write-Host ""
