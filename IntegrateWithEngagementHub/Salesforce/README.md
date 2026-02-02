@@ -42,10 +42,11 @@ These samples are companion code for the official documentation at: [Microsoft L
 
 ## What Gets Deployed
 
-The deployment script will:
-- Deploy the three DirectLine Apex classes
-- Deploy the Remote Site Setting for directline.botframework.com
-- Grant Apex class access to the Einstein Bot permission set
+The deployment script (`deploy.sh` / `deploy.ps1`) performs these steps:
+
+1. **Deploys Apex Classes** - Uploads `DL_GetConversation`, `DL_PostActivity`, and `DL_GetActivity` to your Salesforce org
+2. **Deploys Remote Site Setting** - Enables callouts to `https://directline.botframework.com`
+3. **Grants Apex Permissions** - Adds the three Apex classes to the `sfdc_chatbot_service_permset` permission set so Einstein Bot can invoke them
 
 ## Manual Configuration Required
 
