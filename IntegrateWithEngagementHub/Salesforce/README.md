@@ -14,7 +14,7 @@ This folder contains sample code for integrating Microsoft Copilot Studio with S
 | **Named Credential** | Endpoint configuration for DirectLine API | [`Metadata/namedCredentials/Directline.namedCredential-meta.xml`](./Metadata/namedCredentials/Directline.namedCredential-meta.xml) |
 | **Deploy Script** | Automated deployment script | [`scripts/deploy.sh`](./scripts/deploy.sh) (Unix) / [`scripts/deploy.ps1`](./scripts/deploy.ps1) (Windows) |
 
-These samples are companion code for the official documentation at: [Microsoft Learn - Copilot Studio with Salesforce](https://learn.microsoft.com/en-us/microsoft-copilot-studio/customer-copilot-salesforce)
+These samples are companion code for the official documentation at: [Microsoft Learn - Copilot Studio with Salesforce](https://learn.microsoft.com/en-us/microsoft-copilot-studio/customer-copilot-salesforce-handoff)
 
 ## Prerequisites
 
@@ -66,4 +66,4 @@ After running the deployment script, you must:
 
 2. **Configure Einstein Bot dialogs** to call the Apex actions
 
-See the [Microsoft Learn documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/customer-copilot-salesforce) for detailed instructions.
+See the [Microsoft Learn documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/customer-copilot-salesforce-handoff) for detailed instructions.
