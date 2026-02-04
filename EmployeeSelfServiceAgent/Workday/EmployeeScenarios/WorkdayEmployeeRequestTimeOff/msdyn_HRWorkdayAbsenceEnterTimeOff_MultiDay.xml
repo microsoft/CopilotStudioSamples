@@ -38,6 +38,7 @@
                         <wd:ID wd:type="Employee_ID">{Employee_ID}</wd:ID>
                     </wd:Worker_Reference>
                     <!-- REPEATABLE SECTION: Will be duplicated for each date in {timeoff_Dates} -->
+
                     <wd:Enter_Time_Off_Entry_Data wd:repeat-for="{timeoff_Dates}" wd:repeat-item="{timeoff_Date}">
                         <wd:Date>{timeoff_Date}</wd:Date>
                         <wd:Requested>{timeoff_Hours_Per_Day}</wd:Requested>
@@ -46,6 +47,7 @@
                         </wd:Time_Off_Type_Reference>
                         <wd:Comment>{timeoff_Comment}</wd:Comment>
                     </wd:Enter_Time_Off_Entry_Data>
+
                 </wd:Enter_Time_Off_Data>
             </wd:Enter_Time_Off_Request>
         </requestTemplate>
