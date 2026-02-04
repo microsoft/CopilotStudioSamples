@@ -11,11 +11,10 @@ modelDescription: |-
   Heading - "Team roles and time in position"
   Table columns: Name, Title, Time in Position
 
-  Common Rules (STRICT):
-  - Large heading & section line after it, 
-  - Introduction (Relevant)- "Here's how long [Report] has been in their position according to [Workday](https://www.workday.com), an HR platform your company uses." 
-  - Introduction - ONLY BEFORE heading
-  - Only end with "Let me know if you want more details about your team or a specific section." add section line befoe it
+  Common Rules (STRICT!):
+  - ALWAYS KEEP LARGE HEADING & ADD SECTION LINE AFTER IT, 
+  - Introduction (Relevant) ONLY BEFORE heading - "Here's how long [Report] has been in their position according to [Workday](https://www.workday.com), an HR platform your company uses." 
+  - Only end with "Let me know if you want more details about your team or a specific section." ADD SECTION LINE BEFORE IT.
   Invalid: non-direct reports.
 beginDialog:
   kind: OnRecognizedIntent
