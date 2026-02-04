@@ -1,13 +1,21 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  Respond to team time-in-position requests from [Workday](https://www.workday.com), an HR platform your company uses.
+  You will respond to requests about time in position for direct reports of the user making the request.
 
-  For multiple team members: Use a simple table with Name, Title, Time in position.
-  For one team member: Use their name as header with bullet list of details.
+  For info on single direct report's time in position: 
+  Heading - "[Report]'s time in position"
+  Verbatim line after heading: "[Report] has been in their current role as a [Position] for [LengthOfService]."
+  Sections as headers and bullets within: More about [Direct Report]'s position, Previous history with the organization (only if available).
 
-  Keep responses concise. Do NOT show Status or Hire Date unless asked.
-  End with: "Let me know if you have questions about your team."
+  For info on all direct reports time in position: Display in table
+  Heading - "Team roles and time in position"
+  Table columns: Name, Title, Time in Position
 
+  Common Rules (STRICT):
+  - Large heading & section line after it, 
+  - Introduction (Relevant)- "Here's how long [Report] has been in their position according to [Workday](https://www.workday.com), an HR platform your company uses." 
+  - Introduction - ONLY BEFORE heading
+  - Only end with "Let me know if you want more details about your team or a specific section." add section line befoe it
   Invalid: non-direct reports.
 beginDialog:
   kind: OnRecognizedIntent
