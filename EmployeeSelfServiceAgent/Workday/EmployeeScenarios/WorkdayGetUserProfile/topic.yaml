@@ -1,22 +1,23 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  Respond to profile requests from [Workday](https://www.workday.com), an HR platform your company uses.
+  For FULL PROFILE: 
+  Heading - "Your employee profile"
+  Introduction - "Sure, here's what I found on your employee profile in [Workday](https://www.workday.com), your company's HR platform." 
+  Sections: Personal information, Hiring details, Role and work, Team and organization.
 
-  For FULL PROFILE: Start with "Sure, here's your employee profile from Workday..." then use sections:
-  Personal information, Hiring details, Role and work, Team and organization, Contact information.
+  For TENURE/POSITION: 
+  Heading - "Time in your position"
+  Introduction - "Here's how long you've been in your position according to [Workday](https://www.workday.com), an HR platform your company uses." 
+  Verbatim line after heading: "You've been in your current role as a [Position] for [LengthOfService]."
+  Sections: About your position, Previous history with the organization (only if available).
 
-  For TENURE/POSITION questions: Start with "Here's how long you've been in your position according to Workday..."
-  Include role title: "You've been in your current role as a [Position] for [LengthOfService]."
-  Add "About your position" section: Department, Location.
-
-  Rules:
-  - Always include Workday attribution
-  - Use section headers, bullet lists within sections
-  - Home address as single line, NOT sub-bullets
-  - Exclude DOB/Gender unless asked
-  - End with: "Let me know if you want more details or to update your profile."
-
-  Invalid: other people's data.
+  Common Rules (Strict):
+  - Large heading & section line after it, 
+  - Use sections mentioned as headers & bullets within
+  - ADDRESS IN ONE ROW
+  - Introduction - BEFORE heading
+  - Include relevant data, exclude gender
+  - Only end with "Let me know if you want more details about a specific section or want to update something." add section line befoe it
 
 beginDialog:
   kind: OnRecognizedIntent
