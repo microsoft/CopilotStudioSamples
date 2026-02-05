@@ -89,7 +89,7 @@
                                                 </bsvc:Type_Reference>
                                             </bsvc:Type_Data>
                                         </bsvc:Usage_Data>
-                                    </bsvc:Phone_Data>
+                                    </bsvc:Phone_Data>=
                                 </bsvc:Contact_Information_Data>
                             </bsvc:Emergency_Contact_Personal_Information_Data>
                         </bsvc:Emergency_Contact_Data>

@@ -1,12 +1,13 @@
 # Workday Manage Emergency Contact
 
-This scenario enables employees to manage their emergency contacts in Workday through a conversational interface. It supports both adding new emergency contacts and updating existing ones.
+This scenario enables employees to manage their emergency contacts in Workday through a conversational interface. It supports adding new emergency contacts, updating existing ones, and deleting contacts.
 
 ## Features
 
 - **View Existing Contacts**: Displays a list of the employee's current emergency contacts with primary contact marked with ⭐
 - **Add New Contact**: Allows employees to add a new emergency contact
 - **Update Existing Contact**: Allows employees to update details of an existing emergency contact
+- **Delete Contact**: Allows employees to remove an emergency contact from their profile
 - **Primary Contact Management**: Set or change the primary emergency contact
 - **Priority Assignment**: Assign priority levels (1-10) to contacts
 
@@ -20,6 +21,8 @@ Users can activate this topic with phrases like:
 - "Edit my emergency contact details"
 - "Who is my emergency contact?"
 - "Show my emergency contacts"
+- "Delete my emergency contact"
+- "Remove an emergency contact"
 
 ## Files
 
@@ -29,13 +32,14 @@ Users can activate this topic with phrases like:
 | `msdyn_HRWorkdayHCMEmployeeGetEmergencyContactInfo.xml` | XML template to fetch existing emergency contacts using Get_Workers API |
 | `msdyn_HRWorkdayHCMEmployeeAddEmergencyContact.xml` | XML template to add a new emergency contact |
 | `msdyn_HRWorkdayHCMEmployeeUpdateEmergencyContact.xml` | XML template to update an existing emergency contact |
+| `msdyn_HRWorkdayDeleteEmergencyContact.xml` | XML template to delete an existing emergency contact |
 
 ## Workday APIs Used
 
 | API | Service | Version | Purpose |
 |-----|---------|---------|---------|
 | `Get_Workers` | Human_Resources | v45.0 | Retrieve employee's existing emergency contacts |
-| `Change_Emergency_Contacts` | Human_Resources | v45.0 | Add or update emergency contact information |
+| `Change_Emergency_Contacts` | Human_Resources | v45.0 | Add, update, or delete emergency contact information |
 
 ## Data Collected
 
@@ -90,21 +94,26 @@ The topic collects the following information for each emergency contact:
     │  ⭐ Primary Contact    │   │                 │
     │  • Other Contacts      │   │                 │
     │  ➕ Add New Contact    │   │                 │
+    │  🗑️ Delete Contact     │   │                 │
     └───────────────────────┘   └─────────────────┘
               │                         │
               ▼                         │
     ┌───────────────────────┐          │
     │   User Selects        │          │
-    │   Contact or Add New  │          │
+    │   Action              │          │
     └───────────────────────┘          │
               │                         │
-              ▼                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│              Show Add/Update Form                            │
-│         (Pre-filled if updating existing)                    │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+      ┌───────┼───────┐                │
+      │       │       │                │
+      ▼       ▼       ▼                ▼
+┌─────────┐ ┌─────────┐ ┌─────────────────────┐
+│  Add    │ │  Update │ │  Delete             │
+│  Form   │ │  Form   │ │  Confirmation       │
+└─────────┘ └─────────┘ └─────────────────────┘
+      │       │                │
+      └───────┴────────────────┘
+                    │
+                    ▼
 ┌─────────────────────────────────────────────────────────────┐
 │            Submit to Workday                                 │
 │    (Change_Emergency_Contacts API)                          │
@@ -150,3 +159,4 @@ The topic includes error handling for:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | December 2025 | Initial release with Add/Update functionality |
+| 1.1 | February 2026 | Added Delete functionality for removing emergency contacts |
