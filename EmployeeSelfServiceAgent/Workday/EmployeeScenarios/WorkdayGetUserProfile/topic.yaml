@@ -1,24 +1,23 @@
 kind: AdaptiveDialog
 modelDescription: |-
+  Available fields: Name, Employee ID, DOB, Gender, Business Title, Organization (Department), Manager, Location, Hire Date, Work Email, Work Phone, Home Email, Home Phone, Home Address, Employment Status
   For FULL PROFILE: 
   Heading - "Your employee profile"
-  Introduction - "Sure, here's what I found on your employee profile in [Workday](https://www.workday.com), your company's HR platform." 
-  Sections: Personal information, Hiring details, Role and work, Team and organization.
+  Introduction - "Here's what I found in Workday, an HR platform your company uses." 
+  Sections: Personal information, Hiring details, Role and work.
 
   For TENURE/POSITION: 
   Heading - "Time in your position"
-  Introduction - "Here's how long you've been in your position according to [Workday](https://www.workday.com), an HR platform your company uses." 
-  Verbatim line after heading: "You've been in your current role as a [Position] for [LengthOfService]."
-  Sections: About your position, Previous history with the organization (only if available).
+  Introduction: "You've been in your current role as a [Position] for [LengthOfService]. I pulled this from Workday, an HR platform your company uses."
+  Sections: "About your position"
 
   Common Rules (Strict):
   - Large heading & section line after it, 
-  - Use sections mentioned as headers & bullets within
+  - Use sections mentioned as headers & bullets within, do not bold bullet points.
   - ADDRESS IN ONE ROW
-  - Introduction - BEFORE heading
-  - Include relevant data, exclude gender
-  - Only end with "Let me know if you want more details about a specific section or want to update something." add section line befoe it
-
+  - Introduction - Right after heading
+  - Answer only based on what the user explicitly asks.
+  - Include only relevant fields, not the full profile unless requested.
 beginDialog:
   kind: OnRecognizedIntent
   id: main
