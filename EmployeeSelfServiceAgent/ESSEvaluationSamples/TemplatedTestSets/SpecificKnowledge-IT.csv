@@ -1,0 +1,83 @@
+﻿Prompt,Category (delete before testing),Sub-area  (delete before testing),Expected response,Test Method Type,Passing Score
+Create a ticket for my laptop not turning on.,IT Ticket lifecycle,Create a ticket,,CompareMeaning,70
+Open a ticket for a cracked laptop screen.,IT Ticket lifecycle,Create a ticket,,CompareMeaning,70
+I need an IT ticket for a broken dock.,IT Ticket lifecycle,Create a ticket,,CompareMeaning,70
+Start a ticket about random shutdowns.,IT Ticket lifecycle,Create a ticket,,CompareMeaning,70
+Log an incident for keyboard keys not working.,IT Ticket lifecycle,Create a ticket,,CompareMeaning,70
+Add a screenshot to my existing ticket.,IT Ticket lifecycle,Update or add details,,CompareMeaning,70
+Update my ticket with 'still happening after reboot'.,IT Ticket lifecycle,Update or add details,,CompareMeaning,70
+Attach logs to ticket 12345.,IT Ticket lifecycle,Update or add details,,CompareMeaning,70
+Change the description to include the error code 0x80070005.,IT Ticket lifecycle,Update or add details,,CompareMeaning,70
+What's the status of my open tickets?,IT Ticket lifecycle,Check status,,CompareMeaning,70
+Show me my closed tickets from last month.,IT Ticket lifecycle,Check status,,CompareMeaning,70
+Has my hardware repair ticket moved to 'in progress'?,IT Ticket lifecycle,Check status,,CompareMeaning,70
+"Escalate my ticket, it's urgent.",IT Ticket lifecycle,Escalate or request live agent,,CompareMeaning,70
+I need a live IT agent right now.,IT Ticket lifecycle,Escalate or request live agent,,CompareMeaning,70
+Can you route this to Tier 2?,IT Ticket lifecycle,Escalate or request live agent,,CompareMeaning,70
+"I forgot my password, reset it.","Access, authentication & security",Password resets,,CompareMeaning,70
+How do I change my password on Windows?,"Access, authentication & security",Password resets,,CompareMeaning,70
+"Password reset keeps failing, help.","Access, authentication & security",Password resets,,CompareMeaning,70
+My Authenticator app isn't prompting me.,"Access, authentication & security",MFA / Authenticator,,CompareMeaning,70
+"I got a new phone, how do I move MFA?","Access, authentication & security",MFA / Authenticator,,CompareMeaning,70
+MFA codes not accepted even though they're fresh.,"Access, authentication & security",MFA / Authenticator,,CompareMeaning,70
+Authenticator push notifications aren't coming through.,"Access, authentication & security",MFA / Authenticator,,CompareMeaning,70
+How do I set up a passkey on this device?,"Access, authentication & security",Passkey setup,,CompareMeaning,70
+"Passkey sign-in not showing as an option, why?","Access, authentication & security",Passkey setup,,CompareMeaning,70
+How do I register my YubiKey?,"Access, authentication & security",YubiKey setup,,CompareMeaning,70
+"YubiKey challenge fails intermittently, what should I try?","Access, authentication & security",YubiKey setup,,CompareMeaning,70
+"My account is locked, help.","Access, authentication & security",Account lockouts,,CompareMeaning,70
+"I see 'account disabled' when signing in, how do I fix it?","Access, authentication & security",Account lockouts,,CompareMeaning,70
+Grant me local admin rights on my laptop.,"Access, authentication & security",Security guardrails,,CompareMeaning,70
+Can you disable antivirus so I can install this?,"Access, authentication & security",Security guardrails,,CompareMeaning,70
+I can't connect to VPN.,VPN & connectivity,Cannot access VPN,,CompareMeaning,70
+vpn not working pls help,VPN & connectivity,Cannot access VPN,,CompareMeaning,70
+VPN connects but I can't reach internal sites.,VPN & connectivity,Cannot access VPN,,CompareMeaning,70
+VPN isn't working on the Redmond campus.,VPN & connectivity,Location-specific connectivity issues,,CompareMeaning,70
+Issues connecting from the EU office any region settings?,VPN & connectivity,Location-specific connectivity issues,,CompareMeaning,70
+Is there a VPN outage right now?,VPN & connectivity,Outage checks for region/campus,,CompareMeaning,70
+Any network incidents today for the New York office?,VPN & connectivity,Outage checks for region/campus,,CompareMeaning,70
+My Wi-Fi keeps dropping at the office.,VPN & connectivity,Wi-Fi / ethernet,,CompareMeaning,70
+"Ethernet says 'unidentified network',what now?",VPN & connectivity,Wi-Fi / ethernet,,CompareMeaning,70
+I need a new laptop.,Devices & lifecycle,Request new laptop or peripherals,,CompareMeaning,70
+How do I request a replacement keyboard?,Devices & lifecycle,Request new laptop or peripherals,,CompareMeaning,70
+"Order a USB-C hub through IT, please.",Devices & lifecycle,Request new laptop or peripherals,,CompareMeaning,70
+Can contractors request new devices?,Devices & lifecycle,Request new laptop or peripherals,,CompareMeaning,70
+Is my laptop still under warranty?,Devices & lifecycle,Device out of warranty,,CompareMeaning,70
+What are my options if the device is out of warranty?,Devices & lifecycle,Device out of warranty,,CompareMeaning,70
+How do I reimage my device?,Devices & lifecycle,Reimage/reset device,,CompareMeaning,70
+Factory reset guidance for a corporate laptop?,Devices & lifecycle,Reimage/reset device,,CompareMeaning,70
+Windows says it isn't activated.,Devices & lifecycle,Windows activation issues,,CompareMeaning,70
+"Activation error 0xC004F074,help.",Devices & lifecycle,Windows activation issues,,CompareMeaning,70
+How do I enroll my phone in device management?,Devices & lifecycle,Mobile device enrollment,,CompareMeaning,70
+"Company Portal enrollment is stuck, any fix?",Devices & lifecycle,Mobile device enrollment,,CompareMeaning,70
+My BIOS update keeps failing.,Devices & lifecycle,Driver/firmware & updates,,CompareMeaning,70
+Where do I get the latest graphics driver for my model?,Devices & lifecycle,Driver/firmware & updates,,CompareMeaning,70
+My Bluetooth headset won't pair after an update.,Devices & lifecycle,Bluetooth / audio / camera (Alchemy),,CompareMeaning,70
+"Camera works in Zoom but not in Teams, why?",Devices & lifecycle,Bluetooth / audio / camera (Alchemy),,CompareMeaning,70
+No audio after docking. walk me through fixes.,Devices & lifecycle,Bluetooth / audio / camera (Alchemy),,CompareMeaning,70
+Outlook won't open.,Applications & meetings,Email not loading,,CompareMeaning,70
+My inbox isn't syncing across devices.,Applications & meetings,Email not loading,,CompareMeaning,70
+Outlook stuck on 'processing' after login.,Applications & meetings,Email not loading,,CompareMeaning,70
+My camera doesn't work in Teams.,Applications & meetings,Video/microphones/camera issues in meeting rooms,,CompareMeaning,70
+No one can hear me in a Teams meeting.,Applications & meetings,Video/microphones/camera issues in meeting rooms,,CompareMeaning,70
+Teams Room mic isn't picking up audio.,Applications & meetings,Video/microphones/camera issues in meeting rooms,,CompareMeaning,70
+Meeting room says 'device not found' on the console.,Applications & meetings,Video/microphones/camera issues in meeting rooms,,CompareMeaning,70
+My calendar won't update events.,Applications & meetings,Calendar availability problems,,CompareMeaning,70
+Meeting invites aren't syncing to my phone.,Applications & meetings,Calendar availability problems,,CompareMeaning,70
+Why are my bookings double-created?,Applications & meetings,Calendar availability problems,,CompareMeaning,70
+I can't open SharePoint files.,Applications & meetings,File access / Application issues,,CompareMeaning,70
+My files keeps failing to sync.,Applications & meetings,File access / Application issues,,CompareMeaning,70
+'Access denied' on a shared folder I used yesterday.,Applications & meetings,File access / Application issues,,CompareMeaning,70
+"I need a license for something, how do I request it?",Applications & meetings,Licensing / access to apps,,CompareMeaning,70
+Install Adobe Reader for me.,Software install & updates,Installation help,,CompareMeaning,70
+"I don't have permissions to install this tool, help.",Software install & updates,Installation help,,CompareMeaning,70
+"My device shows 'non-compliant',what should I do?",Software install & updates,Patching & compliance,,CompareMeaning,70
+How do I trigger Windows Update now?,Software install & updates,Patching & compliance,,CompareMeaning,70
+Request access to the Finance SharePoint site.,"Storage, permissions & recovery",Permissions,,CompareMeaning,70
+Who approves access to the Sales shared drive?,"Storage, permissions & recovery",Permissions,,CompareMeaning,70
+Recover a deleted file from OneDrive.,"Storage, permissions & recovery",Data recovery,,CompareMeaning,70
+Can we restore a previous version of this document?,"Storage, permissions & recovery",Data recovery,,CompareMeaning,70
+"Defender is blocking my build tools,what's the exception path?",Endpoint protection & health,AV / Defender,,CompareMeaning,70
+"Full disk scan keeps failing, any guidance?",Endpoint protection & health,AV / Defender,,CompareMeaning,70
+"BitLocker is asking for a recovery key,where do I get it?",Endpoint protection & health,Encryption / BitLocker,,CompareMeaning,70
+"My drive shows as not encrypted, how do I enable it?",Endpoint protection & health,Encryption / BitLocker,,CompareMeaning,70
