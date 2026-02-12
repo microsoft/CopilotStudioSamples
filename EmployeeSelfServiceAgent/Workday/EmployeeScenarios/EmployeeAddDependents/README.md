@@ -4,9 +4,16 @@ This scenario allows employees to add new dependents to their Workday profile fo
 
 ## Overview
 
-The `AddDependents` topic allows employees to:
+The `EmployeeAddDependents` topic allows employees to:
 1. **View** their existing dependents
 2. **Add** a new dependent (spouse, child, domestic partner, etc.)
+
+## Features
+
+- **View Existing Dependents**: Displays a list of the employee's current dependents with their relationship and date of birth
+- **Add New Dependent**: Allows employees to add a new dependent with full details
+- **Relationship Types**: Dynamic dropdown populated from Workday reference data
+- **Confirmation Flow**: Shows summary of dependent details before submission
 
 ## Flow
 
@@ -73,9 +80,9 @@ The `AddDependents` topic allows employees to:
 
 | File | Purpose |
 |------|---------|
-| `AddDependents_Topic.yaml` | Main topic definition with full flow |
-| `msdyn_GetDependents_Template.xml` | XML template for fetching existing dependents |
-| `msdyn_AddDependent_Template.xml` | XML template for adding a new dependent |
+| `topic.yaml` | Main topic definition with full flow |
+| `msdyn_HRWorkdayHCMEmployeeGetDependents.xml` | XML template for fetching existing dependents |
+| `msdyn_HRWorkdayHCMEmployeeAddDependent.xml` | XML template for adding a new dependent |
 
 
 ## API Scenarios Used
@@ -159,6 +166,8 @@ This ensures that only `Related_Person` nodes containing a `Dependent` child ele
 - "Add my spouse to my benefits"
 - "Register a new dependent"
 - "I need to add a family member"
+- "Show my dependents"
+- "Who are my dependents?"
 
 ## Dependencies
 
@@ -166,3 +175,56 @@ This ensures that only `Related_Person` nodes containing a `Dependent` child ele
 - `msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution` - For API execution
 - `Global.RelatedPersonRelationshipLookupTable` - Relationship types lookup
 - `Global.ESS_UserContext_Employee_Id` - Current user's employee ID
+
+## Trigger Phrases
+
+- "Add a dependent"
+- "I want to add my child as a dependent"
+- "Add my spouse to my benefits"
+- "Register a new dependent"
+- "I need to add a family member"
+- "Show my dependents"
+- "Who are my dependents?"
+
+## Example Interaction
+
+**User**: "I want to add my child as a dependent"
+
+**Agent**: Shows existing dependents (if any) and displays the Add Dependent form
+
+**User**: Fills in child's details (name, DOB, gender, relationship)
+
+**Agent**: Shows confirmation card with summary of dependent details
+
+**User**: Confirms "Yes, add this dependent"
+
+**Agent**: "✅ Your dependent has been successfully added!"
+
+## Setup Instructions
+
+1. **Import the Topic**: Import `topic.yaml` into your Copilot Studio agent
+2. **Add XML Templates**: Upload both XML templates to your Workday connector configuration
+3. **Configure Connection**: Ensure your Workday connector connection reference is set in the topic
+4. **Set Global Variable**: Ensure `Global.ESS_UserContext_Employee_Id` is populated from user authentication
+
+## Notes
+
+- Relationship types are dynamically loaded from Workday reference data
+- The topic validates that all required fields are completed before submission
+- Gender options are hardcoded as Male, Female, and Not_Declared to match Workday values
+- Country codes use ISO 3166-1 Alpha-3 format (e.g., USA, CAN, GBR)
+
+## Error Handling
+
+| Scenario | Behavior |
+|----------|----------|
+| Failed to fetch dependents | Error message displayed, dialog ends |
+| Failed to add dependent | Error message with option to retry |
+| User cancels | Dialog ends gracefully |
+| Missing required fields | Form validation prevents submission |
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0 | December 2025 | Initial release with Add Dependent functionality |
