@@ -1,14 +1,14 @@
 ﻿Prompt,Expected response,Test Method Type,Passing Score
-I need access,"It sounds like you might need access to a specific system, file, or app. What exactly are you trying to access so I can help?",CompareMeaning,70
-Something isn’t working,"There are many things that could stop working—your device, an app, or your connection. What isn’t working for you?",CompareMeaning,70
-I can’t sign in,"Sign‑in issues can come from passwords, MFA, or account problems. Where are you trying to sign in?",CompareMeaning,70
-My device is slow,"A slow device could be caused by storage, software, or network issues. What’s happening when it slows down?",CompareMeaning,70
-I need software installed,"Are you trying to install approved software, request a new license, or update something already installed?",CompareMeaning,70
-I’m getting an error,Errors can appear in different apps or actions. What were you doing when the error appeared?,CompareMeaning,70
-I need a new laptop,Do you need a replacement for a broken device or are you requesting an upgrade?,CompareMeaning,70
-I can’t connect,"Is the issue with Wi‑Fi, VPN, or connecting to a specific app or site?",CompareMeaning,70
-I need permissions,"Are you trying to get permissions for a folder, shared drive, application, or something else?",CompareMeaning,70
-How do I set up my phone,"Are you setting up email, MFA, or device management on your phone?",CompareMeaning,70
+What is the annual PTO allocation for employees in the Los Angeles office?,"Employees in the Los Angeles office receive the following annual PTO amounts: 18 days for Individual Contributors, 21 days for Managers, and 25 days for Directors and above.",CompareMeaning,70
+How much PTO do employees in the New York office receive each year?,"Employees in the New York office receive the following annual PTO amounts: 20 days for Individual Contributors, 23 days for Managers, and 27 days for Directors and above.",CompareMeaning,70
+How much annual leave do managers in the Hong Kong office get?,Managers in the Hong Kong office receive 18 PTO days per year.,CompareMeaning,70
+Who do I send medical documentation to if I’m out sick for more than three days?,Medical documentation for sick leave longer than three days must be sent to medicaldocs@globalco.com.,CompareMeaning,70
+How many sick days do NYC employees receive each year?,NYC employees receive 10 paid sick days per year.,CompareMeaning,70
+Where do I go to submit a PTO request?,You can submit PTO requests through the HR portal at https://hrportal.globalco.com.,CompareMeaning,70
+How much parental leave do LA employees get?,LA employees receive 12 weeks of paid parental leave.,CompareMeaning,70
+What’s the email to use for urgent bereavement leave requests?,"For urgent bereavement requests, email leave-requests@globalco.com.",CompareMeaning,70
+Who do I escalate to if my PTO request is denied and I believe it’s incorrect?,"You should escalate it by first with your direct manager. If it remains unresolved, you should escalate to your regional HR team using the email for your location: la-hr@globalco.com for Los Angeles, nyc-hr@globalco.com for New York, or hk-hr@globalco.com for Hong Kong. ",CompareMeaning,70
+How much PTO can employees carry over each year?,"Employees can carry over different amounts of PTO depending on their region: Los Angeles employees may carry over up to 5 unused PTO days, New York employees may carry over up to 7 unused PTO days, and Hong Kong employees may carry over up to 3 unused PTO days each year. Carryover limits vary by region.",CompareMeaning,70
 My account is locked,Accounts can lock for several reasons. Where are you seeing the locked‑out message?,CompareMeaning,70
 How do I update my computer,"Are you looking to install system updates, restart for updates, or update a specific application?",CompareMeaning,70
 I need to reset something,"Are you trying to reset your password, your device, or a particular app?",CompareMeaning,70
