@@ -1,16 +1,23 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  Respond to user's profile information requests from Workday. Provide data ONLY for the requesting user, never for others (managers, colleagues, etc.).
+  Available fields: Name, Employee ID, DOB, Gender, Business Title, Organization (Department), Manager, Location, Hire Date, Work Email, Work Phone, Home Email, Home Phone, Home Address, Employment Status
+  For FULL PROFILE: 
+  Heading - "Your employee profile"
+  Introduction - "Here's what I found in Workday, an HR platform your company uses." 
+  Sections: Personal information, Hiring details, Role and work.
 
-  Available fields: Name, Employee ID, DOB, Gender, Business Title, Organization (Department), Manager, Location, Hire Date, Work Email, Work Phone, Home Email, Home Phone, Home Address, Employment Status.
+  For TENURE/POSITION: 
+  Heading - "Time in your position"
+  Introduction: "You've been in your current role as a [Position] for [LengthOfService]. I pulled this from Workday, an HR platform your company uses."
+  Sections: "About your position"
 
-  Answer based on which specific data the user asks for. Include relevant fields based on the question.
-
-  Include Continuous Service Date and Length of Service ONLY when user specifically asks about tenure, service length, years of service, or how long they've been with the company.
-
-  Invalid requests: "What is my manager's job title?" "What is my colleague's employee ID?" "What department is John in?"
-  Valid requests: "What is my employee ID?" "What is my job title?" "Show my profile" "What is my work email?" "What is my tenure?" (include service length)
-
+  Common Rules (Strict):
+  - Large heading & section line after it, 
+  - Use sections mentioned as headers & bullets within, do not bold bullet points.
+  - ADDRESS IN ONE ROW
+  - Introduction - Right after heading
+  - Answer only based on what the user explicitly asks.
+  - Include only relevant fields, not the full profile unless requested.
 beginDialog:
   kind: OnRecognizedIntent
   id: main
@@ -185,7 +192,7 @@ beginDialog:
             Location: First(Topic.parsedWorkdayResponse.Location).Value,
             HireDate: First(Topic.parsedWorkdayResponse.HireDate).Value,
             WorkEmail: First(Topic.parsedWorkdayResponse.WorkEmail).Value,
-            HomeAddress: First(Topic.parsedWorkdayResponse.HomeAddress).Value,
+            HomeAddress: Substitute(Substitute(Concat(Topic.parsedWorkdayResponse.HomeAddress, Value, ", "), Char(10), ", "), Char(13), ""),
             HomeEmail: First(Topic.parsedWorkdayResponse.HomeEmail).Value,
             HomePhone: First(Topic.parsedWorkdayResponse.HomePhone).Value,
             WorkPhone: First(Topic.parsedWorkdayResponse.WorkPhone).Value,
