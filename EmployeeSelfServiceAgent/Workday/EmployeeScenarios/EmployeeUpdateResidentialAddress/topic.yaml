@@ -203,10 +203,16 @@ beginDialog:
                 =ForAll(
                     Topic.homeAddresses,
                     {
-                        title: If(ThisRecord.IsPrimary, "⭐ ", "") & ThisRecord.FormattedAddress,
+                        title: ThisRecord.AddressLine1 & ", " & ThisRecord.City & ", " & ThisRecord.StateProvinceCode & " " & ThisRecord.PostalCode & " (" & If(ThisRecord.IsPrimary, "Primary", "Home") & ")",
                         value: ThisRecord.AddressID
                     }
                 )
+
+            # Set Workday icon URL
+            - kind: SetVariable
+              id: set_workday_icon_url
+              variable: Topic.WorkdayIconUrl
+              value: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAExUlEQVR4nOVbSUwUQRT9XSJxQVExLoQZLwJGGZfEJcY5KJx0Er2piF7d4hkTTby5njxoRE9eHM5oxqOY2O5jXFAjYFzAgBrEDKIxGpf8xta2+ld1z3T1TPfMSwiZ7vrd9V69/391D2jgEZWLd/6CAiPz6JyWa6wWVtKqxNCKhXiuQmjFRjxbIVgxk3czf+YlOCyQ8WC5BIURIj4sm8FhB8WLuRlUTOD5MdnJYoWVZ1nebjruGzRMHIbYhGFomPDB+Iw/iMyPcuj6WgWPv86A66NzjM/5gub36q+peAvN03phw9S+v4SdcP3zHGj/WAvtH+eD33sEzS8BouWjcKrmGqyZ/Dbna/R9q4AT75f5JkTGFEA1+d0zn8DhuXeUXQ8FODi4ypfUYCovhhY/HbmmlDyiefpzuDq/w3CVamgqHYCTjE0clo4Z+VkO+uhcw96Zn2MrioURyWFxlAFjNr1cb/xWBU0V+SPVt2FX1VPhebOoYYETAUVonfUA4hWDEBlPrzaSX/t8k7J00FQIsH/2fWPiFLC1HRhYJSUuEqJ5ei95/vJIFHa8boJA1IDon8mKVn3ji/VZkTdXed+bOBx/t4w8jy0V60IgBGiddV9IHkl4seqJ90uFIuB93e4rfBMgWj5KrkT/9wo4OLgSVABFaBtaRN57qwIXMD9Wf/urJqU9G0WgrpeY+rqwAjQQLe/yyDyj8KkEkm/7YHcB7jK97g3KvAS3D9fCY04EXC0/cHZoIVSyfw9QpjBe9wRaqTwC52UrHEYwKHEwKHEwKHEwKHGUeQnetnE1RKur/juWvHgT+gbEj7Wx+hpIrLO3SozBWBn2tDRC5ZRJWcX4KsDR1s3/TQgRrZ4Jew+dF8ZcOLnXJpqJru5+6Op+Q55D0Y62brEd19O90DcwBAVJgS5isrEFNcLx8eV1QvJj5+ulsTwyn754Iu9dgGf9tmMygmh/GRKN4l1kbEHEfn+BW/ImgJ7usR3DlMA0oJBopB9trQLxKWU9R6VM4ARAxJfXAg8kRtmYH0OlUKw+Qgqj3+2GggqQEeQgZVeKfOqK/U0S1SHERbPAKYDQ7/a4IptoXGI7dqztkiGikwDU9bAFytpt/gRI97iyLF/hcfK4grwLcLX5WMpRlPCBEQBhzWUkxdvYJEDF4wbLyQF62nv+KxEAV5K3MSJWF5Hnf+fY67RU50N7bL08ViZ8QZ4FUkQxs06c6u+4g0OgeHwxs9YLqv2pyn9lAlCrEV9RJ1xFHG91Dd/OjJb5J57aO6jKf3UOIGxskkDyfFHjHZPqFDuIcoCZPoERIEPY2KwDVFvjCxjvCLNrUOKNjae/Mivo+wCd2JVh7sdX0O3PKY2QPF077GIFQoCUwMa8hUX5Swm4p6XJVcENhgPS7lZG1L+TF2+5vI+a/u/LK7Fkh/PbGVH/FtURN+njBczLPxu4SQOevKx/Oz3dOV2/4A7QHdLAK8Fkxw0I/FvhpCQN9Hs9OQvoh/3/CpCPNEACbnZwIpLHzlyC0PyhZIx4tYXE3PZvfuvspkB6FgBRSt8Um65nUOJg1g8qa0GQYeXJZCeLETw/5mZQsYDixbIZHGaI+LBcgsIGGQ/mJTgMcJq/ls3FSvZ/h4FDkIXI1rG/Adz0VZDmVyKYAAAAAElFTkSuQmCC
 
             # Show address selection card
             - kind: AdaptiveCardPrompt
@@ -216,34 +222,70 @@ beginDialog:
                 ={
                   type: "AdaptiveCard",
                   '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
-                  version: "1.3",
+                  version: "1.5",
                   body: [
                     {
-                      type: "TextBlock",
-                      text: "Update Residential Address",
-                      weight: "Bolder",
-                      size: "Medium",
-                      wrap: true,
-                      color: "Default"
+                      type: "ColumnSet",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "auto",
+                          items: [
+                            {
+                              type: "Image",
+                              url: Topic.WorkdayIconUrl,
+                              style: "RoundedCorners",
+                              size: "Small",
+                              height: "20px",
+                              width: "20px"
+                            }
+                          ],
+                          verticalContentAlignment: "Center"
+                        },
+                        {
+                          type: "Column",
+                          width: "auto",
+                          items: [
+                            {
+                              type: "TextBlock",
+                              text: "Workday",
+                              size: "Small",
+                              weight: "Bolder"
+                            }
+                          ],
+                          verticalContentAlignment: "Center",
+                          spacing: "Small"
+                        }
+                      ]
                     },
                     {
                       type: "TextBlock",
-                      text: "You have " & CountRows(Topic.homeAddresses) & " home addresses. Select the one you want to update.",
-                      wrap: true
+                      text: "Select an address to update",
+                      weight: "Bolder",
+                      size: "Medium",
+                      wrap: true,
+                      spacing: "Medium"
+                    },
+                    {
+                      type: "TextBlock",
+                      text: "You have " & CountRows(Topic.homeAddresses) & " addresses. Select to update or add a new address.",
+                      wrap: true,
+                      spacing: "Small"
                     },
                     {
                       type: "Input.ChoiceSet",
                       id: "selectedAddress",
-                      label: "Select Address",
-                      style: "expanded",
+                      label: "Address",
+                      style: "compact",
                       isRequired: true,
                       errorMessage: "Please select an address.",
-                      choices: ForAll(Topic.addressChoices, { title: ThisRecord.title, value: ThisRecord.value })
+                      choices: ForAll(Topic.addressChoices, { title: ThisRecord.title, value: ThisRecord.value }),
+                      value: First(Topic.addressChoices).value
                     }
                   ],
                   actions: [
-                    { type: "Action.Submit", title: "Continue" },
-                    { type: "Action.Submit", title: "Cancel", associatedInputs: "none" }
+                    { type: "Action.Submit", title: "Continue", id: "Continue", data: { actionSubmitId: "Continue" } },
+                    { type: "Action.Submit", title: "Add an address", id: "AddNew", data: { actionSubmitId: "AddNew" }, associatedInputs: "none" }
                   ]
                 }
               output:
@@ -268,12 +310,35 @@ beginDialog:
                     - kind: CancelAllDialogs
                       id: selectionCancelAll
 
-            # Get the selected address details
-            - kind: SetVariable
-              id: setSelectedAddress
-              displayName: Set selected address details
-              variable: Topic.selectedAddress
-              value: =LookUp(Topic.homeAddresses, AddressID = Topic.selectedAddressID)
+            # Handle add new address
+            - kind: ConditionGroup
+              id: handleAddNewAddress
+              conditions:
+                - id: addNewSelected
+                  condition: =Topic.selectionActionId = "AddNew"
+                  actions:
+                    - kind: SetVariable
+                      id: setIsNewAddressFromSelection
+                      variable: Topic.isNewAddress
+                      value: =true
+
+                    - kind: SetVariable
+                      id: clearSelectedAddressID
+                      variable: Topic.selectedAddressID
+                      value: =""
+
+            # Get the selected address details (only if not adding new)
+            - kind: ConditionGroup
+              id: checkIfContinueSelected
+              conditions:
+                - id: continueSelected
+                  condition: =Topic.selectionActionId = "Continue"
+                  actions:
+                    - kind: SetVariable
+                      id: setSelectedAddress
+                      displayName: Set selected address details
+                      variable: Topic.selectedAddress
+                      value: =LookUp(Topic.homeAddresses, AddressID = Topic.selectedAddressID)
 
         # Set current address values for form pre-population
         - kind: SetVariable
@@ -322,7 +387,7 @@ beginDialog:
             body: [
                 {
                     type: "TextBlock",
-                    text: "Update your home address",
+                    text: "Update Your Home Address",
                     weight: "Bolder",
                     size: "Large"
                 },
@@ -334,31 +399,35 @@ beginDialog:
                 {
                     type: "Input.Text",
                     id: "addressLine1",
-                    label: "Address Line 1 ",
+                    label: "Address line 1",
                     placeholder: "Street address",
                     isRequired: true,
+                    errorMessage: "Address line 1 is required.",
                     value: If(IsBlank(Topic.currentAddressLine1), "", Topic.currentAddressLine1)
                 },
                 {
                     type: "Input.Text",
                     id: "addressLine2",
-                    label: "Address Line 2",
+                    label: "Address line 2",
                     placeholder: "Apt, Suite, Unit, etc. (optional)",
                     value: If(IsBlank(Topic.currentAddressLine2), "", Topic.currentAddressLine2)
                 },
                 {
                     type: "Input.Text",
                     id: "city",
-                    label: "City ",
+                    label: "City",
                     placeholder: "City",
                     isRequired: true,
+                    errorMessage: "City is required.",
                     value: If(IsBlank(Topic.currentCity), "", Topic.currentCity)
                 },
                 {
                     type: "Input.ChoiceSet",
                     id: "country",
-                    label: "Country ",
+                    label: "Country",
+                    style: "compact",
                     isRequired: true,
+                    errorMessage: "Please select a country.",
                     value: If(IsBlank(Topic.currentCountryCode), "USA", Topic.currentCountryCode),
                     choices: [
                         { title: "United States", value: "USA" },
@@ -376,8 +445,10 @@ beginDialog:
                 {
                     type: "Input.ChoiceSet",
                     id: "stateProvince",
-                    label: "State/Province ",
+                    label: "State/province",
+                    style: "compact",
                     isRequired: true,
+                    errorMessage: "Please select a state/province.",
                     value: If(IsBlank(Topic.currentStateProvince), "", Topic.currentStateProvince),
                     choices: [
                         { title: "Alabama", value: "USA-AL" },
@@ -440,9 +511,10 @@ beginDialog:
                 {
                     type: "Input.Text",
                     id: "postalCode",
-                    label: "Postal/ZIP Code ",
-                    placeholder: "Postal Code",
+                    label: "Postal/ZIP code",
+                    placeholder: "Postal code",
                     isRequired: true,
+                    errorMessage: "Postal code is required.",
                     value: If(IsBlank(Topic.currentPostalCode), "", Topic.currentPostalCode)
                 },
                 {
@@ -520,23 +592,48 @@ beginDialog:
             - kind: EndDialog
               id: endOnValidationError
 
-    # Step 8: Call Update API
-    - kind: BeginDialog
-      id: updateAddress_BeginDialog
-      displayName: Update Residential Address
-      input:
-        binding:
-          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Event_Effective_Date}"",""value"":"""& Text(Now(), "yyyy-MM-dd") &"""},{""key"":""{Address_ID}"",""value"":""" & Topic.selectedAddressID & """},{""key"":""{Country_Code}"",""value"":""" & Topic.newCountry & """},{""key"":""{State_Province_Code}"",""value"":""" & Topic.newStateProvince & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.newAddressLine1 & """},{""key"":""{Address_Line_2}"",""value"":""" & If(IsBlank(Topic.newAddressLine2), "", Topic.newAddressLine2) & """},{""key"":""{City}"",""value"":""" & Topic.newCity & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.newPostalCode & """},{""key"":""{Is_Primary}"",""value"":""" & If(Topic.newIsPrimary = "true", "true", "false") & """}]}"
-          scenarioName: msdyn_HRWorkdayHCMEmployeeUpdateResidentialAddress
+    # Step 8: Call Add or Update API based on isNewAddress flag
+    - kind: ConditionGroup
+      id: checkAddOrUpdate
+      conditions:
+        - id: isNewAddressCondition
+          condition: =Topic.isNewAddress = true
+          displayName: Add new address
+          actions:
+            # Call Add API (no Address_ID parameter)
+            - kind: BeginDialog
+              id: addAddress_BeginDialog
+              displayName: Add New Residential Address
+              input:
+                binding:
+                  parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Event_Effective_Date}"",""value"":"""& Text(Now(), "yyyy-MM-dd") &"""},{""key"":""{Country_Code}"",""value"":""" & Topic.newCountry & """},{""key"":""{State_Province_Code}"",""value"":""" & Topic.newStateProvince & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.newAddressLine1 & """},{""key"":""{Address_Line_2}"",""value"":""" & If(IsBlank(Topic.newAddressLine2), "", Topic.newAddressLine2) & """},{""key"":""{City}"",""value"":""" & Topic.newCity & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.newPostalCode & """},{""key"":""{Is_Primary}"",""value"":""" & If(Topic.newIsPrimary = "true", "true", "false") & """}]}"
+                  scenarioName: msdyn_HRWorkdayHCMEmployeeAddResidentialAddress
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-      output:
-        binding:
-          errorResponse: Topic.updateErrorResponse
-          isSuccess: Topic.updateIsSuccess
-          workdayResponse: Topic.updateWorkdayResponse
+              dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+              output:
+                binding:
+                  errorResponse: Topic.updateErrorResponse
+                  isSuccess: Topic.updateIsSuccess
+                  workdayResponse: Topic.updateWorkdayResponse
 
-    # Step 10: Show result
+      elseActions:
+        # Call Update API (with Address_ID parameter)
+        - kind: BeginDialog
+          id: updateAddress_BeginDialog
+          displayName: Update Residential Address
+          input:
+            binding:
+              parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Event_Effective_Date}"",""value"":"""& Text(Now(), "yyyy-MM-dd") &"""},{""key"":""{Address_ID}"",""value"":""" & Topic.selectedAddressID & """},{""key"":""{Country_Code}"",""value"":""" & Topic.newCountry & """},{""key"":""{State_Province_Code}"",""value"":""" & Topic.newStateProvince & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.newAddressLine1 & """},{""key"":""{Address_Line_2}"",""value"":""" & If(IsBlank(Topic.newAddressLine2), "", Topic.newAddressLine2) & """},{""key"":""{City}"",""value"":""" & Topic.newCity & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.newPostalCode & """},{""key"":""{Is_Primary}"",""value"":""" & If(Topic.newIsPrimary = "true", "true", "false") & """}]}"
+              scenarioName: msdyn_HRWorkdayHCMEmployeeUpdateResidentialAddress
+
+          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+          output:
+            binding:
+              errorResponse: Topic.updateErrorResponse
+              isSuccess: Topic.updateIsSuccess
+              workdayResponse: Topic.updateWorkdayResponse
+
+    # Step 9: Show result
     - kind: ConditionGroup
       id: checkUpdateSuccess
       conditions:
@@ -544,23 +641,84 @@ beginDialog:
           condition: =Topic.updateIsSuccess = true
           actions:
             - kind: SendActivity
+              id: sendSuccessIntroMessage
+              activity: Great! You've updated your address.
+
+            - kind: SendActivity
               id: sendSuccessMessage
-              activity: |-
-                ✅ Your home address has been successfully updated!
-                
-                **New Address:**
-                {Topic.newAddressLine1}
-                {If(!IsBlank(Topic.newAddressLine2), Topic.newAddressLine2 & Char(10), "")}
-                {Topic.newCity}, {Topic.newStateProvince} {Topic.newPostalCode}
-                {Topic.newCountry}
+              activity:
+                attachments:
+                  - kind: AdaptiveCardTemplate
+                    cardContent: |-
+                      ={
+                        type: "AdaptiveCard",
+                        '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                        version: "1.5",
+                        body: [
+                          {
+                            type: "ColumnSet",
+                            columns: [
+                              {
+                                type: "Column",
+                                width: "auto",
+                                items: [
+                                  {
+                                    type: "Image",
+                                    url: Topic.WorkdayIconUrl,
+                                    style: "RoundedCorners",
+                                    size: "Small",
+                                    height: "20px",
+                                    width: "20px"
+                                  }
+                                ],
+                                verticalContentAlignment: "Center"
+                              },
+                              {
+                                type: "Column",
+                                width: "auto",
+                                items: [
+                                  {
+                                    type: "TextBlock",
+                                    text: "Workday",
+                                    size: "Small",
+                                    weight: "Bolder"
+                                  }
+                                ],
+                                verticalContentAlignment: "Center",
+                                spacing: "Small"
+                              }
+                            ]
+                          },
+                          {
+                            type: "TextBlock",
+                            text: "✅ Address updated",
+                            weight: "Bolder",
+                            size: "Medium",
+                            wrap: true,
+                            spacing: "Medium"
+                          },
+                          {
+                            type: "TextBlock",
+                            text: Topic.newAddressLine1 & ", " & Topic.newCity & ", " & Topic.newStateProvince & " " & Topic.newPostalCode & " (" & If(Topic.newIsPrimary = "true", "Primary", "Home") & ")",
+                            wrap: true,
+                            spacing: "Small"
+                          }
+                        ]
+                      }
+
+            - kind: CancelAllDialogs
+              id: endOnSuccess
 
       elseActions:
         - kind: SendActivity
           id: sendUpdateErrorMessage
           activity: |-
-            ❌ There was an error updating your address. Please try again later or contact support.
+            There was an error updating your address. Please try again later or contact support.
             
-            Error: {Topic.updateErrorResponse}
+            **Error details:** {Topic.updateErrorResponse}
+
+        - kind: CancelAllDialogs
+          id: endOnUpdateError
 
 inputType: {}
 outputType:

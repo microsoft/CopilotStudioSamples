@@ -1,21 +1,21 @@
 ﻿Prompt,Expected response,Test Method Type,Passing Score
-How do I request time off,"Are you looking to request vacation, sick leave, or another type of time off?",CompareMeaning,70
-How do I change my personal information,"Are you trying to update your contact details, emergency contacts, or something else in your profile?",CompareMeaning,70
-Where do I find the policy,"There are many HR policies—are you looking for a policy on time off, benefits, or workplace guidelines?",CompareMeaning,70
-What approvals do I need,"Are you asking about approvals for time off, expenses, training, or something else?",CompareMeaning,70
-How do I get an employment letter,"Do you need a verification letter for employment, immigration, or a rental application?",CompareMeaning,70
-How do reimbursements work,"Reimbursements can include travel, wellness, tuition, or other costs. Which type do you mean?",CompareMeaning,70
-Can I work from a different location,"Do you want to work remotely temporarily, relocate permanently, or work from another country?",CompareMeaning,70
-How do I update my pay details,"Are you trying to update direct deposit, tax information, or other pay‑related details?",CompareMeaning,70
-How does carryover work,"Are you asking about vacation carryover, sick leave carryover, or another leave type?",CompareMeaning,70
-How do I enroll,"Are you looking to enroll in benefits, training, or another HR program?",CompareMeaning,70
-How do I report an HR issue,"Is the issue related to a workplace concern, a policy question, or something else you want to report?",CompareMeaning,70
-How do I request equipment,"Are you asking about equipment for onboarding, ergonomic gear, or a replacement for broken items?",CompareMeaning,70
-How do I change my schedule,"Do you want to change your daily hours, shift pattern, or regular work location schedule?",CompareMeaning,70
-How do I check eligibility,"Are you checking eligibility for benefits, leave, or another program?",CompareMeaning,70
-How do I see my balances,"Are you looking for your vacation balance, sick time, or another type of leave balance?",CompareMeaning,70
-How do I update my manager information,"Are you trying to update your manager because of a re‑org, a reporting change, or something else?",CompareMeaning,70
-How do I start onboarding,"Are you starting onboarding as a new hire, a transfer, or a manager onboarding someone else?",CompareMeaning,70
-How do I find required training,"Are you looking for mandatory training, role‑specific training, or compliance courses?",CompareMeaning,70
-How do I get travel approved,"Is this for domestic travel, international travel, or another type of trip that needs approval?",CompareMeaning,70
-Tell me about CC,"Are you asking about cost centers, company codes, or another kind of “CC” information?",CompareMeaning,70
+I just lost a family member and need help figuring out my leave options.,I’m so sorry for your loss. I can help you look at your leave options.,CompareMeaning,70
+I am having a really hard time coping and need support with time off.,I hear how tough this feels. Let’s walk through the time off you can use.,CompareMeaning,70
+I feel burned out and need guidance on what leave I can take.,Burnout is hard. I can show you the types of leave available.,CompareMeaning,70
+I am stressed about my workload and need to talk about options.,Workload stress is real. Let’s explore what support is available.,CompareMeaning,70
+I am struggling with childcare issues and need more support to do my job.,That sounds really difficult. I can help you see what childcare or leave options may help.,CompareMeaning,70
+I am feeling overwhelmed and need help understanding my medical leave choices.,I understand this feels overwhelming. Here are the medical leave choices you can consider.,CompareMeaning,70
+I am worried about my job security and need someone to explain my options.,Job security worries are stressful. I can explain the options and support channels.,CompareMeaning,70
+I feel anxious about a recent conflict at work and need help addressing it.,Conflict at work can be upsetting. Let’s look at the safest steps you can take.,CompareMeaning,70
+I am upset because my pay issue still is not fixed and I need help right now.,I can see why this is frustrating. I can help you start the right pay support request.,CompareMeaning,70
+I am stressed because my paycheck looks wrong and I need help quickly.,Pay issues are stressful. Let’s get you to the right place to get this resolved.,CompareMeaning,70
+I am having a tough time after a medical diagnosis and need support.,That sounds very hard. I can help you understand what support or leave may apply.,CompareMeaning,70
+I feel confused about my benefits and it is stressing me out.,Benefits confusion is common. I can help you find the right information quickly.,CompareMeaning,70
+I feel uncomfortable talking to my manager. Can you help me understand my choices?,I understand that feels uncomfortable. Here are your options for getting support.,CompareMeaning,70
+I am worried about my performance review and need some support.,It makes sense to feel worried. I can help you understand the review process.,CompareMeaning,70
+I am struggling to balance work and caregiving. What can I do?,Caregiving stress is real. Let’s look at leave or flexibility options you can use.,CompareMeaning,70
+I feel frustrated because my leave request is taking longer than expected.,I hear your frustration. I can help you check the status of your request.,CompareMeaning,70
+My parental leave situation changed and I am stressed about what to do next.,Changes like this can be stressful. I can help you see what comes next for leave.,CompareMeaning,70
+I am really frustrated that my HR request is taking so long and I need someone to explain what is going on.,I understand this delay is frustrating. Let’s take a look at your case status.,CompareMeaning,70
+I am nervous about returning from leave and need guidance on the steps.,It’s normal to feel nervous returning. I can walk you through the steps.,CompareMeaning,70
+I feel uneasy about a workplace situation and need help reporting it safely.,Your safety matters. I can help you report this through the right HR channel.,CompareMeaning,70

@@ -1,22 +1,21 @@
-﻿Prompt,Expected response ,Test Method Type,Passing Score
+﻿Prompt,Expected response,Test Method Type,Passing Score
+Show me my base salary details,"Base salary, local currency, compa ratio",CompareMeaning,70
+What is my Cost Center?,Cost center number and cost center name,CompareMeaning,70
 What is my employee ID?,Employee ID,CompareMeaning,70
-What is my cost center?,Cost center,CompareMeaning,70
-What's my base compensation?,Total base compensation and currency,CompareMeaning,70
-What languages are listed in my employee profile?,Languages listed in employee profile,CompareMeaning,70
-What employment information is on file for me?,"Employment type, FTE, work schedule, hire dates, work location, management level, position ID",CompareMeaning,70
-Can you show me the passport I have on file?,Passport information on file,CompareMeaning,70
-Show me the government ID I have on file,Government ID information on file,CompareMeaning,70
-What is my service anniversary,Next service anniversary date and milestone years,CompareMeaning,70
-Show me the Visa information I have in my employee profile,Visa information on file,CompareMeaning,70
-Show me my employee profile summary.,"Employee profile summary including personal details, job information, hire dates, contact information, and address",CompareMeaning,70
-Who is listed as my emergency contact?,"List of emergency contacts with name, relationship, phone number, and address",CompareMeaning,70
-How can I update my preferences for being contacted by phone?,Phone contact preference settings,CompareMeaning,70
-Show me my certifications on file.,Certifications listed in profile,CompareMeaning,70
-Check whether my job history is available in my profile.,Job history availability,CompareMeaning,70
-What is the process for updating my dependent's information?,List of dependents with name and relationship,CompareMeaning,70
-What is my official job title?,Official job title,CompareMeaning,70
-Do I have access to view my compensation data?,Base compensation visibility and amount,CompareMeaning,70
-Are there any trainings and certifications needed for my role?,Required trainings or certifications for role,CompareMeaning,70
-Where can I see my official work location?,Official work location,CompareMeaning,70
-Can I update my preferred language for HR communications?,Preferred language information and update process,CompareMeaning,70
-Show me my hire date and my rehire date if I have one.,Hire date and rehire date,CompareMeaning,70
+Show me my job details,"Job title, job classification, job function code, job function type",CompareMeaning,70
+What is my position ID?,Position ID,CompareMeaning,70
+Show my service anniversary date,Service anniversary date and years of service,CompareMeaning,70
+What is my company code?,Company code and company name,CompareMeaning,70
+How much can I expect to earn annually?,Annual base salary amount and local currency,CompareMeaning,70
+I need to correct my email in HR.,Email address on file,CompareMeaning,70
+How do I update my emergency contact?,"List of emergency contacts with name, relationship, and phone number",CompareMeaning,70
+I need to add a new work phone,"List of phone numbers by type (business, mobile, home, fax)",CompareMeaning,70
+I want to update my preferred name.,Preferred name on file,CompareMeaning,70
+Do you have my national ID on file?,"National ID details including country, card type, ID number, and primary status",CompareMeaning,70
+Show me the company code for my direct reports,Company code and company name for each direct report,CompareMeaning,70
+Show me the cost center for my team members,Cost center details for each team member,CompareMeaning,70
+Show me the job information for <Name>,"Job title, job code, position number, job function, job function type",CompareMeaning,70
+What is my team member’s work anniversary?,"Hire date, next service anniversary date, and milestone years for each team member",CompareMeaning,70
+What is the work anniversary for <Name>?,"Hire date, next service anniversary date, and milestone years for each team member",CompareMeaning,70
+I need to update my employee’s job title.,Current job title for each employee,CompareMeaning,70
+What is the hire date for <Name>?,Hire date,CompareMeaning,70

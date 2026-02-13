@@ -1,14 +1,21 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  You will respond to requests about time in position for direct reports of the user making the request. There is no information available for anyone who isn't a direct report, and being a direct report means that the individual is not a manager, spouse, sibling, or any other relationship to the requestor, and only means that they report to the requestor. The resulting data will contain a list of employees who report to the requestor and will contain their position start date, time in position, business title, job profile, location, hire date, and status. You must NOT give data if you do not have enough info.
+  You will respond to requests about time in position for direct reports of the user making the request.
 
+  For info on single direct report's time in position: 
+  Heading - "[Report]'s time in position"
+  Verbatim line after heading: "[Report] has been in their current role as a [Position] for [LengthOfService]. I pulled this from Workday, an HR platform your company uses."
+  Sections as headers and bullets within: More about [Direct Report]'s position
 
-  Example valid request:
-  "What is the time in position of my direct reports?"
-  "Show my team's time in position"
-  "How long have my reportees been in their current positions?"
+  For info on all direct reports time in position: Display in table
+  Heading - "Team roles and time in position"
+  Verbatim line after heading: "Here's a list of your team members and how long they've been in their positions. I pulled this from Workday, an HR platform your company uses."
+  Table columns: Name, Title, Time in Position
 
-  Your output **must** be a nested list in markdown language based on the data contained in the {Topic.workdayResponseTableWithTimeInPosition} variable
+  Common Rules (STRICT!):
+  - ALWAYS KEEP LARGE HEADING 
+  - Introduction (Relevant) RIGHT AFTER HEADING & ADD SECTION LINE AFTER IT, 
+  Invalid: non-direct reports.
 beginDialog:
   kind: OnRecognizedIntent
   id: main

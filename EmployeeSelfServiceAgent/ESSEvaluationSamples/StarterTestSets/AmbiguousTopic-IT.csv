@@ -1,21 +1,21 @@
 ﻿Prompt,Expected response,Test Method Type,Passing Score
-I need access,"It sounds like you might need access to a specific system, file, or app. What exactly are you trying to access so I can help?",CompareMeaning,70
-Something isn’t working,"There are many things that could stop working—your device, an app, or your connection. What isn’t working for you?",CompareMeaning,70
-I can’t sign in,"Sign‑in issues can come from passwords, MFA, or account problems. Where are you trying to sign in?",CompareMeaning,70
-My device is slow,"A slow device could be caused by storage, software, or network issues. What’s happening when it slows down?",CompareMeaning,70
-I need software installed,"Are you trying to install approved software, request a new license, or update something already installed?",CompareMeaning,70
-I’m getting an error,Errors can appear in different apps or actions. What were you doing when the error appeared?,CompareMeaning,70
-I need a new laptop,Do you need a replacement for a broken device or are you requesting an upgrade?,CompareMeaning,70
-I can’t connect,"Is the issue with Wi‑Fi, VPN, or connecting to a specific app or site?",CompareMeaning,70
-I need permissions,"Are you trying to get permissions for a folder, shared drive, application, or something else?",CompareMeaning,70
-How do I set up my phone,"Are you setting up email, MFA, or device management on your phone?",CompareMeaning,70
-My account is locked,Accounts can lock for several reasons. Where are you seeing the locked‑out message?,CompareMeaning,70
-How do I update my computer,"Are you looking to install system updates, restart for updates, or update a specific application?",CompareMeaning,70
-I need to reset something,"Are you trying to reset your password, your device, or a particular app?",CompareMeaning,70
-Where do I report an issue,"Is the issue related to hardware, software, access, or something else you want to report?",CompareMeaning,70
-I need a shared drive,Do you need a new shared drive created or access to an existing one?,CompareMeaning,70
-Teams isn’t working,"Is Teams not opening, not connecting, or are you having issues with calls or meetings?",CompareMeaning,70
-I can’t print,"Are you unable to connect to the printer, send jobs to it, or is the printer showing an error?",CompareMeaning,70
-How do I get admin rights,"Do you need admin rights to install software, troubleshoot something, or perform another action?",CompareMeaning,70
-How do I access a site,"Are you running into permissions issues, VPN requirements, or a blocked page when trying to access the site?",CompareMeaning,70
-I lost access,"Did you lose access to a system, shared drive, app, or something else?",CompareMeaning,70
+How do I request time off,"Are you looking to request vacation, sick leave, or another type of time off?",CompareMeaning,70
+How do I change my personal information,"Are you trying to update your contact details, emergency contacts, or something else in your profile?",CompareMeaning,70
+Where do I find the policy,"There are many HR policies—are you looking for a policy on time off, benefits, or workplace guidelines?",CompareMeaning,70
+What approvals do I need,"Are you asking about approvals for time off, expenses, training, or something else?",CompareMeaning,70
+How do I get an employment letter,"Do you need a verification letter for employment, immigration, or a rental application?",CompareMeaning,70
+How do reimbursements work,"Reimbursements can include travel, wellness, tuition, or other costs. Which type do you mean?",CompareMeaning,70
+Can I work from a different location,"Do you want to work remotely temporarily, relocate permanently, or work from another country?",CompareMeaning,70
+How do I update my pay details,"Are you trying to update direct deposit, tax information, or other pay‑related details?",CompareMeaning,70
+How does carryover work,"Are you asking about vacation carryover, sick leave carryover, or another leave type?",CompareMeaning,70
+How do I enroll,"Are you looking to enroll in benefits, training, or another HR program?",CompareMeaning,70
+How do I report an HR issue,"Is the issue related to a workplace concern, a policy question, or something else you want to report?",CompareMeaning,70
+How do I request equipment,"Are you asking about equipment for onboarding, ergonomic gear, or a replacement for broken items?",CompareMeaning,70
+How do I change my schedule,"Do you want to change your daily hours, shift pattern, or regular work location schedule?",CompareMeaning,70
+How do I check eligibility,"Are you checking eligibility for benefits, leave, or another program?",CompareMeaning,70
+How do I see my balances,"Are you looking for your vacation balance, sick time, or another type of leave balance?",CompareMeaning,70
+How do I update my manager information,"Are you trying to update your manager because of a re‑org, a reporting change, or something else?",CompareMeaning,70
+How do I start onboarding,"Are you starting onboarding as a new hire, a transfer, or a manager onboarding someone else?",CompareMeaning,70
+How do I find required training,"Are you looking for mandatory training, role‑specific training, or compliance courses?",CompareMeaning,70
+How do I get travel approved,"Is this for domestic travel, international travel, or another type of trip that needs approval?",CompareMeaning,70
+Tell me about CC,"Are you asking about cost centers, company codes, or another kind of “CC” information?",CompareMeaning,70

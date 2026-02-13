@@ -1,4 +1,11 @@
 kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: InputAction
+    description: "Look for keywords 'add', 'new', or 'create' in the user's request. If found, extract 'add'. Otherwise extract 'manage'."
+    entity: StringPrebuiltEntity
+    shouldPromptUser: false
+
 modelDescription: |-
   You will respond to requests related to managing emergency contacts for the user making the request.
   This includes adding new emergency contacts or updating existing ones.
@@ -14,11 +21,17 @@ modelDescription: |-
   "Update my emergency contact"
   "Add or update emergency contact"
   "Change my emergency contact information"
+  "Add a new emergency contact"
 beginDialog:
   kind: OnRecognizedIntent
   id: main
   intent: {}
   actions:
+    - kind: SetVariable
+      id: set_workday_icon_url_2
+      variable: Topic.WorkdayIconUrl
+      value: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAExUlEQVR4nOVbSUwUQRT9XSJxQVExLoQZLwJGGZfEJcY5KJx0Er2piF7d4hkTTby5njxoRE9eHM5oxqOY2O5jXFAjYFzAgBrEDKIxGpf8xta2+ld1z3T1TPfMSwiZ7vrd9V69/391D2jgEZWLd/6CAiPz6JyWa6wWVtKqxNCKhXiuQmjFRjxbIVgxk3czf+YlOCyQ8WC5BIURIj4sm8FhB8WLuRlUTOD5MdnJYoWVZ1nebjruGzRMHIbYhGFomPDB+Iw/iMyPcuj6WgWPv86A66NzjM/5gub36q+peAvN03phw9S+v4SdcP3zHGj/WAvtH+eD33sEzS8BouWjcKrmGqyZ/Dbna/R9q4AT75f5JkTGFEA1+d0zn8DhuXeUXQ8FODi4ypfUYCovhhY/HbmmlDyiefpzuDq/w3CVamgqHYCTjE0clo4Z+VkO+uhcw96Zn2MrioURyWFxlAFjNr1cb/xWBU0V+SPVt2FX1VPhebOoYYETAUVonfUA4hWDEBlPrzaSX/t8k7J00FQIsH/2fWPiFLC1HRhYJSUuEqJ5ei95/vJIFHa8boJA1IDon8mKVn3ji/VZkTdXed+bOBx/t4w8jy0V60IgBGiddV9IHkl4seqJ90uFIuB93e4rfBMgWj5KrkT/9wo4OLgSVABFaBtaRN57qwIXMD9Wf/urJqU9G0WgrpeY+rqwAjQQLe/yyDyj8KkEkm/7YHcB7jK97g3KvAS3D9fCY04EXC0/cHZoIVSyfw9QpjBe9wRaqTwC52UrHEYwKHEwKHEwKHEwKHGUeQnetnE1RKur/juWvHgT+gbEj7Wx+hpIrLO3SozBWBn2tDRC5ZRJWcX4KsDR1s3/TQgRrZ4Jew+dF8ZcOLnXJpqJru5+6Op+Q55D0Y62brEd19O90DcwBAVJgS5isrEFNcLx8eV1QvJj5+ulsTwyn754Iu9dgGf9tmMygmh/GRKN4l1kbEHEfn+BW/ImgJ7usR3DlMA0oJBopB9trQLxKWU9R6VM4ARAxJfXAg8kRtmYH0OlUKw+Qgqj3+2GggqQEeQgZVeKfOqK/U0S1SHERbPAKYDQ7/a4IptoXGI7dqztkiGikwDU9bAFytpt/gRI97iyLF/hcfK4grwLcLX5WMpRlPCBEQBhzWUkxdvYJEDF4wbLyQF62nv+KxEAV5K3MSJWF5Hnf+fY67RU50N7bL08ViZ8QZ4FUkQxs06c6u+4g0OgeHwxs9YLqv2pyn9lAlCrEV9RJ1xFHG91Dd/OjJb5J57aO6jKf3UOIGxskkDyfFHjHZPqFDuIcoCZPoERIEPY2KwDVFvjCxjvCLNrUOKNjae/Mivo+wCd2JVh7sdX0O3PKY2QPF077GIFQoCUwMa8hUX5Swm4p6XJVcENhgPS7lZG1L+TF2+5vI+a/u/LK7Fkh/PbGVH/FtURN+njBczLPxu4SQOevKx/Oz3dOV2/4A7QHdLAK8Fkxw0I/FvhpCQN9Hs9OQvoh/3/CpCPNEACbnZwIpLHzlyC0PyhZIx4tYXE3PZvfuvspkB6FgBRSt8Um65nUOJg1g8qa0GQYeXJZCeLETw/5mZQsYDixbIZHGaI+LBcgsIGGQ/mJTgMcJq/ls3FSvZ/h4FDkIXI1rG/Adz0VZDmVyKYAAAAAElFTkSuQmCC
+
     - kind: ConditionGroup
       id: check_country_codes
       conditions:
@@ -50,6 +63,25 @@ beginDialog:
                   referenceDataKey: Related_Person_Relationship_ID
 
               dialog: msdyn_copilotforemployeeselfservicehr.topic.GetReferenceData
+
+    # Check if user explicitly wants to add a new contact - skip loading existing contacts
+    - kind: ConditionGroup
+      id: check_direct_add
+      conditions:
+        - id: user_wants_add_directly
+          condition: =(!IsBlank(Topic.InputAction) && "add" in Lower(Topic.InputAction)) || "add" in Lower(System.Activity.Text) || "new emergency contact" in Lower(System.Activity.Text) || "create" in Lower(System.Activity.Text)
+          displayName: User wants to add a new contact directly
+          actions:
+            - kind: SetVariable
+              id: set_add_mode_direct
+              variable: Topic.isUpdateMode
+              value: =false
+            - kind: SendActivity
+              id: direct_add_msg
+              activity: Sure. I can help you with that. Here's where you can add an emergency contact. You can also view all emergency contact information in Workday, your company's HR portal.
+            - kind: GotoAction
+              id: goto_add_form_direct
+              actionId: emergency_contact_form
 
     - kind: BeginDialog
       id: fetch_emergency_contacts
@@ -226,19 +258,25 @@ beginDialog:
           actions:
             - kind: SetVariable
               id: build_selection_choices
-              displayName: Build selection choices with Add New option
+              displayName: Build selection choices
               variable: Topic.selectionChoices
               value: |
-                =Table(
-                    ForAll(
-                        SortByColumns(Topic.contactSelectionList, "IsPrimary", SortOrder.Descending, "Priority", SortOrder.Ascending),
-                        {
-                            title: If(ThisRecord.IsPrimary = "1" || ThisRecord.IsPrimary = "true", "⭐ ", "") & ThisRecord.DisplayName & " (" & ThisRecord.RelationshipType & ") - " & Coalesce(ThisRecord.Phone, "No phone"),
-                            value: ThisRecord.WID
-                        }
-                    ),
-                    { title: "➕ Add New Emergency Contact", value: "ADD_NEW" }
+                =ForAll(
+                    SortByColumns(Topic.contactSelectionList, "IsPrimary", SortOrder.Descending, "Priority", SortOrder.Ascending),
+                    {
+                        title: ThisRecord.DisplayName,
+                        value: ThisRecord.WID
+                    }
                 )
+
+            - kind: SetVariable
+              id: set_intro_msg_text
+              variable: Topic.introMsgText
+              value: ="Sure, I can help you with that. Here's where you can both update and add emergency contacts. I've identified " & Text(CountRows(Topic.contactSelectionList)) & " contacts of yours from [Workday](https://impl.workday.com/microsoft_dpt6/d/home.htmld), an HR platform your company uses."
+
+            - kind: SendActivity
+              id: intro_selection_msg
+              activity: "{Topic.introMsgText}"
 
             - kind: AdaptiveCardPrompt
               id: select_contact_card
@@ -247,34 +285,69 @@ beginDialog:
                 ={
                   type: "AdaptiveCard",
                   '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
-                  version: "1.3",
+                  version: "1.5",
                   body: [
                     {
-                      type: "TextBlock",
-                      text: "Manage Emergency Contacts",
-                      weight: "Bolder",
-                      size: "Medium",
-                      wrap: true,
-                      color: "Default"
+                      type: "ColumnSet",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "auto",
+                          items: [
+                            {
+                              type: "Image",
+                              url: Topic.WorkdayIconUrl,
+                              style: "RoundedCorners",
+                              size: "Small",
+                              height: "20px",
+                              width: "20px"
+                            }
+                          ],
+                          verticalContentAlignment: "Center"
+                        },
+                        {
+                          type: "Column",
+                          width: "auto",
+                          items: [
+                            {
+                              type: "TextBlock",
+                              text: "Workday",
+                              size: "Small",
+                              weight: "Bolder"
+                            }
+                          ],
+                          verticalContentAlignment: "Center",
+                          spacing: "Small"
+                        }
+                      ]
                     },
                     {
                       type: "TextBlock",
-                      text: "You have " & CountRows(Topic.contactSelectionList) & " emergency contact(s). Select one to update or add a new contact.",
-                      wrap: true
+                      text: "Select an emergency contact to update",
+                      weight: "Bolder",
+                      size: "Medium",
+                      wrap: true,
+                      spacing: "Medium"
+                    },
+                    {
+                      type: "TextBlock",
+                      text: "You have " & CountRows(Topic.contactSelectionList) & " emergency contact(s). Select to update or add a new contact.",
+                      wrap: true,
+                      spacing: "Small"
                     },
                     {
                       type: "Input.ChoiceSet",
                       id: "selectedContact",
-                      label: "Select Emergency Contact",
-                      style: "expanded",
+                      label: "Emergency contact",
+                      style: "compact",
                       isRequired: true,
-                      errorMessage: "Please select an option.",
+                      errorMessage: "Please select an emergency contact.",
                       choices: ForAll(Topic.selectionChoices, { title: ThisRecord.title, value: ThisRecord.value })
                     }
                   ],
                   actions: [
-                    { type: "Action.Submit", title: "Continue" },
-                    { type: "Action.Submit", title: "Cancel", associatedInputs: "none" }
+                    { type: "Action.Submit", title: "Continue", id: "Continue" },
+                    { type: "Action.Submit", title: "Add an emergency contact", id: "ADD_NEW", associatedInputs: "none" }
                   ]
                 }
               output:
@@ -304,7 +377,7 @@ beginDialog:
               id: set_mode
               conditions:
                 - id: is_update_mode
-                  condition: =Topic.selectedContactWID <> "ADD_NEW"
+                  condition: =Topic.selectionActionId = "Continue"
                   displayName: Update existing contact
                   actions:
                     - kind: SetVariable
@@ -333,6 +406,22 @@ beginDialog:
           id: no_contacts_msg
           activity: You don't have any emergency contacts configured yet. Let's add one now.
 
+    # Show context message before form (only for update mode)
+    - kind: ConditionGroup
+      id: show_update_context_msg
+      conditions:
+        - id: is_update_show_msg
+          condition: =Topic.isUpdateMode = true
+          actions:
+            - kind: SetVariable
+              id: set_update_context_text
+              variable: Topic.updateContextText
+              value: ="You've pulled up " & Topic.selectedContactData.FirstName & " " & Topic.selectedContactData.LastName & "'s emergency contact details. In this form you can edit details or remove " & Topic.selectedContactData.FirstName & " from your emergency contacts."
+
+            - kind: SendActivity
+              id: update_context_msg
+              activity: "{Topic.updateContextText}"
+
     - kind: AdaptiveCardPrompt
       id: emergency_contact_form
       displayName: Emergency contact form
@@ -340,292 +429,424 @@ beginDialog:
         ={
           type: "AdaptiveCard",
           '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
-          version: "1.3",
+          version: "1.5",
           body: [
             {
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "auto",
+                  items: [
+                    {
+                      type: "Image",
+                      url: Topic.WorkdayIconUrl,
+                      style: "RoundedCorners",
+                      size: "Small",
+                      height: "20px",
+                      width: "20px"
+                    }
+                  ],
+                  verticalContentAlignment: "Center"
+                },
+                {
+                  type: "Column",
+                  width: "auto",
+                  items: [
+                    {
+                      type: "TextBlock",
+                      text: "Workday",
+                      size: "Small",
+                      weight: "Bolder"
+                    }
+                  ],
+                  verticalContentAlignment: "Center",
+                  spacing: "Small"
+                }
+              ]
+            },
+            {
               type: "TextBlock",
-              text: If(Topic.isUpdateMode, "Update Emergency Contact", "Add Emergency Contact"),
+              text: If(Topic.isUpdateMode, "Update emergency contact", "Add emergency contact"),
               weight: "Bolder",
               size: "Medium",
               wrap: true,
-              color: "Default"
+              spacing: "Medium"
             },
             {
               type: "TextBlock",
-              text: If(Topic.isUpdateMode, "Update the details for " & Topic.selectedContactData.DisplayName & ".", "Please provide the details for your emergency contact."),
-              wrap: true
+              text: "Fields marked with * are required.",
+              wrap: true,
+              size: "Small",
+              spacing: "Small"
             },
             {
-              type: "Input.Text",
-              id: "firstName",
-              label: "First Name",
-              placeholder: "Enter first name",
-              isRequired: true,
-              errorMessage: "First name is required.",
-              maxLength: 100,
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.FirstName, "")
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.Text",
+                      id: "firstName",
+                      label: "First name",
+                      placeholder: "Enter first name",
+                      isRequired: true,
+                      errorMessage: "First name is required.",
+                      maxLength: 100,
+                      value: If(Topic.isUpdateMode, Topic.selectedContactData.FirstName, "")
+                    }
+                  ]
+                },
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.Text",
+                      id: "lastName",
+                      label: "Last name",
+                      placeholder: "Enter last name",
+                      isRequired: true,
+                      errorMessage: "Last name is required.",
+                      maxLength: 100,
+                      value: If(Topic.isUpdateMode, Topic.selectedContactData.LastName, "")
+                    }
+                  ]
+                }
+              ]
             },
             {
-              type: "Input.Text",
-              id: "lastName",
-              label: "Last Name",
-              placeholder: "Enter last name",
-              isRequired: true,
-              errorMessage: "Last name is required.",
-              maxLength: 100,
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.LastName, "")
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "priority",
+                      label: "Priority (only applies if not primary)",
+                      style: "compact",
+                      isRequired: true,
+                      errorMessage: "Please select a priority.",
+                      choices: [
+                        { title: "2 - High", value: "2" },
+                        { title: "3", value: "3" },
+                        { title: "4", value: "4" },
+                        { title: "5 - Medium", value: "5" },
+                        { title: "6", value: "6" },
+                        { title: "7", value: "7" },
+                        { title: "8", value: "8" },
+                        { title: "9", value: "9" },
+                        { title: "10 - Low", value: "10" }
+                      ],
+                      value: If(Topic.isUpdateMode, If(Value(Topic.selectedContactData.Priority) > 1, Topic.selectedContactData.Priority, "2"), "2")
+                    }
+                  ]
+                },
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "relationshipType",
+                      label: "Relationship",
+                      style: "compact",
+                      isRequired: true,
+                      errorMessage: "Please select a relationship type.",
+                      choices: ForAll(Global.RelatedPersonRelationshipLookupTable, { title: ThisRecord.Referenced_Object_Descriptor, value: ThisRecord.ID }),
+                      value: If(Topic.isUpdateMode, Topic.selectedContactData.RelationshipTypeID, First(Global.RelatedPersonRelationshipLookupTable).ID)
+                    }
+                  ]
+                }
+              ]
             },
             {
               type: "Input.Toggle",
               id: "isPrimaryContact",
-              title: "Set as Primary Emergency Contact",
+              title: "Set as primary emergency contact",
               value: If(Topic.isUpdateMode, If(Topic.selectedContactData.IsPrimary = "true" || Topic.selectedContactData.IsPrimary = "1", "true", "false"), "false"),
               valueOn: "true",
               valueOff: "false"
             },
             {
               type: "Input.ChoiceSet",
-              id: "priority",
-              label: "Priority (only applies if not primary)",
-              style: "compact",
-              isRequired: true,
-              errorMessage: "Please select a priority.",
-              choices: [
-                { title: "2 - High", value: "2" },
-                { title: "3", value: "3" },
-                { title: "4", value: "4" },
-                { title: "5 - Medium", value: "5" },
-                { title: "6", value: "6" },
-                { title: "7", value: "7" },
-                { title: "8", value: "8" },
-                { title: "9", value: "9" },
-                { title: "10 - Low", value: "10" }
-              ],
-              value: If(Topic.isUpdateMode, If(Value(Topic.selectedContactData.Priority) > 1, Topic.selectedContactData.Priority, "2"), "2")
-            },
-            {
-              type: "Input.ChoiceSet",
-              id: "relationshipType",
-              label: "Relationship",
-              style: "compact",
-              isRequired: true,
-              errorMessage: "Please select a relationship type.",
-              choices: ForAll(Global.RelatedPersonRelationshipLookupTable, { title: ThisRecord.Referenced_Object_Descriptor, value: ThisRecord.ID }),
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.RelationshipTypeID, First(Global.RelatedPersonRelationshipLookupTable).ID)
-            },
-            {
-              type: "Input.ChoiceSet",
-              id: "phoneCountryCode",
-              label: "Phone Country Code",
-              style: "compact",
-              isRequired: true,
-              errorMessage: "Please select a country code.",
-              choices: ForAll(Global.CountryCodeLookupTable, { title: ThisRecord.Referenced_Object_Descriptor, value: ThisRecord.ID }),
-              value: If(Topic.isUpdateMode, LookUp(Global.CountryCodeLookupTable, Last(Split(ID, "_")).Value = Topic.selectedContactData.PhoneCountryCode).ID, First(Global.CountryCodeLookupTable).ID)
-            },
-            {
-              type: "Input.Text",
-              id: "phoneNumber",
-              label: "Phone Number",
-              placeholder: "Enter phone number (without country code)",
-              isRequired: true,
-              errorMessage: "Phone number is required.",
-              maxLength: 20,
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.PhoneNumber, "")
-            },
-            {
-              type: "Input.ChoiceSet",
               id: "phoneDeviceType",
-              label: "Phone Type",
+              label: "Phone type",
               style: "compact",
               isRequired: true,
               errorMessage: "Please select a phone type.",
+              separator: true,
               choices: [
                 { title: "Mobile", value: "Mobile" },
                 { title: "Home", value: "Home" },
                 { title: "Work", value: "Work" }
               ],
-              value: "Mobile"
+              value: "Mobile",
+              spacing: "Medium"
+            },
+            {
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "phoneCountryCode",
+                      label: "Phone country code",
+                      style: "compact",
+                      isRequired: true,
+                      errorMessage: "Please select a country code.",
+                      choices: ForAll(Global.CountryCodeLookupTable, { title: ThisRecord.Referenced_Object_Descriptor, value: ThisRecord.ID }),
+                      value: If(Topic.isUpdateMode, LookUp(Global.CountryCodeLookupTable, Last(Split(ID, "_")).Value = Topic.selectedContactData.PhoneCountryCode).ID, First(Global.CountryCodeLookupTable).ID)
+                    }
+                  ]
+                },
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.Text",
+                      id: "phoneNumber",
+                      label: "Phone number",
+                      placeholder: "Enter phone number",
+                      isRequired: true,
+                      errorMessage: "Phone number is required.",
+                      maxLength: 20,
+                      value: If(Topic.isUpdateMode, Topic.selectedContactData.PhoneNumber, "")
+                    }
+                  ]
+                }
+              ]
             },
             {
               type: "Input.Text",
               id: "addressLine1",
-              label: "Address Line 1",
+              label: "Address line 1",
               placeholder: "Enter street address",
               isRequired: true,
               errorMessage: "Address is required.",
               maxLength: 200,
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.AddressLine1, "")
+              value: If(Topic.isUpdateMode, Topic.selectedContactData.AddressLine1, ""),
+              separator: true,
+              spacing: "Medium"
             },
             {
-              type: "Input.Text",
-              id: "city",
-              label: "City",
-              placeholder: "Enter city",
-              isRequired: true,
-              errorMessage: "City is required.",
-              maxLength: 100,
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.City, "")
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.Text",
+                      id: "city",
+                      label: "City",
+                      placeholder: "Enter city",
+                      isRequired: true,
+                      errorMessage: "City is required.",
+                      maxLength: 100,
+                      value: If(Topic.isUpdateMode, Topic.selectedContactData.City, "")
+                    }
+                  ]
+                },
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "stateProvince",
+                      label: "State/Province",
+                      style: "compact",
+                      isRequired: true,
+                      errorMessage: "Please select a state/province.",
+                      choices: [
+                        { title: "-- USA --", value: "_USA_HEADER" },
+                        { title: "Alabama", value: "USA-AL" },
+                        { title: "Alaska", value: "USA-AK" },
+                        { title: "Arizona", value: "USA-AZ" },
+                        { title: "Arkansas", value: "USA-AR" },
+                        { title: "California", value: "USA-CA" },
+                        { title: "Colorado", value: "USA-CO" },
+                        { title: "Connecticut", value: "USA-CT" },
+                        { title: "Delaware", value: "USA-DE" },
+                        { title: "Florida", value: "USA-FL" },
+                        { title: "Georgia", value: "USA-GA" },
+                        { title: "Hawaii", value: "USA-HI" },
+                        { title: "Idaho", value: "USA-ID" },
+                        { title: "Illinois", value: "USA-IL" },
+                        { title: "Indiana", value: "USA-IN" },
+                        { title: "Iowa", value: "USA-IA" },
+                        { title: "Kansas", value: "USA-KS" },
+                        { title: "Kentucky", value: "USA-KY" },
+                        { title: "Louisiana", value: "USA-LA" },
+                        { title: "Maine", value: "USA-ME" },
+                        { title: "Maryland", value: "USA-MD" },
+                        { title: "Massachusetts", value: "USA-MA" },
+                        { title: "Michigan", value: "USA-MI" },
+                        { title: "Minnesota", value: "USA-MN" },
+                        { title: "Mississippi", value: "USA-MS" },
+                        { title: "Missouri", value: "USA-MO" },
+                        { title: "Montana", value: "USA-MT" },
+                        { title: "Nebraska", value: "USA-NE" },
+                        { title: "Nevada", value: "USA-NV" },
+                        { title: "New Hampshire", value: "USA-NH" },
+                        { title: "New Jersey", value: "USA-NJ" },
+                        { title: "New Mexico", value: "USA-NM" },
+                        { title: "New York", value: "USA-NY" },
+                        { title: "North Carolina", value: "USA-NC" },
+                        { title: "North Dakota", value: "USA-ND" },
+                        { title: "Ohio", value: "USA-OH" },
+                        { title: "Oklahoma", value: "USA-OK" },
+                        { title: "Oregon", value: "USA-OR" },
+                        { title: "Pennsylvania", value: "USA-PA" },
+                        { title: "Rhode Island", value: "USA-RI" },
+                        { title: "South Carolina", value: "USA-SC" },
+                        { title: "South Dakota", value: "USA-SD" },
+                        { title: "Tennessee", value: "USA-TN" },
+                        { title: "Texas", value: "USA-TX" },
+                        { title: "Utah", value: "USA-UT" },
+                        { title: "Vermont", value: "USA-VT" },
+                        { title: "Virginia", value: "USA-VA" },
+                        { title: "Washington", value: "USA-WA" },
+                        { title: "West Virginia", value: "USA-WV" },
+                        { title: "Wisconsin", value: "USA-WI" },
+                        { title: "Wyoming", value: "USA-WY" },
+                        { title: "District of Columbia", value: "USA-DC" },
+                        { title: "-- Canada --", value: "_CAN_HEADER" },
+                        { title: "Alberta", value: "CAN-AB" },
+                        { title: "British Columbia", value: "CAN-BC" },
+                        { title: "Manitoba", value: "CAN-MB" },
+                        { title: "New Brunswick", value: "CAN-NB" },
+                        { title: "Newfoundland and Labrador", value: "CAN-NL" },
+                        { title: "Nova Scotia", value: "CAN-NS" },
+                        { title: "Ontario", value: "CAN-ON" },
+                        { title: "Prince Edward Island", value: "CAN-PE" },
+                        { title: "Quebec", value: "CAN-QC" },
+                        { title: "Saskatchewan", value: "CAN-SK" },
+                        { title: "-- United Kingdom --", value: "_GBR_HEADER" },
+                        { title: "England", value: "GBR-ENG" },
+                        { title: "Scotland", value: "GBR-SCT" },
+                        { title: "Wales", value: "GBR-WLS" },
+                        { title: "Northern Ireland", value: "GBR-NIR" },
+                        { title: "-- India --", value: "_IND_HEADER" },
+                        { title: "Andhra Pradesh", value: "IND-AP" },
+                        { title: "Delhi", value: "IND-DL" },
+                        { title: "Gujarat", value: "IND-GJ" },
+                        { title: "Haryana", value: "IND-HR" },
+                        { title: "Karnataka", value: "IND-KA" },
+                        { title: "Kerala", value: "IND-KL" },
+                        { title: "Madhya Pradesh", value: "IND-MP" },
+                        { title: "Maharashtra", value: "IND-MH" },
+                        { title: "Punjab", value: "IND-PB" },
+                        { title: "Rajasthan", value: "IND-RJ" },
+                        { title: "Tamil Nadu", value: "IND-TN" },
+                        { title: "Telangana", value: "IND-TG" },
+                        { title: "Uttar Pradesh", value: "IND-UP" },
+                        { title: "West Bengal", value: "IND-WB" },
+                        { title: "-- Australia --", value: "_AUS_HEADER" },
+                        { title: "Australian Capital Territory", value: "AUS-ACT" },
+                        { title: "New South Wales", value: "AUS-NSW" },
+                        { title: "Northern Territory", value: "AUS-NT" },
+                        { title: "Queensland", value: "AUS-QLD" },
+                        { title: "South Australia", value: "AUS-SA" },
+                        { title: "Tasmania", value: "AUS-TAS" },
+                        { title: "Victoria", value: "AUS-VIC" },
+                        { title: "Western Australia", value: "AUS-WA" },
+                        { title: "-- Germany --", value: "_DEU_HEADER" },
+                        { title: "Bavaria", value: "DEU-BY" },
+                        { title: "Berlin", value: "DEU-BE" },
+                        { title: "Hamburg", value: "DEU-HH" },
+                        { title: "Hesse", value: "DEU-HE" },
+                        { title: "North Rhine-Westphalia", value: "DEU-NW" },
+                        { title: "-- France --", value: "_FRA_HEADER" },
+                        { title: "Île-de-France", value: "FRA-IDF" },
+                        { title: "Provence-Alpes-Côte d'Azur", value: "FRA-PAC" },
+                        { title: "Auvergne-Rhône-Alpes", value: "FRA-ARA" }
+                      ],
+                      value: If(Topic.isUpdateMode, Topic.selectedContactData.StateProvince, "USA-WA")
+                    }
+                  ]
+                }
+              ]
             },
             {
-              type: "Input.ChoiceSet",
-              id: "stateProvince",
-              label: "State/Province",
-              style: "compact",
-              isRequired: true,
-              errorMessage: "Please select a state/province.",
-              choices: [
-                { title: "-- USA --", value: "_USA_HEADER" },
-                { title: "Alabama", value: "USA-AL" },
-                { title: "Alaska", value: "USA-AK" },
-                { title: "Arizona", value: "USA-AZ" },
-                { title: "Arkansas", value: "USA-AR" },
-                { title: "California", value: "USA-CA" },
-                { title: "Colorado", value: "USA-CO" },
-                { title: "Connecticut", value: "USA-CT" },
-                { title: "Delaware", value: "USA-DE" },
-                { title: "Florida", value: "USA-FL" },
-                { title: "Georgia", value: "USA-GA" },
-                { title: "Hawaii", value: "USA-HI" },
-                { title: "Idaho", value: "USA-ID" },
-                { title: "Illinois", value: "USA-IL" },
-                { title: "Indiana", value: "USA-IN" },
-                { title: "Iowa", value: "USA-IA" },
-                { title: "Kansas", value: "USA-KS" },
-                { title: "Kentucky", value: "USA-KY" },
-                { title: "Louisiana", value: "USA-LA" },
-                { title: "Maine", value: "USA-ME" },
-                { title: "Maryland", value: "USA-MD" },
-                { title: "Massachusetts", value: "USA-MA" },
-                { title: "Michigan", value: "USA-MI" },
-                { title: "Minnesota", value: "USA-MN" },
-                { title: "Mississippi", value: "USA-MS" },
-                { title: "Missouri", value: "USA-MO" },
-                { title: "Montana", value: "USA-MT" },
-                { title: "Nebraska", value: "USA-NE" },
-                { title: "Nevada", value: "USA-NV" },
-                { title: "New Hampshire", value: "USA-NH" },
-                { title: "New Jersey", value: "USA-NJ" },
-                { title: "New Mexico", value: "USA-NM" },
-                { title: "New York", value: "USA-NY" },
-                { title: "North Carolina", value: "USA-NC" },
-                { title: "North Dakota", value: "USA-ND" },
-                { title: "Ohio", value: "USA-OH" },
-                { title: "Oklahoma", value: "USA-OK" },
-                { title: "Oregon", value: "USA-OR" },
-                { title: "Pennsylvania", value: "USA-PA" },
-                { title: "Rhode Island", value: "USA-RI" },
-                { title: "South Carolina", value: "USA-SC" },
-                { title: "South Dakota", value: "USA-SD" },
-                { title: "Tennessee", value: "USA-TN" },
-                { title: "Texas", value: "USA-TX" },
-                { title: "Utah", value: "USA-UT" },
-                { title: "Vermont", value: "USA-VT" },
-                { title: "Virginia", value: "USA-VA" },
-                { title: "Washington", value: "USA-WA" },
-                { title: "West Virginia", value: "USA-WV" },
-                { title: "Wisconsin", value: "USA-WI" },
-                { title: "Wyoming", value: "USA-WY" },
-                { title: "District of Columbia", value: "USA-DC" },
-                { title: "-- Canada --", value: "_CAN_HEADER" },
-                { title: "Alberta", value: "CAN-AB" },
-                { title: "British Columbia", value: "CAN-BC" },
-                { title: "Manitoba", value: "CAN-MB" },
-                { title: "New Brunswick", value: "CAN-NB" },
-                { title: "Newfoundland and Labrador", value: "CAN-NL" },
-                { title: "Nova Scotia", value: "CAN-NS" },
-                { title: "Ontario", value: "CAN-ON" },
-                { title: "Prince Edward Island", value: "CAN-PE" },
-                { title: "Quebec", value: "CAN-QC" },
-                { title: "Saskatchewan", value: "CAN-SK" },
-                { title: "-- United Kingdom --", value: "_GBR_HEADER" },
-                { title: "England", value: "GBR-ENG" },
-                { title: "Scotland", value: "GBR-SCT" },
-                { title: "Wales", value: "GBR-WLS" },
-                { title: "Northern Ireland", value: "GBR-NIR" },
-                { title: "-- India --", value: "_IND_HEADER" },
-                { title: "Andhra Pradesh", value: "IND-AP" },
-                { title: "Delhi", value: "IND-DL" },
-                { title: "Gujarat", value: "IND-GJ" },
-                { title: "Haryana", value: "IND-HR" },
-                { title: "Karnataka", value: "IND-KA" },
-                { title: "Kerala", value: "IND-KL" },
-                { title: "Madhya Pradesh", value: "IND-MP" },
-                { title: "Maharashtra", value: "IND-MH" },
-                { title: "Punjab", value: "IND-PB" },
-                { title: "Rajasthan", value: "IND-RJ" },
-                { title: "Tamil Nadu", value: "IND-TN" },
-                { title: "Telangana", value: "IND-TG" },
-                { title: "Uttar Pradesh", value: "IND-UP" },
-                { title: "West Bengal", value: "IND-WB" },
-                { title: "-- Australia --", value: "_AUS_HEADER" },
-                { title: "Australian Capital Territory", value: "AUS-ACT" },
-                { title: "New South Wales", value: "AUS-NSW" },
-                { title: "Northern Territory", value: "AUS-NT" },
-                { title: "Queensland", value: "AUS-QLD" },
-                { title: "South Australia", value: "AUS-SA" },
-                { title: "Tasmania", value: "AUS-TAS" },
-                { title: "Victoria", value: "AUS-VIC" },
-                { title: "Western Australia", value: "AUS-WA" },
-                { title: "-- Germany --", value: "_DEU_HEADER" },
-                { title: "Bavaria", value: "DEU-BY" },
-                { title: "Berlin", value: "DEU-BE" },
-                { title: "Hamburg", value: "DEU-HH" },
-                { title: "Hesse", value: "DEU-HE" },
-                { title: "North Rhine-Westphalia", value: "DEU-NW" },
-                { title: "-- France --", value: "_FRA_HEADER" },
-                { title: "Île-de-France", value: "FRA-IDF" },
-                { title: "Provence-Alpes-Côte d'Azur", value: "FRA-PAC" },
-                { title: "Auvergne-Rhône-Alpes", value: "FRA-ARA" }
-              ],
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.StateProvince, "USA-WA")
-            },
-            {
-              type: "Input.Text",
-              id: "postalCode",
-              label: "Postal Code",
-              placeholder: "Enter postal code",
-              isRequired: true,
-              errorMessage: "Postal code is required.",
-              maxLength: 20,
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.PostalCode, "")
-            },
-            {
-              type: "Input.ChoiceSet",
-              id: "countryCode",
-              label: "Country",
-              style: "compact",
-              isRequired: true,
-              errorMessage: "Please select a country.",
-              choices: [
-                { title: "United States", value: "USA" },
-                { title: "Canada", value: "CAN" },
-                { title: "United Kingdom", value: "GBR" },
-                { title: "India", value: "IND" },
-                { title: "Australia", value: "AUS" },
-                { title: "Germany", value: "DEU" },
-                { title: "France", value: "FRA" },
-                { title: "Japan", value: "JPN" },
-                { title: "China", value: "CHN" },
-                { title: "Brazil", value: "BRA" },
-                { title: "Mexico", value: "MEX" },
-                { title: "Italy", value: "ITA" },
-                { title: "Spain", value: "ESP" },
-                { title: "Netherlands", value: "NLD" },
-                { title: "Singapore", value: "SGP" },
-                { title: "Ireland", value: "IRL" },
-                { title: "Israel", value: "ISR" },
-                { title: "South Korea", value: "KOR" },
-                { title: "Switzerland", value: "CHE" },
-                { title: "Sweden", value: "SWE" }
-              ],
-              value: If(Topic.isUpdateMode, Topic.selectedContactData.CountryCode, "USA")
+              type: "ColumnSet",
+              columns: [
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.Text",
+                      id: "postalCode",
+                      label: "Postal code",
+                      placeholder: "Enter postal code",
+                      isRequired: true,
+                      errorMessage: "Postal code is required.",
+                      maxLength: 20,
+                      value: If(Topic.isUpdateMode, Topic.selectedContactData.PostalCode, "")
+                    }
+                  ]
+                },
+                {
+                  type: "Column",
+                  width: "stretch",
+                  items: [
+                    {
+                      type: "Input.ChoiceSet",
+                      id: "countryCode",
+                      label: "Country",
+                      style: "compact",
+                      isRequired: true,
+                      errorMessage: "Please select a country.",
+                      choices: [
+                        { title: "United States", value: "USA" },
+                        { title: "Canada", value: "CAN" },
+                        { title: "United Kingdom", value: "GBR" },
+                        { title: "India", value: "IND" },
+                        { title: "Australia", value: "AUS" },
+                        { title: "Germany", value: "DEU" },
+                        { title: "France", value: "FRA" },
+                        { title: "Japan", value: "JPN" },
+                        { title: "China", value: "CHN" },
+                        { title: "Brazil", value: "BRA" },
+                        { title: "Mexico", value: "MEX" },
+                        { title: "Italy", value: "ITA" },
+                        { title: "Spain", value: "ESP" },
+                        { title: "Netherlands", value: "NLD" },
+                        { title: "Singapore", value: "SGP" },
+                        { title: "Ireland", value: "IRL" },
+                        { title: "Israel", value: "ISR" },
+                        { title: "South Korea", value: "KOR" },
+                        { title: "Switzerland", value: "CHE" },
+                        { title: "Sweden", value: "SWE" }
+                      ],
+                      value: If(Topic.isUpdateMode, Topic.selectedContactData.CountryCode, "USA")
+                    }
+                  ]
+                }
+              ]
             }
           ],
-          actions: [
-            { type: "Action.Submit", title: If(Topic.isUpdateMode, "Update", "Submit") },
-            { type: "Action.Submit", title: "Cancel", associatedInputs: "none" }
-          ]
+          actions: If(Topic.isUpdateMode,
+            [
+              { type: "Action.Submit", title: "Submit changes", id: "Submit", data: { actionSubmitId: "Submit" } },
+              { type: "Action.Submit", title: "Delete contact", id: "Delete", data: { actionSubmitId: "Delete" }, associatedInputs: "none" },
+              { type: "Action.Submit", title: "Cancel", id: "Cancel", data: { actionSubmitId: "Cancel" }, associatedInputs: "none" }
+            ],
+            [
+              { type: "Action.Submit", title: "Submit", id: "Submit", data: { actionSubmitId: "Submit" } },
+              { type: "Action.Submit", title: "Cancel", id: "Cancel", data: { actionSubmitId: "Cancel" }, associatedInputs: "none" }
+            ]
+          )
         }
       output:
         binding:
@@ -674,72 +895,431 @@ beginDialog:
             - kind: CancelAllDialogs
               id: form_cancel_all
 
+    # Handle delete action - show confirmation
     - kind: ConditionGroup
-      id: submit_to_workday
+      id: handle_delete_action
       conditions:
-        - id: is_update_submit
-          condition: =Topic.isUpdateMode = true
-          displayName: Submit update to Workday
+        - id: delete_requested
+          condition: =Topic.formActionId = "Delete"
+          displayName: User wants to delete contact
           actions:
-            - kind: BeginDialog
-              id: execute_update
-              displayName: Execute Workday Update
-              input:
-                binding:
-                  parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Emergency_Contact_WID}"",""value"":""" & Topic.selectedContactWID & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Updating emergency contact""}]}"
-                  scenarioName: msdyn_UpdateEmergencyContact
+            # Check if contact is primary - don't allow delete
+            - kind: ConditionGroup
+              id: check_primary_delete
+              conditions:
+                - id: is_primary_contact
+                  condition: =Topic.selectedContactData.IsPrimary = "true" || Topic.selectedContactData.IsPrimary = "1"
+                  displayName: Cannot delete primary contact
+                  actions:
+                    - kind: SendActivity
+                      id: cannot_delete_primary_msg
+                      activity: You cannot delete your primary emergency contact. Please designate another contact as primary first, then you can remove this one.
 
-              dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-              output:
-                binding:
-                  errorResponse: Topic.errorResponse
-                  isSuccess: Topic.isSuccess
-                  workdayResponse: Topic.workdayResponse
+                    - kind: CancelAllDialogs
+                      id: cancel_primary_delete
 
-      elseActions:
-        - kind: BeginDialog
-          id: execute_add
-          displayName: Execute Workday Add
-          input:
-            binding:
-              parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Adding emergency contact""}]}"
-              scenarioName: msdyn_HRWorkdayHCMEmployeeAddEmergencyContact
+              elseActions:
+                # Not primary - proceed with delete confirmation
+                - kind: SetVariable
+                  id: set_delete_confirm_text
+                  variable: Topic.deleteConfirmText
+                  value: ="Are you sure you want to delete this emergency contact?"
 
-          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-          output:
-            binding:
-              errorResponse: Topic.errorResponse
-              isSuccess: Topic.isSuccess
-              workdayResponse: Topic.workdayResponse
-
-    - kind: ConditionGroup
-      id: report_result
-      conditions:
-        - id: failed
-          condition: =Topic.isSuccess = false
-          actions:
-            - kind: SendActivity
-              id: failure_msg
-              activity: ={If(Topic.isUpdateMode, "An error occurred and your emergency contact was not updated.", "An error occurred and your emergency contact was not added.") & " Please try again or contact support."}
-
-      elseActions:
-        - kind: ConditionGroup
-          id: success_message_condition
-          conditions:
-            - id: update_success
-              condition: =Topic.isUpdateMode = true
-              actions:
                 - kind: SendActivity
-                  id: update_success_msg
-                  activity: Your emergency contact has been successfully updated in Workday.
+                  id: delete_confirm_text_msg
+                  activity: "{Topic.deleteConfirmText}"
 
-          elseActions:
-            - kind: SendActivity
-              id: add_success_msg
-              activity: Your emergency contact has been successfully added to Workday.
+                - kind: AdaptiveCardPrompt
+                  id: confirm_delete_card
+                  displayName: Confirm delete
+                  card: |-
+                    ={
+                      type: "AdaptiveCard",
+                      '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                      version: "1.5",
+                      body: [
+                        {
+                          type: "ColumnSet",
+                          columns: [
+                            {
+                              type: "Column",
+                              width: "auto",
+                              items: [
+                                {
+                                  type: "Image",
+                                  url: Topic.WorkdayIconUrl,
+                                  style: "RoundedCorners",
+                                  size: "Small",
+                                  height: "20px",
+                                  width: "20px"
+                                }
+                              ],
+                              verticalContentAlignment: "Center"
+                            },
+                            {
+                              type: "Column",
+                              width: "auto",
+                              items: [
+                                {
+                                  type: "TextBlock",
+                                  text: "Workday",
+                                  size: "Small",
+                                  weight: "Bolder"
+                                }
+                              ],
+                              verticalContentAlignment: "Center",
+                              spacing: "Small"
+                            }
+                          ]
+                        },
+                        {
+                          type: "TextBlock",
+                          text: "Confirm deletion",
+                          weight: "Bolder",
+                          size: "Medium",
+                          wrap: true,
+                          spacing: "Medium"
+                        },
+                        {
+                          type: "FactSet",
+                          spacing: "Medium",
+                          facts: [
+                            { title: "Name", value: Topic.selectedContactData.FirstName & " " & Topic.selectedContactData.LastName },
+                            { title: "Priority", value: LookUp([{v:"2",t:"2 - High"},{v:"3",t:"3"},{v:"4",t:"4"},{v:"5",t:"5 - Medium"},{v:"6",t:"6"},{v:"7",t:"7"},{v:"8",t:"8"},{v:"9",t:"9"},{v:"10",t:"10 - Low"}], v = Topic.selectedContactData.Priority).t },
+                            { title: "Relationship", value: Topic.selectedContactData.RelationshipType },
+                            { title: "Phone", value: Topic.selectedContactData.Phone },
+                            { title: "Address", value: Topic.selectedContactData.Address }
+                          ]
+                        }
+                      ],
+                      actions: [
+                        { type: "Action.Submit", title: "Yes, delete", id: "Yes", data: { actionSubmitId: "Yes" } },
+                        { type: "Action.Submit", title: "Cancel", id: "No", data: { actionSubmitId: "No" } }
+                      ]
+                    }
+                  output:
+                    binding:
+                      actionSubmitId: Topic.confirmDeleteAction
 
+                  outputType:
+                    properties:
+                      actionSubmitId: String
+
+                - kind: ConditionGroup
+                  id: check_delete_confirmation
+                  conditions:
+                    - id: confirmed_delete
+                      condition: =Topic.confirmDeleteAction = "Yes"
+                      displayName: User confirmed delete
+                      actions:
+                        - kind: BeginDialog
+                          id: execute_delete
+                          displayName: Execute Workday Delete
+                          input:
+                            binding:
+                              parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Emergency_Contact_WID}"",""value"":""" & Topic.selectedContactWID & """},{""key"":""{Priority}"",""value"":""" & Topic.selectedContactData.Priority & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.selectedContactData.RelationshipTypeID & """},{""key"":""{Comment}"",""value"":""Removing emergency contact via Copilot""}]}"
+                              scenarioName: msdyn_DeleteEmergencyContact
+
+                          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+                          output:
+                            binding:
+                              errorResponse: Topic.errorResponse
+                              isSuccess: Topic.isSuccess
+                              workdayResponse: Topic.workdayResponse
+
+                        - kind: ConditionGroup
+                          id: report_delete_result
+                          conditions:
+                            - id: delete_failed
+                              condition: =Topic.isSuccess = false
+                              actions:
+                                # Parse error message for display
+                                - kind: SetVariable
+                                  id: set_delete_error_raw
+                                  variable: Topic.deleteErrorRaw
+                                  value: =Topic.errorResponse
+
+                                - kind: SetVariable
+                                  id: parse_delete_error
+                                  variable: Topic.deleteErrorParsed
+                                  value: =IfError(Text(ParseJSON(Topic.deleteErrorRaw).error.message), IfError(Text(ParseJSON(Topic.deleteErrorRaw).message), Topic.deleteErrorRaw))
+
+                                - kind: SetVariable
+                                  id: set_delete_error_display
+                                  variable: Topic.deleteErrorDisplay
+                                  value: =If(IsBlank(Topic.deleteErrorParsed), "An unknown error occurred.", Topic.deleteErrorParsed)
+
+                                - kind: SendActivity
+                                  id: delete_failure_msg
+                                  activity: |-
+                                    An error occurred and the emergency contact was not deleted.
+
+                                    **Error details:** {Topic.deleteErrorDisplay}
+
+                                    Please try again or contact support.
+
+                                - kind: CancelAllDialogs
+                                  id: end_on_delete_failure
+
+                          elseActions:
+                            - kind: SendActivity
+                              id: delete_success_msg
+                              activity:
+                                attachments:
+                                  - kind: AdaptiveCardTemplate
+                                    cardContent: |-
+                                      ={
+                                        type: "AdaptiveCard",
+                                        '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                                        version: "1.5",
+                                        body: [
+                                          {
+                                            type: "ColumnSet",
+                                            columns: [
+                                              {
+                                                type: "Column",
+                                                width: "auto",
+                                                items: [
+                                                  {
+                                                    type: "Image",
+                                                    url: Topic.WorkdayIconUrl,
+                                                    style: "RoundedCorners",
+                                                    size: "Small",
+                                                    height: "20px",
+                                                    width: "20px"
+                                                  }
+                                                ],
+                                                verticalContentAlignment: "Center"
+                                              },
+                                              {
+                                                type: "Column",
+                                                width: "auto",
+                                                items: [
+                                                  {
+                                                    type: "TextBlock",
+                                                    text: "Workday",
+                                                    size: "Small",
+                                                    weight: "Bolder"
+                                                  }
+                                                ],
+                                                verticalContentAlignment: "Center",
+                                                spacing: "Small"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            type: "TextBlock",
+                                            text: "✅ Emergency contact deleted",
+                                            weight: "Bolder",
+                                            size: "Medium",
+                                            wrap: true,
+                                            spacing: "Medium"
+                                          },
+                                          {
+                                            type: "FactSet",
+                                            spacing: "Medium",
+                                            facts: [
+                                              { title: "Name", value: Topic.selectedContactData.FirstName & " " & Topic.selectedContactData.LastName },
+                                              { title: "Priority", value: LookUp([{v:"2",t:"2 - High"},{v:"3",t:"3"},{v:"4",t:"4"},{v:"5",t:"5 - Medium"},{v:"6",t:"6"},{v:"7",t:"7"},{v:"8",t:"8"},{v:"9",t:"9"},{v:"10",t:"10 - Low"}], v = Topic.selectedContactData.Priority).t },
+                                              { title: "Relationship", value: Topic.selectedContactData.RelationshipType },
+                                              { title: "Phone", value: Topic.selectedContactData.Phone },
+                                              { title: "Address", value: Topic.selectedContactData.Address }
+                                            ]
+                                          }
+                                        ]
+                                      }
+
+                            - kind: CancelAllDialogs
+                              id: end_delete_dialogs
+
+                  elseActions:
+                    - kind: SendActivity
+                      id: delete_cancelled_msg
+                      activity: Delete cancelled. Is there anything else I can help you with?
+
+                    - kind: CancelAllDialogs
+                      id: cancel_delete_dialogs
+
+    # Only process submit action (not cancel or delete)
+    - kind: ConditionGroup
+      id: check_submit_action
+      conditions:
+        - id: is_submit_action
+          condition: =Topic.formActionId = "Submit"
+          displayName: User submitted the form
+          actions:
+            - kind: ConditionGroup
+              id: submit_to_workday
+              conditions:
+                - id: is_update_submit
+                  condition: =Topic.isUpdateMode = true
+                  displayName: Submit update to Workday
+                  actions:
+                    - kind: BeginDialog
+                      id: execute_update
+                      displayName: Execute Workday Update
+                      input:
+                        binding:
+                          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Emergency_Contact_WID}"",""value"":""" & Topic.selectedContactWID & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Updating emergency contact""}]}"
+                          scenarioName: msdyn_UpdateEmergencyContact
+
+                      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+                      output:
+                        binding:
+                          errorResponse: Topic.errorResponse
+                          isSuccess: Topic.isSuccess
+                          workdayResponse: Topic.workdayResponse
+
+              elseActions:
+                - kind: BeginDialog
+                  id: execute_add
+                  displayName: Execute Workday Add
+                  input:
+                    binding:
+                      parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Adding emergency contact""}]}"
+                      scenarioName: msdyn_HRWorkdayHCMEmployeeAddEmergencyContact
+
+                  dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+                  output:
+                    binding:
+                      errorResponse: Topic.errorResponse
+                      isSuccess: Topic.isSuccess
+                      workdayResponse: Topic.workdayResponse
+
+            - kind: ConditionGroup
+              id: report_result
+              conditions:
+                - id: failed
+                  condition: =Topic.isSuccess = false
+                  actions:
+                    # Parse error message for display
+                    - kind: SetVariable
+                      id: set_submit_error_raw
+                      variable: Topic.submitErrorRaw
+                      value: =Topic.errorResponse
+
+                    - kind: SetVariable
+                      id: parse_submit_error
+                      variable: Topic.submitErrorParsed
+                      value: =IfError(Text(ParseJSON(Topic.submitErrorRaw).error.message), IfError(Text(ParseJSON(Topic.submitErrorRaw).message), Topic.submitErrorRaw))
+
+                    - kind: SetVariable
+                      id: set_submit_error_display
+                      variable: Topic.submitErrorDisplay
+                      value: =If(IsBlank(Topic.submitErrorParsed), "An unknown error occurred.", Topic.submitErrorParsed)
+
+                    - kind: SetVariable
+                      id: set_failure_msg_text
+                      variable: Topic.failureMsgText
+                      value: =If(Topic.isUpdateMode, "An error occurred and your emergency contact was not updated.", "An error occurred and your emergency contact was not added.")
+
+                    - kind: SendActivity
+                      id: failure_msg
+                      activity: |-
+                        {Topic.failureMsgText}
+
+                        **Error details:** {Topic.submitErrorDisplay}
+
+                        Please try again or contact support.
+
+                    - kind: CancelAllDialogs
+                      id: end_on_failure
+
+              elseActions:
+                - kind: SetVariable
+                  id: set_workday_url
+                  variable: Topic.WorkdayUrl
+                  value: ="https://impl.workday.com/microsoft_dpt6/d/home.htmld"
+
+                - kind: SetVariable
+                  id: set_success_intro_text
+                  variable: Topic.successIntroText
+                  value: =If(Topic.isUpdateMode, "Great! You've updated your emergency contact.", "Great! You've added a new emergency contact.")
+
+                - kind: SendActivity
+                  id: success_intro_msg
+                  activity: "{Topic.successIntroText}"
+
+                - kind: SendActivity
+                  id: success_card
+                  activity:
+                    attachments:
+                      - kind: AdaptiveCardTemplate
+                        cardContent: |-
+                          ={
+                            type: "AdaptiveCard",
+                            '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                            version: "1.5",
+                            body: [
+                              {
+                                type: "ColumnSet",
+                                columns: [
+                                  {
+                                    type: "Column",
+                                    width: "auto",
+                                    items: [
+                                      {
+                                        type: "Image",
+                                        url: Topic.WorkdayIconUrl,
+                                        style: "RoundedCorners",
+                                        size: "Small",
+                                        height: "20px",
+                                        width: "20px"
+                                      }
+                                    ],
+                                    verticalContentAlignment: "Center"
+                                  },
+                                  {
+                                    type: "Column",
+                                    width: "auto",
+                                    items: [
+                                      {
+                                        type: "TextBlock",
+                                        text: "Workday",
+                                        size: "Small",
+                                        weight: "Bolder"
+                                      }
+                                    ],
+                                    verticalContentAlignment: "Center",
+                                    spacing: "Small"
+                                  }
+                                ]
+                              },
+                              {
+                                type: "TextBlock",
+                                text: If(Topic.isUpdateMode, "✅ Emergency contact updated", "✅ Emergency contact added"),
+                                weight: "Bolder",
+                                size: "Medium",
+                                wrap: true, 
+                                spacing: "Medium"
+                              },
+                              {
+                                type: "FactSet",
+                                spacing: "Medium",
+                                facts: [
+                                  { title: "Name", value: Topic.firstName & " " & Topic.lastName },
+                                  { title: "Priority", value: If(Topic.isPrimaryContact = "true", "Primary", LookUp([{v:"2",t:"2 - High"},{v:"3",t:"3"},{v:"4",t:"4"},{v:"5",t:"5 - Medium"},{v:"6",t:"6"},{v:"7",t:"7"},{v:"8",t:"8"},{v:"9",t:"9"},{v:"10",t:"10 - Low"}], v = Topic.priority).t) },
+                                  { title: "Relationship", value: LookUp(Global.RelatedPersonRelationshipLookupTable, ID = Topic.relationshipType).Referenced_Object_Descriptor },
+                                  { title: "Phone", value: "+" & Last(Split(Topic.phoneCountryCode, "_")).Value & "-" & Topic.phoneNumber & " (" & Topic.phoneDeviceType & ")" },
+                                  { title: "Address", value: Topic.addressLine1 & " " & Topic.city & ", " & Topic.countryCode & " " & Topic.postalCode }
+                                ]
+                              }
+                            ]
+                          }
+
+                - kind: CancelAllDialogs
+                  id: end_dialogs
+
+      elseActions:
+        # This handles case when formActionId is not "Submit" (fallback for Cancel/Delete that weren't caught)
         - kind: CancelAllDialogs
-          id: end_dialogs
+          id: end_unexpected_action
 
-inputType: {}
+inputType:
+  properties:
+    InputAction:
+      displayName: InputAction
+      description: The action the user wants to perform (add, update, manage).
+      type: String
+
 outputType: {}
