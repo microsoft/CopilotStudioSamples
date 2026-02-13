@@ -1,14 +1,21 @@
 ﻿Prompt,Expected response,Test Method Type,Passing Score
-My laptop crashed during an important meeting. Can you help me fix this quickly?,I can see how stressful that must have been. Let’s get your laptop issue checked right away.,CompareMeaning,70
-I keep getting locked out of my account,Getting locked out is frustrating. I can help you reset access.,CompareMeaning,70
-My computer has been freezing all morning and I it's disrupting my productivity,I hear how disruptive this feels. Let’s look at steps to get your computer working again.,CompareMeaning,70
-I have a big deadline today and my VPN stopped working. This is urgent.,I understand this is urgent. I can help you troubleshoot the VPN quickly.,CompareMeaning,70
-I am feeling burnt out and this IT issue is just too much right now,Burnout is real. I can guide you on the simplest way to get this IT issue handled.,CompareMeaning,70
-I just lost an important file and I am freaking out.,Losing a file is upsetting. Let’s look at what recovery options you have.,CompareMeaning,70
-This software keeps crashing and I am getting really frustrated.,I get why that is frustrating. I can help you restart or update the software safely.,CompareMeaning,70
-I am worried I made a mistake clicking a suspicious link. Can you tell me what to do?,It makes sense to feel worried. I can walk you through the right steps after clicking a suspicious link.,CompareMeaning,70
-My video conferencing app is not working and I am stressed because I do not want to miss my meeting.,I understand the stress this causes. Let’s get your video issue fixed so you do not miss your meeting.,CompareMeaning,70
-My computer updates restarted in the middle of a presentation and it was really annoying,That would be annoying. I can help you get back into your presentation setup.,CompareMeaning,70
-My access request is taking forever and it is putting a lot of pressure on me. Can you help me check it?,I hear the pressure you are under. I can check the status of your access request.,CompareMeaning,70
-This system error keeps popping up and I can't get any work done,Repeated errors are exhausting. Let’s try a quick way to clear the issue.,CompareMeaning,70
-I am nervous about installing new software because I do not want to break anything,It is normal to feel nervous. I can guide you through installing the software safely.,CompareMeaning,70
+I just lost a family member and need help figuring out my leave options.,I’m so sorry for your loss. I can help you look at your leave options.,CompareMeaning,70
+I am having a really hard time coping and need support with time off.,I hear how tough this feels. Let’s walk through the time off you can use.,CompareMeaning,70
+I feel burned out and need guidance on what leave I can take.,Burnout is hard. I can show you the types of leave available.,CompareMeaning,70
+I am stressed about my workload and need to talk about options.,Workload stress is real. Let’s explore what support is available.,CompareMeaning,70
+I am struggling with childcare issues and need more support to do my job.,That sounds really difficult. I can help you see what childcare or leave options may help.,CompareMeaning,70
+I am feeling overwhelmed and need help understanding my medical leave choices.,I understand this feels overwhelming. Here are the medical leave choices you can consider.,CompareMeaning,70
+I am worried about my job security and need someone to explain my options.,Job security worries are stressful. I can explain the options and support channels.,CompareMeaning,70
+I feel anxious about a recent conflict at work and need help addressing it.,Conflict at work can be upsetting. Let’s look at the safest steps you can take.,CompareMeaning,70
+I am upset because my pay issue still is not fixed and I need help right now.,I can see why this is frustrating. I can help you start the right pay support request.,CompareMeaning,70
+I am stressed because my paycheck looks wrong and I need help quickly.,Pay issues are stressful. Let’s get you to the right place to get this resolved.,CompareMeaning,70
+I am having a tough time after a medical diagnosis and need support.,That sounds very hard. I can help you understand what support or leave may apply.,CompareMeaning,70
+I feel confused about my benefits and it is stressing me out.,Benefits confusion is common. I can help you find the right information quickly.,CompareMeaning,70
+I feel uncomfortable talking to my manager. Can you help me understand my choices?,I understand that feels uncomfortable. Here are your options for getting support.,CompareMeaning,70
+I am worried about my performance review and need some support.,It makes sense to feel worried. I can help you understand the review process.,CompareMeaning,70
+I am struggling to balance work and caregiving. What can I do?,Caregiving stress is real. Let’s look at leave or flexibility options you can use.,CompareMeaning,70
+I feel frustrated because my leave request is taking longer than expected.,I hear your frustration. I can help you check the status of your request.,CompareMeaning,70
+My parental leave situation changed and I am stressed about what to do next.,Changes like this can be stressful. I can help you see what comes next for leave.,CompareMeaning,70
+I am really frustrated that my HR request is taking so long and I need someone to explain what is going on.,I understand this delay is frustrating. Let’s take a look at your case status.,CompareMeaning,70
+I am nervous about returning from leave and need guidance on the steps.,It’s normal to feel nervous returning. I can walk you through the steps.,CompareMeaning,70
+I feel uneasy about a workplace situation and need help reporting it safely.,Your safety matters. I can help you report this through the right HR channel.,CompareMeaning,70
