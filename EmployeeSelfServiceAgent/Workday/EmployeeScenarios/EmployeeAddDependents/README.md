@@ -14,7 +14,7 @@ This topic enables employees to view their existing dependents and add new depen
 
 ## Snapshots
 
-<!-- Add conversation flow screenshots here -->
+![Add Dependents](add_dependents.png)
 
 ## Trigger Phrases
 
@@ -97,5 +97,4 @@ Environment makers need to configure the following in the topic:
 ## Dependencies
 
 - **msdyn_HRWorkdayHCMEmployeeGetDependents template**: Required for fetching existing dependents
-- **GetReferenceData topic**: Required for fetching relationship types dynamically
 - **Employee Context**: Worker ID must be available in the conversation context
