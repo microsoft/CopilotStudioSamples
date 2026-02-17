@@ -14,7 +14,7 @@ This topic enables employees to submit time off requests through a conversationa
 
 ## Snapshots
 
-<!-- Add conversation flow screenshots here -->
+![Request Time Off](request_time_off.png)
 
 ## Trigger Phrases
 
