@@ -30,7 +30,7 @@ beginDialog:
     - kind: SetVariable
       id: set_workday_icon_url_2
       variable: Topic.WorkdayIconUrl
-      value: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAExUlEQVR4nOVbSUwUQRT9XSJxQVExLoQZLwJGGZfEJcY5KJx0Er2piF7d4hkTTby5njxoRE9eHM5oxqOY2O5jXFAjYFzAgBrEDKIxGpf8xta2+ld1z3T1TPfMSwiZ7vrd9V69/391D2jgEZWLd/6CAiPz6JyWa6wWVtKqxNCKhXiuQmjFRjxbIVgxk3czf+YlOCyQ8WC5BIURIj4sm8FhB8WLuRlUTOD5MdnJYoWVZ1nebjruGzRMHIbYhGFomPDB+Iw/iMyPcuj6WgWPv86A66NzjM/5gub36q+peAvN03phw9S+v4SdcP3zHGj/WAvtH+eD33sEzS8BouWjcKrmGqyZ/Dbna/R9q4AT75f5JkTGFEA1+d0zn8DhuXeUXQ8FODi4ypfUYCovhhY/HbmmlDyiefpzuDq/w3CVamgqHYCTjE0clo4Z+VkO+uhcw96Zn2MrioURyWFxlAFjNr1cb/xWBU0V+SPVt2FX1VPhebOoYYETAUVonfUA4hWDEBlPrzaSX/t8k7J00FQIsH/2fWPiFLC1HRhYJSUuEqJ5ei95/vJIFHa8boJA1IDon8mKVn3ji/VZkTdXed+bOBx/t4w8jy0V60IgBGiddV9IHkl4seqJ90uFIuB93e4rfBMgWj5KrkT/9wo4OLgSVABFaBtaRN57qwIXMD9Wf/urJqU9G0WgrpeY+rqwAjQQLe/yyDyj8KkEkm/7YHcB7jK97g3KvAS3D9fCY04EXC0/cHZoIVSyfw9QpjBe9wRaqTwC52UrHEYwKHEwKHEwKHEwKHGUeQnetnE1RKur/juWvHgT+gbEj7Wx+hpIrLO3SozBWBn2tDRC5ZRJWcX4KsDR1s3/TQgRrZ4Jew+dF8ZcOLnXJpqJru5+6Op+Q55D0Y62brEd19O90DcwBAVJgS5isrEFNcLx8eV1QvJj5+ulsTwyn754Iu9dgGf9tmMygmh/GRKN4l1kbEHEfn+BW/ImgJ7usR3DlMA0oJBopB9trQLxKWU9R6VM4ARAxJfXAg8kRtmYH0OlUKw+Qgqj3+2GggqQEeQgZVeKfOqK/U0S1SHERbPAKYDQ7/a4IptoXGI7dqztkiGikwDU9bAFytpt/gRI97iyLF/hcfK4grwLcLX5WMpRlPCBEQBhzWUkxdvYJEDF4wbLyQF62nv+KxEAV5K3MSJWF5Hnf+fY67RU50N7bL08ViZ8QZ4FUkQxs06c6u+4g0OgeHwxs9YLqv2pyn9lAlCrEV9RJ1xFHG91Dd/OjJb5J57aO6jKf3UOIGxskkDyfFHjHZPqFDuIcoCZPoERIEPY2KwDVFvjCxjvCLNrUOKNjae/Mivo+wCd2JVh7sdX0O3PKY2QPF077GIFQoCUwMa8hUX5Swm4p6XJVcENhgPS7lZG1L+TF2+5vI+a/u/LK7Fkh/PbGVH/FtURN+njBczLPxu4SQOevKx/Oz3dOV2/4A7QHdLAK8Fkxw0I/FvhpCQN9Hs9OQvoh/3/CpCPNEACbnZwIpLHzlyC0PyhZIx4tYXE3PZvfuvspkB6FgBRSt8Um65nUOJg1g8qa0GQYeXJZCeLETw/5mZQsYDixbIZHGaI+LBcgsIGGQ/mJTgMcJq/ls3FSvZ/h4FDkIXI1rG/Adz0VZDmVyKYAAAAAElFTkSuQmCC
+      value: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=
 
     - kind: ConditionGroup
       id: check_country_codes
@@ -262,9 +262,12 @@ beginDialog:
               variable: Topic.selectionChoices
               value: |
                 =ForAll(
-                    SortByColumns(Topic.contactSelectionList, "IsPrimary", SortOrder.Descending, "Priority", SortOrder.Ascending),
+                    Filter(
+                        SortByColumns(Topic.contactSelectionList, "IsPrimary", SortOrder.Descending, "Priority", SortOrder.Ascending),
+                        !IsBlank(ThisRecord.DisplayName) && !IsBlank(ThisRecord.WID)
+                    ),
                     {
-                        title: ThisRecord.DisplayName,
+                        title: If(IsBlank(ThisRecord.DisplayName), "Unknown Contact", ThisRecord.DisplayName),
                         value: ThisRecord.WID
                     }
                 )
@@ -272,7 +275,7 @@ beginDialog:
             - kind: SetVariable
               id: set_intro_msg_text
               variable: Topic.introMsgText
-              value: ="Sure, I can help you with that. Here's where you can both update and add emergency contacts. I've identified " & Text(CountRows(Topic.contactSelectionList)) & " contacts of yours from [Workday](https://impl.workday.com/microsoft_dpt6/d/home.htmld), an HR platform your company uses."
+              value: ="Sure, I can help you with that. Here's where you can both update and add emergency contacts. I've identified " & Text(CountRows(Topic.selectionChoices)) & " emergency contact(s) of yours from [Workday](https://impl.workday.com/microsoft_dpt6/d/home.htmld), an HR platform your company uses."
 
             - kind: SendActivity
               id: intro_selection_msg
@@ -311,7 +314,7 @@ beginDialog:
                           items: [
                             {
                               type: "TextBlock",
-                              text: "Workday",
+                              text: "",
                               size: "Small",
                               weight: "Bolder"
                             }
@@ -331,7 +334,7 @@ beginDialog:
                     },
                     {
                       type: "TextBlock",
-                      text: "You have " & CountRows(Topic.contactSelectionList) & " emergency contact(s). Select to update or add a new contact.",
+                      text: "You have " & CountRows(Topic.selectionChoices) & " emergency contact(s). Select to update or add a new contact.",
                       wrap: true,
                       spacing: "Small"
                     },
@@ -342,12 +345,13 @@ beginDialog:
                       style: "compact",
                       isRequired: true,
                       errorMessage: "Please select an emergency contact.",
-                      choices: ForAll(Topic.selectionChoices, { title: ThisRecord.title, value: ThisRecord.value })
+                      choices: ForAll(Topic.selectionChoices, { title: ThisRecord.title, value: ThisRecord.value }),
+                      value: First(Topic.selectionChoices).value
                     }
                   ],
                   actions: [
-                    { type: "Action.Submit", title: "Continue", id: "Continue" },
-                    { type: "Action.Submit", title: "Add an emergency contact", id: "ADD_NEW", associatedInputs: "none" }
+                    { type: "Action.Submit", title: "Continue", id: "Continue", data: { actionSubmitId: "Continue" } },
+                    { type: "Action.Submit", title: "Add an emergency contact", id: "ADD_NEW", data: { actionSubmitId: "ADD_NEW" }, associatedInputs: "none" }
                   ]
                 }
               output:
@@ -455,7 +459,7 @@ beginDialog:
                   items: [
                     {
                       type: "TextBlock",
-                      text: "Workday",
+                      text: "",
                       size: "Small",
                       weight: "Bolder"
                     }
@@ -962,7 +966,7 @@ beginDialog:
                               items: [
                                 {
                                   type: "TextBlock",
-                                  text: "Workday",
+                                  text: "",
                                   size: "Small",
                                   weight: "Bolder"
                                 }
@@ -1097,7 +1101,7 @@ beginDialog:
                                                 items: [
                                                   {
                                                     type: "TextBlock",
-                                                    text: "Workday",
+                                                    text: "",
                                                     size: "Small",
                                                     weight: "Bolder"
                                                   }
@@ -1275,7 +1279,7 @@ beginDialog:
                                     items: [
                                       {
                                         type: "TextBlock",
-                                        text: "Workday",
+                                        text: "",
                                         size: "Small",
                                         weight: "Bolder"
                                       }
