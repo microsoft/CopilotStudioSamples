@@ -23,11 +23,27 @@ beginDialog:
   intent: {}
 
   actions:
+    # Set Workday URL
+    - kind: SetVariable
+      id: set_workday_url
+      variable: Topic.WorkdayUrl
+      value: https://impl.workday.com/<TENANT_NAME>/home.htmld
+
     # Set Workday icon URL
     - kind: SetVariable
       id: set_workday_icon_url
       variable: Topic.WorkdayIconUrl
       value: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=
+
+    # Intro message
+    - kind: SetVariable
+      id: set_intro_msg_text
+      variable: Topic.introMsgText
+      value: ="Sure, I can help you with that. Here's where you can add a new dependent. You can also add a dependent on [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
+
+    - kind: SendActivity
+      id: intro_msg
+      activity: "{Topic.introMsgText}"
 
     # Step 1: Fetch reference data for relationship types
     - kind: ConditionGroup
@@ -161,28 +177,7 @@ beginDialog:
             }
         )
 
-    # Step 5: Show existing dependents and option to add new
-    - kind: ConditionGroup
-      id: checkExistingDependents
-      conditions:
-        - id: hasDependentsCondition
-          condition: =CountRows(Topic.dependentsTable) > 0
-          actions:
-            - kind: SendActivity
-              id: sendExistingDependentsMsg
-              activity: |-
-                You currently have **{CountRows(Topic.dependentsTable)}** dependent(s) on file:
-                
-                {Concat(Topic.dependentsTable, "• " & FullName & " (" & RelationshipType & ")" & Char(10))}
-                
-                Let's add a new dependent.
-
-      elseActions:
-        - kind: SendActivity
-          id: sendNoDependentsMsg
-          activity: You don't have any dependents on file yet. Let's add one now.
-
-    # Step 6: Collect dependent information using Adaptive Card
+    # Step 5: Collect dependent information using Adaptive Card
     - kind: AdaptiveCardPrompt
       id: collectDependentCard
       displayName: Collect dependent information
@@ -192,40 +187,6 @@ beginDialog:
             '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
             version: "1.5",
             body: [
-                {
-                    type: "ColumnSet",
-                    columns: [
-                        {
-                            type: "Column",
-                            width: "auto",
-                            items: [
-                                {
-                                    type: "Image",
-                                    url: Topic.WorkdayIconUrl,
-                                    style: "RoundedCorners",
-                                    size: "Small",
-                                    height: "20px",
-                                    width: "20px"
-                                }
-                            ],
-                            verticalContentAlignment: "Center"
-                        },
-                        {
-                            type: "Column",
-                            width: "auto",
-                            items: [
-                                {
-                                    type: "TextBlock",
-                                    text: "",
-                                    size: "Small",
-                                    weight: "Bolder"
-                                }
-                            ],
-                            verticalContentAlignment: "Center",
-                            spacing: "Small"
-                        }
-                    ]
-                },
                 {
                     type: "TextBlock",
                     text: "Add a new dependent",
@@ -406,40 +367,6 @@ beginDialog:
                         '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
                         version: "1.5",
                         body: [
-                          {
-                            type: "ColumnSet",
-                            columns: [
-                              {
-                                type: "Column",
-                                width: "auto",
-                                items: [
-                                  {
-                                    type: "Image",
-                                    url: Topic.WorkdayIconUrl,
-                                    style: "RoundedCorners",
-                                    size: "Small",
-                                    height: "20px",
-                                    width: "20px"
-                                  }
-                                ],
-                                verticalContentAlignment: "Center"
-                              },
-                              {
-                                type: "Column",
-                                width: "auto",
-                                items: [
-                                  {
-                                    type: "TextBlock",
-                                    text: "",
-                                    size: "Small",
-                                    weight: "Bolder"
-                                  }
-                                ],
-                                verticalContentAlignment: "Center",
-                                spacing: "Small"
-                              }
-                            ]
-                          },
                           {
                             type: "TextBlock",
                             text: "✅ Your new dependent was added",

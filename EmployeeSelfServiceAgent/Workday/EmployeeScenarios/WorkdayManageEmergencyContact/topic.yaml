@@ -273,9 +273,14 @@ beginDialog:
                 )
 
             - kind: SetVariable
+              id: set_workday_url_2
+              variable: Topic.WorkdayUrl
+              value: https://impl.workday.com/<TENANT_NAME>/home.htmld
+
+            - kind: SetVariable
               id: set_intro_msg_text
               variable: Topic.introMsgText
-              value: ="Sure, I can help you with that. Here's where you can both update and add emergency contacts. I've identified " & Text(CountRows(Topic.selectionChoices)) & " emergency contact(s) of yours from [Workday](https://impl.workday.com/microsoft_dpt6/d/home.htmld), an HR platform your company uses."
+              value: ="Sure, I can help you with that. Here's where you can both update and add emergency contacts. I've identified " & Text(CountRows(Topic.selectionChoices)) & " emergency contact(s) of yours from [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
 
             - kind: SendActivity
               id: intro_selection_msg
@@ -290,40 +295,6 @@ beginDialog:
                   '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
                   version: "1.5",
                   body: [
-                    {
-                      type: "ColumnSet",
-                      columns: [
-                        {
-                          type: "Column",
-                          width: "auto",
-                          items: [
-                            {
-                              type: "Image",
-                              url: Topic.WorkdayIconUrl,
-                              style: "RoundedCorners",
-                              size: "Small",
-                              height: "20px",
-                              width: "20px"
-                            }
-                          ],
-                          verticalContentAlignment: "Center"
-                        },
-                        {
-                          type: "Column",
-                          width: "auto",
-                          items: [
-                            {
-                              type: "TextBlock",
-                              text: "",
-                              size: "Small",
-                              weight: "Bolder"
-                            }
-                          ],
-                          verticalContentAlignment: "Center",
-                          spacing: "Small"
-                        }
-                      ]
-                    },
                     {
                       type: "TextBlock",
                       text: "Select an emergency contact to update",
@@ -435,40 +406,6 @@ beginDialog:
           '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
           version: "1.5",
           body: [
-            {
-              type: "ColumnSet",
-              columns: [
-                {
-                  type: "Column",
-                  width: "auto",
-                  items: [
-                    {
-                      type: "Image",
-                      url: Topic.WorkdayIconUrl,
-                      style: "RoundedCorners",
-                      size: "Small",
-                      height: "20px",
-                      width: "20px"
-                    }
-                  ],
-                  verticalContentAlignment: "Center"
-                },
-                {
-                  type: "Column",
-                  width: "auto",
-                  items: [
-                    {
-                      type: "TextBlock",
-                      text: "",
-                      size: "Small",
-                      weight: "Bolder"
-                    }
-                  ],
-                  verticalContentAlignment: "Center",
-                  spacing: "Small"
-                }
-              ]
-            },
             {
               type: "TextBlock",
               text: If(Topic.isUpdateMode, "Update emergency contact", "Add emergency contact"),
@@ -943,40 +880,6 @@ beginDialog:
                       version: "1.5",
                       body: [
                         {
-                          type: "ColumnSet",
-                          columns: [
-                            {
-                              type: "Column",
-                              width: "auto",
-                              items: [
-                                {
-                                  type: "Image",
-                                  url: Topic.WorkdayIconUrl,
-                                  style: "RoundedCorners",
-                                  size: "Small",
-                                  height: "20px",
-                                  width: "20px"
-                                }
-                              ],
-                              verticalContentAlignment: "Center"
-                            },
-                            {
-                              type: "Column",
-                              width: "auto",
-                              items: [
-                                {
-                                  type: "TextBlock",
-                                  text: "",
-                                  size: "Small",
-                                  weight: "Bolder"
-                                }
-                              ],
-                              verticalContentAlignment: "Center",
-                              spacing: "Small"
-                            }
-                          ]
-                        },
-                        {
                           type: "TextBlock",
                           text: "Confirm deletion",
                           weight: "Bolder",
@@ -1077,40 +980,6 @@ beginDialog:
                                         '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
                                         version: "1.5",
                                         body: [
-                                          {
-                                            type: "ColumnSet",
-                                            columns: [
-                                              {
-                                                type: "Column",
-                                                width: "auto",
-                                                items: [
-                                                  {
-                                                    type: "Image",
-                                                    url: Topic.WorkdayIconUrl,
-                                                    style: "RoundedCorners",
-                                                    size: "Small",
-                                                    height: "20px",
-                                                    width: "20px"
-                                                  }
-                                                ],
-                                                verticalContentAlignment: "Center"
-                                              },
-                                              {
-                                                type: "Column",
-                                                width: "auto",
-                                                items: [
-                                                  {
-                                                    type: "TextBlock",
-                                                    text: "",
-                                                    size: "Small",
-                                                    weight: "Bolder"
-                                                  }
-                                                ],
-                                                verticalContentAlignment: "Center",
-                                                spacing: "Small"
-                                              }
-                                            ]
-                                          },
                                           {
                                             type: "TextBlock",
                                             text: "✅ Emergency contact deleted",
@@ -1233,7 +1102,7 @@ beginDialog:
                 - kind: SetVariable
                   id: set_workday_url
                   variable: Topic.WorkdayUrl
-                  value: ="https://impl.workday.com/microsoft_dpt6/d/home.htmld"
+                  value: ="https://impl.workday.com/<TENANT_NAME>/home.htmld"
 
                 - kind: SetVariable
                   id: set_success_intro_text
@@ -1255,40 +1124,6 @@ beginDialog:
                             '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
                             version: "1.5",
                             body: [
-                              {
-                                type: "ColumnSet",
-                                columns: [
-                                  {
-                                    type: "Column",
-                                    width: "auto",
-                                    items: [
-                                      {
-                                        type: "Image",
-                                        url: Topic.WorkdayIconUrl,
-                                        style: "RoundedCorners",
-                                        size: "Small",
-                                        height: "20px",
-                                        width: "20px"
-                                      }
-                                    ],
-                                    verticalContentAlignment: "Center"
-                                  },
-                                  {
-                                    type: "Column",
-                                    width: "auto",
-                                    items: [
-                                      {
-                                        type: "TextBlock",
-                                        text: "",
-                                        size: "Small",
-                                        weight: "Bolder"
-                                      }
-                                    ],
-                                    verticalContentAlignment: "Center",
-                                    spacing: "Small"
-                                  }
-                                ]
-                              },
                               {
                                 type: "TextBlock",
                                 text: If(Topic.isUpdateMode, "✅ Emergency contact updated", "✅ Emergency contact added"),

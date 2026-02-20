@@ -165,7 +165,6 @@ beginDialog:
       variable: Topic.PlanConfig
       value: |-
         =Table(
-          {PlanID: "PTO_USA", DisplayName: "Paid time off"},
           {PlanID: "FH_USA", DisplayName: "Floating holiday"},
           {PlanID: "ABSENCE_PLAN-6-159", DisplayName: "Sick leave"},
           {PlanID: "ABSENCE_PLAN-6-158", DisplayName: "Vacation"}
