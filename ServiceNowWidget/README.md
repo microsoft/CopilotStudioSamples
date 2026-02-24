@@ -120,6 +120,20 @@ npx serve . -l 5500
 
 Open `http://localhost:5500/test-page/` — the floating chat bubble should appear in the bottom-right corner.
 
+## Customization
+
+The widget supports theming (colors, sizes, position) and WebChat style overrides via config options. See the [Customization Guide](docs/CUSTOMIZATION.md) for the full options reference.
+
+## Disabling the OOTB Virtual Agent Widget
+
+If your ServiceNow instance has the built-in Virtual Agent chat widget enabled and you want to replace it with this widget:
+
+1. Navigate to **Agent Chat > Service Portal Agent Chat Configuration** (`sp_agent_chat_config_list.do`)
+2. Find the configuration record for your portal
+3. Set **Active** to `false`
+
+> **Note:** This setting is under **Agent Chat**, not under the **Virtual Agent** menu.
+
 ## Project Structure
 
 ```
@@ -127,6 +141,7 @@ ServiceNowWidget/
 ├── README.md                      # This file
 ├── docs/
 │   ├── MANUAL-SETUP.md            # Step-by-step manual setup guide
+│   ├── CUSTOMIZATION.md           # Config options and theming reference
 │   └── images/                    # Screenshots for documentation
 ├── src/                           # TypeScript source
 │   ├── index.ts                   # Entry point — validates config, creates bubble
@@ -150,20 +165,6 @@ ServiceNowWidget/
 ├── esbuild.config.mjs             # Build config (IIFE bundle)
 └── .gitignore
 ```
-
-## Customization
-
-The widget supports theming (colors, sizes, position) and WebChat style overrides via config options. See the [Customization Guide](docs/CUSTOMIZATION.md) for the full options reference.
-
-## Disabling the OOTB Virtual Agent Widget
-
-If your ServiceNow instance has the built-in Virtual Agent chat widget enabled and you want to replace it with this widget:
-
-1. Navigate to **Agent Chat > Service Portal Agent Chat Configuration** (`sp_agent_chat_config_list.do`)
-2. Find the configuration record for your portal
-3. Set **Active** to `false`
-
-> **Note:** This setting is under **Agent Chat**, not under the **Virtual Agent** menu.
 
 ## Troubleshooting
 
