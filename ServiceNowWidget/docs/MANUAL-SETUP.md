@@ -86,18 +86,22 @@ Widget Dependencies ensure all scripts are loaded before the client controller r
 3. Drag the **Copilot Chat** widget into any container on the page
 4. The floating bubble will appear in the bottom-right corner regardless of widget placement — it renders with `position: fixed`
 
-## Step 7: Configure Content Security Policy (CSP)
+## Step 7: Content Security Policy (CSP)
 
-If your ServiceNow instance enforces CSP headers, add these directives:
+> **Most ServiceNow dev instances do not enforce CSP.** If your portal already works after Steps 1–6, you can skip this step. Only proceed if you see `Refused to load` or `Refused to connect` errors in the browser console.
 
-| Directive | Domains |
-|-----------|---------|
-| `script-src` | `https://unpkg.com` |
-| `connect-src` | `https://login.microsoftonline.com`, `https://*.botframework.com`, `https://default*.environment.api.powerplatform.com` |
-| `frame-src` | `https://login.microsoftonline.com` |
-| `style-src` | `'unsafe-inline'` (required by WebChat) |
+If your instance enforces CSP, you need to allowlist the external domains used by the widget. ServiceNow manages CSP via system properties — navigate to **System Properties > All Properties** (`sys_properties_list.do`) and search for `glide.http.content_security_policy`. Create or update the following properties:
 
-Navigate to **System Properties** and update `glide.http.content_security_policy` or the CSP-related properties for your instance.
+| System Property | Value to Add |
+|----------------|-------------|
+| `glide.http.content_security_policy.script.src` | `https://unpkg.com` |
+| `glide.http.content_security_policy.connect.src` | `https://login.microsoftonline.com https://*.botframework.com https://default*.environment.api.powerplatform.com` |
+| `glide.http.content_security_policy.frame.src` | `https://login.microsoftonline.com` |
+| `glide.http.content_security_policy.style.src` | `'unsafe-inline'` |
+
+If these properties don't exist on your instance, your CSP may be configured differently (e.g., via HTTP response headers in a load balancer or reverse proxy). Consult your ServiceNow admin for the correct location.
+
+> **`style-src 'unsafe-inline'`** is required because WebChat injects inline styles. This is a WebChat limitation.
 
 ## Step 8: Configure Entra ID App Registration
 
