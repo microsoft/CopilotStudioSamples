@@ -359,14 +359,16 @@ async function placeWidgetOnPortal(client, widgetSysId, portalConfig) {
 
   const urlSuffix = portalConfig.urlSuffix || 'sp';
 
-  // Check if widget instance already exists
+  // Check if widget instance already exists for THIS widget
   const existingInstances = await client.query(
     'sp_instance',
-    `widget=${widgetSysId}`,
-    ['sys_id', 'page'],
+    `widget=${widgetSysId}^widgetISNOTEMPTY`,
+    ['sys_id', 'widget'],
   );
-  if (existingInstances.length > 0) {
-    log('portal', `Widget instance already exists on a page (${existingInstances[0].sys_id})`);
+  // Verify the match actually references our widget (ServiceNow can match empty refs)
+  const realMatch = existingInstances.find((inst) => inst.widget?.value === widgetSysId);
+  if (realMatch) {
+    log('portal', `Widget instance already exists on a page (${realMatch.sys_id})`);
     return;
   }
 
