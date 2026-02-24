@@ -155,21 +155,6 @@ ServiceNowWidget/
 
 The widget supports theming (colors, sizes, position) and WebChat style overrides via config options. See the [Customization Guide](docs/CUSTOMIZATION.md) for the full options reference.
 
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| **Bubble doesn't appear** | Check browser console for errors. Verify the bundle loaded (`window.CopilotChat` should exist). Check that system properties are set. |
-| **"Missing required config" error** | One or more system properties are empty. Verify all four required properties in `sys_properties_list.do`. |
-| **MSAL popup blocked** | The browser blocked the auth popup. Ensure popups are allowed for your ServiceNow domain. The first click on the bubble triggers auth. |
-| **CORS errors** | Verify CSP settings. The SDK connects to `*.botframework.com` and `*.powerplatform.com`. |
-| **"Bundle not loaded" error** | The Widget Dependency isn't loading the bundle. Verify the JS Include URL is correct and the dependency is linked to the widget. |
-| **Auth redirect loop** | Check that the Entra ID app has the correct redirect URI for your ServiceNow instance. |
-| **Chat connects but no response** | Verify the `agentIdentifier` matches the agent's schema name in Copilot Studio (not the display name). |
-| **UI Script source type doesn't load** | JS Includes with `source=local` ("UI Script" in the UI) generate a `.jsdbx?c=` URL that doesn't work in Service Portal. Use an attachment URL with `source=url` instead. |
-| **Two chat bubbles appear** | An old widget instance is still installed. Check the `sp_instance` table for duplicate instances and remove the extra one. Also ensure ServiceNow's built-in Virtual Agent is disabled (see below). |
-| **`angular.do` blocked by CSP** | This is a ServiceNow internal URL that gets blocked in some portal configurations. It does not affect the widget — it's a Service Portal framework issue. |
-
 ## Disabling the OOTB Virtual Agent Widget
 
 If your ServiceNow instance has the built-in Virtual Agent chat widget enabled and you want to replace it with this widget:
@@ -179,3 +164,15 @@ If your ServiceNow instance has the built-in Virtual Agent chat widget enabled a
 3. Set **Active** to `false`
 
 > **Note:** This setting is under **Agent Chat**, not under the **Virtual Agent** menu.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| **Bubble doesn't appear** | Check browser console for errors. Verify the bundle loaded (`window.CopilotChat` should exist). Check that system properties are set. |
+| **"Missing required config" error** | One or more system properties are empty. Verify all four required properties in `sys_properties_list.do`. |
+| **MSAL popup blocked** | Ensure popups are allowed for your ServiceNow domain. The first click on the bubble triggers the auth popup. |
+| **"Bundle not loaded" error** | The Widget Dependency isn't loading the bundle. Verify the JS Include URL is correct and the dependency is linked to the widget. |
+| **Auth redirect loop** | Check that the Entra ID app has the correct redirect URI matching your ServiceNow instance origin. |
+| **Chat connects but no response** | Verify the `agentIdentifier` matches the agent's schema name in Copilot Studio (not the display name). |
+| **Two chat bubbles appear** | Check the `sp_instance` table for duplicate widget instances and remove the extra one. Also ensure the OOTB Virtual Agent is disabled (see above). |
