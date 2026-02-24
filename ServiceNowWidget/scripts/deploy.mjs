@@ -151,9 +151,14 @@ async function ensureSystemProperties(client, agentConfig) {
   };
 
   for (const [name, value] of Object.entries(props)) {
-    const existing = await client.query('sys_properties', `name=${name}`, ['sys_id', 'name']);
+    const existing = await client.query('sys_properties', `name=${name}`, ['sys_id', 'name', 'value']);
     if (existing.length > 0) {
-      log('props', `Property ${name} already exists (${existing[0].sys_id})`);
+      if (existing[0].value !== value) {
+        await client.request('PATCH', `/api/now/table/sys_properties/${existing[0].sys_id}`, { value });
+        log('props', `Updated ${name} (${existing[0].sys_id})`);
+      } else {
+        log('props', `Property ${name} unchanged (${existing[0].sys_id})`);
+      }
       continue;
     }
     const record = await client.create('sys_properties', {
@@ -168,12 +173,6 @@ async function ensureSystemProperties(client, agentConfig) {
 
 async function ensureWidget(client) {
   const WIDGET_ID = 'copilot-chat';
-  const existing = await client.query('sp_widget', `id=${WIDGET_ID}`, ['sys_id', 'id', 'name']);
-  if (existing.length > 0) {
-    log('widget', `Widget "${WIDGET_ID}" already exists (${existing[0].sys_id})`);
-    return existing[0].sys_id;
-  }
-
   // Read widget source files
   const htmlBody = existsSync(WIDGET_HTML_PATH) ? readFileSync(WIDGET_HTML_PATH, 'utf-8') : '';
   const clientScript = existsSync(WIDGET_CLIENT_PATH) ? readFileSync(WIDGET_CLIENT_PATH, 'utf-8') : '';
@@ -195,13 +194,24 @@ async function ensureWidget(client) {
     'https://unpkg.com/@azure/msal-browser@4.13.1/lib/msal-browser.js');
 })();`;
 
-  const record = await client.create('sp_widget', {
-    id: WIDGET_ID,
-    name: 'Copilot Chat',
+  const widgetFields = {
     template: htmlBody,
     client_script: clientScript,
     script: serverScript,
     css,
+  };
+
+  const existing = await client.query('sp_widget', `id=${WIDGET_ID}`, ['sys_id', 'id', 'name']);
+  if (existing.length > 0) {
+    await client.request('PATCH', `/api/now/table/sp_widget/${existing[0].sys_id}`, widgetFields);
+    log('widget', `Updated widget "${WIDGET_ID}" (${existing[0].sys_id})`);
+    return existing[0].sys_id;
+  }
+
+  const record = await client.create('sp_widget', {
+    id: WIDGET_ID,
+    name: 'Copilot Chat',
+    ...widgetFields,
   });
   log('widget', `Created widget "Copilot Chat" (${record.sys_id})`);
   return record.sys_id;
@@ -249,25 +259,39 @@ async function uploadBundle(client, widgetSysId) {
 async function ensureJsIncludes(client, bundleAttachmentSysId) {
   const bundleUrl = `/sys_attachment.do?sys_id=${bundleAttachmentSysId}`;
   const includes = [
-    { name: 'Copilot Chat - MSAL', source: 'url', url: MSAL_CDN },
-    { name: 'Copilot Chat - WebChat', source: 'url', url: WEBCHAT_CDN },
-    { name: 'Copilot Chat - Bundle', source: 'url', url: bundleUrl },
+    { label: 'MSAL', source: 'url', url: MSAL_CDN },
+    { label: 'WebChat', source: 'url', url: WEBCHAT_CDN },
+    { label: 'Bundle', source: 'url', url: bundleUrl },
   ];
 
   const sysIds = [];
   for (const inc of includes) {
-    const existing = await client.query('sp_js_include', `name=${inc.name}`, ['sys_id', 'name']);
+    // Query by exact URL match — sp_js_include has no "name" field
+    const existing = await client.query('sp_js_include', `url=${inc.url}`, ['sys_id', 'url']);
     if (existing.length > 0) {
-      log('includes', `JS Include "${inc.name}" already exists (${existing[0].sys_id})`);
+      log('includes', `JS Include "${inc.label}" already exists (${existing[0].sys_id})`);
       sysIds.push(existing[0].sys_id);
       continue;
     }
+
+    // For the bundle, also check if an old attachment URL exists (re-deploy scenario)
+    if (inc.label === 'Bundle') {
+      const oldBundle = await client.query('sp_js_include', 'urlLIKE/sys_attachment.do?sys_id=', ['sys_id', 'url']);
+      if (oldBundle.length > 0) {
+        await client.request('PATCH', `/api/now/table/sp_js_include/${oldBundle[0].sys_id}`, {
+          url: inc.url,
+        });
+        log('includes', `Updated JS Include "${inc.label}" URL (${oldBundle[0].sys_id})`);
+        sysIds.push(oldBundle[0].sys_id);
+        continue;
+      }
+    }
+
     const record = await client.create('sp_js_include', {
-      name: inc.name,
       source: inc.source,
       url: inc.url,
     });
-    log('includes', `Created JS Include "${inc.name}" (${record.sys_id})`);
+    log('includes', `Created JS Include "${inc.label}" (${record.sys_id})`);
     sysIds.push(record.sys_id);
   }
   return sysIds;
@@ -410,8 +434,34 @@ async function placeWidgetOnPortal(client, widgetSysId, portalConfig) {
 
 // ─── Main ──────────────────────────────────────────────────────────────────────
 
+async function confirm(message) {
+  return new Promise((resolve) => {
+    const rl = createInterface({ input: process.stdin, output: process.stderr });
+    rl.question(message, (answer) => {
+      rl.close();
+      resolve(answer.trim().toLowerCase() === 'y');
+    });
+  });
+}
+
 async function main() {
   console.log('\n=== Copilot Chat — ServiceNow Deployment ===\n');
+
+  console.log('This script will create or update the following records on your ServiceNow instance:');
+  console.log('  - System properties (copilot.chat.*)');
+  console.log('  - Widget (sp_widget) with HTML, client script, server script, CSS');
+  console.log('  - Bundle uploaded as attachment');
+  console.log('  - JS Include records (sp_js_include)');
+  console.log('  - Widget Dependency (sp_dependency) with M2M links');
+  console.log('  - Widget instance on portal homepage (optional)\n');
+  console.log('Review scripts/deploy-config.json before proceeding.\n');
+
+  const ok = await confirm('Continue? (y/n) ');
+  if (!ok) {
+    console.log('Aborted.');
+    process.exit(0);
+  }
+  console.log('');
 
   // 1. Load config
   if (!existsSync(CONFIG_PATH)) {
