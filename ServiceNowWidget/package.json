@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node esbuild.config.mjs",
     "dev": "node esbuild.config.mjs --watch",
-    "serve": "npx serve . -l 5500"
+    "serve": "npx serve . -l 5500",
+    "deploy": "node scripts/deploy.mjs"
   },
   "dependencies": {
     "@microsoft/agents-copilotstudio-client": "^1.2.3"
