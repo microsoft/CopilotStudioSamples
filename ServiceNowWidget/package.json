@@ -1,0 +1,18 @@
+{
+  "name": "servicenow-copilot-chat",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "serve": "npx serve . -l 5500"
+  },
+  "dependencies": {
+    "@microsoft/agents-copilotstudio-client": "^1.2.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0"
+  }
+}

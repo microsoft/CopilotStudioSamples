@@ -1,0 +1,4 @@
+node_modules/
+dist/
+test-page/config.js
+.DS_Store
