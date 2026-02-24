@@ -1,0 +1,16 @@
+{
+  "instance": "https://dev12345.service-now.com",
+  "username": "admin",
+  "password": "",
+  "agent": {
+    "environmentId": "00000000-0000-0000-0000-000000000000",
+    "agentIdentifier": "cr000_myAgent",
+    "tenantId": "00000000-0000-0000-0000-000000000000",
+    "appClientId": "00000000-0000-0000-0000-000000000000",
+    "headerTitle": "Chat with us"
+  },
+  "portal": {
+    "urlSuffix": "sp",
+    "placeOnPortal": true
+  }
+}
