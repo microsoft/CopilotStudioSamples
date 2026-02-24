@@ -15,7 +15,20 @@ The widget uses [BotFramework WebChat](https://github.com/microsoft/BotFramework
 
 ## Quick Start
 
-### 1. Build the bundle
+### 1. Configure Entra ID App Registration
+
+The widget authenticates users via MSAL, which requires an app registration in [Azure Portal](https://portal.azure.com):
+
+1. Go to **App registrations** → **New registration** (or use an existing one)
+2. Under **Authentication**, add a **Single-page application (SPA)** platform with redirect URIs:
+   - `https://<your-instance>.service-now.com` (ServiceNow portal origin)
+   - `http://localhost:5500` (local development)
+3. Check **Access tokens** and **ID tokens** under **Implicit grant and hybrid flows**
+4. No additional API permissions are needed — the SDK scope is derived from the Copilot Studio environment
+
+Note the **Application (client) ID** and your **Directory (tenant) ID** — you'll need them in the deploy config.
+
+### 2. Build the bundle
 
 ```bash
 cd ServiceNowWidget
@@ -25,7 +38,7 @@ npm run build
 
 This produces `dist/copilot-chat.js` (~147 KB), an IIFE bundle that exposes `window.CopilotChat`.
 
-### 2. Deploy to ServiceNow
+### 3. Deploy to ServiceNow
 
 ```bash
 # Copy sample config and fill in your values
