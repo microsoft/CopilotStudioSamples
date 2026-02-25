@@ -20,25 +20,24 @@ beginDialog:
   kind: OnRecognizedIntent
   id: main
   intent: {}
-  actions:
-    - kind: BeginDialog
-      id: jJpz3n
-      displayName: Redirect to Workday Get Common Execution
-      input:
-        binding:
-          parameters: ="{""params"":[{""key"":""{Manager_Org_ID}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """}]}"
-          scenarioName: msdyn_GetManagerReportees
+actions:
+  - kind: BeginDialog
+    id: jJpz3n
+    displayName: Redirect to Workday Get Common Execution
+    input:
+      binding:
+        parameters: ="{""params"":[{""key"":""{Manager_Org_ID}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """}]}"
+        scenarioName: msdyn_GetManagerReportees
+    dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+    output:
+      binding:
+        errorResponse: Topic.errorResponse
+        isSuccess: Topic.isSuccess
+        workdayResponse: Topic.workdayResponse
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-      output:
-        binding:
-          errorResponse: Topic.errorResponse
-          isSuccess: Topic.isSuccess
-          workdayResponse: Topic.workdayResponse
-
-    - kind: ParseValue
-      id: aXVFNu
-      displayName: Parse value to a record
+  - kind: ParseValue
+    id: aXVFNu
+    displayName: Parse value to a record
       variable: Topic.workdayResponseRecord
       valueType:
         kind: Record
@@ -118,6 +117,42 @@ beginDialog:
                 Status: If(Last(FirstN(Topic.workdayResponseRecord.Status, Value)).Value = "1", "Active", "Inactive")
             }
         )
+    - kind: ConditionGroup
+      id: conditionGroup_yepfHF
+      conditions:
+        - id: conditionItem_86c1ij
+          condition: |-
+            = !IsBlank(Topic.EmployeeName)
+              &&
+              Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(Global.ESS_UserContext_Employee_Firstname))
+              &&
+              Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(Global.ESS_UserContext_Employee_Lastname))
+              &&
+              Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(
+                Concatenate(
+                  Global.ESS_UserContext_Employee_Firstname,
+                  " ",
+                  Global.ESS_UserContext_Employee_Lastname
+                )
+              ))
+              &&
+                Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(
+                  Concatenate(
+                    Global.ESS_UserContext_Employee_Lastname,
+                    " ",
+                    Global.ESS_UserContext_Employee_Firstname
+                  )
+                ))
+              &&
+                Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(
+                  Concatenate(
+                    Global.ESS_UserContext_Employee_Lastname,
+                    ", ",
+                    Global.ESS_UserContext_Employee_Firstname
+                  )
+                ))
+          displayName: Check if EmployeeName provided and is not the manager
+          actions:
 
     - kind: SetVariable
       id: setVariable_AddTimeInPosition
