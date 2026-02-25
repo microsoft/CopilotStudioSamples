@@ -24,9 +24,21 @@ The widget authenticates users via MSAL, which requires an app registration in [
    - `https://<your-instance>.service-now.com` (ServiceNow portal origin)
    - `http://localhost:5500` (local development)
 3. Check **Access tokens** and **ID tokens** under **Implicit grant and hybrid flows**
-4. No additional API permissions are needed — the SDK scope is derived from the Copilot Studio environment
+4. In your new application:
+    1. On the Overview page, note (you'll need them in the deploy config.):
+        - Application (client) ID
+        - Directory (tenant) ID
+    2. Go to **API Permissions** in the Manage section.
+    3. Click **Add Permission**:
+        1. In the side panel, click the `APIs my organization uses` tab.
+        2. Search for `Power Platform API` or `8578e004-a5c6-46e7-913e-12f58912df43`.
+            - *If you do not see `Power Platform API`, see the note below.*
+        3. In *Delegated permissions*, choose `CopilotStudio` and check `CopilotStudio.Copilots.Invoke`.
+        4. Click **Add Permissions**.
+    4. Click **Grant Admin consent** for your app.
+> [!TIP]  
+> If you do not see `Power Platform API` in the list, you need to add it to your tenant. See [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions).    
 
-Note the **Application (client) ID** and your **Directory (tenant) ID** — you'll need them in the deploy config.
 
 ### 2. Build the bundle
 
@@ -177,3 +189,4 @@ ServiceNowWidget/
 | **Auth redirect loop** | Check that the Entra ID app has the correct redirect URI matching your ServiceNow instance origin. |
 | **Chat connects but no response** | Verify the `agentIdentifier` matches the agent's schema name in Copilot Studio (not the display name). |
 | **Two chat bubbles appear** | Check the `sp_instance` table for duplicate widget instances and remove the extra one. Also ensure the OOTB Virtual Agent is disabled (see above). |
+
