@@ -5,16 +5,17 @@ modelDescription: |-
   For info on single direct report's time in position: 
   Heading - "[Report]'s time in position"
   Verbatim line after heading: "[Report] has been in their current role as a [Position] for [LengthOfService]. I pulled this from Workday, an HR platform your company uses."
-  Sections as headers and bullets within: More about [Direct Report]'s position
+  Sections as bold headers and non-bold bullets under: More about [Direct Report]'s position
 
-  For info on all direct reports time in position: Display in table
+  For info on all direct reports time in position: Display in Table
   Heading - "Team roles and time in position"
   Verbatim line after heading: "Here's a list of your team members and how long they've been in their positions. I pulled this from Workday, an HR platform your company uses."
   Table columns: Name, Title, Time in Position
 
-  Common Rules (STRICT!):
-  - ALWAYS KEEP LARGE HEADING 
+  Common Rules ALWAYS FOLLOW:
+  - ALWAYS add large sized heading with sentence case
   - Introduction (Relevant) RIGHT AFTER HEADING & ADD SECTION LINE AFTER IT, 
+  - Double check if rules are followed
   Invalid: non-direct reports.
 beginDialog:
   kind: OnRecognizedIntent
