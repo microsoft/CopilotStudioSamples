@@ -144,7 +144,35 @@ beginDialog:
       id: conditionGroup_yepfHF
       conditions:
         - id: conditionItem_86c1ij
-          condition: =!IsBlank(Topic.EmployeeName)
+          condition: =!IsBlank(Topic.EmployeeName)&&
+              Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(Global.ESS_UserContext_Employee_Firstname))
+              &&
+              Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(Global.ESS_UserContext_Employee_Lastname))
+              &&
+              Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(
+                Concatenate(
+                  Global.ESS_UserContext_Employee_Firstname,
+                  " ",
+                  Global.ESS_UserContext_Employee_Lastname
+                )
+              ))
+              &&
+                Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(
+                  Concatenate(
+                    Global.ESS_UserContext_Employee_Lastname,
+                    " ",
+                    Global.ESS_UserContext_Employee_Firstname
+                  )
+                ))
+              &&
+                Lower(Trim(Topic.EmployeeName)) <> Lower(Trim(
+                  Concatenate(
+                    Global.ESS_UserContext_Employee_Lastname,
+                    ", ",
+                    Global.ESS_UserContext_Employee_Firstname
+                  )
+                ))
+          displayName: Check if EmployeeName provided
           displayName: Check if EmployeeName provided
           actions:
             - kind: SetVariable
