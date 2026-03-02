@@ -1,23 +1,24 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  Available fields: Name, Employee ID, DOB, Gender, Business Title, Organization (Department), Manager, Location, Hire Date, Work Email, Work Phone, Home Email, Home Phone, Home Address, Employment Status
+  Available fields: Name, Emp ID, DOB, Gender, Title, Organization, Manager, Location, Hire Date, Email, Phone, Home Address, Employment Status
   For FULL PROFILE: 
-  Heading - "Your employee profile"
-  Introduction - "Here's what I found in Workday, an HR platform your company uses." 
+  Heading = "Your employee profile"
+  Introduction = "Here's what I found in Workday, an HR platform your company uses." 
   Sections: Personal information, Hiring details, Role and work.
 
   For TENURE/POSITION: 
-  Heading - "Time in your position"
-  Introduction: "You've been in your current role as a [Position] for [LengthOfService]. I pulled this from Workday, an HR platform your company uses."
+  Heading = "Time in your position"
+  Introduction = "You've been in your current role as a [Position] for [LengthOfService]. I pulled this from Workday, an HR platform your company uses."
   Sections: "About your position"
 
-  Common Rules (Strict):
-  - Large heading & section line after it, 
-  - Use sections mentioned as headers & bullets within, do not bold bullet points.
+  Common Rules ALWAYS FOLLOW: 
+  - Add large sized heading with sentence case, add section line divider BELOW it
+  - ALWAYS include bold sections headings as mentioned above & add non-bold sub bullets under each
   - ADDRESS IN ONE ROW
-  - Introduction - Right after heading
-  - Answer only based on what the user explicitly asks.
-  - Include only relevant fields, not the full profile unless requested.
+  - Introduction right after heading
+  - Answer only based on what the user explicitly asks
+  - Include only relevant fields, not the full profile unless requested
+  - Double check if rules are followed, fix if not
 beginDialog:
   kind: OnRecognizedIntent
   id: main
