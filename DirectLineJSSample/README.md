@@ -33,6 +33,66 @@ A minimal, self-contained sample that connects to a **Copilot Studio** agent usi
 
 3. Open http://localhost:5510
 
+## Code snippets
+
+### Connect to Copilot Studio
+
+```js
+// Fetch token and regional endpoint (both derived from the token endpoint URL)
+const tokenEndpoint = 'https://<env>.environment.api.powerplatform.com/.../directline/token?api-version=2022-03-01-preview';
+const apiVersion = new URL(tokenEndpoint).searchParams.get('api-version');
+
+const [{ channelUrlsById }, { token }] = await Promise.all([
+  fetch(new URL(`/powervirtualagents/regionalchannelsettings?api-version=${apiVersion}`, tokenEndpoint)).then(r => r.json()),
+  fetch(tokenEndpoint).then(r => r.json()),
+]);
+
+const directLine = new DirectLine.DirectLine({
+  token,
+  domain: new URL('v3/directline', channelUrlsById.directline).toString(),
+  webSocket: true,
+});
+```
+
+### Receive activities
+
+```js
+directLine.activity$
+  .filter(activity => {
+    // Only agent activities — DirectLine echoes back your own messages
+    // with from.role undefined; the agent's always have from.role === 'bot'
+    return activity.from.role === 'bot';
+  })
+  .subscribe(activity => {
+    if (activity.type === 'message') console.log('Agent:', activity.text);
+    if (activity.type === 'typing')  console.log('Agent is typing...');
+  });
+```
+
+### Send a message
+
+```js
+// postActivity returns an RxJS Observable — you MUST subscribe to trigger the send
+directLine.postActivity({
+  from: { id: 'user1' },
+  type: 'message',
+  text: 'Hello!',
+}).subscribe(
+  id => console.log('Sent, id:', id),
+  err => console.error('Error:', err),
+);
+```
+
+### Trigger the greeting topic
+
+```js
+directLine.postActivity({
+  from: { id: 'user1' },
+  type: 'event',
+  name: 'startConversation',
+}).subscribe();
+```
+
 ## Key gotchas
 
 - **`from.role`, not `from.id`** — DirectLine replaces your `from.id` with a server-assigned UUID. To distinguish agent activities from user echoes, filter on `from.role === 'bot'` (the protocol still uses "bot" as the role value).
