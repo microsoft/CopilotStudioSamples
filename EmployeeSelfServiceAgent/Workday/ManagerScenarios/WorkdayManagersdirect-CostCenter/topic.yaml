@@ -5,7 +5,7 @@ modelDescription: |-
   Example invalid requests:
   "What is my manager's cost center?"
   "What is my sister's cost center?"
-  
+   
   Example valid request:
   "What is the cost center of my direct reports?"
   
