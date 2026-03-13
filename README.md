@@ -44,6 +44,7 @@ Older samples and labs, largely focused on Power Virtual Agents, have been moved
 | SSOwithEntraID | Single Sign-On for Web and Entra ID | [View][cs#10] |
 | Type Ahead Suggestions | Demonstrates typeahead suggestion functionality for your custom copilot that can assist users finding things like frequently asked questions, auto correcting typos and showing a list of menu items like product names or topic names before sending a message to the copilot | [View][cs#9] |
 | WebChat Customization | Shows the Customization Options from the Azure AI Bot Services as well as some CSS to drastically change the look of your Copilot agent | [View][cs#6]|
+| CData Connect AI | Shows how to connect Copilot Studio to a single MCP server powered by CData Connect AI for real-time access to 350+ data sources | [View][cs#11] |
 
 
 [cs#1]:./SSOSamples/3rdPartySSOWithOKTA
@@ -56,6 +57,7 @@ Older samples and labs, largely focused on Power Virtual Agents, have been moved
 [cs#8]:./LoadTesting/JMeterMultiThreadGroup
 [cs#9]:./TypeaheadSuggestions
 [cs#10]:./SSOSamples/SSOwithEntraID
+[cs#11]:./CDataConnectAI/
 
 ## Contributing
 
