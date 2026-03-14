@@ -24,7 +24,7 @@ This table maps old folder locations (on `main`) to new locations (on `reorg/v1`
 | Skill Handoff | `IntegrateWithEngagementHub/HandoverToLiveAgentUsingSkill` | `contact-center/servicenow/HandoverToLiveAgentUsingSkill` | adilei |
 | Salesforce | `IntegrateWithEngagementHub/Salesforce` | `contact-center/servicenow/Salesforce` | adilei |
 | ServiceNow | `IntegrateWithEngagementHub/ServiceNow` | `contact-center/servicenow/ServiceNow` | adilei |
-| Engagement Playbook | `Playbook` | `contact-center/skill-handoff` | Matt Farmer |
+| Engagement Playbook | `Playbook` | *(removed)* | Matt Farmer |
 
 ## Extensibility
 
