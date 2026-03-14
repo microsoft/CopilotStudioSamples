@@ -13,7 +13,6 @@ Single Sign-On implementations for Copilot Studio agents with various identity p
 
 | Folder | Description |
 |--------|-------------|
-| [chat-api/](./chat-api/) | SSO with Copilot Studio Chat API (experimental) |
 | [entra-id/](./entra-id/) | SSO with Microsoft Entra ID |
 | [okta/](./okta/) | SSO with Okta identity provider |
 
