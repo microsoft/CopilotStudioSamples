@@ -5,10 +5,13 @@ nav_order: 1
 ---
 # Copilot Studio Chat API Sample
 
-This sample demonstrates how to use the Copilot Studio Chat API to communicate with a Copilot Studio Agent using Single Sign-On (SSO) authentication. 
+Deprecated
+{: .label .label-red }
+
+This sample demonstrates how to use the Copilot Studio Chat API to communicate with a Copilot Studio Agent using Single Sign-On (SSO) authentication.
 
 {: .caution }
-> This sample uses an experimental API that is not officially supported for production use.
+> This sample is deprecated. It uses an experimental API that is not officially supported for production use. Use the [Web Client](../../ui/custom-ui/webclient/) sample instead.
 
 ## Overview
 

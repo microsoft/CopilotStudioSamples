@@ -1,154 +1,204 @@
 # CopilotStudioSamples
 
-Microsoft Copilot Studio samples repo. GitHub Pages site uses **Just the Docs** (Jekyll theme) for navigation and search.
+Microsoft Copilot Studio samples repo with a Just the Docs (Jekyll) site for navigation and search.
 
-## Just the Docs Reference
+**Live site**: https://adilei.github.io/CopilotStudioSamples/
 
-### Navigation Front Matter
+## Repo Structure
 
-Pages are organized via front matter fields — hierarchy is determined by `parent`/`grand_parent`, NOT by file paths.
+```
+├── authoring/          # Importable solutions and topic snippets
+├── contact-center/     # ServiceNow, Salesforce, Genesys, skill handoff
+├── extensibility/      # MCP servers, A2A protocol, M365 Agents SDK
+├── guides/             # Implementation guide, workshop, playbook
+├── infrastructure/     # VNet and deployment templates
+├── sso/                # SSO with Entra ID, Okta, Chat API
+├── testing/            # Functional (pytest) and load (JMeter) testing
+├── ui/                 # Custom UIs and platform embed samples
+│   ├── custom-ui/      # Standalone chat frontends
+│   └── embed/          # Widgets for ServiceNow, SharePoint, Power Apps, etc.
+├── EmployeeSelfServiceAgent/  # Workday/facilities topics (pending deprecation)
+├── _config.yml         # Jekyll configuration
+├── _layouts/           # Custom default.html (adds Browse source button)
+├── _includes/          # source_link.html (Browse source / external link button)
+└── Gemfile             # Jekyll dependencies
+```
+
+## Adding a New Sample
+
+1. **Create a folder** under the appropriate category (e.g., `ui/embed/my-sample/`)
+2. **Add a `README.md`** with front matter:
 
 ```yaml
-# Top-level page
 ---
-title: UI              # Required. Must be unique among siblings.
-nav_order: 3           # Numeric = sorted before alphabetical defaults
-has_children: true     # Redundant since v0.10.0, but kept for clarity
----
-
-# Child page
----
-title: Embed
-parent: UI             # Must match parent's title exactly
-nav_order: 2
----
-
-# Grandchild page
----
-title: ServiceNow Widget
-parent: Embed
-grand_parent: UI       # Disambiguates when titles repeat across parents
-nav_order: 5
+title: My Sample
+parent: Embed           # Must match the parent page's title exactly
+grand_parent: UI        # Required for level 3 pages
+nav_order: 8            # Position among siblings
 ---
 ```
 
-**Sorting**: Numeric `nav_order` pages come before alphabetical defaults. Integers and floats are equivalent. Same-value pages have unstable order.
+3. **Write the README** with: description, prerequisites, setup steps, architecture notes
+4. **Name the file `README.md`** (exact casing) — the `jekyll-readme-index` plugin converts it to `index.html`
 
-**Excluding pages**: `nav_exclude: true` hides from sidebar (still searchable). `search_exclude: true` hides from search index. Both can be combined.
+### For Power Platform Solutions (`authoring/solutions/`)
 
-**Nesting**: Unlimited depth since v0.10.0. Every page can have children.
+Solutions follow the [PnP format](https://github.com/pnp/powerplatform-samples):
 
-### Callouts (Admonitions)
-
-Just the Docs does NOT support GitHub `> [!NOTE]` syntax. It uses **kramdown block IALs** with callout types defined in `_config.yml`.
-
-**Config** (`_config.yml`):
-```yaml
-callouts:
-  note:
-    title: Note
-    color: purple
-  warning:
-    title: Warning
-    color: red
-  important:
-    title: Important
-    color: blue
-  caution:
-    title: Caution
-    color: red
-  tip:
-    title: Tip
-    color: green
-  highlight:
-    color: yellow
+```
+authoring/solutions/my-solution/
+├── README.md       # Description, screenshots, install steps
+├── assets/         # Screenshots and diagrams
+├── solution/       # Packaged .zip file(s) ready to import
+└── sourcecode/     # Unpacked source (pac solution unpack)
 ```
 
-Predefined colors: `grey-lt`, `grey-dk`, `purple`, `blue`, `green`, `yellow`, `red`. Custom colors via `_sass/custom/setup.scss`.
+Front matter:
+```yaml
+---
+title: My Solution
+parent: Solutions
+grand_parent: Authoring
+nav_order: 7
+---
+```
 
-**Markdown syntax**:
+README should include:
+- What the solution does and which Copilot Studio features it demonstrates
+- Screenshots in `assets/` (reference as `![screenshot](./assets/screenshot.png)`)
+- Installation steps (import zip via make.powerapps.com > Solutions > Import)
+- Any connection references or environment variables to configure
+- Known issues or limitations
+
+Update `authoring/solutions/README.md` Contents table after adding.
+
+### For External Samples (code lives in another repo)
+
+Add `external_url` to front matter — this replaces the "Browse source" button with "View sample in M365 Agents SDK repo":
+
+```yaml
+---
+title: Genesys Handoff
+parent: Contact Center
+nav_order: 4
+external_url: "https://github.com/microsoft/Agents/tree/main/samples/dotnet/GenesysHandoff"
+---
+```
+
+### For Deprecated Samples
+
+Add a red label and caution callout at the top:
+
+```markdown
+Deprecated
+{: .label .label-red }
+
+{: .caution }
+> This sample is deprecated. Use [replacement](../path/) instead.
+```
+
+## Category README Convention
+
+Each category folder has a README.md with:
+- `has_children: true` and `has_toc: false` in front matter
+- A manual `## Contents` table (preferred over JTD's auto-generated TOC)
+- Optional `## See also` section for cross-references
+
+## Markdown Rules
+
+### Do NOT use GitHub alert syntax
+
+GitHub `> [!NOTE]` alerts render as plain text in Jekyll. Use JTD callouts instead:
+
 ```markdown
 {: .note }
-> This is a note with the default title from config.
+> This is a note.
 
 {: .warning }
-> A warning callout.
->
-> Supports multiple paragraphs.
+> This is a warning.
 
-{: .note-title }
-> Custom Title Here
->
-> The first line becomes the title when using `-title` variant.
+{: .tip }
+> This is a tip.
+
+{: .caution }
+> This is a caution.
 
 {: .important }
-> {: .opaque }
-> <div markdown="block">
-> {: .warning }
-> Nested callout inside an opaque background.
-> </div>
+> This is important.
 ```
 
-**Converting GitHub alerts to JTD callouts**:
-```
-GitHub:                          JTD equivalent:
-> [!NOTE]                        {: .note }
-> Content here.                  > Content here.
+### Links
 
-> [!CAUTION]                     {: .caution }
-> Content here.                  > Content here.
+- Link to other READMEs as **directories**, not files: `[My Sample](./my-sample/)` not `[My Sample](./my-sample/README.md)`
+- Non-README markdown: strip the `.md` extension: `[Setup Guide](./SETUP)` not `(./SETUP.md)`
+- External links are fine as-is
 
-> [!WARNING]                     {: .warning }
-> Content here.                  > Content here.
+### Labels
 
-> [!TIP]                         {: .tip }
-> Content here.                  > Content here.
+```markdown
+New
+{: .label .label-green }
 
-> [!IMPORTANT]                   {: .important }
-> Content here.                  > Content here.
+Deprecated
+{: .label .label-red }
 ```
 
-### Search
+### Liquid Escaping
 
-Client-side search via lunr.js. Configured in `_config.yml`:
-```yaml
-search_enabled: true
-search:
-  heading_level: 2          # Sections split at h2 for granular results
-  previews: 3
-  preview_words_before: 5
-  preview_words_after: 10
-  tokenizer_separator: /[\s/\-]+/  # Hyphens split tokens
-  focus_shortcut_key: 'k'   # Ctrl+K / Cmd+K to focus search
+If markdown contains `{%` (e.g., URL-encoded params), wrap in raw tags:
+
+````markdown
+{% raw %}
+```
+https://example.com?params={%22key%22:%22value%22}
+```
+{% endraw %}
+````
+
+## Building and Testing Locally
+
+```bash
+# Install dependencies (first time only)
+bundle install
+
+# Start dev server with live reload
+bundle exec jekyll serve
+# Site at http://127.0.0.1:4000/CopilotStudioSamples/
+
+# Build without serving (CI check)
+bundle exec jekyll build
 ```
 
-### Other UI Components
+Verify after changes:
+- New page appears in sidebar nav
+- Search finds the new sample (Ctrl+K)
+- Internal links work (no 404s)
+- Images render correctly
 
-- **Labels**: `{: .label .label-green }` inline spans
-- **Buttons**: `{: .btn .btn-purple }` styled links
-- **Mermaid**: Enable in config, use ` ```mermaid ` code blocks
+## Git Workflow
 
-### Exclude Patterns in _config.yml
+```bash
+# Work on the docs branch
+git checkout reorg/v1
 
-Jekyll `exclude` uses `File.fnmatch` **without** `FNM_PATHNAME`:
-- `*` matches `/` (any characters), so `*.js` matches `foo/bar/baz.js`
-- `*.html` also matches theme layout files — **never use `*.html` in exclude**
-- Directory excludes need `*/dirname` form to match at any depth
-- `index.html` only matches root — use `*index.html` for recursive
+# Make changes, then commit
+git add -A
+git commit -m "Add my-new-sample to ui/embed"
 
-### jekyll-readme-index Plugin
-
-Converts `README.md` → `index.html` pages. Config:
-```yaml
-readme_index:
-  with_frontmatter: true
+# Push to fork — GitHub Actions deploys automatically
+git push origin reorg/v1
 ```
-If a directory already has a source `index.html`, the plugin skips it and renders README.md as `README.html` instead (causing duplicates). Fix: exclude source `index.html` files.
 
-## Important Notes
+**Branch**: `reorg/v1` is the docs branch. GitHub Actions builds and deploys to Pages on every push.
 
-- `*.html` in `_config.yml` exclude breaks theme layouts (entry filter applies to theme `_layouts/*.html` too)
-- Source `index.html` files in sample directories must be excluded so `jekyll-readme-index` can convert README.md to the index
-- Liquid `{%` sequences in markdown (e.g., URL-encoded params) cause build errors — wrap in `{% raw %}...{% endraw %}`
-- `has_children: true` is redundant since JTD v0.10.0 but harmless to keep
-- GitHub `> [!NOTE]` alerts render as plain text in Jekyll — must convert to JTD callout syntax
+**To merge upstream**: when ready, open a PR from `reorg/v1` → `main`. Update `.github/workflows/pages.yml` to trigger on `main` instead of `reorg/v1` before merging.
+
+**Remotes**:
+- `origin` — your fork (`adilei/CopilotStudioSamples`)
+- `upstream` — source repo (`microsoft/CopilotStudioSamples`)
+
+## Key Config Notes
+
+- `_config.yml` exclude patterns: `*.js`, `*.ts`, `*.cs` etc. match recursively (`*` matches `/` in Jekyll's fnmatch)
+- **Never add `*.html` to exclude** — it breaks theme layouts
+- Source `index.html` files are excluded via `*index.html` so `jekyll-readme-index` can use README.md

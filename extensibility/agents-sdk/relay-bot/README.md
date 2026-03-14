@@ -4,7 +4,13 @@ parent: Agents SDK
 grand_parent: Extensibility
 nav_order: 3
 ---
-﻿# Relay Bot
+# Relay Bot
+
+Deprecated
+{: .label .label-red }
+
+{: .caution }
+> This sample is deprecated and will be replaced with a modernized M365 Agents SDK sample.
 
 Sample of connecting Bot Framework v4 bot to a Power Virtual Agent bot.
 

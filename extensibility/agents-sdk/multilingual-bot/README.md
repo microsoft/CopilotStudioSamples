@@ -6,6 +6,12 @@ nav_order: 2
 ---
 # Translation Bot sample
 
+Deprecated
+{: .label .label-red }
+
+{: .caution }
+> This sample is deprecated and will be replaced with a modernized M365 Agents SDK sample.
+
 ## Overview
 The main idea of this sample is to show the user how a PVA Bot can be connected using DirecLine API and using all its topics in different languages, by using a middleware (Azure Bot) to translate the messages between the user and the PVA Bot. The middleware will be using Cognitive services to translate the texts during the entire conversation.
 

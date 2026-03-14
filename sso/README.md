@@ -29,13 +29,8 @@ These embed and custom UI samples also implement SSO:
 | [SharePoint Customizer](../ui/embed/sharepoint-customizer/) | SharePoint SPFx SSO |
 | [PCF Canvas App](../ui/embed/pcf-canvas-app/) | Built-in Canvas App SSO |
 | [Assistant UI](../ui/custom-ui/assistant-ui/assistant-ui-mcs/) | MSAL SSO |
-
-## See also (M365 Agents SDK repo)
-
-| Sample | Description | Language |
-|--------|-------------|----------|
-| [copilotstudio-webchat-react](https://github.com/microsoft/Agents/tree/main/samples/nodejs/copilotstudio-webchat-react) | WebChat React client with auth | Node |
-| [copilotstudio-webclient](https://github.com/microsoft/Agents/tree/main/samples/nodejs/copilotstudio-webclient) | Web client with auth | Node |
+| [WebChat React](../ui/custom-ui/webchat-react/) | WebChat React with auth (Node) — *M365 Agents SDK repo* |
+| [Web Client](../ui/custom-ui/webclient/) | Web client with auth (Node) — *M365 Agents SDK repo* |
 
 ## Prerequisites
 

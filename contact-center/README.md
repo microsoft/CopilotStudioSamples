@@ -16,9 +16,4 @@ Integrate Copilot Studio agents with contact center platforms and live agent han
 | [Skill Handoff](./servicenow/HandoverToLiveAgentUsingSkill/) | Skill-based handoff to live agents using M365 Agents SDK |
 | [Salesforce](./servicenow/Salesforce/) | Salesforce Einstein Bot integration via DirectLine API |
 | [ServiceNow](./servicenow/ServiceNow/) | ServiceNow Virtual Agent integration via DirectLine |
-
-## See also (M365 Agents SDK repo)
-
-| Sample | Description | Language |
-|--------|-------------|----------|
-| [GenesysHandoff](https://github.com/microsoft/Agents/tree/main/samples/dotnet/GenesysHandoff) | Live agent handoff to Genesys | .NET |
+| [Genesys Handoff](./genesys-handoff/) | Live agent handoff to Genesys (.NET) — *M365 Agents SDK repo* |

@@ -20,3 +20,5 @@ Plug a Copilot Studio chat agent into an existing platform.
 | [servicenow-widget/](./servicenow-widget/) | Floating chat widget for ServiceNow Service Portal |
 | [sharepoint-customizer/](./sharepoint-customizer/) | SharePoint app customizer with SSO |
 | [typeahead-suggestions/](./typeahead-suggestions/) | Typeahead suggestions for WebChat |
+| [WebChat React](../custom-ui/webchat-react/) | WebChat React client with auth (Node) — *M365 Agents SDK repo* |
+| [Web Client](../custom-ui/webclient/) | Web client with auth (Node) — *M365 Agents SDK repo* |
