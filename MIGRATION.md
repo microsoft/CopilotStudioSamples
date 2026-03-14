@@ -32,10 +32,10 @@ This table maps old folder locations (on `main`) to new locations (on `reorg/v1`
 |--------|-------------|-------------|-------|
 | Simple A2A Sample | `A2ASamples/Simple-A2A-Sample` | `extensibility/a2a/Simple-A2A-Sample` | Giorgio Ughini |
 | Call Agent Connector | `CallAgentConnector` | `extensibility/agents-sdk/call-agent-connector` | adilei |
-| Multilingual Bot | `MultilingualBotSample` | `extensibility/agents-sdk/multilingual-bot` *(deprecated)* | Remi Dyon |
+| Multilingual Bot | `MultilingualBotSample` | `extensibility/agents-sdk/multilingual-bot` *(deprecated)* | adilei |
 | Relay Bot | `RelayBotSample` | `extensibility/agents-sdk/relay-bot` *(deprecated)* | tracyboehrer |
 | Pass Resources as Inputs | `MCPSamples/pass-resources-as-inputs` | `extensibility/mcp/pass-resources-as-inputs` | Giorgio Ughini |
-| Search Species Resources | `MCPSamples/search-species-resources-typescript` | `extensibility/mcp/search-species-resources-typescript` | Markus Tobler |
+| Search Species Resources | `MCPSamples/search-species-resources-typescript` | `extensibility/mcp/search-species-resources-typescript` | adilei |
 
 ## Guides
 
@@ -62,7 +62,7 @@ This table maps old folder locations (on `main`) to new locations (on `reorg/v1`
 
 | Sample | Old Location | New Location | Owner |
 |--------|-------------|-------------|-------|
-| Pytest Agents SDK | `FunctionalTesting/PytestAgentsSDK` | `testing/functional/PytestAgentsSDK` | Laura Damian |
+| Pytest Agents SDK | `FunctionalTesting/PytestAgentsSDK` | `testing/functional/PytestAgentsSDK` | adilei |
 | Response Analysis | `FunctionalTesting/ResponseAnalysisAgentsSDK` | `testing/functional/ResponseAnalysisAgentsSDK` | kaul-vineet |
 | JMeter Multi Thread Group | `LoadTesting/JMeterMultiThreadGroup` | `testing/load/JMeterMultiThreadGroup` | adilei |
 
