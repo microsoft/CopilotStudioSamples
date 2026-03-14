@@ -1,3 +1,8 @@
+---
+title: Okta
+parent: SSO
+nav_order: 3
+---
 # Description
 
 This custom canvas demonstrates how an access token obtained from a 3rd party identity provider, like OKTA, can be used in the context of a single sign-on (SSO) login flow with Copilot Studio.
@@ -56,7 +61,7 @@ Deploy [index.html](./public/index.html) and [signout.html](./public/signout.htm
   <em>Manual authentication without real values</em>
 </p>
 
-> [!IMPORTANT]
+{: .important }
 > When using "placeholder" instead of real values, SSO will not work in the test canvas, and users will not be able to sign-on using the standard "login card".
 > After making any changes to the copilot's authentication settings, publish the copilot.
 

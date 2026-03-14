@@ -1,3 +1,8 @@
+---
+title: Entra ID
+parent: SSO
+nav_order: 2
+---
 # Description
 
 This sample demonstrates how to retrieve an Entra ID access token for a signed-in user, and share the token with Copilot Studio over Direct Line, thus enabling seamless SSO.

@@ -1,3 +1,8 @@
+---
+title: Implementation Guide
+parent: Guides
+nav_order: 1
+---
 # What is the implementation guide?
 
 The Copilot Studio implementation guide offers in-depth guidance, best practices, and reference architectures and patterns. It is designed to help customers, partners, and Microsoft teams plan, design, and review copilot projects and architectures for a successful implementation journey.

@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # @microsoft/agents-copilotstudio-client
 
 ## Overview
@@ -6,7 +10,7 @@ The `@microsoft/agents-copilotstudio-client` package allows you to interact with
 
 This package provides exports for CommonJS and ES6 modules, and also a bundle to be used in the browser.
 
-> [!NOTE]
+{: .note }
 > The Client needs to be initialized with a valid JWT Token.
 
 ## Installation
@@ -36,7 +40,7 @@ To use this library, you will need the following:
 
 ### Create an Application Registration in Entra ID to support user authentication to Copilot Studio
 
-> [!IMPORTANT]
+{: .important }
 > If you are using this client from a service, you will need to exchange the user token used to login to your service for a token for your agent hosted in copilot studio. This is called a On Behalf Of (OBO) authentication token. You can find more information about this authentication flow in [Entra Documentation](https://learn.microsoft.com/entra/msal/dotnet/acquiring-tokens/web-apps-apis/on-behalf-of-flow).
 >
 > When using this method, you will need to add the `CopilotStudio.Copilots.Invoke` _delegated_ API permision to your application registration's API privilages
@@ -61,7 +65,7 @@ This step will require permissions to edit application identities in your Azure 
             1. An appropriate administrator must then `Grant Admin consent for copilotsdk` before the permissions will be available to the application.
     1.  Close Azure Portal
 
-> [!TIP]
+{: .tip }
 > If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
 
 ## How-to use
@@ -90,7 +94,7 @@ const settings: ConnectionSettings = {
 };
 ```
 
-> [!NOTE]
+{: .note }
 > By default, it's assumed your agent is in the Microsoft Public Cloud. If you are using a different cloud, you will need to set the `Cloud` property to the appropriate value. See the `PowerPlatformCloud` enum for the supported values
 
 #### Using the .env file

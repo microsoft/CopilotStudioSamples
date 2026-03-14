@@ -1,3 +1,9 @@
+---
+title: Home
+layout: home
+nav_order: 0
+description: Samples and artifacts for Microsoft Copilot Studio
+---
 # Microsoft Copilot Studio Samples
 
 ## Overview
@@ -16,6 +22,7 @@ Older samples and labs, largely focused on Power Virtual Agents, have been moved
 | Product documentation | [aka.ms/CopilotStudioDocs](https://aka.ms/CopilotStudioDocs) |
 | Guidance documentation | [aka.ms/CopilotStudioGuidance](https://aka.ms/CopilotStudioGuidance) |
 | Try Copilot Studio | [aka.ms/TryCopilotStudio](https://aka.ms/TryCopilotStudio) |
+| Copilot Acceleration Team technical blog | [aka.ms/TheCustomEngine](https://aka.ms/TheCustomEngine) |
 
 ## Microsoft Copilot Studio and Agents SDK links
 

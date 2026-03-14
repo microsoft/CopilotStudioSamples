@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Copilot Studio Workshop Proctor Instructions
 
 The Microsoft Copilot Studio workshop can be ran in a trial Microsoft 365 tenant, with trial licenses of Microsoft Copilot Studio.

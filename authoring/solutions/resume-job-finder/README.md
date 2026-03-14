@@ -1,3 +1,9 @@
+---
+title: Resume Job Finder
+parent: Solutions
+grand_parent: Authoring
+nav_order: 6
+---
 # Resume Job Finder Agent
 
 A Copilot Studio agent that analyzes uploaded resumes and matches them against job listings stored in Dataverse.

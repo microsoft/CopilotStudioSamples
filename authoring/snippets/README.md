@@ -1,3 +1,10 @@
+---
+title: Snippets
+parent: Authoring
+nav_order: 1
+has_children: true
+has_toc: false
+---
 # Snippets
 
 Code snippets and templates that can be copied directly into Copilot Studio. No server or external dependencies required.

@@ -1,3 +1,9 @@
+---
+title: Generative Chitchat
+parent: Solutions
+grand_parent: Authoring
+nav_order: 5
+---
 # AI Response Generated Chit Chat
 
 Sample solution showing how to provide simple chit chat capabilities to Copilot Studio without the need to enable General Knowledge.  Many makers will not want all of the general knowledge capabilities but would like to have general chit chat work within their agent.  This sample allows for you to do this without the need for General Knowledge.  It is not necessary to do this if general knowledge is on with your agent unless you want to control chit chat differently than knowledge. 

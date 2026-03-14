@@ -1,3 +1,8 @@
+---
+title: Workday
+parent: Employee Self-Service
+nav_order: 1
+---
 # ESS Workday Scenarios
 
 This folder contains sample topic definitions and ESS Template configurations XML that customers can use to extend the functionality of their ESS Agent setup. Use the topic definitions (`topic.yaml`) and the accompanying Template configuration XML file to create new topics in your environment or to customize the behavior of existing topics for the scenarios listed below.

@@ -1,3 +1,10 @@
+---
+title: Employee Self-Service
+nav_order: 9
+has_children: true
+has_toc: false
+description: Employee Self-Service samples for Microsoft Copilot Studio
+---
 # Employee Self-Service Agent
 
 Copilot Studio topics for employee self-service scenarios integrating with Workday and facilities management systems.

@@ -1,3 +1,9 @@
+---
+title: Relay Bot
+parent: Agents SDK
+grand_parent: Extensibility
+nav_order: 3
+---
 ﻿# Relay Bot
 
 Sample of connecting Bot Framework v4 bot to a Power Virtual Agent bot.

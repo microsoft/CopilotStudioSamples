@@ -1,3 +1,9 @@
+---
+title: Call Agent Connector
+parent: Agents SDK
+grand_parent: Extensibility
+nav_order: 1
+---
 # Copilot Studio Call Agent Connector
 
 A solution that enables synchronous, deterministic orchestration of Microsoft Copilot Studio agents from Power Platform applications.
@@ -48,6 +54,6 @@ Follow these steps in order:
 
 | Component | Description | Setup Guide | Order |
 |-----------|-------------|-------------|-------|
-| **Azure Function** | SyncToAsyncService that bridges synchronous and asynchronous calls | [SyncToAsyncService/README.md](SyncToAsyncService/README.md) | 1️⃣ |
-| **Custom Connector** | Power Platform connector that calls the Azure Function | [Connector/README.md](Connector/README.md) | 2️⃣ |
+| **Azure Function** | SyncToAsyncService that bridges synchronous and asynchronous calls | [SyncToAsyncService/README.md](SyncToAsyncService/) | 1️⃣ |
+| **Custom Connector** | Power Platform connector that calls the Azure Function | [Connector/README.md](Connector/) | 2️⃣ |
 

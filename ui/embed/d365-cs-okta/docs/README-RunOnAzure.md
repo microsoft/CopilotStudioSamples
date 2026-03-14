@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 
 
 # Unified SSO with Copilot Agent and D365 Omnichannel
@@ -117,7 +121,7 @@ This sample app demonstrates unified SSO with Copilot Agent and D365 Omnichannel
 > This section assumes that [Copilot handoff to Dynamics 365 Customer Service](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-hand-off-omnichannel?tabs=webApp) is configured.
 
 #### Public Key / Private Key Setup:
- > [!NOTE] 
+ {: .note }
  > **OPTIONAL** - This sample app comes with pre configured public/private keys. This step is optional if self generated keys are not required. 
 
  1. Install [Git Bash](https://www.atlassian.com/git/tutorials/git-bash) on your machine.
@@ -181,7 +185,7 @@ This sample app demonstrates unified SSO with Copilot Agent and D365 Omnichannel
  4. Click on **More** and select **Open code editor**.  
  
  ##### Use pass-through pattern. 
-  > [!TIP] 
+  {: .tip }
   > In this pattern, only the token and not the JWT payload (typically includes information about the authenticated user, such as their identity, attributes etc.) is sent to Copilot Studio. 
   > In addition, the token is **not** validated by Copilot till it is used e.g.to cal an API. 
   > Authentication flow works as long as Copilot Studio receives the token. 
@@ -191,10 +195,10 @@ This sample app demonstrates unified SSO with Copilot Agent and D365 Omnichannel
  6. Publish the agent.
  
  ##### Use introspection API. 
- > [!NOTE] 
+ {: .note }
  > **OPTIONAL** - Steps [7], [8], [9] are to be followed **only** when implementing introspection API pattern.
  
- > [!TIP] 
+ {: .tip }
  > In this pattern, the token is sent to Copilot Studio. The Copilot Studio calls the Idp instrspection API to validate the token and get the JWT payload (typically includes information about 
  > the authenticated user, such as their identity, attributes etc.). 
  > The authentication flow validates the token at the time of SSO. 
@@ -300,7 +304,7 @@ Step 7: <em> Check Live Agent is available from Presence Status. </em>
 </p>
 
 Step 8: <em> Open Omnichannel for Customer Service console in D365 Service. A chat request notification pops with **username** of the test user.  This step confirm D365 Omnichannel authentication.  </em>
-  > [!TIP] 
+  {: .tip }
   > Rewrite utterance `i want to talk to an agent` in chat widget if chat request notification does not come up.
 
 <p  align="center">

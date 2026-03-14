@@ -1,6 +1,10 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Manual Setup Guide
 
-This guide walks through deploying the Copilot Chat widget to ServiceNow manually. For automated deployment, see the [Quick Start](../README.md#quick-start) in the README.
+This guide walks through deploying the Copilot Chat widget to ServiceNow manually. For automated deployment, see the [Quick Start](../#quick-start) in the README.
 
 ## Step 1: Build the Bundle
 

@@ -1,0 +1,10 @@
+{% if site.gh_edit_repository and site.gh_edit_branch and page.path %}
+  {% assign page_dir = page.path | split: "/" | pop | join: "/" %}
+  {% if page_dir != "" %}
+    <p class="text-right text-small mb-4">
+      <a href="{{ site.gh_edit_repository }}/tree/{{ site.gh_edit_branch }}/{{ page_dir }}" class="btn btn-outline fs-3" target="_blank">
+        Browse source on GitHub
+      </a>
+    </p>
+  {% endif %}
+{% endif %}

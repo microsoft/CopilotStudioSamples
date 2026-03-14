@@ -1,8 +1,14 @@
+---
+title: SharePoint Customizer
+parent: Embed
+grand_parent: UI
+nav_order: 6
+---
 # SharePoint SSO Component
 
 This code sample demonstrates how to create a SharePoint SPFx component which is a wrapper for a copilot, created with Microsoft Copilot Studio. The SPFx component included in the sample supports SSO, providing seamless authentication for users interacting with the copilot.
 
-> [!IMPORTANT]
+{: .important }
 > ⚠️ **This sample has been superseded.**  
 > Please use the updated sample here: [SharePoint SSO App Customizer](https://github.com/microsoft/CopilotStudioSamples/tree/main/SSOSamples/SharePointSSOAppCustomizer).  
 >  
@@ -26,7 +32,7 @@ This code sample demonstrates how to create a SharePoint SPFx component which is
 
 5. Upload the component to your tenant app catalog and enable on your site
 
-For more detailed instructions, please refer to the [step-by-step setup guide](./SETUP.md).
+For more detailed instructions, please refer to the [step-by-step setup guide](./SETUP).
 
 ## The Deployed Component
 

@@ -1,3 +1,9 @@
+---
+title: Simple A2A Sample
+parent: A2A Protocol
+grand_parent: Extensibility
+nav_order: 1
+---
 # A2A Agent Framework Sample
 
 This repository contains a sample implementation of an AI agent using the A2A Agent Framework. It demonstrates how to host a simple "botanical" agent.

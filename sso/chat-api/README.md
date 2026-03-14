@@ -1,8 +1,13 @@
+---
+title: Chat API
+parent: SSO
+nav_order: 1
+---
 # Copilot Studio Chat API Sample
 
 This sample demonstrates how to use the Copilot Studio Chat API to communicate with a Copilot Studio Agent using Single Sign-On (SSO) authentication. 
 
-> [!CAUTION]
+{: .caution }
 > This sample uses an experimental API that is not officially supported for production use.
 
 ## Overview

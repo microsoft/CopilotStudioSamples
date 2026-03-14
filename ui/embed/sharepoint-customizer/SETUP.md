@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Deploy a Microsoft Copilot Studio copilot as a SharePoint component with single sign-on (SSO) enabled.
 
 To follow through the end-to-end setup process, you would need to:

@@ -1,3 +1,9 @@
+---
+title: Auto Detect Language
+parent: Solutions
+grand_parent: Authoring
+nav_order: 2
+---
 # Auto Detect Language for Generative Responses
 
 Sample solution showing how to provide a way to allow Copilot Studio agents to autodetect the spoken language and use one of the maker approved languages for their agent. 

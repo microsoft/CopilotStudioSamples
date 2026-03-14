@@ -1,3 +1,9 @@
+---
+title: Typeahead Suggestions
+parent: Embed
+grand_parent: UI
+nav_order: 7
+---
 # Typeahead suggestions for Copilot Studio 
 This code sample allows you to create a typeahead suggestion functionality for your custom copilot. This assists users finding things like frequently asked questions, auto correcting typos and showing a list of menu items. The v1 uses an API that returns topic names for given Agent but the sample can be used with any REST endpoint to show suggestions.
 

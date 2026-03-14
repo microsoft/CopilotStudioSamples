@@ -1,3 +1,8 @@
+---
+title: ServiceNow
+parent: Contact Center
+nav_order: 3
+---
 # Copilot Studio - ServiceNow Integration Samples
 
 This folder contains sample code for integrating Microsoft Copilot Studio with ServiceNow Virtual Agent, enabling seamless handoff from virtual agent to live agent.

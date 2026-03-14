@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 ﻿# TranslationBot
 
 Bot Framework v4 empty bot sample.

@@ -1,3 +1,10 @@
+---
+title: Custom UI
+parent: UI
+nav_order: 1
+has_children: true
+has_toc: false
+---
 # Custom UI Samples
 
 Build your own standalone chat frontend for Copilot Studio agents.

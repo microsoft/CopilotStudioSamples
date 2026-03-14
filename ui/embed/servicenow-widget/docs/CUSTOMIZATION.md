@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Customization Guide
 
 ## Config Options

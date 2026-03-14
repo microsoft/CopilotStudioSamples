@@ -1,3 +1,9 @@
+---
+title: DirectLine JS
+parent: Custom UI
+grand_parent: UI
+nav_order: 1
+---
 # DirectLine JS Sample
 
 A minimal, self-contained sample that connects to a **Copilot Studio** agent using Microsoft's open-source [`botframework-directlinejs`](https://github.com/microsoft/BotFramework-DirectLineJS) library — **without WebChat**. The UI is fully custom: plain HTML, CSS, and vanilla JavaScript.

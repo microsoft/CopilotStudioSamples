@@ -1,3 +1,10 @@
+---
+title: Solutions
+parent: Authoring
+nav_order: 2
+has_children: true
+has_toc: false
+---
 # Power Platform Solutions
 
 Importable Power Platform solutions in PnP format. Each solution includes packaged zips and unpacked source code.

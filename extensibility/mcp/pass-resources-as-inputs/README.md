@@ -1,3 +1,9 @@
+---
+title: Pass Resources as Inputs
+parent: MCP
+grand_parent: Extensibility
+nav_order: 1
+---
 # Pass Resources As Inputs MCP Server
 
 An MCP server demonstrating how tools can accept either inline text or resource references. Copilot Studio sends only lightweight inputs (like `resourceUri`) while the server keeps multi‑kilobyte payloads in its resource catalog, preventing the agent context window from getting saturated.

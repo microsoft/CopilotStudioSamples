@@ -1,3 +1,10 @@
+---
+title: Contact Center
+nav_order: 4
+has_children: true
+has_toc: false
+description: Contact Center samples for Microsoft Copilot Studio
+---
 # Contact Center Integration
 
 Integrate Copilot Studio agents with contact center platforms and live agent handoff.
@@ -6,9 +13,12 @@ Integrate Copilot Studio agents with contact center platforms and live agent han
 
 | Folder | Description |
 |--------|-------------|
-| [servicenow/](./servicenow/) | Engagement hub integrations (ServiceNow, Salesforce, live agent handoff) |
-| [skill-handoff/](./skill-handoff/) | Planning templates and playbook for engagement implementations |
+| [Skill Handoff](./servicenow/HandoverToLiveAgentUsingSkill/) | Skill-based handoff to live agents using M365 Agents SDK |
+| [Salesforce](./servicenow/Salesforce/) | Salesforce Einstein Bot integration via DirectLine API |
+| [ServiceNow](./servicenow/ServiceNow/) | ServiceNow Virtual Agent integration via DirectLine |
 
 ## See also (M365 Agents SDK repo)
 
-- [GenesysHandoff](https://github.com/microsoft/Agents/tree/main/samples/dotnet/GenesysHandoff) — Live agent handoff to Genesys (.NET)
+| Sample | Description | Language |
+|--------|-------------|----------|
+| [GenesysHandoff](https://github.com/microsoft/Agents/tree/main/samples/dotnet/GenesysHandoff) | Live agent handoff to Genesys | .NET |

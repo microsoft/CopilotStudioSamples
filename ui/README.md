@@ -1,3 +1,10 @@
+---
+title: UI
+nav_order: 3
+has_children: true
+has_toc: false
+description: UI samples for Microsoft Copilot Studio
+---
 # UI Samples
 
 Custom chat interfaces and platform embeds for Copilot Studio agents.

@@ -1,3 +1,9 @@
+---
+title: Assistant UI
+parent: Custom UI
+grand_parent: UI
+nav_order: 3
+---
 # Copilot Studio + Assistant UI Integration Sample
 
 This project demonstrates how to integrate Copilot Studio with Assistant UI to create a modern, responsive chat interface with AI capabilities.

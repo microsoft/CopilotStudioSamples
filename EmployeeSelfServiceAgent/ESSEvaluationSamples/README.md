@@ -1,3 +1,8 @@
+---
+title: Evaluation Samples
+parent: Employee Self-Service
+nav_order: 3
+---
 # ESS Agent Evaluation Resources
 
 This repository provides guidance and ready-to-use resources for evaluating the **Microsoft Employee Self‑Service (ESS)** agent built in **Copilot Studio**. It is designed to help teams create consistent, repeatable, and scalable evaluation workflows across HR and IT scenarios.

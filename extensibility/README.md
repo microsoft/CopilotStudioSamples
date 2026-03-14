@@ -1,3 +1,10 @@
+---
+title: Extensibility
+nav_order: 2
+has_children: true
+has_toc: false
+description: Extensibility samples for Microsoft Copilot Studio
+---
 # Extensibility
 
 Extend Copilot Studio agents with external protocols and the M365 Agents SDK.

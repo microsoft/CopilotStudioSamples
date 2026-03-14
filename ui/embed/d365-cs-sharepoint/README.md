@@ -1,3 +1,9 @@
+---
+title: D365 CS SharePoint
+parent: Embed
+grand_parent: UI
+nav_order: 2
+---
 # Dynamics Live Chat SSO Sample
 
 ## Summary

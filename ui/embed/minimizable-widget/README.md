@@ -1,3 +1,9 @@
+---
+title: Minimizable Widget
+parent: Embed
+grand_parent: UI
+nav_order: 3
+---
 # Custom External UI
 
 The provided html-file can be integrated in your external website or published in a Power Pages website.

@@ -1,3 +1,9 @@
+---
+title: D365 CS Okta
+parent: Embed
+grand_parent: UI
+nav_order: 1
+---
 
 # Unified SSO with Copilot Agent and D365 Omnichannel
 
@@ -23,8 +29,8 @@ D365 Omnichannel -->> Chat Widget: 10. Return auth confirmation.
 
 ## Detailed instructions
 
-- [Run locally](<docs/README-RunOnAzure.md>)
-- [Run on Azure](<docs/README-RunOnLocalMachine.md>)
+- [Run locally](docs/README-RunOnAzure)
+- [Run on Azure](docs/README-RunOnLocalMachine)
 
 ## Authors
 

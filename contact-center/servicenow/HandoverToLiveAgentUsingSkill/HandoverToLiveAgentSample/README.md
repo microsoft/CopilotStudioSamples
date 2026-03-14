@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Handover To Live Agent Sample
 
 A .NET 9.0 Copilot Studio skill that enables seamless handover of conversations from Copilot Studio to a live chat system. This application acts as a bridge between Copilot Studio agents and live support systems, managing bidirectional message flow and conversation state.

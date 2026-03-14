@@ -1,3 +1,9 @@
+---
+title: Multilingual Bot
+parent: Agents SDK
+grand_parent: Extensibility
+nav_order: 2
+---
 # Translation Bot sample
 
 ## Overview

@@ -1,8 +1,13 @@
+---
+title: SSO
+nav_order: 5
+has_children: true
+has_toc: false
+description: SSO samples for Microsoft Copilot Studio
+---
 # SSO Samples
 
 Single Sign-On implementations for Copilot Studio agents with various identity providers.
-
-> Platform-specific embed samples that include SSO (SharePoint, D365 Customer Service) are under [ui/embed/](../ui/embed/).
 
 ## Contents
 
@@ -12,9 +17,25 @@ Single Sign-On implementations for Copilot Studio agents with various identity p
 | [entra-id/](./entra-id/) | SSO with Microsoft Entra ID |
 | [okta/](./okta/) | SSO with Okta identity provider |
 
+## UI samples with SSO
+
+These embed and custom UI samples also implement SSO:
+
+| Sample | SSO approach |
+|--------|-------------|
+| [ServiceNow Widget](../ui/embed/servicenow-widget/) | MSAL silent / popup SSO |
+| [D365 CS + Okta](../ui/embed/d365-cs-okta/) | Okta SSO with D365 Omnichannel |
+| [D365 CS + SharePoint](../ui/embed/d365-cs-sharepoint/) | MSAL SSO via SharePoint webpart |
+| [SharePoint Customizer](../ui/embed/sharepoint-customizer/) | SharePoint SPFx SSO |
+| [PCF Canvas App](../ui/embed/pcf-canvas-app/) | Built-in Canvas App SSO |
+| [Assistant UI](../ui/custom-ui/assistant-ui/assistant-ui-mcs/) | MSAL SSO |
+
 ## See also (M365 Agents SDK repo)
 
-- [obo-authorization](https://github.com/microsoft/Agents/tree/main/samples/dotnet/obo-authorization) — On-behalf-of flow to a Copilot Studio agent (.NET, [Node](https://github.com/microsoft/Agents/tree/main/samples/nodejs/obo-authorization), [Python](https://github.com/microsoft/Agents/tree/main/samples/python/obo-authorization))
+| Sample | Description | Language |
+|--------|-------------|----------|
+| [copilotstudio-webchat-react](https://github.com/microsoft/Agents/tree/main/samples/nodejs/copilotstudio-webchat-react) | WebChat React client with auth | Node |
+| [copilotstudio-webclient](https://github.com/microsoft/Agents/tree/main/samples/nodejs/copilotstudio-webclient) | Web client with auth | Node |
 
 ## Prerequisites
 

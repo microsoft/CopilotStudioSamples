@@ -1,3 +1,9 @@
+---
+title: Pytest Agents SDK
+parent: Functional Testing
+grand_parent: Testing
+nav_order: 1
+---
 # PytestAgentsSDK
 
 This project provides a sample test harness for evaluating Copilot Studio agents using [**Pytest**](https://docs.pytest.org/en/stable/) and [**DeepEval**](https://github.com/confident-ai/deepeval). It uses the [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) to communicate with Copilot Studio and focuses on **semantic evaluation** of agent responses using DeepEval’s `GEval` metric.

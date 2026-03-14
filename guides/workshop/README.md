@@ -1,3 +1,8 @@
+---
+title: Workshop
+parent: Guides
+nav_order: 2
+---
 # Microsoft Copilot Studio Hands-On Workshop
 
 ## Build and Extend your own Copilot using Microsoft Copilot Studio
@@ -45,4 +50,4 @@
 
 ## Proctor Instructions
 
-- Additional information on how to setup and run this workshop are available in [Proctor Instructions](./PROCTOR_INSTRUCTIONS.md)
+- Additional information on how to setup and run this workshop are available in [Proctor Instructions](./PROCTOR_INSTRUCTIONS)

@@ -1,3 +1,8 @@
+---
+title: Salesforce
+parent: Contact Center
+nav_order: 2
+---
 # Copilot Studio - Salesforce Integration Samples
 
 This folder contains sample code for integrating Microsoft Copilot Studio with Salesforce Einstein Bots, enabling Einstein Bot to use Copilot Studio as its AI backend via the DirectLine API.

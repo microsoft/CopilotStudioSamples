@@ -1,10 +1,14 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Copilot Studio Call Agent Connector
 
 This custom connector enables synchronous calls to Microsoft Copilot Studio conversational and autonomous agents from Power Platform applications. It uses an Azure Functions backend service that converts synchronous HTTP requests to asynchronous agent calls using the Agents SDK, making it possible to call an agent from Power Apps or Power Automate and wait for the response in a single operation.
 
 ## Prerequisites
 
-- The SyncToAsyncService Function App deployed (see [../SyncToAsyncService/README.md](../SyncToAsyncService/README.md) for deployment instructions)
+- The SyncToAsyncService Function App deployed (see [../SyncToAsyncService/README.md](../SyncToAsyncService/) for deployment instructions)
 - Azure subscription with permissions to create App Registrations
 - Power Platform CLI (`pac`) installed
 - Power Platform environment with permissions to create custom connectors

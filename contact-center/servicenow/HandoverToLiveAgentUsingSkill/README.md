@@ -1,3 +1,8 @@
+---
+title: Skill Handoff
+parent: Contact Center
+nav_order: 1
+---
 # Copilot Studio Handover To Live Agent Sample
 
 This sample shows how a Copilot Studio agent can escalate to a live agent while keeping Copilot Studio in control of the communication. It uses M365 Agents SDK skills to exchange messages with a live chat solution, preserving native channel features and avoiding engagement hub takeover.
@@ -16,7 +21,7 @@ This traditional pattern has several limitations:
 
 This sample solves these limitations by keeping the Copilot Studio agent in control of the Microsoft Teams channel while enabling bidirectional communication with a 3rd party customer service system. The solution uses an [M365 Agents SDK skill](https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-use-skills) to route messages to a live chat API, and leverages [Microsoft Teams proactive messaging](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/conversations/send-proactive-messages?tabs=dotnet) to allow live agents to send multiple asynchronous messages back to the customer, creating a seamless handoff experience while preserving native Teams capabilities.
 
-> [!IMPORTANT]
+{: .important }
 > Agents SDK Skills are currently supported but not the recommended long-term pattern. For new implementations, consider using [multi-agent orchestration over Agents SDK Agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-microsoft-365-agents-sdk-agent), which reflects our forward investment path.
 
 ## Solution 
@@ -30,7 +35,7 @@ The sample consists of the following elements:
   - Maintains session state and conversation history
   - **Is meant to be replaced** with your actual customer service platform (e.g., ServiceNow, Genesys, Salesforce Service Cloud)
   
-  More details: [./ContosoLiveChatApp/README.md](./ContosoLiveChatApp/README.md)
+  More details: [./ContosoLiveChatApp/README.md](./ContosoLiveChatApp/)
 
 - **HandoverToLiveAgentSample**: The M365 Agents SDK skill that acts as a bridge between Copilot Studio and your customer service system. This skill:
   - Handles authentication with both the Copilot Studio agent and the live chat system
@@ -39,7 +44,7 @@ The sample consists of the following elements:
   - Uses Microsoft Teams proactive messaging to deliver live agent responses asynchronously
   - Stores conversation state to route messages to the correct session
   
-  More details: [./HandoverToLiveAgentSample/README.md](./HandoverToLiveAgentSample/README.md)
+  More details: [./HandoverToLiveAgentSample/README.md](./HandoverToLiveAgentSample/)
 
 - **HandoverAgentSample.zip**: A Copilot Studio solution containing:
   - The `Contoso Agent` configured with the handoff skill
@@ -170,10 +175,10 @@ Both registrations are necessary for the bidirectional communication pattern - t
     
     Take note of the `connect via browser` endpoint, it should look like `https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms`
 
-    > [!NOTE]
+    {: .note }
     > For production deployments, you should deploy the HandoverToLiveAgentSample skill to Azure instead of using devtunnel. The devtunnel approach is only recommended for development and testing purposes.
     
-    > [!NOTE]
+    {: .note }
     > Only the HandoverToLiveAgentSample skill (port 5001) requires devtunnel exposure. The ContosoLiveChatApp (port 5000) runs locally and is accessed only from your machine via `http://localhost:5000/`.
 
 1. **Create App Registration for the HandoverToLiveAgentSample skill**: Create a new App Registration in your Microsoft Entra ID. This app registration will be used by the HandoverToLiveAgentSample skill to authenticate with Azure Bot Service and receive messages from the Copilot Studio agent.
@@ -205,7 +210,7 @@ Both registrations are necessary for the bidirectional communication pattern - t
     - `[Contoso Agent] Handoff Skill endpointUrl`: Set to `https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms/api/messages`
     - `[Contoso Agent] Handoff Skill msAppId`: Use the Application (client) ID from step 2
 
-    ![env variables](./.img/solution_import.png)
+    ![env variables](./img/solution_import.png)
     
     After the solution import completes:
     - Navigate to `https://copilotstudio.microsoft.com/`
@@ -224,7 +229,7 @@ Both registrations are necessary for the bidirectional communication pattern - t
    - Set `ClientId` to the Agent App ID from step 6
    - Set `Secret` to the secret value from step 7
    
-   > [!NOTE]
+   {: .note }
    > This configuration allows the skill to authenticate **as** the Copilot Studio agent using the client credentials flow. The skill needs these credentials to send proactive messages to Teams on behalf of the agent during live chat sessions.
 
 1. **Configure the LiveChat connection**: In the same [appsettings.json](./HandoverToLiveAgentSample/appsettings.json), update the `LiveChat` connection using the app registration credentials from step 2:
@@ -232,7 +237,7 @@ Both registrations are necessary for the bidirectional communication pattern - t
     - Set `ClientId` to the Application (client) ID from step 2
     - Set `Secret` to the secret value from step 2
     
-    > [!NOTE]
+    {: .note }
     > This configuration allows the skill to authenticate with Azure Bot Service to receive messages **from** the Copilot Studio agent.
 
 1. **Update the app registration home page**: In Azure Portal, navigate to the `HandoverToLiveAgentSample` app registration created in step 2:
@@ -240,7 +245,7 @@ Both registrations are necessary for the bidirectional communication pattern - t
     - Set the Home page URL to `https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms/api/messages`
     - Click Save
 
-    ![app registration](./.img/app_registration_setup.png)   
+    ![app registration](./img/app_registration_setup.png)   
 
 1. **Update the skill manifest**: Open [skill-manifest.json](./HandoverToLiveAgentSample/wwwroot/skill-manifest.json) and update:
     - Set `endpointUrl` to `https://<YOUR-RANDOM-NAME>-5001.euw.devtunnels.ms/api/messages`
@@ -291,7 +296,7 @@ You can customize the skill by:
 
 ## Replacing ContosoLiveChatApp with Your Customer Service System
 
-**ContosoLiveChatApp** is a sample application included in this repository to demonstrate the handoff pattern. For details about how it works, see [./ContosoLiveChatApp/README.md](./ContosoLiveChatApp/README.md).
+**ContosoLiveChatApp** is a sample application included in this repository to demonstrate the handoff pattern. For details about how it works, see [./ContosoLiveChatApp/README.md](./ContosoLiveChatApp/).
 
 To integrate with your own customer service platform (ServiceNow, Salesforce Service Cloud, Genesys, Zendesk, etc.), modify the `HandoverToLiveAgentSample` skill at these key integration points:
 
@@ -300,7 +305,7 @@ To integrate with your own customer service platform (ServiceNow, Salesforce Ser
 1. **Callback Endpoint** (in `MessagesController.cs`): Configure your system to send responses to `/api/messages/proactive`
 1. **Session Termination** (in `SendMessageAction.cs`): Replace `/api/livechat/end` with your system's API
 
-> [!TIP]
+{: .tip }
 > Review your customer service platform's documentation for chat/messaging APIs and webhook capabilities. The ContosoLiveChatApp serves as a reference implementation.
 
 ## Known Limitations 

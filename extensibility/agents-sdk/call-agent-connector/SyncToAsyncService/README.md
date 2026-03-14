@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # SyncToAsyncService - Azure Function for Copilot Studio Agent Calls
 
 This Azure Function serves as a bridge between synchronous HTTP requests from Power Platform and the asynchronous Microsoft Copilot Studio Agents SDK. It enables Power Apps and Power Automate to call Copilot Studio agents and wait for responses in a single operation.
@@ -138,4 +142,4 @@ This error is expected and confirms your function is deployed correctly. Authent
 
 ## Next Steps
 
-After deploying this function, proceed to set up the Power Platform custom connector that will use this function as its backend. See [../Connector/README.md](../Connector/README.md) for instructions.
+After deploying this function, proceed to set up the Power Platform custom connector that will use this function as its backend. See [../Connector/README.md](../Connector/) for instructions.

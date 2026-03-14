@@ -1,3 +1,9 @@
+---
+title: Dataverse Indexer
+parent: Solutions
+grand_parent: Authoring
+nav_order: 3
+---
 # Dataverse Indexer
 
 Sample solution showing how to index the content of a SharePoint library into a Copilot Studio agent as knowledge source files, along with a workaround to get nice citations that point to the source files in SharePoint.

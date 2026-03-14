@@ -1,3 +1,9 @@
+---
+title: Account Contact Lookup
+parent: Solutions
+grand_parent: Authoring
+nav_order: 1
+---
 # Account & Contact Lookup Agent
 
 A Copilot Studio agent that looks up account and contact information from Dataverse using generative AI orchestration.

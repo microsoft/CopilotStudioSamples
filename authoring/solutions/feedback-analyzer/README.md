@@ -1,3 +1,9 @@
+---
+title: Feedback Analyzer
+parent: Solutions
+grand_parent: Authoring
+nav_order: 4
+---
 # Feedback Analyzer
 
 This project attempts to provide a mechanism to collect the reactions (thumbs up/down and comments) from users interacting with Copilot Studio agents as noted [**here**](https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-improve-agent-effectiveness#reactions). Currently, the feedback is surfaced through the agent's 'analytics' tab in Copilot Studio. Makers can see feedback provided but some limitations currently exist:

@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: true
+---
 # Engagement Hub Integrations
 
 Integrate Copilot Studio agents with engagement hub platforms including ServiceNow and Salesforce.

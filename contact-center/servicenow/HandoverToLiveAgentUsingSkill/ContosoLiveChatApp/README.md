@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Contoso Live Chat App
 
 A simple live chat application designed as mock live agent handover scenarios with Copilot Studio. This application simulates a live chat support system that can receive conversations from Copilot Studio and send messages back.

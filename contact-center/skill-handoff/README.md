@@ -1,3 +1,8 @@
+---
+title: Engagement Playbook
+parent: Guides
+nav_order: 3
+---
 # Playbook
 
 Templates and guides for planning Copilot Studio engagement implementations.

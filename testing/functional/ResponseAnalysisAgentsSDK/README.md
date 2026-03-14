@@ -1,3 +1,9 @@
+---
+title: Response Analysis
+parent: Functional Testing
+grand_parent: Testing
+nav_order: 2
+---
 # Copilot Studio Response Analysis Tool :computer:
 
 ## Purpose: 
@@ -120,7 +126,7 @@ This step will require permissions to create application identities in your Azur
         4. Click `Add Permissions`
     4. (Optional) Click `Grant Admin consent for copilotsdk`
 
-> [!TIP]
+{: .tip }
 > If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
 
 ## Step 3. Configure the Copilot Studio Response Analysis Tool.
@@ -177,17 +183,17 @@ python -m src.main
 > [!Important]
 > Cross check test utterances are sequentially listed in the `/data/input.txt` file.
 
-> [!TIP]
+{: .tip }
 > If the tool is properly setup, `Process Status` displays the current state of processing, including the number of utterances analyzed and conversation identifiers.
 
-> [!TIP]
+{: .tip }
 > `Start Test Run` button woudl be disabled till completion of the session.
 
-> [!TIP]
+{: .tip }
 > Utterances in the data file can be updated or altered after each session and the session re-executed.
 
-> [!TIP]
+{: .tip }
 > After each test run, the tool automatically generates a CSV file containing all queries, their responses, and corresponding response times. The file is stored in the `/data/` directory for easy access.
 
-> [!TIP]
+{: .tip }
 > If any utterances appear to be missing in the result, restart the tool and start a new session.

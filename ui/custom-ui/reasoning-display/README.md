@@ -1,3 +1,9 @@
+---
+title: Reasoning Display
+parent: Custom UI
+grand_parent: UI
+nav_order: 2
+---
 # Showing Agent Reasoning in Custom UIs
 
 > **IMPORTANT!** This is the sample repository for [https://microsoft.github.io/mcscatblog/posts/show-reasoning-agents-sdk/](This article). Follow the article for a more detailed explanation.

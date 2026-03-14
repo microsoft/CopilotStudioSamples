@@ -1,3 +1,9 @@
+---
+title: Search Species Resources
+parent: MCP
+grand_parent: Extensibility
+nav_order: 2
+---
 # Biological Species MCP Server
 
 An MCP server demonstrating resource discovery through tools. Copilot Studio always accesses resources through tools, not directly - a design motivated by enterprise environments with large-scale resource catalogs.

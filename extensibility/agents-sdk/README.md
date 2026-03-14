@@ -1,3 +1,10 @@
+---
+title: Agents SDK
+parent: Extensibility
+nav_order: 2
+has_children: true
+has_toc: false
+---
 # M365 Agents SDK Samples
 
 Server-side implementations using the M365 Agents SDK to extend Copilot Studio agents.

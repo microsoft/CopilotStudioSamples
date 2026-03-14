@@ -1,3 +1,10 @@
+---
+title: Embed
+parent: UI
+nav_order: 2
+has_children: true
+has_toc: false
+---
 # Embed Samples
 
 Plug a Copilot Studio chat agent into an existing platform.

@@ -1,3 +1,10 @@
+---
+title: Guides
+nav_order: 7
+has_children: true
+has_toc: false
+description: Guides samples for Microsoft Copilot Studio
+---
 # Guides
 
 Implementation guidance and best practices for Copilot Studio projects.

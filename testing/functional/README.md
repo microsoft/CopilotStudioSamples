@@ -1,3 +1,10 @@
+---
+title: Functional Testing
+parent: Testing
+nav_order: 1
+has_children: true
+has_toc: false
+---
 # Functional Testing
 
 Automated testing frameworks for Copilot Studio agents.

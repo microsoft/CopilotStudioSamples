@@ -1,3 +1,9 @@
+---
+title: PCF Canvas App
+parent: Embed
+grand_parent: UI
+nav_order: 4
+---
 # ChatControl - Power Apps Component Framework (PCF) Control
 
 This sample contains a [PCF](https://learn.microsoft.com/power-apps/developer/component-framework/overview) control that integrates Microsoft Copilot Studio agents into [Canvas Apps](https://learn.microsoft.com/power-apps/maker/canvas-apps/getting-started). It leverages the ReactWebChat component with the [Fluent UI theme pack](https://github.com/microsoft/BotFramework-WebChat#experimental-fluent-ui-theme-pack) and the [Microsoft 365 Agents SDK for TypeScript](https://github.com/microsoft/Agents-for-js) to establish a secure connection with a Copilot Studio agent configured with ['Authenticate with Microsoft'](https://learn.microsoft.com/microsoft-copilot-studio/configuration-end-user-authentication#authenticate-with-microsoft).

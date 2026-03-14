@@ -1,3 +1,9 @@
+---
+title: ServiceNow Widget
+parent: Embed
+grand_parent: UI
+nav_order: 5
+---
 # ServiceNow Widget for Copilot Studio
 
 Embed a Microsoft Copilot Studio agent as a floating chat widget in a ServiceNow Service Portal.
@@ -62,7 +68,7 @@ The script is **idempotent** — safe to re-run. On re-run, the bundle attachmen
 
 See [scripts/deploy-config.sample.json](scripts/deploy-config.sample.json) for all configuration options.
 
-> Prefer to set things up manually? See the [Manual Setup Guide](docs/MANUAL-SETUP.md) for step-by-step instructions with screenshots.
+> Prefer to set things up manually? See the [Manual Setup Guide](docs/MANUAL-SETUP) for step-by-step instructions with screenshots.
 
 ## Architecture
 
@@ -122,7 +128,7 @@ Open `http://localhost:5500/test-page/` — the floating chat bubble should appe
 
 ## Customization
 
-The widget supports theming (colors, sizes, position) and WebChat style overrides via config options. See the [Customization Guide](docs/CUSTOMIZATION.md) for the full options reference.
+The widget supports theming (colors, sizes, position) and WebChat style overrides via config options. See the [Customization Guide](docs/CUSTOMIZATION) for the full options reference.
 
 ## Disabling the OOTB Virtual Agent Widget
 

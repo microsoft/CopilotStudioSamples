@@ -1,3 +1,10 @@
+---
+title: MCP
+parent: Extensibility
+nav_order: 3
+has_children: true
+has_toc: false
+---
 # MCP (Model Context Protocol) Samples
 
 MCP servers that provide tools and resources to Copilot Studio agents.
