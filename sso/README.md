@@ -12,6 +12,10 @@ Single Sign-On implementations for Copilot Studio agents with various identity p
 | [entra-id/](./entra-id/) | SSO with Microsoft Entra ID |
 | [okta/](./okta/) | SSO with Okta identity provider |
 
+## See also (M365 Agents SDK repo)
+
+- [obo-authorization](https://github.com/microsoft/Agents/tree/main/samples/dotnet/obo-authorization) — On-behalf-of flow to a Copilot Studio agent (.NET, [Node](https://github.com/microsoft/Agents/tree/main/samples/nodejs/obo-authorization), [Python](https://github.com/microsoft/Agents/tree/main/samples/python/obo-authorization))
+
 ## Prerequisites
 
 - Copilot Studio agent with authentication configured
