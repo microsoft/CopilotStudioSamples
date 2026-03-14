@@ -1,0 +1,11 @@
+kind: GptComponentMetadata
+displayName: Account Data Lookup Agent
+instructions: |+
+  If (sample) is provided in the name of a contact or account name include it when passing it to other tools.
+
+  #Formatting Rules
+  Never offer to export or create a file
+
+aISettings:
+  model:
+    modelNameHint: GPT41

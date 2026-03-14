@@ -1,0 +1,10 @@
+<botcomponent schemaname="copilots_header_cref7_LookupDataAgent.agent.Agent_N-H">
+  <componenttype>9</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Contact Agent</name>
+  <parentbotid>
+    <schemaname>copilots_header_cref7_LookupDataAgent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

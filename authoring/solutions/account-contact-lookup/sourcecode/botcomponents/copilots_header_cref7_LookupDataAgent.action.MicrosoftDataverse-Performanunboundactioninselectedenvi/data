@@ -1,0 +1,112 @@
+kind: TaskDialog
+inputs:
+  - kind: ManualTaskInput
+    propertyName: organization
+    value: current
+
+  - kind: ManualTaskInput
+    propertyName: actionName
+    value: searchquery
+
+  - kind: ManualTaskInput
+    propertyName: item.entities
+    value: "[{\"name\":\"account\",\"selectColumns\":[\"name\",\"accountid\",\"cr905_supplierid\",\"address1_city\",\"address1_stateorprovince\",\"address1_postalcode\",\"telephone1\",\"primarycontactid\",\"address1_composite\",\"accountnumber\",\"revenue\",\"transactioncurrencyid\",\"emailaddress1\"],\"searchColumns\":[\"name\"]}]"
+
+  - kind: AutomaticTaskInput
+    propertyName: item.search
+    description: The name of the account that you want to lookup the details of
+
+modelDisplayName: Get Account Details
+modelDescription: This tool allows a user to get the details of a specified account by account name
+outputs:
+  - propertyName: response
+    name: response
+
+action:
+  kind: InvokeConnectorTaskAction
+  connectionReference: copilots_header_cref7_LookupDataAgent.shared_commondataserviceforapps.shared-commondataser-300cc200-a4eb-4a45-9779-f73541d2691b
+  connectionProperties:
+    mode: Maker
+
+  operationId: PerformUnboundActionWithOrganization
+  dynamicInputSchema:
+    properties:
+      actionName:
+        displayName: Action Name
+        description: Choose an action
+        isRequired: true
+        order: 1
+        dynamicValuesConfig:
+          capability: List
+
+        type: String
+
+      item:
+        displayName: Action parameters
+        description: Action parameters
+        order: 2
+        type:
+          kind: Record
+          properties:
+            count:
+              order: 2
+              type: Boolean
+
+            entities:
+              order: 5
+              type: String
+
+            facets:
+              order: 6
+              type: String
+
+            filter:
+              order: 7
+              type: String
+
+            options:
+              order: 3
+              type: String
+
+            orderby:
+              order: 4
+              type: String
+
+            propertybag:
+              order: 0
+              type: String
+
+            search:
+              order: 9
+              type: String
+
+            semanticquery:
+              order: 10
+              type: String
+
+            skip:
+              order: 8
+              type: Number
+
+            top:
+              order: 1
+              type: Number
+
+      organization:
+        displayName: Environment
+        description: Choose an environment
+        isRequired: true
+        order: 0
+        dynamicValuesConfig:
+          capability: List
+
+        type: String
+
+  dynamicOutputSchema:
+    kind: Record
+    properties:
+      response:
+        order: 0
+        type: String
+
+outputMode: All

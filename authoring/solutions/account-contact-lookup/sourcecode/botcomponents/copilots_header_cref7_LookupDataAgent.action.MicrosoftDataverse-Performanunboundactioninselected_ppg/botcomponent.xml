@@ -1,0 +1,13 @@
+<botcomponent schemaname="copilots_header_cref7_LookupDataAgent.action.MicrosoftDataverse-Performanunboundactioninselected_ppg">
+  <componenttype>9</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Microsoft Dataverse - Perform an unbound action in selected environment</name>
+  <parentbotcomponentid>
+    <schemaname>copilots_header_cref7_LookupDataAgent.agent.Agent_N-H</schemaname>
+  </parentbotcomponentid>
+  <parentbotid>
+    <schemaname>copilots_header_cref7_LookupDataAgent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>
