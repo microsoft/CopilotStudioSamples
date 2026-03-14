@@ -332,3 +332,6 @@ ASALocalRun/
 /sabacha/Dispatcher/dispatcher.bot
 SharePointSSOComponent/package-lock.json
 SharePointSSOComponent/config/serve.json
+
+# macOS
+.DS_Store
