@@ -11,11 +11,11 @@ This table maps old folder locations (on `main`) to new locations (on `reorg/v1`
 | Adaptive Card Snippets | `AdaptiveCardSamples` | `authoring/snippets/adaptive-cards` | Henry Jammes |
 | Citation Swap | `OnGeneratedResponse` | `authoring/snippets/topics/citation-swap` | Remi Dyon |
 | Account Contact Lookup | `ExampleAgents/AccountContactLookupAgent` | `authoring/solutions/account-contact-lookup` | Dewain Robinson |
-| Auto Detect Language | `AutoDetectLanguageSample` | `authoring/solutions/auto-detect-language` | adilei |
+| Auto Detect Language | `AutoDetectLanguageSample` | `authoring/solutions/auto-detect-language` | Dewain Robinson |
 | Dataverse Indexer | `DataverseIndexer` | `authoring/solutions/dataverse-indexer` | Henry Jammes |
-| Feedback Analyzer | `FeedbackAnalyzer` | `authoring/solutions/feedback-analyzer` | adilei |
+| Feedback Analyzer | `FeedbackAnalyzer` | `authoring/solutions/feedback-analyzer` | rafalcaraz |
 | Generative Chitchat | `GenerativeChitChat` | `authoring/solutions/generative-chitchat` | Dewain Robinson |
-| Resume Job Finder | `ResumeJobFinderAgent` | `authoring/solutions/resume-job-finder` | adilei |
+| Resume Job Finder | `ResumeJobFinderAgent` | `authoring/solutions/resume-job-finder` | Dewain Robinson |
 
 ## Contact Center
 
@@ -30,12 +30,12 @@ This table maps old folder locations (on `main`) to new locations (on `reorg/v1`
 
 | Sample | Old Location | New Location | Owner |
 |--------|-------------|-------------|-------|
-| Simple A2A Sample | `A2ASamples/Simple-A2A-Sample` | `extensibility/a2a/Simple-A2A-Sample` | adilei |
+| Simple A2A Sample | `A2ASamples/Simple-A2A-Sample` | `extensibility/a2a/Simple-A2A-Sample` | Giorgio Ughini |
 | Call Agent Connector | `CallAgentConnector` | `extensibility/agents-sdk/call-agent-connector` | adilei |
-| Multilingual Bot | `MultilingualBotSample` | `extensibility/agents-sdk/multilingual-bot` *(deprecated)* | adilei |
-| Relay Bot | `RelayBotSample` | `extensibility/agents-sdk/relay-bot` *(deprecated)* | adilei |
-| Pass Resources as Inputs | `MCPSamples/pass-resources-as-inputs` | `extensibility/mcp/pass-resources-as-inputs` | adilei |
-| Search Species Resources | `MCPSamples/search-species-resources-typescript` | `extensibility/mcp/search-species-resources-typescript` | adilei |
+| Multilingual Bot | `MultilingualBotSample` | `extensibility/agents-sdk/multilingual-bot` *(deprecated)* | Remi Dyon |
+| Relay Bot | `RelayBotSample` | `extensibility/agents-sdk/relay-bot` *(deprecated)* | tracyboehrer |
+| Pass Resources as Inputs | `MCPSamples/pass-resources-as-inputs` | `extensibility/mcp/pass-resources-as-inputs` | Giorgio Ughini |
+| Search Species Resources | `MCPSamples/search-species-resources-typescript` | `extensibility/mcp/search-species-resources-typescript` | Markus Tobler |
 
 ## Guides
 
@@ -48,7 +48,7 @@ This table maps old folder locations (on `main`) to new locations (on `reorg/v1`
 
 | Sample | Old Location | New Location | Owner |
 |--------|-------------|-------------|-------|
-| VNet Support | `VNet support` | `infrastructure/vnet-support` | adilei |
+| VNet Support | `VNet support` | `infrastructure/vnet-support` | Iaan D'Souza-Wiltshire |
 
 ## SSO
 
@@ -62,8 +62,8 @@ This table maps old folder locations (on `main`) to new locations (on `reorg/v1`
 
 | Sample | Old Location | New Location | Owner |
 |--------|-------------|-------------|-------|
-| Pytest Agents SDK | `FunctionalTesting/PytestAgentsSDK` | `testing/functional/PytestAgentsSDK` | adilei |
-| Response Analysis | `FunctionalTesting/ResponseAnalysisAgentsSDK` | `testing/functional/ResponseAnalysisAgentsSDK` | adilei |
+| Pytest Agents SDK | `FunctionalTesting/PytestAgentsSDK` | `testing/functional/PytestAgentsSDK` | Laura Damian |
+| Response Analysis | `FunctionalTesting/ResponseAnalysisAgentsSDK` | `testing/functional/ResponseAnalysisAgentsSDK` | kaul-vineet |
 | JMeter Multi Thread Group | `LoadTesting/JMeterMultiThreadGroup` | `testing/load/JMeterMultiThreadGroup` | adilei |
 
 ## UI — Custom UI
@@ -78,11 +78,11 @@ This table maps old folder locations (on `main`) to new locations (on `reorg/v1`
 
 | Sample | Old Location | New Location | Owner |
 |--------|-------------|-------------|-------|
-| D365 CS + Okta | `SSOSamples/3rdPartySSOWithOKTA - Copilot+D365OC` | `ui/embed/d365-cs-okta` | adilei |
-| D365 CS + SharePoint | `SSOSamples/DynamicsLiveChatSSO` | `ui/embed/d365-cs-sharepoint` | adilei |
-| Minimizable Widget | `CustomExternalUI` | `ui/embed/minimizable-widget` | adilei |
-| PCF Canvas App | `PCFControls/ChatControl` | `ui/embed/pcf-canvas-app` | adilei |
+| D365 CS + Okta | `SSOSamples/3rdPartySSOWithOKTA - Copilot+D365OC` | `ui/embed/d365-cs-okta` | kaul-vineet |
+| D365 CS + SharePoint | `SSOSamples/DynamicsLiveChatSSO` | `ui/embed/d365-cs-sharepoint` | Jody Boelen |
+| Minimizable Widget | `CustomExternalUI` | `ui/embed/minimizable-widget` | Robin |
+| PCF Canvas App | `PCFControls/ChatControl` | `ui/embed/pcf-canvas-app` | Dieter De Cock |
 | ServiceNow Widget | `ServiceNowWidget` | `ui/embed/servicenow-widget` | adilei |
-| SharePoint Customizer | `SSOSamples/SharePointSSOComponent` | `ui/embed/sharepoint-customizer` | adilei |
-| SharePoint SSO App Customizer | `SSOSamples/SharePointSSOAppCustomizer` | `ui/embed/sharepoint-customizer/SharePointSSOAppCustomizer` | adilei |
-| Typeahead Suggestions | `TypeaheadSuggestions` | `ui/embed/typeahead-suggestions` | adilei |
+| SharePoint Customizer | `SSOSamples/SharePointSSOComponent` | `ui/embed/sharepoint-customizer` | Henry Jammes |
+| SharePoint SSO App Customizer | `SSOSamples/SharePointSSOAppCustomizer` | `ui/embed/sharepoint-customizer/SharePointSSOAppCustomizer` | Giorgio Ughini |
+| Typeahead Suggestions | `TypeaheadSuggestions` | `ui/embed/typeahead-suggestions` | Parag Dessai |
