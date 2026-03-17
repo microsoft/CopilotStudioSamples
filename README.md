@@ -23,6 +23,7 @@ Older samples and labs, largely focused on Power Virtual Agents, have been moved
 | Guidance documentation | [aka.ms/CopilotStudioGuidance](https://aka.ms/CopilotStudioGuidance) |
 | Try Copilot Studio | [aka.ms/TryCopilotStudio](https://aka.ms/TryCopilotStudio) |
 | Copilot Acceleration Team technical blog | [aka.ms/TheCustomEngine](https://aka.ms/TheCustomEngine) |
+| Samples browser | [microsoft.github.io/CopilotStudioSamples](https://microsoft.github.io/CopilotStudioSamples/) |
 
 ## Microsoft Copilot Studio and Agents SDK links
 
