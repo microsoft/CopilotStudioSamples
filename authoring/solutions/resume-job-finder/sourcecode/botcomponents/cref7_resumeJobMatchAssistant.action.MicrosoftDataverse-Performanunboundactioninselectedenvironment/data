@@ -1,0 +1,112 @@
+kind: TaskDialog
+inputs:
+  - kind: ManualTaskInput
+    propertyName: organization
+    value: current
+
+  - kind: ManualTaskInput
+    propertyName: actionName
+    value: searchquery
+
+  - kind: ManualTaskInput
+    propertyName: item.entities
+    value: "[{\"name\":\"cref7_jobposting\",\"selectColumns\":[\"cref7_jobtitle\",\"cref7_department\",\"cref7_city\",\"cref7_state\",\"cref7_employmenttype\",\"cref7_experiencelevel\",\"cref7_minimumsalary\",\"cref7_maximumsalary\",\"cref7_dateposted\",\"cref7_jobstatus\"],\"searchColumns\":[\"cref7_experiencelevel\",\"cref7_jobtitle\",\"cref7_city\",\"cref7_state\",\"cref7_employmenttype\",\"cref7_jobstatus\",\"cref7_dateposted\"]}]"
+
+  - kind: AutomaticTaskInput
+    propertyName: item.search
+    description: Allows the user to search for experience level, job title, city, state in format of two letter code in all caps such as TX for Texas, employment type such as full or part time, job status such as open or closed, and date posted
+
+modelDisplayName: Find Job Openings
+modelDescription: This tool lets a user lookup the job postings with the following searchable items experience level, job title, city, state in format of two letter code in all caps such as TX for Texas, employment type such as full or part time, job status such as open or closed, and date posted
+outputs:
+  - propertyName: response
+    name: response
+
+action:
+  kind: InvokeConnectorTaskAction
+  connectionReference: cref7_resumeJobMatchAssistant.shared_commondataserviceforapps.shared-commondataser-300cc200-a4eb-4a45-9779-f73541d2691b
+  connectionProperties:
+    mode: Maker
+
+  operationId: PerformUnboundActionWithOrganization
+  dynamicInputSchema:
+    properties:
+      actionName:
+        displayName: Action Name
+        description: Choose an action
+        isRequired: true
+        order: 1
+        dynamicValuesConfig:
+          capability: List
+
+        type: String
+
+      item:
+        displayName: Action parameters
+        description: Action parameters
+        order: 2
+        type:
+          kind: Record
+          properties:
+            count:
+              order: 2
+              type: Boolean
+
+            entities:
+              order: 5
+              type: String
+
+            facets:
+              order: 6
+              type: String
+
+            filter:
+              order: 7
+              type: String
+
+            options:
+              order: 3
+              type: String
+
+            orderby:
+              order: 4
+              type: String
+
+            propertybag:
+              order: 0
+              type: String
+
+            search:
+              order: 9
+              type: String
+
+            semanticquery:
+              order: 10
+              type: String
+
+            skip:
+              order: 8
+              type: Number
+
+            top:
+              order: 1
+              type: Number
+
+      organization:
+        displayName: Environment
+        description: Choose an environment
+        isRequired: true
+        order: 0
+        dynamicValuesConfig:
+          capability: List
+
+        type: String
+
+  dynamicOutputSchema:
+    kind: Record
+    properties:
+      response:
+        order: 0
+        type: String
+
+outputMode: All

@@ -332,3 +332,8 @@ ASALocalRun/
 /sabacha/Dispatcher/dispatcher.bot
 SharePointSSOComponent/package-lock.json
 SharePointSSOComponent/config/serve.json
+
+# Jekyll
+_site/
+.jekyll-cache/
+.jekyll-metadata

@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Workday Get Vacation Balance
 
 ## Overview

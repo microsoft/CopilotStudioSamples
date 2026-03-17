@@ -1,0 +1,1089 @@
+<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.25123.162" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.25123.00166">
+  <Entities>
+    <Entity>
+      <Name LocalizedName="Account" OriginalName="">Account</Name>
+      <EntityInfo>
+        <entity Name="Account" unmodified="1">
+          <attributes>
+            <attribute PhysicalName="AccountNumber">
+              <Type>nvarchar</Type>
+              <Name>accountnumber</Name>
+              <LogicalName>accountnumber</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>auto</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>20</MaxLength>
+              <Length>40</Length>
+              <displaynames>
+                <displayname description="Account Number" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type an ID number or code for the account to quickly search and identify the account in system views." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Address1_City">
+              <Type>nvarchar</Type>
+              <Name>address1_city</Name>
+              <LogicalName>address1_city</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>active</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsLogical>1</IsLogical>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>1</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>80</MaxLength>
+              <Length>160</Length>
+              <displaynames>
+                <displayname description="Address 1: City" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the city for the primary address." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Address1_PostalCode">
+              <Type>nvarchar</Type>
+              <Name>address1_postalcode</Name>
+              <LogicalName>address1_postalcode</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsLogical>1</IsLogical>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>1</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>20</MaxLength>
+              <Length>40</Length>
+              <displaynames>
+                <displayname description="Address 1: ZIP/Postal Code" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the ZIP Code or postal code for the primary address." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Address1_StateOrProvince">
+              <Type>nvarchar</Type>
+              <Name>address1_stateorprovince</Name>
+              <LogicalName>address1_stateorprovince</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>active</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsLogical>1</IsLogical>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="Address 1: State/Province" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the state or province of the primary address." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="EMailAddress1">
+              <Type>nvarchar</Type>
+              <Name>emailaddress1</Name>
+              <LogicalName>emailaddress1</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>email</Format>
+              <MaxLength>100</MaxLength>
+              <Length>200</Length>
+              <displaynames>
+                <displayname description="Email" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the primary email address for the account." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Name">
+              <Type>nvarchar</Type>
+              <Name>name</Name>
+              <LogicalName>name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <DisplayMask>ActivityRegardingName|ActivityPointerRegardingName|PrimaryName|ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForForm|RequiredForGrid</DisplayMask>
+              <ImeMode>active</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>160</MaxLength>
+              <Length>320</Length>
+              <displaynames>
+                <displayname description="Account Name" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the company or business name." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="PrimaryContactId">
+              <Type>lookup</Type>
+              <Name>primarycontactid</Name>
+              <LogicalName>primarycontactid</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>auto</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>1</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>0</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <LookupStyle>single</LookupStyle>
+              <LookupTypes>
+                <LookupType id="00000000-0000-0000-0000-000000000000">2</LookupType>
+              </LookupTypes>
+              <displaynames>
+                <displayname description="Primary Contact" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Choose the primary contact for the account to provide quick access to contact details." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="StateCode">
+              <Type>state</Type>
+              <Name>statecode</Name>
+              <LogicalName>statecode</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>auto</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>0</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>0</IsSearchable>
+              <IsFilterable>1</IsFilterable>
+              <IsRetrievable>0</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <optionset Name="account_statecode">
+                <OptionSetType>state</OptionSetType>
+                <IntroducedVersion>5.0.0.0</IntroducedVersion>
+                <displaynames>
+                  <displayname description="Status" languagecode="1033" />
+                </displaynames>
+                <Descriptions>
+                  <Description description="Status of the account." languagecode="1033" />
+                </Descriptions>
+                <states>
+                  <state value="0" defaultstatus="1" invariantname="Active">
+                    <labels>
+                      <label description="Active" languagecode="1033" />
+                    </labels>
+                  </state>
+                  <state value="1" defaultstatus="2" invariantname="Inactive">
+                    <labels>
+                      <label description="Inactive" languagecode="1033" />
+                    </labels>
+                  </state>
+                </states>
+              </optionset>
+              <displaynames>
+                <displayname description="Status" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Shows whether the account is active or inactive. Inactive accounts are read-only and can't be edited unless they are reactivated." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Telephone1">
+              <Type>nvarchar</Type>
+              <Name>telephone1</Name>
+              <LogicalName>telephone1</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>phone</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="Main Phone" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the main phone number for this account." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Telephone2">
+              <Type>nvarchar</Type>
+              <Name>telephone2</Name>
+              <LogicalName>telephone2</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>0</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>phone</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="Other Phone" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type a second phone number for this account." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+          </attributes>
+        </entity>
+      </EntityInfo>
+      <SavedQueries>
+        <savedqueries>
+          <savedquery>
+            <isquickfindquery>1</isquickfindquery>
+            <isprivate>0</isprivate>
+            <isdefault>1</isdefault>
+            <savedqueryid>{2d1187c4-23fe-4bb5-9647-43bb1c6ddbd1}</savedqueryid>
+            <queryapi></queryapi>
+            <layoutxml>
+              <grid name="resultset" jump="name" select="1" icon="1" preview="1">
+                <row name="result" id="accountid">
+                  <cell name="name" width="300" />
+                  <cell name="accountnumber" width="100" />
+                  <cell name="primarycontactid" width="150" />
+                  <cell name="address1_city" width="100" />
+                  <cell name="telephone1" width="100" />
+                  <cell name="emailaddress1" width="200" />
+                  <cell name="address1_stateorprovince" width="186" />
+                  <cell name="address1_postalcode" width="196" />
+                </row>
+              </grid>
+            </layoutxml>
+            <querytype>4</querytype>
+            <fetchxml>
+              <fetch version="1.0" output-format="xml-platform" mapping="logical">
+                <entity name="account">
+                  <attribute name="name" />
+                  <attribute name="accountnumber" />
+                  <attribute name="primarycontactid" />
+                  <attribute name="address1_city" />
+                  <attribute name="telephone1" />
+                  <attribute name="emailaddress1" />
+                  <attribute name="accountid" />
+                  <order attribute="name" descending="false" />
+                  <filter type="and">
+                    <condition attribute="statecode" operator="eq" value="0" />
+                  </filter>
+                  <filter type="or" isquickfindfields="1">
+                    <condition attribute="name" operator="like" value="{0}" />
+                    <condition attribute="accountnumber" operator="like" value="{0}" />
+                    <condition attribute="emailaddress1" operator="like" value="{0}" />
+                    <condition attribute="telephone1" operator="like" value="{0}" />
+                    <condition attribute="telephone2" operator="like" value="{0}" />
+                    <condition attribute="address1_stateorprovince" operator="like" value="{0}" />
+                    <condition attribute="address1_city" operator="like" value="{0}" />
+                    <condition attribute="address1_postalcode" operator="like" value="{0}" />
+                  </filter>
+                  <attribute name="address1_stateorprovince" />
+                  <attribute name="address1_postalcode" />
+                </entity>
+              </fetch>
+            </fetchxml>
+            <IntroducedVersion>5.0.0.0</IntroducedVersion>
+            <LocalizedNames>
+              <LocalizedName description="Quick Find Active Accounts" languagecode="1033" />
+            </LocalizedNames>
+          </savedquery>
+        </savedqueries>
+      </SavedQueries>
+      <RibbonDiffXml>
+        <CustomActions />
+        <Templates>
+          <RibbonTemplates Id="Mscrm.Templates"></RibbonTemplates>
+        </Templates>
+        <CommandDefinitions />
+        <RuleDefinitions>
+          <TabDisplayRules />
+          <DisplayRules />
+          <EnableRules />
+        </RuleDefinitions>
+        <LocLabels />
+      </RibbonDiffXml>
+    </Entity>
+    <Entity>
+      <Name LocalizedName="Contact" OriginalName="">Contact</Name>
+      <EntityInfo>
+        <entity Name="Contact" unmodified="1">
+          <attributes>
+            <attribute PhysicalName="Address1_City">
+              <Type>nvarchar</Type>
+              <Name>address1_city</Name>
+              <LogicalName>address1_city</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>active</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsLogical>1</IsLogical>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>1</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>0</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>80</MaxLength>
+              <Length>160</Length>
+              <displaynames>
+                <displayname description="Address 1: City" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the city for the primary address." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Address1_Telephone1">
+              <Type>nvarchar</Type>
+              <Name>address1_telephone1</Name>
+              <LogicalName>address1_telephone1</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsLogical>1</IsLogical>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>0</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>phone</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="Address 1: Phone" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the main phone number associated with the primary address." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Anniversary" unmodified="1">
+              <Type>datetime</Type>
+              <Name>anniversary</Name>
+              <LogicalName>anniversary</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>0</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>date</Format>
+              <displaynames>
+                <displayname description="Anniversary" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Enter the date of the contact's wedding or service anniversary for use in customer gift programs or other communications." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="BirthDate" unmodified="1">
+              <Type>datetime</Type>
+              <Name>birthdate</Name>
+              <LogicalName>birthdate</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>0</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>date</Format>
+              <displaynames>
+                <displayname description="Birthday" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Enter the contact's birthday for use in customer gift programs or other communications." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="EMailAddress1">
+              <Type>nvarchar</Type>
+              <Name>emailaddress1</Name>
+              <LogicalName>emailaddress1</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>email</Format>
+              <MaxLength>100</MaxLength>
+              <Length>200</Length>
+              <displaynames>
+                <displayname description="Email" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the primary email address for the contact." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="FamilyStatusCode">
+              <Type>picklist</Type>
+              <Name>familystatuscode</Name>
+              <LogicalName>familystatuscode</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>auto</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <AppDefaultValue>-1</AppDefaultValue>
+              <optionset Name="contact_familystatuscode">
+                <OptionSetType>picklist</OptionSetType>
+                <IntroducedVersion>5.0.0.0</IntroducedVersion>
+                <displaynames>
+                  <displayname description="Marital Status" languagecode="1033" />
+                </displaynames>
+                <Descriptions>
+                  <Description description="Marital status of the contact." languagecode="1033" />
+                </Descriptions>
+                <options>
+                  <option value="1" IsHidden="0">
+                    <labels>
+                      <label description="Single" languagecode="1033" />
+                    </labels>
+                  </option>
+                  <option value="2" IsHidden="0">
+                    <labels>
+                      <label description="Married" languagecode="1033" />
+                    </labels>
+                  </option>
+                  <option value="3" IsHidden="0">
+                    <labels>
+                      <label description="Divorced" languagecode="1033" />
+                    </labels>
+                  </option>
+                  <option value="4" IsHidden="0">
+                    <labels>
+                      <label description="Widowed" languagecode="1033" />
+                    </labels>
+                  </option>
+                </options>
+              </optionset>
+              <displaynames>
+                <displayname description="Marital Status" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Select the marital status of the contact for reference in follow-up phone calls and other communications." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="FirstName">
+              <Type>nvarchar</Type>
+              <Name>firstname</Name>
+              <LogicalName>firstname</LogicalName>
+              <RequiredLevel>recommended</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForForm</DisplayMask>
+              <ImeMode>active</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>0</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="First Name" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the contact's first name to make sure the contact is addressed correctly in sales calls, email, and marketing campaigns." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="FullName">
+              <Type>nvarchar</Type>
+              <Name>fullname</Name>
+              <LogicalName>fullname</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ActivityRegardingName|ActivityPointerRegardingName|PrimaryName|ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForGrid</DisplayMask>
+              <ImeMode>active</ImeMode>
+              <ValidForUpdateApi>0</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>0</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>1</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>160</MaxLength>
+              <Length>320</Length>
+              <displaynames>
+                <displayname description="Full Name" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Combines and shows the contact's first and last names so that the full name can be displayed in views and reports." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="JobTitle">
+              <Type>nvarchar</Type>
+              <Name>jobtitle</Name>
+              <LogicalName>jobtitle</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>auto</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>100</MaxLength>
+              <Length>200</Length>
+              <displaynames>
+                <displayname description="Job Title" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the job title of the contact to make sure the contact is addressed correctly in sales calls, email, and marketing campaigns." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="LastName">
+              <Type>nvarchar</Type>
+              <Name>lastname</Name>
+              <LogicalName>lastname</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForForm</DisplayMask>
+              <ImeMode>active</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>0</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="Last Name" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the contact's last name to make sure the contact is addressed correctly in sales calls, email, and marketing campaigns." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="MiddleName">
+              <Type>nvarchar</Type>
+              <Name>middlename</Name>
+              <LogicalName>middlename</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>active</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>0</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>text</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="Middle Name" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the contact's middle name or initial to make sure the contact is addressed correctly." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="MobilePhone">
+              <Type>nvarchar</Type>
+              <Name>mobilephone</Name>
+              <LogicalName>mobilephone</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>0</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>phone</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="Mobile Phone" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the mobile phone number for the contact." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="ParentCustomerId">
+              <Type>customer</Type>
+              <Name>parentcustomerid</Name>
+              <LogicalName>parentcustomerid</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>auto</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>1</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <displaynames>
+                <displayname description="Company Name" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Select the parent account or parent contact for the contact to provide a quick link to additional details, such as financial information, activities, and opportunities." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="StateCode">
+              <Type>state</Type>
+              <Name>statecode</Name>
+              <LogicalName>statecode</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>auto</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>0</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>0</IsSearchable>
+              <IsFilterable>1</IsFilterable>
+              <IsRetrievable>0</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <optionset Name="contact_statecode">
+                <OptionSetType>state</OptionSetType>
+                <IntroducedVersion>5.0.0.0</IntroducedVersion>
+                <displaynames>
+                  <displayname description="Status" languagecode="1033" />
+                </displaynames>
+                <Descriptions>
+                  <Description description="Status of the contact." languagecode="1033" />
+                </Descriptions>
+                <states>
+                  <state value="0" defaultstatus="1" invariantname="Active">
+                    <labels>
+                      <label description="Active" languagecode="1033" />
+                    </labels>
+                  </state>
+                  <state value="1" defaultstatus="2" invariantname="Inactive">
+                    <labels>
+                      <label description="Inactive" languagecode="1033" />
+                    </labels>
+                  </state>
+                </states>
+              </optionset>
+              <displaynames>
+                <displayname description="Status" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Shows whether the contact is active or inactive. Inactive contacts are read-only and can't be edited unless they are reactivated." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+            <attribute PhysicalName="Telephone1">
+              <Type>nvarchar</Type>
+              <Name>telephone1</Name>
+              <LogicalName>telephone1</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <DisplayMask>ValidForAdvancedFind|ValidForForm|ValidForGrid</DisplayMask>
+              <ImeMode>inactive</ImeMode>
+              <ValidForUpdateApi>1</ValidForUpdateApi>
+              <ValidForReadApi>1</ValidForReadApi>
+              <ValidForCreateApi>1</ValidForCreateApi>
+              <IsCustomField>0</IsCustomField>
+              <IsAuditEnabled>1</IsAuditEnabled>
+              <IsSecured>0</IsSecured>
+              <IntroducedVersion>5.0.0.0</IntroducedVersion>
+              <SourceType>0</SourceType>
+              <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+              <IsSortableEnabled>0</IsSortableEnabled>
+              <IsDataSourceSecret>0</IsDataSourceSecret>
+              <AutoNumberFormat></AutoNumberFormat>
+              <IsSearchable>1</IsSearchable>
+              <IsFilterable>0</IsFilterable>
+              <IsRetrievable>1</IsRetrievable>
+              <IsLocalizable>0</IsLocalizable>
+              <Format>phone</Format>
+              <MaxLength>50</MaxLength>
+              <Length>100</Length>
+              <displaynames>
+                <displayname description="Business Phone" languagecode="1033" />
+              </displaynames>
+              <Descriptions>
+                <Description description="Type the main phone number for this contact." languagecode="1033" />
+              </Descriptions>
+            </attribute>
+          </attributes>
+        </entity>
+      </EntityInfo>
+      <SavedQueries>
+        <savedqueries>
+          <savedquery>
+            <isquickfindquery>1</isquickfindquery>
+            <isprivate>0</isprivate>
+            <isdefault>1</isdefault>
+            <savedqueryid>{8df19b44-a073-40c3-9d6d-ee1355d8c4ba}</savedqueryid>
+            <queryapi></queryapi>
+            <layoutxml>
+              <grid name="resultset" jump="fullname" select="1" icon="1" preview="1">
+                <row name="result" id="contactid">
+                  <cell name="fullname" width="300" />
+                  <cell name="parentcustomerid" width="150" />
+                  <cell name="address1_city" width="100" />
+                  <cell name="address1_telephone1" width="125" />
+                  <cell name="telephone1" width="125" />
+                  <cell name="emailaddress1" width="200" />
+                  <cell name="jobtitle" width="100" />
+                  <cell name="birthdate" width="100" />
+                  <cell name="anniversary" width="110" />
+                  <cell name="familystatuscode" width="119" />
+                </row>
+              </grid>
+            </layoutxml>
+            <querytype>4</querytype>
+            <fetchxml>
+              <fetch version="1.0" output-format="xml-platform" mapping="logical">
+                <entity name="contact">
+                  <attribute name="fullname" />
+                  <attribute name="parentcustomerid" />
+                  <attribute name="address1_city" />
+                  <attribute name="address1_telephone1" />
+                  <attribute name="telephone1" />
+                  <attribute name="emailaddress1" />
+                  <attribute name="contactid" />
+                  <order attribute="fullname" descending="false" />
+                  <filter type="and">
+                    <condition attribute="statecode" operator="eq" value="0" />
+                  </filter>
+                  <filter type="or" isquickfindfields="1">
+                    <condition attribute="fullname" operator="like" value="{0}" />
+                    <condition attribute="firstname" operator="like" value="{0}" />
+                    <condition attribute="lastname" operator="like" value="{0}" />
+                    <condition attribute="middlename" operator="like" value="{0}" />
+                    <condition attribute="emailaddress1" operator="like" value="{0}" />
+                    <condition attribute="parentcustomerid" operator="like" value="{0}" />
+                    <condition attribute="telephone1" operator="like" value="{0}" />
+                    <condition attribute="mobilephone" operator="like" value="{0}" />
+                    <condition attribute="anniversary" operator="on" value="{3}" />
+                    <condition attribute="birthdate" operator="on" value="{3}" />
+                    <condition attribute="jobtitle" operator="like" value="{0}" />
+                    <condition attribute="familystatuscode" operator="like" value="{0}" />
+                  </filter>
+                  <attribute name="jobtitle" />
+                  <attribute name="birthdate" />
+                  <attribute name="anniversary" />
+                  <attribute name="familystatuscode" />
+                </entity>
+              </fetch>
+            </fetchxml>
+            <IntroducedVersion>5.0.0.0</IntroducedVersion>
+            <LocalizedNames>
+              <LocalizedName description="Quick Find Active Contacts" languagecode="1033" />
+            </LocalizedNames>
+          </savedquery>
+        </savedqueries>
+      </SavedQueries>
+      <RibbonDiffXml>
+        <CustomActions />
+        <Templates>
+          <RibbonTemplates Id="Mscrm.Templates"></RibbonTemplates>
+        </Templates>
+        <CommandDefinitions />
+        <RuleDefinitions>
+          <TabDisplayRules />
+          <DisplayRules />
+          <EnableRules />
+        </RuleDefinitions>
+        <LocLabels />
+      </RibbonDiffXml>
+    </Entity>
+  </Entities>
+  <Roles></Roles>
+  <Workflows></Workflows>
+  <FieldSecurityProfiles></FieldSecurityProfiles>
+  <Templates />
+  <EntityMaps />
+  <EntityRelationships />
+  <OrganizationSettings />
+  <optionsets />
+  <CustomControls />
+  <EntityDataProviders />
+  <connectionreferences>
+    <connectionreference connectionreferencelogicalname="copilots_header_cref7_LookupDataAgent.shared_commondataserviceforapps.shared-commondataser-300cc200-a4eb-4a45-9779-f73541d2691b">
+      <connectionreferencedisplayname>copilots_header_cref7_LookupDataAgent.shared_commondataserviceforapps.shared-commondataser-300cc200-a4eb-4a45-9779-f73541d2691b</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps</connectorid>
+      <iscustomizable>0</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+  </connectionreferences>
+  <Languages>
+    <Language>1033</Language>
+  </Languages>
+</ImportExportXml>

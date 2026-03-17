@@ -1,0 +1,11 @@
+<botcomponent schemaname="cref7_resumeJobMatchAssistant.gpt.default">
+  <componenttype>15</componenttype>
+  <description>Helps users upload their resume and compares it against open company positions to identify the best matches.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>Resume Job Match Assistant</name>
+  <parentbotid>
+    <schemaname>cref7_resumeJobMatchAssistant</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

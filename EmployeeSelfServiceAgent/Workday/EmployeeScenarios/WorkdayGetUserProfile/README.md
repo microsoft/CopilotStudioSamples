@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+search_exclude: false
+---
 # Workday Get User Profile
 
 This scenario enables employees to retrieve their profile information from Workday through a conversational interface. It provides comprehensive employee data including personal details, employment information, contact details, and tenure calculations.
