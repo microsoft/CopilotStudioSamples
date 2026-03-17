@@ -10,7 +10,7 @@ This code sample demonstrates how to create a SharePoint SPFx component which is
 
 {: .important }
 > ⚠️ **This sample has been superseded.**  
-> Please use the updated sample here: [SharePoint SSO App Customizer](https://github.com/microsoft/CopilotStudioSamples/tree/main/SSOSamples/SharePointSSOAppCustomizer).  
+> Please use the updated sample here: [SharePoint SSO App Customizer](./SharePointSSOAppCustomizer/).  
 >  
 > The new sample:
 > - Uses a **modern UI**
