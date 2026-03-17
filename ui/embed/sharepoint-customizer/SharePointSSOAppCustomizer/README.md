@@ -11,7 +11,7 @@ This sample demonstrates how to integrate a Microsoft Copilot Studio agent into 
 
 The key advantage of using the Microsoft 365 Agents SDK is its ability to connect to agents that support Microsoft authentication, which enables [tenant graph grounding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding) capabilities.
 
-> **Note**: This sample supersedes the [legacy SharePoint SSO Component sample](https://github.com/microsoft/CopilotStudioSamples/tree/main/SSOSamples/SharePointSSOComponent) which uses DirectLine and a modal dialog. 
+> **Note**: This sample supersedes the [legacy SharePoint SSO Component sample](../) which uses DirectLine and a modal dialog. 
 
 {: .important }
 > ⚠️ **This is an open-source reference sample only.**  
