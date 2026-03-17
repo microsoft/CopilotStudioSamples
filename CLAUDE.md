@@ -2,7 +2,7 @@
 
 Microsoft Copilot Studio samples repo with a Just the Docs (Jekyll) site for navigation and search.
 
-**Live site**: https://adilei.github.io/CopilotStudioSamples/
+**Live site**: https://microsoft.github.io/CopilotStudioSamples/
 
 ## Repo Structure
 
@@ -194,7 +194,7 @@ git push origin reorg/v1
 **To merge upstream**: when ready, open a PR from `reorg/v1` → `main`. Update `.github/workflows/pages.yml` to trigger on `main` instead of `reorg/v1` before merging.
 
 **Remotes**:
-- `origin` — your fork (`adilei/CopilotStudioSamples`)
+- `origin` — your fork (`microsoft/CopilotStudioSamples`)
 - `upstream` — source repo (`microsoft/CopilotStudioSamples`)
 
 ## Key Config Notes

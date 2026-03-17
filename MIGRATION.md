@@ -2,7 +2,7 @@
 
 This table maps old folder locations (on `main`) to new locations (on `reorg/v1`). If you've linked to these samples in blogs, videos, or docs, please update your links.
 
-**Live site**: https://adilei.github.io/CopilotStudioSamples/
+**Live site**: https://microsoft.github.io/CopilotStudioSamples/
 
 ## Authoring
 

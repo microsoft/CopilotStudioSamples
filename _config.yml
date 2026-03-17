@@ -1,6 +1,6 @@
 title: Copilot Studio Samples
 description: Samples and artifacts for Microsoft Copilot Studio
-url: "https://adilei.github.io"
+url: "https://microsoft.github.io"
 baseurl: "/CopilotStudioSamples"
 
 theme: just-the-docs
@@ -36,13 +36,13 @@ search:
 # Aux links (top-right)
 aux_links:
   "View on GitHub":
-    - "https://github.com/adilei/CopilotStudioSamples"
+    - "https://github.com/microsoft/CopilotStudioSamples"
 aux_links_new_tab: true
 
 # GitHub source link (used by _includes/source_link.html at top of page)
 gh_edit_link: false
-gh_edit_repository: "https://github.com/adilei/CopilotStudioSamples"
-gh_edit_branch: "reorg/v1"
+gh_edit_repository: "https://github.com/microsoft/CopilotStudioSamples"
+gh_edit_branch: "main"
 
 # Back to top link
 back_to_top: true

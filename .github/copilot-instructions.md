@@ -165,7 +165,7 @@ git push origin reorg/v1
 
 - **Branch**: `reorg/v1` is the docs branch. GitHub Actions builds and deploys to Pages on every push.
 - **To merge upstream**: open a PR from `reorg/v1` → `main`. Update `.github/workflows/pages.yml` to trigger on `main` instead of `reorg/v1` before merging.
-- **Remotes**: `origin` = fork (`adilei/CopilotStudioSamples`), `upstream` = source (`microsoft/CopilotStudioSamples`)
+- **Remotes**: `origin` = fork (`microsoft/CopilotStudioSamples`), `upstream` = source (`microsoft/CopilotStudioSamples`)
 
 ## Config Gotchas
 

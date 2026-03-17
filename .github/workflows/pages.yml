@@ -2,7 +2,7 @@ name: Deploy Jekyll site to Pages
 
 on:
   push:
-    branches: ["reorg/v1"]  # Change to "main" after merge
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
