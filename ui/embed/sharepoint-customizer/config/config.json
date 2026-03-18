@@ -2,17 +2,17 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
   "version": "2.0",
   "bundles": {
-    "pva-sso-application-customizer": {
+    "sidebar-agent-application-customizer": {
       "components": [
         {
-          "entrypoint": "./lib/extensions/pvaSso/PvaSsoApplicationCustomizer.js",
-          "manifest": "./src/extensions/pvaSso/PvaSsoApplicationCustomizer.manifest.json"
+          "entrypoint": "./lib/extensions/sidebarAgent/SidebarAgentApplicationCustomizer.js",
+          "manifest": "./src/extensions/sidebarAgent/SidebarAgentApplicationCustomizer.manifest.json"
         }
       ]
     }
   },
   "externals": {},
   "localizedResources": {
-    "PvaSsoApplicationCustomizerStrings": "lib/extensions/pvaSso/loc/{locale}.js"
+    "SidebarAgentApplicationCustomizerStrings": "lib/extensions/sidebarAgent/loc/{locale}.js"
   }
 }
