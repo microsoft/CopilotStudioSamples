@@ -12,48 +12,14 @@ module.exports = {
         'sourceType': 'module'
       },
       rules: {
-        '@typescript-eslint/no-empty-function': 0,
         // Prevent usage of the JavaScript null value, while allowing code to access existing APIs that may require null. https://www.npmjs.com/package/@rushstack/eslint-plugin
-        '@rushstack/no-new-null': 0,
+        '@rushstack/no-new-null': 1,
         // Require Jest module mocking APIs to be called before any other statements in their code block. https://www.npmjs.com/package/@rushstack/eslint-plugin
         '@rushstack/hoist-jest-mock': 1,
         // Require regular expressions to be constructed from string constants rather than dynamically building strings at runtime. https://www.npmjs.com/package/@rushstack/eslint-plugin-security
         '@rushstack/security/no-unsafe-regexp': 1,
         // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
         '@typescript-eslint/adjacent-overload-signatures': 1,
-        // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
-        //
-        // CONFIGURATION:     By default, these are banned: String, Boolean, Number, Object, Symbol
-        '@typescript-eslint/ban-types': [
-          1,
-          {
-            'extendDefaults': false,
-            'types': {
-              'String': {
-                'message': 'Use \'string\' instead',
-                'fixWith': 'string'
-              },
-              'Boolean': {
-                'message': 'Use \'boolean\' instead',
-                'fixWith': 'boolean'
-              },
-              'Number': {
-                'message': 'Use \'number\' instead',
-                'fixWith': 'number'
-              },
-              'Object': {
-                'message': 'Use \'object\' instead, or else define a proper TypeScript type:'
-              },
-              'Symbol': {
-                'message': 'Use \'symbol\' instead',
-                'fixWith': 'symbol'
-              },
-              'Function': {
-                'message': 'The \'Function\' type accepts any function-like value.\nIt provides no type safety when calling the function, which can be a common source of bugs.\nIt also accepts things like class declarations, which will throw at runtime as they will not be called with \'new\'.\nIf you are expecting the function to accept certain arguments, you should explicitly define the function shape.'
-              }
-            }
-          }
-        ],
         // RATIONALE:         Code is more readable when the type of every variable is immediately obvious.
         //                    Even if the compiler may be able to infer a type, this inference will be unavailable
         //                    to a person who is reviewing a GitHub diff.  This rule makes writing code harder,
@@ -61,7 +27,7 @@ module.exports = {
         //
         // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
         '@typescript-eslint/explicit-function-return-type': [
-          0,
+          1,
           {
             'allowExpressions': true,
             'allowTypedFunctionExpressions': true,
@@ -80,7 +46,7 @@ module.exports = {
         //                    This rule should be suppressed only in very special cases such as JSON.stringify()
         //                    where the type really can be anything.  Even if the type is flexible, another type
         //                    may be more appropriate such as "unknown", "{}", or "Record<k,V>".
-        '@typescript-eslint/no-explicit-any': 0,
+        '@typescript-eslint/no-explicit-any': 1,
         // RATIONALE:         The #1 rule of promises is that every promise chain must be terminated by a catch()
         //                    handler.  Thus wherever a Promise arises, the code must either append a catch handler,
         //                    or else return the object to a caller (who assumes this responsibility).  Unterminated
@@ -324,7 +290,7 @@ module.exports = {
         // ====================================================================
         '@microsoft/spfx/import-requires-chunk-name': 1,
         '@microsoft/spfx/no-require-ensure': 2,
-        '@microsoft/spfx/pair-react-dom-render-unmount': 0
+        '@microsoft/spfx/pair-react-dom-render-unmount': 1
       }
     },
     {
