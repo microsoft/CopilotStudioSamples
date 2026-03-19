@@ -10,11 +10,11 @@ Deprecated
 {: .label .label-red }
 
 {: .caution }
-> This sample is deprecated and will be replaced with a modernized M365 Agents SDK sample.
+> This sample uses the archived Bot Framework SDK (`Microsoft.Bot.Builder`). It will be replaced with an M365 Agents SDK implementation.
 
-Sample of connecting Bot Framework v4 bot to a Power Virtual Agent bot.
+Sample of connecting an Azure Bot Service bot to a Copilot Studio agent using the Direct Line API.
 
-This bot has been created based on [Bot Framework](https://dev.botframework.com), it shows how to create an Azure Bot Service bot that connects to Power Virtual Agents bot
+This bot has been created based on [Bot Framework](https://dev.botframework.com), it shows how to create an Azure Bot Service bot that connects to a Copilot Studio agent
 
 ## Prerequisites
 
