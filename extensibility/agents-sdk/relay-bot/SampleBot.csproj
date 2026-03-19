@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.5" />
 	  <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.23.1" />
 	  <PackageReference Include="Microsoft.Bot.Connector.DirectLine" Version="3.0.2" />
   </ItemGroup>
