@@ -10,15 +10,15 @@ Deprecated
 {: .label .label-red }
 
 {: .caution }
-> This sample is deprecated and will be replaced with a modernized M365 Agents SDK sample.
+> This sample uses the archived Bot Framework SDK (`Microsoft.Bot.Builder`). It will be replaced with an M365 Agents SDK implementation.
 
-Sample of connecting Bot Framework v4 bot to a Power Virtual Agent bot.
+Sample of connecting an Azure Bot Service bot to a Copilot Studio agent using the Direct Line API.
 
-This bot has been created based on [Bot Framework](https://dev.botframework.com), it shows how to create an Azure Bot Service bot that connects to Power Virtual Agents bot
+This bot has been created based on [Bot Framework](https://dev.botframework.com), it shows how to create an Azure Bot Service bot that connects to a Copilot Studio agent
 
 ## Prerequisites
 
-- [.NET Core SDK](https://dotnet.microsoft.com/download) version 2.1
+- [.NET SDK](https://dotnet.microsoft.com/download) version 10.0
 
   ```bash
   # determine dotnet version
@@ -30,10 +30,10 @@ This bot has been created based on [Bot Framework](https://dev.botframework.com)
 - Clone the repository
 
     ```bash
-    git clone https://github.com/microsoft/PowerVirtualAgentsSample.git
+    git clone https://github.com/microsoft/CopilotStudioSamples.git
     ```
 
-- In a terminal, navigate to `BYOBSample/`
+- In a terminal, navigate to `extensibility/agents-sdk/relay-bot`
 - Update file appsettings.json with your Power Virtual Agent bot id, tenant id, bot name and other settings.
     
     To retrieve your bot's bot ID and tenant ID, click on left side pane's ***Manage***, click ***Channels*** and click on the Azure Bot Service channel that you need to connect to.
@@ -54,7 +54,7 @@ This bot has been created based on [Bot Framework](https://dev.botframework.com)
 
   - Launch Visual Studio
   - File -> Open -> Project/Solution
-  - Navigate to `BYOBSample/` folder
+  - Navigate to `extensibility/agents-sdk/relay-bot` folder
   - Select `SampleBot.csproj` file
   - Press `F5` to run the project
 
