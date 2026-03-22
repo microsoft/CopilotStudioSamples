@@ -1,0 +1,10 @@
+<botcomponent schemaname="cref7_resumeJobMatchAssistant.agent.Agent">
+  <componenttype>9</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Job Finder Agent</name>
+  <parentbotid>
+    <schemaname>cref7_resumeJobMatchAssistant</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

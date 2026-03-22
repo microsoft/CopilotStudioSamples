@@ -1,0 +1,11 @@
+<botcomponent schemaname="copilots_header_cref7_LookupDataAgent.topic.Signin">
+  <componenttype>9</componenttype>
+  <description>This system topic triggers when the agent needs to sign in the user or require the user to sign in</description>
+  <iscustomizable>0</iscustomizable>
+  <name>Sign in </name>
+  <parentbotid>
+    <schemaname>copilots_header_cref7_LookupDataAgent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

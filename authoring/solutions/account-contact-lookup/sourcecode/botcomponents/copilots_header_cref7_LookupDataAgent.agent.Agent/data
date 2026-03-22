@@ -1,0 +1,15 @@
+kind: AgentDialog
+beginDialog:
+  kind: OnToolSelected
+  id: main
+  description: This agent provides information and performs tasks for accounts
+
+settings:
+  instructions: |-
+    Use {Topic.Components.Actions.'copilots_header_cref7_LookupDataAgent.action.MicrosoftDataverse-Performanunboundactioninselected_xAp'.DisplayName}  to find account to lookup the details of
+    Use {Topic.Components.Actions.'copilots_header_cref7_LookupDataAgent.action.MicrosoftDataverse-Performanunboundactioninselectedenvi'.DisplayName}  to get the details of an account
+
+    When asked for the details on an account provide all details content in the list provided back that is in data provided from {Topic.Components.Actions.'copilots_header_cref7_LookupDataAgent.action.MicrosoftDataverse-Performanunboundactioninselectedenvi'.DisplayName} 
+
+inputType: {}
+outputType: {}
