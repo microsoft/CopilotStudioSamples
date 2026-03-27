@@ -179,8 +179,9 @@ Or use the one-step deploy script that handles login, servers, tunnel, and conne
 1. Open your agent in [Copilot Studio](https://copilotstudio.microsoft.com/)
 2. Go to **Tools** > **Add tool** > filter by **Model Context Protocol**
 3. Search for "Dynamic MCP Connector" and add it
-4. Select an instance from the dropdown
-5. The agent now has access to the MCP tools for that instance
+4. Under **Inputs**, select an instance from the **Instance** dropdown (e.g. "Contoso", "Fabrikam", "Northwind")
+5. The **Tools** section will populate with the MCP tools for the selected instance — tools won't appear until you pick an instance
+6. Click **Save**
 
 ## Example Queries
 
