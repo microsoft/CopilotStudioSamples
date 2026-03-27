@@ -29,6 +29,20 @@ beginDialog:
 
   actions:
     - kind: SetVariable
+      id: set_workday_url
+      variable: Topic.WorkdayUrl
+      value: https://impl.workday.com/<TENANT_NAME>/home.htmld
+
+    - kind: SetVariable
+      id: set_intro_msg_text
+      variable: Topic.introMsgText
+      value: ="Sure, here's what I found on your time off balance from [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
+
+    - kind: SendActivity
+      id: intro_msg
+      activity: "{Topic.introMsgText}"
+
+    - kind: SetVariable
       id: setVariable_8qSSM1
       variable: Topic.date
       value: =Text(Today(), "yyyy-MM-dd")

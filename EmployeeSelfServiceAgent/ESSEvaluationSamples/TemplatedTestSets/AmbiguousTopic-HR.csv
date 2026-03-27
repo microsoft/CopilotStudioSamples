@@ -1,0 +1,21 @@
+﻿Prompt,Expected response,Test Method Type,Passing Score
+How do I request time off,"Are you looking to request vacation, sick leave, or another type of time off?",CompareMeaning,50
+How do I change my personal information,"Are you trying to update your contact details, emergency contacts, or something else in your profile?",CompareMeaning,50
+Where do I find the policy,"There are many HR policies—are you looking for a policy on time off, benefits, or workplace guidelines?",CompareMeaning,50
+What approvals do I need,"Are you asking about approvals for time off, expenses, training, or something else?",CompareMeaning,50
+How do I get an employment letter,"Do you need a verification letter for employment, immigration, or a rental application?",CompareMeaning,50
+How do reimbursements work,"Reimbursements can include travel, wellness, tuition, or other costs. Which type do you mean?",CompareMeaning,50
+Can I work from a different location,"Do you want to work remotely temporarily, relocate permanently, or work from another country?",CompareMeaning,50
+How do I update my pay details,"Are you trying to update direct deposit, tax information, or other pay‑related details?",CompareMeaning,50
+How does carryover work,"Are you asking about vacation carryover, sick leave carryover, or another leave type?",CompareMeaning,50
+How do I enroll,"Are you looking to enroll in benefits, training, or another HR program?",CompareMeaning,50
+How do I report an HR issue,"Is the issue related to a workplace concern, a policy question, or something else you want to report?",CompareMeaning,50
+How do I request equipment,"Are you asking about equipment for onboarding, ergonomic gear, or a replacement for broken items?",CompareMeaning,50
+How do I change my schedule,"Do you want to change your daily hours, shift pattern, or regular work location schedule?",CompareMeaning,50
+How do I check eligibility,"Are you checking eligibility for benefits, leave, or another program?",CompareMeaning,50
+How do I see my balances,"Are you looking for your vacation balance, sick time, or another type of leave balance?",CompareMeaning,50
+How do I update my manager information,"Are you trying to update your manager because of a re‑org, a reporting change, or something else?",CompareMeaning,50
+How do I start onboarding,"Are you starting onboarding as a new hire, a transfer, or a manager onboarding someone else?",CompareMeaning,50
+How do I find required training,"Are you looking for mandatory training, role‑specific training, or compliance courses?",CompareMeaning,50
+How do I get travel approved,"Is this for domestic travel, international travel, or another type of trip that needs approval?",CompareMeaning,50
+Tell me about CC,"Are you asking about cost centers, company codes, or another kind of “CC” information?",CompareMeaning,50

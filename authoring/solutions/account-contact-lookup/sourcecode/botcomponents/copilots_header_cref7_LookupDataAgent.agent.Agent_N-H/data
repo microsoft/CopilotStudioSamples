@@ -1,0 +1,11 @@
+kind: AgentDialog
+beginDialog:
+  kind: OnToolSelected
+  id: main
+  description: This agent provide ability to get information on contacts and perform actions on contacts
+
+settings:
+  instructions: "When asked for the details on an account provide all details content in the list provided back that is in data provided from {Topic.Components.Actions.'copilots_header_cref7_LookupDataAgent.action.MicrosoftDataverse-Performanunboundactioninselected_ppg'.DisplayName} "
+
+inputType: {}
+outputType: {}

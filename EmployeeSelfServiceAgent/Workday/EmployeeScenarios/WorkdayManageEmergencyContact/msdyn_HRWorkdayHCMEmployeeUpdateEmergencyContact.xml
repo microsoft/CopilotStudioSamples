@@ -22,7 +22,7 @@
         <requestTemplate name="Template_UpdateEmergencyContactRequest">
             <bsvc:Change_Emergency_Contacts_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v45.0">
                 <bsvc:Business_Process_Parameters>
-                    <bsvc:Auto_Complete>true</bsvc:Auto_Complete>
+                    <bsvc:Auto_Complete>false</bsvc:Auto_Complete>
                     <bsvc:Run_Now>true</bsvc:Run_Now>
                     <bsvc:Discard_On_Exit_Validation_Error>true</bsvc:Discard_On_Exit_Validation_Error>
                     <bsvc:Comment_Data>

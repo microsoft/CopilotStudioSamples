@@ -1,0 +1,18 @@
+kind: AgentDialog
+beginDialog:
+  kind: OnToolSelected
+  id: main
+  description: This agent finds jobs that are a good fit for resumes submitted and provides back best options for that person.
+
+settings:
+  instructions: |-
+    This agent should look at all the job listings and make recommendations if that user is a fit for any of the roles or not that are listed.
+
+    For every resume that was asked to be reviewed, it should look at each of them and determine if it can find the best option for the user.
+
+    Look across all possible search items to find the best options for the resumes submitted.  If there isn't a clear fit for the resume, then inform the person asking that there isn't a clear fit for that resume.
+
+    Prioritize them in the order of the most fitting and take in consideration where they currently live and their proximity to the role as part of that criteria as well as their experience.
+
+inputType: {}
+outputType: {}

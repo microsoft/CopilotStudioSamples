@@ -1,0 +1,11 @@
+﻿Prompt,Expected response,Test Method Type,Passing Score
+What is the annual PTO allocation for employees in the Los Angeles office?,"Employees in the Los Angeles office receive the following annual PTO amounts: 18 days for Individual Contributors, 21 days for Managers, and 25 days for Directors and above.",CompareMeaning,70
+How much PTO do employees in the New York office receive each year?,"Employees in the New York office receive the following annual PTO amounts: 20 days for Individual Contributors, 23 days for Managers, and 27 days for Directors and above.",CompareMeaning,70
+How much annual leave do managers in the Hong Kong office get?,Managers in the Hong Kong office receive 18 PTO days per year.,CompareMeaning,70
+Who do I send medical documentation to if I’m out sick for more than three days?,Medical documentation for sick leave longer than three days must be sent to medicaldocs@globalco.com.,CompareMeaning,70
+How many sick days do NYC employees receive each year?,NYC employees receive 10 paid sick days per year.,CompareMeaning,70
+Where do I go to submit a PTO request?,You can submit PTO requests through the HR portal at https://hrportal.globalco.com.,CompareMeaning,70
+How much parental leave do LA employees get?,LA employees receive 12 weeks of paid parental leave.,CompareMeaning,70
+What’s the email to use for urgent bereavement leave requests?,"For urgent bereavement requests, email leave-requests@globalco.com.",CompareMeaning,70
+Who do I escalate to if my PTO request is denied and I believe it’s incorrect?,"You should escalate it by first with your direct manager. If it remains unresolved, you should escalate to your regional HR team using the email for your location: la-hr@globalco.com for Los Angeles, nyc-hr@globalco.com for New York, or hk-hr@globalco.com for Hong Kong. ",CompareMeaning,70
+How much PTO can employees carry over each year?,"Employees can carry over different amounts of PTO depending on their region: Los Angeles employees may carry over up to 5 unused PTO days, New York employees may carry over up to 7 unused PTO days, and Hong Kong employees may carry over up to 3 unused PTO days each year. Carryover limits vary by region.",CompareMeaning,70

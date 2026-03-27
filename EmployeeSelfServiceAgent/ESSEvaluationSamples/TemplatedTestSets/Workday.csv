@@ -1,0 +1,22 @@
+﻿Prompt,Expected response ,Test Method Type,Passing Score
+What is my employee ID?,Employee ID <21514>,CompareMeaning,70
+What is my cost center?,Cost center <12345>,CompareMeaning,70
+What's my base compensation?,Base compensation <Amount + Currency>,CompareMeaning,70
+What languages are listed in my employee profile?,"Languages on file <Language1, Language2, …>",CompareMeaning,70
+What employment information is on file for me?,"Employment type <Full‑time/Part‑time>, FTE <100%>, hire dates <Hire + Original Hire>, location <Work location>, management level <Level>, position ID <ID>",CompareMeaning,70
+Can you show me the passport I have on file?,Passport information <Passport Details>,CompareMeaning,70
+Show me the government ID I have on file,Government ID information <ID Details>,CompareMeaning,70
+What is my service anniversary,Service anniversary date <MM/DD/YYYY> and milestone <X years>,CompareMeaning,70
+Show me the Visa information I have in my employee profile,Visa information <Visa Details>,CompareMeaning,70
+Show me my employee profile summary.,"Employee profile summary <Name, Employee ID, Job title, Department, Manager, Location, Employment status, Hire dates, DOB, Gender, Contact details, Address>",CompareMeaning,70
+Who is listed as my emergency contact?,"Emergency contacts <Name, Relationship, Phone number, Address>",CompareMeaning,70
+How can I update my preferences for being contacted by phone?,Phone contact preference settings <Update steps or location>,CompareMeaning,70
+Show me my certifications on file.,Certifications on file <Details>,CompareMeaning,70
+Check whether my job history is available in my profile.,Job history availability <Details>,CompareMeaning,70
+What is the process for updating my dependent's information?,Dependents on file <Name + Relationship>,CompareMeaning,70
+What is my official job title?,Job title <Title>,CompareMeaning,70
+Do I have access to view my compensation data?,Base compensation <Amount + Currency>,CompareMeaning,70
+Are there any trainings and certifications needed for my role?,Required trainings or certifications <List>,CompareMeaning,70
+Where can I see my official work location?,Work location <Location>,CompareMeaning,70
+Can I update my preferred language for HR communications?,Preferred language information <List>,CompareMeaning,70
+Show me my hire date and my rehire date if I have one.,Hire date <MM/DD/YYYY> and rehire date <MM/DD/YYYY or None>,CompareMeaning,70

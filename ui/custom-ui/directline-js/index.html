@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DirectLine JS Sample — Copilot Studio</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f0f2f5;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* ── Layout ── */
+
+    .chat {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 640px;
+      height: 90vh;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 16px 20px;
+      background: #0f6cbd;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-header .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #ffd000;
+    }
+    .chat-header .status-dot.online { background: #5ec75a; }
+
+    /* ── Messages ── */
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .message.agent {
+      align-self: flex-start;
+      background: #f0f0f0;
+      color: #1a1a1a;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #0f6cbd;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message a { color: inherit; text-decoration: underline; }
+    .message.agent a { color: #0f6cbd; }
+
+    /* ── Markdown inside agent messages ── */
+
+    .message.agent p { margin: 0 0 8px; }
+    .message.agent p:last-child { margin-bottom: 0; }
+    .message.agent ul, .message.agent ol { margin: 4px 0; padding-left: 20px; }
+    .message.agent li { margin: 2px 0; }
+    .message.agent h1, .message.agent h2, .message.agent h3 {
+      margin: 8px 0 4px; font-size: 14px; font-weight: 700;
+    }
+    .message.agent code {
+      background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; font-size: 13px;
+    }
+    .message.agent pre {
+      background: rgba(0,0,0,0.06); padding: 8px; border-radius: 4px; overflow-x: auto;
+    }
+
+    /* ── Sources ── */
+
+    .sources {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      font-size: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+    }
+    .sources-label { width: 100%; font-weight: 600; color: #555; margin-bottom: 2px; }
+    .sources a {
+      color: #0f6cbd; text-decoration: none;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+    }
+    .sources a:hover { text-decoration: underline; }
+
+    /* ── Suggested actions ── */
+
+    .suggested-actions {
+      display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 20px 12px;
+    }
+    .suggested-actions button {
+      padding: 6px 14px;
+      border: 1px solid #0f6cbd; border-radius: 16px;
+      background: #fff; color: #0f6cbd;
+      font-size: 13px; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .suggested-actions button:hover { background: #0f6cbd; color: #fff; }
+
+    /* ── Typing indicator ── */
+
+    .typing-indicator {
+      display: none; align-self: flex-start;
+      padding: 10px 14px; background: #f0f0f0;
+      border-radius: 12px; border-bottom-left-radius: 4px; gap: 4px;
+    }
+    .typing-indicator.visible { display: flex; }
+    .typing-indicator .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #999; animation: bounce 1.4s infinite;
+    }
+    .typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ── Input ── */
+
+    .chat-input { display: flex; padding: 12px 16px; border-top: 1px solid #e0e0e0; gap: 8px; }
+    .chat-input input {
+      flex: 1; padding: 10px 14px;
+      border: 1px solid #d0d0d0; border-radius: 8px; font-size: 14px; outline: none;
+    }
+    .chat-input input:focus { border-color: #0f6cbd; }
+    .chat-input input:disabled { background: #f5f5f5; }
+    .chat-input button {
+      padding: 10px 20px; background: #0f6cbd; color: #fff;
+      border: none; border-radius: 8px; font-size: 14px; cursor: pointer;
+    }
+    .chat-input button:hover { background: #0d5aa7; }
+    .chat-input button:disabled { background: #ccc; cursor: default; }
+
+    /* ── Status banner ── */
+
+    .status-banner {
+      display: none; padding: 8px 20px;
+      background: #fff3cd; color: #664d03; font-size: 13px; text-align: center;
+    }
+    .status-banner.error { background: #f8d7da; color: #842029; }
+    .status-banner.visible { display: block; }
+
+    /* ── Animations ── */
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-4px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat">
+    <div class="chat-header">
+      <span class="status-dot" id="statusDot"></span>
+      <span>Copilot Studio Agent</span>
+    </div>
+    <div class="status-banner" id="statusBanner"></div>
+    <div class="messages" id="messages">
+      <div class="typing-indicator" id="typingIndicator">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="suggested-actions" id="suggestedActions"></div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Type a message..." disabled />
+      <button id="sendButton" disabled>Send</button>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────────────────
+       Dependencies
+       ───────────────────────────────────────────────────────────────────────── -->
+
+  <!-- botframework-directlinejs: Microsoft's open-source DirectLine 3.0 client.
+       Same library WebChat uses internally, but here we use it standalone.
+       Bundles RxJS 5.x — Observables use chainable .filter()/.subscribe(). -->
+  <script src="https://unpkg.com/botframework-directlinejs/dist/directline.js"></script>
+
+  <!-- marked: Markdown → HTML. Copilot Studio sends responses as markdown. -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Config: copy config.sample.js → config.js and set your token endpoint. -->
+  <script src="config.js"></script>
+
+  <script>
+    // ==========================================================================
+    // DirectLine JS Sample
+    //
+    // Connects to a Copilot Studio agent using botframework-directlinejs with a
+    // fully custom UI — no WebChat dependency.
+    //
+    // Flow:
+    //   1. Fetch token & regional DirectLine endpoint from Copilot Studio
+    //   2. Open a DirectLine WebSocket connection
+    //   3. Subscribe to activities (messages, typing, events)
+    //   4. Send user messages via postActivity()
+    // ==========================================================================
+
+    (async function main() {
+
+      // ── DOM references ──
+
+      const messagesEl       = document.getElementById('messages');
+      const typingEl         = document.getElementById('typingIndicator');
+      const suggestedEl      = document.getElementById('suggestedActions');
+      const inputEl          = document.getElementById('userInput');
+      const sendBtn          = document.getElementById('sendButton');
+      const statusDot        = document.getElementById('statusDot');
+      const statusBanner     = document.getElementById('statusBanner');
+
+      const userId = 'user-' + Math.random().toString(36).slice(2, 9);
+
+      // ── UI helpers ──
+
+      function scrollToBottom() {
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      function showStatus(text, isError = false) {
+        statusBanner.textContent = text;
+        statusBanner.className = 'status-banner visible' + (isError ? ' error' : '');
+      }
+
+      function hideStatus() {
+        statusBanner.className = 'status-banner';
+      }
+
+      // ======================================================================
+      // STEP 1 — Connect to Copilot Studio via DirectLine
+      //
+      // Two things are needed before creating a DirectLine connection:
+      //   a) A token from the Copilot Studio token endpoint
+      //   b) The regional DirectLine URL (agents are deployed regionally —
+      //      never hardcode directline.botframework.com)
+      //
+      // Both are derived from the token endpoint URL.
+      // ======================================================================
+
+      showStatus('Connecting...');
+
+      const tokenEndpoint = CONFIG.tokenEndpoint;
+      const apiVersion = new URL(tokenEndpoint).searchParams.get('api-version');
+
+      let directLineURL, token;
+      try {
+        const [regionalSettings, tokenResponse] = await Promise.all([
+          fetch(new URL(`/powervirtualagents/regionalchannelsettings?api-version=${apiVersion}`, tokenEndpoint))
+            .then(r => { if (!r.ok) throw new Error(`Regional settings: ${r.status}`); return r.json(); }),
+          fetch(tokenEndpoint)
+            .then(r => { if (!r.ok) throw new Error(`Token: ${r.status}`); return r.json(); }),
+        ]);
+
+        directLineURL = regionalSettings.channelUrlsById.directline;
+        token = tokenResponse.token;
+      } catch (err) {
+        showStatus('Failed to connect: ' + err.message, true);
+        return;
+      }
+
+      // Create the DirectLine connection.
+      // The domain is the regional URL + /v3/directline.
+      const directLine = new DirectLine.DirectLine({
+        token,
+        domain: new URL('v3/directline', directLineURL).toString(),
+        webSocket: true,
+      });
+
+      // ======================================================================
+      // STEP 2 — Monitor connection status & trigger greeting
+      //
+      // connectionStatus$ is a BehaviorSubject that emits:
+      //   0 = Uninitialized, 1 = Connecting, 2 = Online,
+      //   3 = ExpiredToken,  4 = FailedToConnect, 5 = Ended
+      //
+      // When the connection goes Online, we send a 'startConversation' event
+      // to trigger the agent's Greeting topic. We only do this once — the
+      // status can re-emit Online after a reconnect.
+      // ======================================================================
+
+      let greetingSent = false;
+
+      directLine.connectionStatus$.subscribe(status => {
+        switch (status) {
+          case 0: // Uninitialized
+          case 1: // Connecting
+            showStatus('Connecting...');
+            break;
+
+          case 2: // Online
+            statusDot.classList.add('online');
+            hideStatus();
+            inputEl.disabled = false;
+            sendBtn.disabled = false;
+            inputEl.focus();
+
+            if (!greetingSent) {
+              greetingSent = true;
+              directLine.postActivity({
+                from: { id: userId },
+                type: 'event',
+                name: 'startConversation',
+                locale: navigator.language || 'en-US',
+              }).subscribe();
+            }
+            break;
+
+          case 3: // ExpiredToken
+            showStatus('Session expired. Please refresh the page.', true);
+            inputEl.disabled = true;
+            sendBtn.disabled = true;
+            break;
+
+          case 4: // FailedToConnect
+            showStatus('Failed to connect. Please refresh the page.', true);
+            inputEl.disabled = true;
+            sendBtn.disabled = true;
+            break;
+
+          case 5: // Ended
+            showStatus('Conversation ended.');
+            inputEl.disabled = true;
+            sendBtn.disabled = true;
+            break;
+        }
+      });
+
+      // ======================================================================
+      // STEP 3 — Receive and render activities
+      //
+      // activity$ emits every activity in the conversation, including echoes
+      // of your own messages. Two filters are needed:
+      //
+      //   1. from.role === 'bot' — only agent activities.
+      //      (DirectLine replaces our from.id with a server-assigned UUID,
+      //      so matching by from.id doesn't work. from.role is reliable.)
+      //
+      //   2. Deduplication by activity ID — DirectLine may deliver the same
+      //      activity twice (e.g. via WebSocket + polling fallback).
+      // ======================================================================
+
+      const seenIds = new Set();
+
+      directLine.activity$
+        .filter(activity => {
+          if (activity.from.role !== 'bot') return false;
+          if (activity.id && seenIds.has(activity.id)) return false;
+          if (activity.id) seenIds.add(activity.id);
+          return true;
+        })
+        .subscribe(activity => {
+          switch (activity.type) {
+            case 'message': {
+              hideTyping();
+              if (activity.text) {
+                addAgentMessage(activity.text, activity.entities);
+              }
+              if (activity.suggestedActions?.actions) {
+                showSuggestedActions(activity.suggestedActions.actions);
+              }
+              break;
+            }
+            case 'typing':
+              showTyping();
+              break;
+          }
+        });
+
+      // ── Rendering helpers ──
+
+      /**
+       * Render an agent message. Copilot Studio sends markdown with
+       * reference-style citations ([n] inline + [n]: URL "title" at bottom).
+       * The `marked` library resolves these into clickable links automatically.
+       *
+       * Citation source metadata is in the activity's entities array as a
+       * schema.org/Message entity with a "citation" array of Claim objects.
+       * We render these as a "Sources" footer below the message.
+       */
+      function addAgentMessage(text, entities) {
+        const el = document.createElement('div');
+        el.className = 'message agent';
+        el.innerHTML = marked.parse(text);
+
+        // Open all links in a new tab
+        el.querySelectorAll('a').forEach(a => {
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        });
+
+        // Append sources from citation entities
+        const messageEntity = entities?.find(e => e.type === 'https://schema.org/Message' && e.citation);
+        if (messageEntity?.citation.length) {
+          const sourcesEl = document.createElement('div');
+          sourcesEl.className = 'sources';
+          sourcesEl.innerHTML =
+            `<span class="sources-label">Sources</span>` +
+            messageEntity.citation.map(c => {
+              const name = c.appearance?.name || c.appearance?.abstract || 'Source';
+              const url = c.appearance?.url;
+              return url
+                ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${c.position}. ${name}</a>`
+                : `<span>${c.position}. ${name}</span>`;
+            }).join('');
+          el.appendChild(sourcesEl);
+        }
+
+        messagesEl.insertBefore(el, typingEl);
+        scrollToBottom();
+      }
+
+      function addUserMessage(text) {
+        const el = document.createElement('div');
+        el.className = 'message user';
+        el.textContent = text;
+        messagesEl.insertBefore(el, typingEl);
+        scrollToBottom();
+      }
+
+      let typingTimer = null;
+
+      function showTyping() {
+        typingEl.classList.add('visible');
+        scrollToBottom();
+        // Auto-hide after 5s in case we miss the final message
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => typingEl.classList.remove('visible'), 5000);
+      }
+
+      function hideTyping() {
+        clearTimeout(typingTimer);
+        typingEl.classList.remove('visible');
+      }
+
+      function showSuggestedActions(actions) {
+        suggestedEl.innerHTML = '';
+        for (const action of actions) {
+          const btn = document.createElement('button');
+          btn.textContent = action.title;
+          btn.addEventListener('click', () => {
+            sendMessage(action.value || action.title);
+            suggestedEl.innerHTML = '';
+          });
+          suggestedEl.appendChild(btn);
+        }
+        scrollToBottom();
+      }
+
+      // ======================================================================
+      // STEP 4 — Send messages
+      //
+      // postActivity() returns an RxJS Observable. You must .subscribe()
+      // to actually send the request (Observables are lazy).
+      // ======================================================================
+
+      function sendMessage(text) {
+        if (!text.trim()) return;
+        addUserMessage(text);
+        suggestedEl.innerHTML = '';
+
+        directLine.postActivity({
+          from: { id: userId },
+          type: 'message',
+          text: text,
+        }).subscribe(
+          id => console.log('[DirectLine] Sent, id:', id),
+          err => console.error('[DirectLine] Send error:', err),
+        );
+      }
+
+      // ── Wire up input ──
+
+      sendBtn.addEventListener('click', () => {
+        sendMessage(inputEl.value);
+        inputEl.value = '';
+        inputEl.focus();
+      });
+
+      inputEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage(inputEl.value);
+          inputEl.value = '';
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>

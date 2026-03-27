@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<workdayEntityConfigurationTemplate>
+    <scenario name="msdyn_DeleteEmergencyContact">
+        <successMessage></successMessage>
+        <apiRequests>
+            <apiRequest>
+                <authType>User</authType>
+                <endpoint>
+                    <request>Template_DeleteEmergencyContactRequest</request>
+                    <serviceName>Human_Resources</serviceName>
+                    <version>v45.0</version>
+                </endpoint>
+                <responseProperties>
+                    <property>
+                        <extractPath>//*[local-name()='Emergency_Contact_Event_Reference']/*[local-name()='ID'][@*[local-name()='type']='WID']/text()</extractPath>
+                        <key>EventID</key>
+                    </property>
+                </responseProperties>
+            </apiRequest>
+        </apiRequests>
+    </scenario>
+    <requestTemplates>
+        <requestTemplate name="Template_DeleteEmergencyContactRequest">
+            <bsvc:Change_Emergency_Contacts_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v45.0">
+                <bsvc:Business_Process_Parameters>
+                    <bsvc:Auto_Complete>false</bsvc:Auto_Complete>
+                    <bsvc:Run_Now>true</bsvc:Run_Now>
+                    <bsvc:Discard_On_Exit_Validation_Error>true</bsvc:Discard_On_Exit_Validation_Error>
+                    <bsvc:Comment_Data>
+                        <bsvc:Comment>{Comment}</bsvc:Comment>
+                        <bsvc:Worker_Reference>
+                            <bsvc:ID bsvc:type="Employee_ID">{Employee_ID}</bsvc:ID>
+                        </bsvc:Worker_Reference>
+                    </bsvc:Comment_Data>
+                </bsvc:Business_Process_Parameters>
+                <bsvc:Change_Emergency_Contacts_Data>
+                    <bsvc:Person_Reference>
+                        <bsvc:ID bsvc:type="Employee_ID">{Employee_ID}</bsvc:ID>
+                    </bsvc:Person_Reference>
+                    <bsvc:Replace_All>false</bsvc:Replace_All>
+                    <bsvc:Emergency_Contacts_Reference_Data>
+                        <bsvc:Emergency_Contact_Reference>
+                            <bsvc:ID bsvc:type="WID">{Emergency_Contact_WID}</bsvc:ID>
+                        </bsvc:Emergency_Contact_Reference>
+                        <bsvc:Delete>true</bsvc:Delete>
+                        <bsvc:Emergency_Contact_Data>
+                            <bsvc:Primary>false</bsvc:Primary>
+                            <bsvc:Priority>{Priority}</bsvc:Priority>
+                            <bsvc:Related_Person_Relationship_Reference>
+                                <bsvc:ID bsvc:type="Related_Person_Relationship_ID">{Relationship_Type}</bsvc:ID>
+                            </bsvc:Related_Person_Relationship_Reference>
+                        </bsvc:Emergency_Contact_Data>
+                    </bsvc:Emergency_Contacts_Reference_Data>
+                </bsvc:Change_Emergency_Contacts_Data>
+            </bsvc:Change_Emergency_Contacts_Request>
+        </requestTemplate>
+    </requestTemplates>
+</workdayEntityConfigurationTemplate>

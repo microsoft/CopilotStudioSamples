@@ -1,0 +1,150 @@
+title: Copilot Studio Samples
+description: Samples and artifacts for Microsoft Copilot Studio
+url: "https://microsoft.github.io"
+baseurl: "/CopilotStudioSamples"
+
+theme: just-the-docs
+logo: "/assets/images/logo.png"
+
+# Mermaid diagram support
+mermaid:
+  version: "11"
+favicon_ico: "/favicon.ico"
+
+# Default layout for all pages
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+# Plugins
+plugins:
+  - jekyll-readme-index
+  - jekyll-seo-tag
+  - jekyll-include-cache
+
+# jekyll-readme-index: treat README.md as index pages, even with front matter
+readme_index:
+  with_frontmatter: true
+
+# Search
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/\-]+/
+
+# Aux links (top-right)
+aux_links:
+  "View on GitHub":
+    - "https://github.com/microsoft/CopilotStudioSamples"
+aux_links_new_tab: true
+
+# GitHub source link (used by _includes/source_link.html at top of page)
+gh_edit_link: false
+gh_edit_repository: "https://github.com/microsoft/CopilotStudioSamples"
+gh_edit_branch: "main"
+
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+
+# Callouts (GitHub alert equivalents)
+callouts:
+  note:
+    title: Note
+    color: purple
+  tip:
+    title: Tip
+    color: green
+  important:
+    title: Important
+    color: blue
+  warning:
+    title: Warning
+    color: yellow
+  caution:
+    title: Caution
+    color: red
+
+# Exclude source code, binaries, and build artifacts from the site
+# Note: Jekyll's File.fnmatch without FNM_PATHNAME means * matches /
+# so *.ext patterns match recursively. Directory patterns need */dir form.
+exclude:
+  # Build/dependency dirs (*/pattern matches at any depth)
+  - Gemfile.lock
+  - "*/node_modules"
+  - vendor/
+  - "*/bin"
+  - "*/obj"
+  - "*/packages"
+  - "*/__pycache__"
+  - "*/wwwroot"
+  - "*/dist"
+  - original-repo/
+  # HTML source files (can't use *.html — it blocks theme layouts too)
+  # Exclude source index.html so jekyll-readme-index can use README.md
+  - "*index.html"
+  - "*/views"
+  - "*/public"
+  - "*CustomChatbotUI*"
+  - "*/reports"
+  - "*/test-page"
+  - "*TypeAhead*"
+  - "*widget-html*"
+  - "*.htm"
+  - "*.sln"
+  - "*.csproj"
+  - "*.cs"
+  - "*.js"
+  - "*.mjs"
+  - "*.ts"
+  - "*.tsx"
+  - "*.jsx"
+  - "*.json"
+  - "*.xml"
+  - "*.xaml"
+  - "*.config"
+  - "*.yaml"
+  - "*.yml"
+  - "*.py"
+  - "*.java"
+  - "*.jmx"
+  - "*.ps1"
+  - "*.sh"
+  - "*.bat"
+  - "*.cmd"
+  - "*.css"
+  - "*.scss"
+  - "*.less"
+  - "*.bicep"
+  - "*.tf"
+  - "*.pcfproj"
+  - "*.cdsproj"
+  - "*.resx"
+  # Binaries and packages
+  - "*.zip"
+  - "*.nupkg"
+  - "*.dll"
+  - "*.exe"
+  - "*.pdb"
+  - "*.suo"
+  - "*.user"
+  - "*.pyc"
+  - "*.egg-info"
+  # Config/lock files
+  - ".env*"
+  - ".gitignore"
+  - ".editorconfig"
+  - Makefile
+  - Dockerfile
+  - "docker-compose*"
+  - ControlManifest.Input.xml
+  # Repo-level files
+  - CODE_OF_CONDUCT.md
+  - SECURITY.md
+  - LICENSE
+  - LICENSE.md

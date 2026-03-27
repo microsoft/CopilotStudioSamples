@@ -1,168 +1,104 @@
-# Add Dependents
-
-This scenario allows employees to add new dependents to their Workday profile for benefits enrollment purposes.
+---
+nav_exclude: true
+search_exclude: false
+---
+# Workday Employee Add Dependents
 
 ## Overview
 
-The `AddDependents` topic allows employees to:
-1. **View** their existing dependents
-2. **Add** a new dependent (spouse, child, domestic partner, etc.)
+This topic enables employees to view their existing dependents and add new dependents to their Workday profile through a conversational interface. Dependents include spouses, domestic partners, children, and other family members who may be covered under employee benefits.
 
-## Flow
+## Features
 
-```
-┌─────────────────────────────────────┐
-│   User triggers topic               │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│   Fetch reference data              │
-│   (Relationship Types)              │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│   Fetch existing dependents         │
-│   (msdyn_HRWorkdayHCMEmployee       │
-│    GetDependents)                   │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-        ┌──────┴──────┐
-        │ Dependents  │
-        │   exist?    │
-        └──────┬──────┘
-               │
-       ┌───────┴───────┐
-       │               │
-       ▼               ▼
-┌──────────────┐ ┌──────────────┐
-│ Show list of │ │ "No deps on  │
-│ existing     │ │ file yet"    │
-│ dependents   │ │              │
-└──────┬───────┘ └──────┬───────┘
-       │                │
-       └───────┬────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│   Show Add Dependent Form           │
-│   (Adaptive Card)                   │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│   Show Confirmation Card            │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│   Submit to Workday                 │
-│   (msdyn_HRWorkdayHCMEmployee       │
-│    AddDependent)                    │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│   Show success/error message        │
-└─────────────────────────────────────┘
-```
+- View existing dependents with their relationship and date of birth
+- Add new dependents (spouse, child, domestic partner, etc.)
+- Dynamic relationship type dropdown populated from Workday reference data
+- Confirmation flow showing summary of dependent details before submission
+- Form validation for required fields
 
-## Files
+## Snapshots
 
-| File | Purpose |
-|------|---------|
-| `AddDependents_Topic.yaml` | Main topic definition with full flow |
-| `msdyn_GetDependents_Template.xml` | XML template for fetching existing dependents |
-| `msdyn_AddDependent_Template.xml` | XML template for adding a new dependent |
+![Add Dependents](add_dependents.png)
 
-
-## API Scenarios Used
-
-| Scenario | API | Purpose |
-|----------|-----|---------|
-| `msdyn_HRWorkdayHCMEmployeeGetDependents` | Human_Resources v45.0 | Fetch existing dependents |
-| `msdyn_HRWorkdayHCMEmployeeAddDependent` | Benefits_Administration v45.1 | Add new dependent |
-
-## XPath Filtering
-
-The Get Dependents template uses XPath predicates to filter only actual dependents (excluding emergency contacts):
-
-```xpath
-//*[local-name()='Related_Person_Data']/*[local-name()='Related_Person'][*[local-name()='Dependent']]
-```
-
-This ensures that only `Related_Person` nodes containing a `Dependent` child element are returned.
-
-## Form Fields
-
-| Field | Type | Required | Source |
-|-------|------|----------|--------|
-| First Name | Text Input | Yes | User entry |
-| Last Name | Text Input | Yes | User entry |
-| Date of Birth | Date Input | Yes | User entry |
-| Gender | Dropdown | Yes | Hardcoded (Male, Female, Not_Declared) |
-| Relationship | Dropdown | Yes | Dynamic from `Global.RelatedPersonRelationshipLookupTable` |
-| Country | Dropdown | Yes | Hardcoded (USA, CAN, GBR, AUS, DEU, FRA, IND) |
-
-## Parameters
-
-### Add Dependent Template Parameters
-
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `{Employee_ID}` | Employee's Workday ID | `21514` |
-| `{First_Name}` | Dependent's first name | `John` |
-| `{Last_Name}` | Dependent's last name | `Smith` |
-| `{Date_Of_Birth}` | Date of birth (YYYY-MM-DD) | `2015-06-15` |
-| `{Gender}` | Gender code | `Male` / `Female` / `Not_Declared` |
-| `{Relationship_Type}` | Relationship type ID | `Biological_Child` |
-| `{Country_Code}` | Country ISO code | `USA` |
-
-### Get Dependents Template Parameters
-
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `{Employee_ID}` | Employee's Workday ID | `21514` |
-| `{As_Of_Effective_Date}` | Effective date (YYYY-MM-DD) | `2025-12-30` |
-
-## Response Data Extracted
-
-### Get Dependents Response
-
-| Key | XPath | Description |
-|-----|-------|-------------|
-| `DependentID` | `.//ID[@type='Dependent_ID']` | Unique dependent identifier |
-| `DependentWID` | `.//ID[@type='WID']` (Dependent_Reference) | Workday Internal ID |
-| `PersonWID` | `.//ID[@type='WID']` (Person_Reference) | Person reference WID |
-| `FullName` | `.//Name_Detail_Data/@Formatted_Name` | Full formatted name |
-| `FirstName` | `.//First_Name` | First name |
-| `LastName` | `.//Last_Name` | Last name |
-| `DateOfBirth` | `.//Dependent_Data/Date_of_Birth` | Date of birth |
-| `Gender` | `.//Dependent_Data/Gender_Reference/@Descriptor` | Gender |
-| `RelationshipTypeID` | `.//Related_Person_Relationship_ID` | Relationship type ID |
-| `IsFullTimeStudent` | `.//Full_Time_Student` | Full-time student flag |
-| `IsDisabled` | `.//Disabled` | Disabled flag |
-
-### Add Dependent Response
-
-| Key | XPath | Description |
-|-----|-------|-------------|
-| `DependentWID` | `.//Dependent_Reference/ID[@type='WID']` | Created dependent WID |
-| `DependentID` | `.//Dependent_Reference/ID[@type='Dependent_ID']` | Created dependent ID |
-
-## Example Triggers
+## Trigger Phrases
 
 - "Add a dependent"
 - "I want to add my child as a dependent"
 - "Add my spouse to my benefits"
 - "Register a new dependent"
 - "I need to add a family member"
+- "Show my dependents"
+
+## Files
+
+| File | Description |
+|------|-------------|
+| `topic.yaml` | Copilot Studio topic definition with conversation flow |
+| `msdyn_HRWorkdayHCMEmployeeGetDependents.xml` | XML template for fetching existing dependents |
+| `msdyn_HRWorkdayHCMEmployeeAddDependent.xml` | XML template for adding a new dependent |
+
+## Workday APIs Used
+
+| API | Purpose |
+|-----|---------|
+| `Human_Resources v45.0` | Fetch existing dependents |
+| `Benefits_Administration v45.1` | Add new dependent |
+
+## Flow Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    User Triggers Topic                       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│        Fetch Reference Data (Relationship Types)             │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              Fetch Existing Dependents                       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│     Display Existing Dependents (or "No dependents")         │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│          Show Add Dependent Form (Adaptive Card)             │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              Show Confirmation Card                          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              Submit to Workday                               │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│           Show Success/Error Message                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Configurations
+
+Environment makers need to configure the following in the topic:
+
+| Configuration | Description | Location in Topic |
+|---------------|-------------|-------------------|
+| **Gender Options** | Configure available gender options (Male, Female, Not_Declared) | Adaptive card dropdown |
+| **Country Codes** | Define available country codes (USA, CAN, GBR, etc.) | Adaptive card dropdown |
+| **Workday Icon** | Update the icon URL to match your organization's branding | Topic properties > Icon |
+| **Workday URL** | Set your organization's Workday tenant URL | HTTP action or connector configuration |
 
 ## Dependencies
 
-- `msdyn_copilotforemployeeselfservicehr.topic.GetReferenceData` - For fetching relationship types
-- `msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution` - For API execution
-- `Global.RelatedPersonRelationshipLookupTable` - Relationship types lookup
-- `Global.ESS_UserContext_Employee_Id` - Current user's employee ID
+- **msdyn_HRWorkdayHCMEmployeeGetDependents template**: Required for fetching existing dependents
+- **Employee Context**: Worker ID must be available in the conversation context
