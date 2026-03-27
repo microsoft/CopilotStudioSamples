@@ -11,30 +11,24 @@ A Power Platform connector that routes MCP Streamable HTTP traffic to one of sev
 
 ## Architecture
 
-```
-                      ┌─────────────────────┐
-                      │   Copilot Studio     │
-                      │   (MCP client)       │
-                      └──────────┬───────────┘
-                                 │
-                    ┌────────────┴────────────┐
-                    │  Power Platform Connector│
-                    │  x-ms-agentic-protocol   │
-                    │  mcp-streamable-1.0      │
-                    └────────────┬────────────┘
-                                 │
-               ┌─────────────────┼─────────────────┐
-               │ script.csx rewrites URL based on   │
-               │ selected instance from dropdown     │
-               └─────────────────┬─────────────────┘
-                                 │
-          ┌──────────────────────┼──────────────────────┐
-          ▼                      ▼                      ▼
- /instances/contoso/mcp  /instances/fabrikam/mcp  /instances/northwind/mcp
-          │                      │                      │
-          └──────────────────────┴──────────────────────┘
-                          MCP Server
-                   (single process, path-based routing)
+```mermaid
+flowchart TD
+    CS["Copilot Studio<br/>(MCP client)"]
+    CONN["Power Platform Connector<br/>x-ms-agentic-protocol: mcp-streamable-1.0"]
+    SCRIPT["script.csx<br/>Rewrites URL based on<br/>selected instance"]
+    CAT["Catalog Server<br/>GET /instances"]
+    MCP["MCP Server<br/>(single process, path-based routing)"]
+    C["/instances/contoso/mcp"]
+    F["/instances/fabrikam/mcp"]
+    N["/instances/northwind/mcp"]
+
+    CS -->|"MCP protocol"| CONN
+    CONN -->|"ListInstances"| CAT
+    CONN -->|"InvokeMCP"| SCRIPT
+    SCRIPT -->|"rewritten URL"| MCP
+    MCP --> C
+    MCP --> F
+    MCP --> N
 ```
 
 **Three components:**
@@ -183,9 +177,10 @@ Or use the one-step deploy script that handles login, servers, tunnel, and conne
 ### 5. Configure Copilot Studio
 
 1. Open your agent in [Copilot Studio](https://copilotstudio.microsoft.com/)
-2. Go to **Actions** > **Add an action** > search for "Dynamic MCP Connector"
-3. Select an instance from the dropdown
-4. The agent now has access to the MCP tools for that instance
+2. Go to **Tools** > **Add tool** > filter by **Model Context Protocol**
+3. Search for "Dynamic MCP Connector" and add it
+4. Select an instance from the dropdown
+5. The agent now has access to the MCP tools for that instance
 
 ## Example Queries
 
