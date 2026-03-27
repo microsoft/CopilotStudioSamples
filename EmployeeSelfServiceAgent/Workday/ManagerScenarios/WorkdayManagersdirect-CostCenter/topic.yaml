@@ -35,74 +35,102 @@ beginDialog:
       displayName: Check manager status
       dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdayManagerCheck
 
-    - kind: BeginDialog
-      id: jJpz3n
-      displayName: Redirect to Workday Get Common Execution
-      input:
-        binding:
-          parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
-          scenarioName: msdyn_HRWorkdayHCMManagerDirectCostCenter
+    - kind: SetVariable
+      id: setVariable_OBjpUF
+      variable: Topic.workdayAllOrgResponseTable
+      value: =[]
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-      output:
-        binding:
-          errorResponse: Topic.errorResponse
-          isSuccess: Topic.isSuccess
-          workdayResponse: Topic.workdayResponse
+    - kind: Foreach
+      id: foreach_niaz95
+      items: =Split(Global.Manager_Supervisory_OrgIds, ",")
+      value: Topic.SupOrgId
+      index: init:Topic.LoopIndex1
+      actions:
+        - kind: BeginDialog
+          id: jJpz3n
+          displayName: Redirect to Workday Get Common Execution
+          input:
+            binding:
+              parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Topic.SupOrgId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+              scenarioName: msdyn_HRWorkdayHCMManagerDirectCostCenter
 
-    - kind: ParseValue
-      id: aXVFNu
-      displayName: Parse value to a record
-      variable: Topic.workdayResponseRecord
-      valueType:
-        kind: Record
-        properties:
-          CostCenterCode:
-            type:
-              kind: Table
-              properties:
-                Value: String
+          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+          output:
+            binding:
+              errorResponse: Topic.errorResponse
+              isSuccess: Topic.isSuccess
+              workdayResponse: Topic.workdayResponse
 
-          CostCenterName:
-            type:
-              kind: Table
-              properties:
-                Value: String
+        - kind: ParseValue
+          id: aXVFNu
+          displayName: Parse value to a record
+          variable: Topic.workdayResponseRecord
+          valueType:
+            kind: Record
+            properties:
+              CostCenterCode:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          LegalNameData:
-            type:
-              kind: Table
-              properties:
-                Name_Detail_Data:
-                  type:
-                    kind: Record
-                    properties:
-                      @Formatted_Name: String
-                      First_Name: String
-                      Last_Name: String
+              CostCenterName:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          WorkerID:
-            type:
-              kind: Table
-              properties:
-                Value: String
+              LegalNameData:
+                type:
+                  kind: Table
+                  properties:
+                    Name_Detail_Data:
+                      type:
+                        kind: Record
+                        properties:
+                          @Formatted_Name: String
+                          First_Name: String
+                          Last_Name: String
 
-      value: =Topic.workdayResponse
+              WorkerID:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+          value: =Topic.workdayResponse
+
+        - kind: SetVariable
+          id: setVariable_ztXmui
+          displayName: Extract data to table
+          variable: Topic.workdayResponseTable
+          value: |-
+            =ForAll(
+                Sequence(CountRows(Topic.workdayResponseRecord.WorkerID)),
+                {
+                    FirstName: Last(FirstN(Topic.workdayResponseRecord.LegalNameData, Value)).Name_Detail_Data.First_Name,
+                    LastName: Last(FirstN(Topic.workdayResponseRecord.LegalNameData, Value)).Name_Detail_Data.Last_Name,
+                    CostCenterCode: Last(FirstN(Topic.workdayResponseRecord.CostCenterCode, Value)).Value,
+                    CostCenterName: Last(FirstN(Topic.workdayResponseRecord.CostCenterName, Value)).Value
+                }
+            )
+          
+        - kind: Foreach
+          id: foreach_rows_in_org
+          items: =Topic.workdayResponseTable
+          value: Topic.employeeRow
+          actions:
+            - kind: EditTableV2
+              id: editTableV2_AddWorkerRow
+              itemsVariable: Topic.workdayAllOrgResponseTable
+              changeType:
+                kind: AddItemOperation
+                value: =Topic.employeeRow
 
     - kind: SetVariable
-      id: setVariable_ztXmui
-      displayName: Extract data to table
+      id: setVariable_P41zFQ
       variable: Topic.workdayResponseTable
-      value: |-
-        =ForAll(
-            Sequence(CountRows(Topic.workdayResponseRecord.WorkerID)),
-            {
-                FirstName: Last(FirstN(Topic.workdayResponseRecord.LegalNameData, Value)).Name_Detail_Data.First_Name,
-                LastName: Last(FirstN(Topic.workdayResponseRecord.LegalNameData, Value)).Name_Detail_Data.Last_Name,
-                CostCenterCode: Last(FirstN(Topic.workdayResponseRecord.CostCenterCode, Value)).Value,
-                CostCenterName: Last(FirstN(Topic.workdayResponseRecord.CostCenterName, Value)).Value
-            }
-        )
+      value: =Topic.workdayAllOrgResponseTable
 
     - kind: ConditionGroup
       id: conditionGroup_eEjEWp
