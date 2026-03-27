@@ -23,102 +23,135 @@ beginDialog:
   intent: {}
   actions:
     - kind: BeginDialog
-      id: jJpz3n
-      displayName: Redirect to Workday Get Common Execution
-      input:
-        binding:
-          parameters: ="{""params"":[{""key"":""{Manager_Org_ID}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """}]}"
-          scenarioName: msdyn_GetManagerReportees
-
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-      output:
-        binding:
-          errorResponse: Topic.errorResponse
-          isSuccess: Topic.isSuccess
-          workdayResponse: Topic.workdayResponse
-
-    - kind: ParseValue
-      id: aXVFNu
-      displayName: Parse value to a record
-      variable: Topic.workdayResponseRecord
-      valueType:
-        kind: Record
-        properties:
-          BusinessTitle:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-          EmployeeID:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-          HireDate:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-          JobProfile:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-          Location:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-          Name:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-          PositionStartDate:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-          Status:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-          WorkerType:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-      value: =Topic.workdayResponse
+      id: WmAHrc
+      displayName: Check manager criteria
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdayManagerCheck
 
     - kind: SetVariable
-      id: setVariable_ztXmui
-      displayName: Extract data to table
+      id: setVariable_OBjpUF
+      variable: Topic.workdayAllOrgResponseTable
+      value: =[]
+
+    - kind: Foreach
+      id: foreach_niaz95
+      items: =Split(Global.Manager_Supervisory_OrgIds, ",")
+      value: Topic.SupOrgId
+      index: init:Topic.LoopIndex1
+      actions:
+        - kind: BeginDialog
+          id: jJpz3n
+          displayName: Redirect to Workday Get Common Execution
+          input:
+            binding:
+              parameters: ="{""params"":[{""key"":""{Manager_Org_ID}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """}]}"
+              scenarioName: msdyn_GetManagerReportees
+
+          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+          output:
+            binding:
+              errorResponse: Topic.errorResponse
+              isSuccess: Topic.isSuccess
+              workdayResponse: Topic.workdayResponse
+
+        - kind: ParseValue
+          id: aXVFNu
+          displayName: Parse value to a record
+          variable: Topic.workdayResponseRecord
+          valueType:
+            kind: Record
+            properties:
+              BusinessTitle:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+              EmployeeID:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+              HireDate:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+              JobProfile:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+              Location:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+              Name:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+              PositionStartDate:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+              Status:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+              WorkerType:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+          value: =Topic.workdayResponse
+
+        - kind: SetVariable
+          id: setVariable_ztXmui
+          displayName: Extract data to table
+          variable: Topic.workdayResponseTable
+          value: |-
+            =ForAll(
+                Sequence(CountRows(Topic.workdayResponseRecord.EmployeeID)),
+                {
+                    EmployeeID: Last(FirstN(Topic.workdayResponseRecord.EmployeeID, Value)).Value,
+                    Name: Last(FirstN(Topic.workdayResponseRecord.Name, Value)).Value,
+                    BusinessTitle: Last(FirstN(Topic.workdayResponseRecord.BusinessTitle, Value)).Value,
+                    WorkerType: Last(FirstN(Topic.workdayResponseRecord.WorkerType, Value)).Value,
+                    JobProfile: Last(FirstN(Topic.workdayResponseRecord.JobProfile, Value)).Value,
+                    Location: Last(FirstN(Topic.workdayResponseRecord.Location, Value)).Value,
+                    PositionStartDate: Last(FirstN(Topic.workdayResponseRecord.PositionStartDate, Value)).Value,
+                    HireDate: Last(FirstN(Topic.workdayResponseRecord.HireDate, Value)).Value,
+                    Status: If(Last(FirstN(Topic.workdayResponseRecord.Status, Value)).Value = "1", "Active", "Inactive")
+                }
+            )
+
+        - kind: Foreach
+          id: foreach_rows_in_org
+          items: =Topic.workdayResponseTable
+          value: Topic.employeeRow
+          actions:
+            - kind: EditTableV2
+              id: editTableV2_AddWorkerRow
+              itemsVariable: Topic.workdayAllOrgResponseTable
+              changeType:
+                kind: AddItemOperation
+                value: =Topic.employeeRow
+
+    - kind: SetVariable
+      id: setVariable_P41zFQ
       variable: Topic.workdayResponseTable
-      value: |-
-        =ForAll(
-            Sequence(CountRows(Topic.workdayResponseRecord.EmployeeID)),
-            {
-                EmployeeID: Last(FirstN(Topic.workdayResponseRecord.EmployeeID, Value)).Value,
-                Name: Last(FirstN(Topic.workdayResponseRecord.Name, Value)).Value,
-                BusinessTitle: Last(FirstN(Topic.workdayResponseRecord.BusinessTitle, Value)).Value,
-                WorkerType: Last(FirstN(Topic.workdayResponseRecord.WorkerType, Value)).Value,
-                JobProfile: Last(FirstN(Topic.workdayResponseRecord.JobProfile, Value)).Value,
-                Location: Last(FirstN(Topic.workdayResponseRecord.Location, Value)).Value,
-                PositionStartDate: Last(FirstN(Topic.workdayResponseRecord.PositionStartDate, Value)).Value,
-                HireDate: Last(FirstN(Topic.workdayResponseRecord.HireDate, Value)).Value,
-                Status: If(Last(FirstN(Topic.workdayResponseRecord.Status, Value)).Value = "1", "Active", "Inactive")
-            }
-        )
+      value: =Topic.workdayAllOrgResponseTable
 
     - kind: SetVariable
       id: setVariable_AddTimeInPosition
