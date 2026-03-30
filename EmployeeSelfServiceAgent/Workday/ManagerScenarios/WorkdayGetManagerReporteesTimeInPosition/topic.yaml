@@ -10,7 +10,7 @@ modelDescription: |-
   For info on all direct reports time in position: Display in Table
   Heading - "Team roles and time in position"
   Verbatim line after heading: "Here's a list of your team members and how long they've been in their positions. I pulled this from Workday, an HR platform your company uses."
-  Table columns: Name, Title, Time in Position
+  Table columns: Name, Title, Time in Position, Status
 
   Common Rules ALWAYS FOLLOW:
   - ALWAYS add large sized heading with sentence case
@@ -43,7 +43,7 @@ beginDialog:
           displayName: Redirect to Workday Get Common Execution
           input:
             binding:
-              parameters: ="{""params"":[{""key"":""{Manager_Org_ID}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """}]}"
+              parameters: ="{""params"":[{""key"":""{Manager_Org_ID}"",""value"":""" & Topic.SupOrgId & """}]}"
               scenarioName: msdyn_GetManagerReportees
 
           dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution

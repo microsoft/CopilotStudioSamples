@@ -5,7 +5,7 @@ search_exclude: false
 # Workday Get Manager Reportees Time In Position
 
 ## Overview
-This scenario enables managers to view their direct reports along with how long each employee has been in their current position. It retrieves team member information from Workday HCM and calculates the time in position for each reportee.
+This scenario enables managers to view their direct reports along with how long each employee has been in their current position. For each supervisory organization, it retrieves team member information from Workday HCM and calculates the time in position for each reportee. The columns displayed can be altered by updating the topic's Model Description section.
 
 ## Files
 
@@ -17,7 +17,7 @@ This scenario enables managers to view their direct reports along with how long 
 ## Prerequisites
 
 ### Global Variables Required
-- `Global.ESS_UserContext_ManagerOrganizationId` - The manager's organization ID in Workday (used to filter direct reports)
+- `Global.Manager_Supervisory_OrgIds` - A list of all of the Workday supervisory organization IDs of a manager (used to filter direct reports)
 
 ### Workday API
 - **Service**: Human_Resources
@@ -81,30 +81,27 @@ The XML template is optimized for performance by:
 1. **Import the Topic**: Import `topic.yaml` into your Copilot Studio agent
 2. **Add XML Template**: Upload `msdyn_GetManagerReportees.xml` to your Workday connector configuration
 3. **Configure Connection**: Ensure your Workday connector connection reference is properly set in the topic
-4. **Set Global Variable**: Make sure `Global.ESS_UserContext_ManagerOrganizationId` is populated (typically from user authentication context)
+4. **Set Global Variable**: Make sure `Global.Manager_Supervisory_OrgIds` is populated (typically from user context setup)
 
 ## Model Instructions
 
 The topic includes model instructions for the AI to:
 - Display results as a nested markdown list
 - Format Time in Position clearly
-- Show Name, Job Title, Time in Position, Start Date, and Status for each reportee
+- Show Name, Job Title, Time in Position and Status for each reportee
 - Sort or group results based on user's question context
 
 ## Example Output
 
 When a manager asks "Show me my team's time in position", the agent displays:
 
-```
-Here are your direct reports and their time in current position:
+# Team roles and time in position
+Here's a list of your team members and how long they've been in their positions. I pulled this from Workday, an HR platform your company uses.
 
-- **John Smith** - Senior Developer
-  - Time in Position: 2 years, 5 months, 12 days
-  - Position Start: 2022-07-15
-  - Status: Active
-
-- **Jane Doe** - Product Manager
-  - Time in Position: 1 year, 2 months, 3 days
-  - Position Start: 2023-10-20
-  - Status: Active
-```
+> | Name | Title   | Time in Position | Status |
+> | ------------- | ------------- | ------------- | ------------- |
+> | Jane Doe	| Sales Solution Consultant |	8 months 28 days |	Active
+> | John Smith	| Sales Solution Consultant |	7 months 5 days |	Active
+> | Jack Doe	| Sales Solution Consultant	| 7 months 28 days |	Active
+>
+> If you need more details about a specific team member’s role or tenure, just let me know!
