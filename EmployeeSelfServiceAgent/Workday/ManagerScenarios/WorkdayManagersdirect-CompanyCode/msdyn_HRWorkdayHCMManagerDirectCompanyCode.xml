@@ -1,5 +1,5 @@
 <workdayEntityConfigurationTemplate>
-	<scenario name="GetManagerDirectCompanyCode">
+	<scenario name="msdyn_HRWorkdayHCMManagerDirectCompanyCode">
 		<apiRequests>
 			<apiRequest>
 				<authType>User</authType>

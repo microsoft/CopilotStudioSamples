@@ -56,67 +56,95 @@ beginDialog:
       variable: Topic.currentDate
       value: =Now()
 
-    - kind: BeginDialog
-      id: HZDypL
-      displayName: Redirect to Workday Get Common Execution
-      input:
-        binding:
-          parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
-          scenarioName: msdyn_HRWorkdayHCMManagerServiceAnniversary
+    - kind: SetVariable
+      id: setVariable_OBjpUF
+      variable: Topic.workdayAllOrgResponseTable
+      value: =[]
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-      output:
-        binding:
-          errorResponse: Topic.errorResponse
-          isSuccess: Topic.isSuccess
-          workdayResponse: Topic.workdayResponse
+    - kind: Foreach
+      id: foreach_niaz95
+      items: =Split(Global.Manager_Supervisory_OrgIds, ",")
+      value: Topic.SupOrgId
+      index: init:Topic.LoopIndex1
+      actions:
+        - kind: BeginDialog
+          id: HZDypL
+          displayName: Redirect to Workday Get Common Execution
+          input:
+            binding:
+              parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Topic.SupOrgId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+              scenarioName: msdyn_HRWorkdayHCMManagerServiceAnniversary
 
-    - kind: ParseValue
-      id: Nh88X0
-      displayName: Parse Workday response
-      variable: Topic.parsedWorkdayResponse
-      valueType:
-        kind: Record
-        properties:
-          FirstName:
-            type:
-              kind: Table
-              properties:
-                Value: String
+          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+          output:
+            binding:
+              errorResponse: Topic.errorResponse
+              isSuccess: Topic.isSuccess
+              workdayResponse: Topic.workdayResponse
 
-          HireDate:
-            type:
-              kind: Table
-              properties:
-                Value: String
+        - kind: ParseValue
+          id: Nh88X0
+          displayName: Parse Workday response
+          variable: Topic.parsedWorkdayResponse
+          valueType:
+            kind: Record
+            properties:
+              FirstName:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          LastName:
-            type:
-              kind: Table
-              properties:
-                Value: String
+              HireDate:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          WorkerID:
-            type:
-              kind: Table
-              properties:
-                Value: String
+              LastName:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-      value: =Topic.workdayResponse
+              WorkerID:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
+
+          value: =Topic.workdayResponse
+
+        - kind: SetVariable
+          id: setVariable_eJUuES
+          displayName: Build Workday response table
+          variable: Topic.workdayResponseTable
+          value: |-
+            =ForAll(
+                        Sequence(CountRows(Topic.parsedWorkdayResponse.WorkerID)),
+                        {
+                            FirstName: Last(FirstN(Topic.parsedWorkdayResponse.FirstName, Value)).Value,
+                            LastName: Last(FirstN(Topic.parsedWorkdayResponse.LastName, Value)).Value,
+                            HireDate: Last(FirstN(Topic.parsedWorkdayResponse.HireDate, Value)).Value
+                        }
+                    )
+
+        - kind: Foreach
+          id: foreach_rows_in_org
+          items: =Topic.workdayResponseTable
+          value: Topic.employeeRow
+          actions:
+            - kind: EditTableV2
+              id: editTableV2_AddWorkerRow
+              itemsVariable: Topic.workdayAllOrgResponseTable
+              changeType:
+                kind: AddItemOperation
+                value: =Topic.employeeRow
 
     - kind: SetVariable
-      id: setVariable_eJUuES
-      displayName: Build Workday response table
+      id: setVariable_P41zFQ
       variable: Topic.workdayResponseTable
-      value: |-
-        =ForAll(
-                    Sequence(CountRows(Topic.parsedWorkdayResponse.WorkerID)),
-                    {
-                        FirstName: Last(FirstN(Topic.parsedWorkdayResponse.FirstName, Value)).Value,
-                        LastName: Last(FirstN(Topic.parsedWorkdayResponse.LastName, Value)).Value,
-                        HireDate: Last(FirstN(Topic.parsedWorkdayResponse.HireDate, Value)).Value
-                    }
-                )
+      value: =Topic.workdayAllOrgResponseTable
 
     - kind: ConditionGroup
       id: conditionGroup_P6QlNE

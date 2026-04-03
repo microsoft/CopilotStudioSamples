@@ -45,100 +45,128 @@ beginDialog:
       displayName: Check manager status
       dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdayManagerCheck
 
-    - kind: BeginDialog
-      id: 7Va4UU
-      displayName: Redirect to Workday Get Common Execution
-      input:
-        binding:
-          parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
-          scenarioName: msdyn_HRWorkdayHCMManagerJobTaxonomy
+    - kind: SetVariable
+      id: setVariable_OBjpUF
+      variable: Topic.workdayAllOrgResponseTable
+      value: =[]
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-      output:
-        binding:
-          errorResponse: Topic.errorResponse
-          isSuccess: Topic.isSuccess
-          workdayResponse: Topic.workdayResponse
+    - kind: Foreach
+      id: foreach_niaz95
+      items: =Split(Global.Manager_Supervisory_OrgIds, ",")
+      value: Topic.SupOrgId
+      index: init:Topic.LoopIndex1
+      actions:
+        - kind: BeginDialog
+          id: 7Va4UU
+          displayName: Redirect to Workday Get Common Execution
+          input:
+            binding:
+              parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Topic.SupOrgId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+              scenarioName: msdyn_HRWorkdayHCMManagerJobTaxonomy
 
-    - kind: ParseValue
-      id: mq6jr0
-      displayName: Parse workdayResponse into table
-      variable: Topic.WorkdayResponseRecord
-      valueType:
-        kind: Record
-        properties:
-          BusinessTitle:
-            type:
-              kind: Table
-              properties:
-                Value: String
+          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+          output:
+            binding:
+              errorResponse: Topic.errorResponse
+              isSuccess: Topic.isSuccess
+              workdayResponse: Topic.workdayResponse
 
-          FirstName:
-            type:
-              kind: Table
-              properties:
-                Value: String
+        - kind: ParseValue
+          id: mq6jr0
+          displayName: Parse workdayResponse into table
+          variable: Topic.WorkdayResponseRecord
+          valueType:
+            kind: Record
+            properties:
+              BusinessTitle:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          JobFamilyId:
-            type:
-              kind: Table
-              properties:
-                Value: String
+              FirstName:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          JobProfile:
-            type:
-              kind: Table
-              properties:
-                Value: String
+              JobFamilyId:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          JobTitle:
-            type:
-              kind: Table
-              properties:
-                Value: String
+              JobProfile:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          LastName:
-            type:
-              kind: Table
-              properties:
-                Value: String
+              JobTitle:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-          WorkerID:
-            type:
-              kind: Table
-              properties:
-                Value: String
+              LastName:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-      value: =Topic.workdayResponse
+              WorkerID:
+                type:
+                  kind: Table
+                  properties:
+                    Value: String
 
-    - kind: BeginDialog
-      id: QdE53O
-      displayName: Refresh JobFamily reference data
-      input:
-        binding:
-          IsTableEmpty: =IsBlank(Global.JobFamilyLookupTable)
-          ReferenceDataKey: Job_Family_ID
+          value: =Topic.workdayResponse
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
+        - kind: BeginDialog
+          id: QdE53O
+          displayName: Refresh JobFamily reference data
+          input:
+            binding:
+              IsTableEmpty: =IsBlank(Global.JobFamilyLookupTable)
+              ReferenceDataKey: Job_Family_ID
+
+          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
+
+        - kind: SetVariable
+          id: setVariable_EFFdlM
+          displayName: Merge all records in table
+          variable: Topic.workdayResponseTable
+          value: |-
+            =ForAll(
+                Sequence(CountRows(Topic.WorkdayResponseRecord.WorkerID)),
+                {
+                    FirstName: Last(FirstN(Topic.WorkdayResponseRecord.FirstName, Value)).Value,
+                    LastName: Last(FirstN(Topic.WorkdayResponseRecord.LastName, Value)).Value,
+                    JobTitle: Last(FirstN(Topic.WorkdayResponseRecord.JobTitle, Value)).Value,
+                    BusinessTitle: Last(FirstN(Topic.WorkdayResponseRecord.BusinessTitle, Value)).Value,
+                    JobProfile: Last(FirstN(Topic.WorkdayResponseRecord.JobProfile, Value)).Value,
+                    JobFamily: LookUp(Global.JobFamilyLookupTable,
+                                ID = Last(FirstN(Topic.WorkdayResponseRecord.JobFamilyId, Value)).Value
+                            ).Referenced_Object_Descriptor
+                }
+            )
+
+        - kind: Foreach
+          id: foreach_rows_in_org
+          items: =Topic.workdayResponseTable
+          value: Topic.employeeRow
+          actions:
+            - kind: EditTableV2
+              id: editTableV2_AddWorkerRow
+              itemsVariable: Topic.workdayAllOrgResponseTable
+              changeType:
+                kind: AddItemOperation
+                value: =Topic.employeeRow
 
     - kind: SetVariable
-      id: setVariable_EFFdlM
-      displayName: Merge all records in table
+      id: setVariable_P41zFQ
       variable: Topic.workdayResponseTable
-      value: |-
-        =ForAll(
-            Sequence(CountRows(Topic.WorkdayResponseRecord.WorkerID)),
-            {
-                FirstName: Last(FirstN(Topic.WorkdayResponseRecord.FirstName, Value)).Value,
-                LastName: Last(FirstN(Topic.WorkdayResponseRecord.LastName, Value)).Value,
-                JobTitle: Last(FirstN(Topic.WorkdayResponseRecord.JobTitle, Value)).Value,
-                BusinessTitle: Last(FirstN(Topic.WorkdayResponseRecord.BusinessTitle, Value)).Value,
-                JobProfile: Last(FirstN(Topic.WorkdayResponseRecord.JobProfile, Value)).Value,
-                JobFamily: LookUp(Global.JobFamilyLookupTable,
-                            ID = Last(FirstN(Topic.WorkdayResponseRecord.JobFamilyId, Value)).Value
-                        ).Referenced_Object_Descriptor
-            }
-        )
+      value: =Topic.workdayAllOrgResponseTable
 
     - kind: ConditionGroup
       id: conditionGroup_yepfHF
