@@ -17,7 +17,9 @@ This scenario enables managers to view their direct reports along with how long 
 ## Prerequisites
 
 ### Global Variables Required
-- `Global.Manager_Supervisory_OrgIds` - A list of all of the Workday supervisory organization IDs of a manager (used to filter direct reports)
+- Check the `ManagerScenarios` folder for more details on prerequisites.
+    - `msdyn_HRWorkdayHCMEmployeeGetData` - A SOAP template for retrieving the Workday supervisory organization IDs for a manager
+    - `Global.Manager_Supervisory_OrgIds` - A list of all of the Workday supervisory organization IDs of a manager
 
 ### Workday API
 - **Service**: Human_Resources
