@@ -30,10 +30,16 @@ inputs:
     entity: StringPrebuiltEntity
     shouldPromptUser: false
 
+  - kind: AutomaticTaskInput
+    propertyName: InputLeaveReason
+    description: The reason or comment for the time off request. Extract any reason, justification, or explanation the user provides for their leave such as 'family event', 'doctor appointment', 'personal', 'travel', etc.
+    entity: StringPrebuiltEntity
+    shouldPromptUser: false
+
 modelDescription: |-
   You will respond only to requests related to requesting time off for the user making the request.
   All time off requests are submitted to Workday (Absence_Management) and pertain exclusively to the requesting user.
-  This topic may prompt the user for input (time off type, start date, end date, and reason) if they are requesting time off for themselves.
+  This topic may prompt the user for input (time off type, start date, end date, reason, and hours) if they are requesting time off for themselves.
   This data exclusively belongs to the user making the request. Do not respond to questions about other people's data.
 
   Example invalid requests:
@@ -55,7 +61,7 @@ beginDialog:
     - kind: SetVariable
       id: set_workday_url
       variable: Topic.WorkdayUrl
-      value: https://impl.workday.com/<TENANT_NAME>/home.htmld
+      value: https://impl.workday.com/microsoft_dpt6/d/home.htmld
 
     - kind: SetVariable
       id: set_workday_icon_url
@@ -72,6 +78,18 @@ beginDialog:
       variable: Topic.AsOfEffectiveDate
       value: =Today()
 
+    - kind: SetVariable
+      id: set_time_off_reason_config
+      variable: Topic.TimeOffReasonConfig
+      value: |-
+        =Table(
+          {Title: "Personal", ReasonID: "REASON_PERSONAL"},
+          {Title: "Medical / Doctor appointment", ReasonID: "REASON_MEDICAL"},
+          {Title: "Family event", ReasonID: "REASON_FAMILY"},
+          {Title: "Travel / Vacation", ReasonID: "REASON_TRAVEL"},
+          {Title: "Other", ReasonID: "REASON_OTHER"}
+        )
+
     # ================================================================
     # LEAVE TYPE CONFIGURATION
     # Edit keywords below to customize how user phrases map to leave types.
@@ -85,7 +103,7 @@ beginDialog:
         =Table(
           {Keywords: "vacation,annual,pto,holiday pay", LeaveTypeValue: "Vacation_Hours"},
           {Keywords: "floating,floater,float day", LeaveTypeValue: "Floating_Holiday_Hours"},
-          {Keywords: "sick,illness,medical,unwell,not feeling well", LeaveTypeValue: "Sick_Hours"}
+          {Keywords: "sick,illness,medical,unwell,not feeling well", LeaveTypeValue: "ESS_Sick_Time_Off"}
         )
 
     # Map extracted time off type to dropdown value using config table
@@ -165,7 +183,7 @@ beginDialog:
       variable: Topic.PlanConfig
       value: |-
         =Table(
-          {PlanID: "FH_USA", DisplayName: "Floating holiday"},
+          {PlanID: "ABSENCE_PLAN-6-139", DisplayName: "Floating holiday"},
           {PlanID: "ABSENCE_PLAN-6-159", DisplayName: "Sick leave"},
           {PlanID: "ABSENCE_PLAN-6-158", DisplayName: "Vacation"}
         )
@@ -217,7 +235,7 @@ beginDialog:
           actions:
             - kind: AdaptiveCardPrompt
               id: collect_time_off
-              displayName: Ask time off type, start date, end date and reason
+              displayName: Ask time off type, start date, end date, reason and hours
               card: |-
                 ={
                   type: "AdaptiveCard",
@@ -285,7 +303,7 @@ beginDialog:
                               choices: [
                                 { title: "Vacation", value: "Vacation_Hours" },
                                 { title: "Floating holiday", value: "Floating_Holiday_Hours" },
-                                { title: "Sick leave", value: "Sick_Hours" },
+                                { title: "Sick leave", value: "ESS_Sick_Time_Off" },
                                 { title: "I don't see my leave type listed", value: "NOT_LISTED" }
                               ]
                             }
@@ -294,20 +312,37 @@ beginDialog:
                       ]
                     },
                     {
-                      type: "Input.Date",
-                      id: "startDate",
-                      label: "Start date",
-                      value: If(IsBlank(Topic.InputStartDate), "", Text(Topic.InputStartDate, "yyyy-MM-dd")),
-                      isRequired: true,
-                      errorMessage: "Please select a start date."
-                    },
-                    {
-                      type: "Input.Date",
-                      id: "endDate",
-                      label: "End date",
-                      value: If(IsBlank(Topic.InputEndDate), "", Text(Topic.InputEndDate, "yyyy-MM-dd")),
-                      isRequired: true,
-                      errorMessage: "Please select an end date."
+                      type: "ColumnSet",
+                      columns: [
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Date",
+                              id: "startDate",
+                              label: "Start date",
+                              value: If(IsBlank(Topic.InputStartDate), "", Text(Topic.InputStartDate, "yyyy-MM-dd")),
+                              isRequired: true,
+                              errorMessage: "Please select a start date."
+                            }
+                          ]
+                        },
+                        {
+                          type: "Column",
+                          width: "stretch",
+                          items: [
+                            {
+                              type: "Input.Date",
+                              id: "endDate",
+                              label: "End date",
+                              value: If(IsBlank(Topic.InputEndDate), "", Text(Topic.InputEndDate, "yyyy-MM-dd")),
+                              isRequired: true,
+                              errorMessage: "Please select an end date."
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
                       type: "Input.Number",
@@ -320,6 +355,30 @@ beginDialog:
                       errorMessage: "Please enter hours per day."
                     },
                     {
+                      type: "Input.ChoiceSet",
+                      id: "timeOffReason",
+                      label: "Reason for time off",
+                      style: "compact",
+                      isRequired: true,
+                      errorMessage: "Please select a reason.",
+                      choices: ForAll(
+                        Topic.TimeOffReasonConfig,
+                        {
+                          title: Title,
+                          value: ReasonID
+                        }
+                      )
+                    },
+                    {
+                      type: "Input.Text",
+                      id: "leaveComment",
+                      label: "Additional comments (optional)",
+                      placeholder: "e.g. Details about your time off",
+                      value: If(IsBlank(Topic.InputLeaveReason), "", Topic.InputLeaveReason),
+                      isMultiline: true,
+                      isRequired: false
+                    },
+                    {
                       type: "ColumnSet",
                       spacing: "Medium",
                       columns: [
@@ -330,8 +389,8 @@ beginDialog:
                             {
                               type: "ActionSet",
                               actions: [
-                                { type: "Action.Submit", title: "Submit", id: "Submit" },
-                                { type: "Action.Submit", title: "Cancel", id: "Cancel" }
+                                { type: "Action.Submit", title: "Submit", id: "Submit", data: { actionSubmitId: "Submit" } },
+                                { type: "Action.Submit", title: "Cancel", id: "Cancel", data: { actionSubmitId: "Cancel" }, associatedInputs: "none" }
                               ]
                             }
                           ],
@@ -396,7 +455,9 @@ beginDialog:
                   actionSubmitId: Topic.actionSubmitId
                   endDate: Topic.endDate
                   hoursPerDay: Topic.hoursPerDay
+                  leaveComment: Topic.leaveComment
                   startDate: Topic.startDate
+                  timeOffReason: Topic.timeOffReason
                   timeOffType: Topic.timeOffType
 
               outputType:
@@ -404,7 +465,9 @@ beginDialog:
                   actionSubmitId: String
                   endDate: String
                   hoursPerDay: String
+                  leaveComment: String
                   startDate: String
+                  timeOffReason: String
                   timeOffType: String
 
     - kind: ConditionGroup
@@ -414,11 +477,19 @@ beginDialog:
           condition: =Topic.actionSubmitId = "Cancel"
           actions:
             - kind: SendActivity
-              id: cancel_msg
-              activity: Your request has been cancelled. Is there anything else you need help with?
+              id: cancel_processing_msg
+              activity: Processing cancellation...
 
-            - kind: CancelAllDialogs
-              id: cancel_all
+            - kind: SendActivity
+              id: cancel_ack_msg
+              activity: Leave request was cancelled - nothing was submitted.
+
+            - kind: SendActivity
+              id: cancel_followup_msg
+              activity: No worries, the form has been discarded and nothing was submitted to Workday. Want to start a new request or need anything else?
+
+            - kind: EndDialog
+              id: end_on_cancel
 
     # Handle "I don't see my leave type listed" selection
     - kind: ConditionGroup
@@ -444,7 +515,7 @@ beginDialog:
       id: validate_dates
       conditions:
         - id: end_before_start
-          condition: =DateValue(Topic.endDate) < DateValue(Topic.startDate)
+          condition: =!IsBlank(Topic.endDate) && !IsBlank(Topic.startDate) && DateValue(Topic.endDate) < DateValue(Topic.startDate)
           actions:
             - kind: SendActivity
               id: date_error_msg
@@ -455,6 +526,7 @@ beginDialog:
               id: ask_retry_dates
               interruptionPolicy:
                 allowInterruption: false
+
               variable: Topic.retryDateChoice
               prompt: Would you like to try with different dates?
               entity: BooleanPrebuiltEntity
@@ -468,6 +540,7 @@ beginDialog:
                     - kind: GotoAction
                       id: goto_form_on_date_retry
                       actionId: collect_time_off
+
               elseActions:
                 - kind: SendActivity
                   id: end_on_no_date_retry
@@ -479,7 +552,12 @@ beginDialog:
     # ========================================================
     # V3: Build list of dates and pass to Plugin
     # ========================================================
-    
+
+    - kind: SetVariable
+      id: set_time_off_comment
+      variable: Topic.timeOffComment
+      value: =If(IsBlank(Topic.leaveComment), "ess generated time off request", Topic.leaveComment)
+
     # Initialize date list (empty string)
     - kind: SetVariable
       id: init_date_list
@@ -540,7 +618,7 @@ beginDialog:
       displayName: Submit Multi-Day Time Off Request
       input:
         binding:
-          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{timeoff_Dates}"",""value"":""" & Topic.dateList & """},{""key"":""{timeoff_Time_Off_Type}"",""value"":""" & Topic.timeOffType & """},{""key"":""{timeoff_Hours_Per_Day}"",""value"":""" & Topic.hoursPerDay & """},{""key"":""{timeoff_Comment}"",""value"":""ess generated time off request""}]}"
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{timeoff_Dates}"",""value"":""" & Topic.dateList & """},{""key"":""{timeoff_Time_Off_Type}"",""value"":""" & Topic.timeOffType & """},{""key"":""{timeoff_Hours_Per_Day}"",""value"":""" & Topic.hoursPerDay & """},{""key"":""{timeoff_Comment}"",""value"":""" & Topic.timeOffComment & """},{""key"":""{timeoff_Reason}"",""value"":""" & Topic.timeOffReason & """}]}"
           scenarioName: msdyn_HRWorkdayAbsenceEnterTimeOff_MultiDay
 
       dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
@@ -590,6 +668,7 @@ beginDialog:
               id: ask_retry
               interruptionPolicy:
                 allowInterruption: false
+
               variable: Topic.retryChoice
               prompt: Would you like to try with different dates?
               entity: BooleanPrebuiltEntity
@@ -603,6 +682,7 @@ beginDialog:
                     - kind: GotoAction
                       id: goto_form_on_retry
                       actionId: collect_time_off
+
               elseActions:
                 - kind: SendActivity
                   id: end_on_no_retry
@@ -655,7 +735,7 @@ beginDialog:
                               },
                               {
                                 type: "TableCell",
-                                items: [{ type: "TextBlock", text: Switch(Topic.timeOffType, "Vacation_Hours", "Vacation", "Floating_Holiday_Hours", "Floating holiday", "Sick_Hours", "Sick leave", Topic.timeOffType), wrap: true }]
+                                items: [{ type: "TextBlock", text: Switch(Topic.timeOffType, "Vacation_Hours", "Vacation", "Floating_Holiday_Hours", "Floating holiday", "Sick Leave", "Sick leave", Topic.timeOffType), wrap: true }]
                               }
                             ]
                           },
@@ -682,6 +762,32 @@ beginDialog:
                               {
                                 type: "TableCell",
                                 items: [{ type: "TextBlock", text: Text(Topic.totalDays * Value(Topic.hoursPerDay)) & " hours (" & Text(Topic.totalDays) & " x " & Topic.hoursPerDay & "-hour days)", wrap: true }]
+                              }
+                            ]
+                          },
+                          {
+                            type: "TableRow",
+                            cells: [
+                              {
+                                type: "TableCell",
+                                items: [{ type: "TextBlock", text: "Reason", weight: "Bolder" }]
+                              },
+                              {
+                                type: "TableCell",
+                                items: [{ type: "TextBlock", text: Coalesce(LookUp(Topic.TimeOffReasonConfig, ReasonID = Topic.timeOffReason).Title, Topic.timeOffReason), wrap: true }]
+                              }
+                            ]
+                          },
+                          {
+                            type: "TableRow",
+                            cells: [
+                              {
+                                type: "TableCell",
+                                items: [{ type: "TextBlock", text: "Comments", weight: "Bolder" }]
+                              },
+                              {
+                                type: "TableCell",
+                                items: [{ type: "TextBlock", text: If(IsBlank(Topic.leaveComment), "—", Topic.leaveComment), wrap: true }]
                               }
                             ]
                           }
@@ -715,7 +821,7 @@ beginDialog:
                                 items: [
                                   {
                                     type: "TextBlock",
-                                    text: "",
+                                    text: "Workday",
                                     size: "Small",
                                     color: "#242424",
                                     weight: "Bolder"
@@ -745,18 +851,27 @@ inputType:
       displayName: EmployeeName
       description: The name of the employee to fetch data for.
       type: String
-    InputStartDate:
-      displayName: InputStartDate
-      description: The start date of the time off request.
-      type: DateTime
+
     InputEndDate:
       displayName: InputEndDate
       description: The end date of the time off request.
       type: DateTime
+
     InputHoursPerDay:
       displayName: InputHoursPerDay
       description: The number of hours per day for the time off request.
       type: Number
+
+    InputLeaveReason:
+      displayName: InputLeaveReason
+      description: Additional comments or context for the time off request.
+      type: String
+
+    InputStartDate:
+      displayName: InputStartDate
+      description: The start date of the time off request.
+      type: DateTime
+
     InputTimeOffType:
       displayName: InputTimeOffType
       description: The type of time off being requested.
