@@ -61,7 +61,7 @@ beginDialog:
     - kind: SetVariable
       id: set_workday_url
       variable: Topic.WorkdayUrl
-      value: https://impl.workday.com/microsoft_dpt6/d/home.htmld
+      value: https://impl.workday.com/<TENANT_NAME>/home.htmld
 
     - kind: SetVariable
       id: set_workday_icon_url
