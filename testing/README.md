@@ -13,5 +13,6 @@ Test frameworks and samples for Copilot Studio agents.
 
 | Folder | Description |
 |--------|-------------|
+| [evaluation/](./evaluation/) | Automated evaluation using the Copilot Studio Evaluation API |
 | [functional/](./functional/) | Functional testing with pytest and response analysis |
 | [load/](./load/) | Load testing with JMeter |
