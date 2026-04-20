@@ -1,0 +1,8 @@
+{
+  "environmentId": "<ci-dev-environment-guid>",
+  "environmentUrl": "https://<ci-dev-org>.crm.dynamics.com/",
+  "botSchemaName": "<bot-schema-name>",
+  "tenantId": "<entra-tenant-guid>",
+  "clientId": "<eval-app-registration-client-id>",
+  "passThreshold": 0.8
+}
