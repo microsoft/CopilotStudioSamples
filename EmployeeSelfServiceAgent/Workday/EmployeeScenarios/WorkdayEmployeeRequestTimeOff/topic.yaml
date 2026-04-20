@@ -101,6 +101,32 @@ beginDialog:
         )
 
     # ================================================================
+    # REASON MAPPING CONFIGURATION
+    # Maps generic reason (Full Day / Half Day AM / Half Day PM) +
+    # Time Off Type to the correct Workday ReasonID.
+    # ReasonKey must match the dropdown values below.
+    # TimeOffTypeID must match the time off type dropdown values.
+    # ================================================================
+    - kind: SetVariable
+      id: set_time_off_reason_config
+      variable: Topic.TimeOffReasonConfig
+      value: |-
+        =Table(
+          {ReasonKey: "full_day", TimeOffTypeID: "ESS_Floating_Holiday_Hours", ReasonID: "full_day_floating"},
+          {ReasonKey: "half_day_am", TimeOffTypeID: "ESS_Floating_Holiday_Hours", ReasonID: "half_day_am_floating"},
+          {ReasonKey: "half_day_pm", TimeOffTypeID: "ESS_Floating_Holiday_Hours", ReasonID: "half_day_pm_floating"},
+          {ReasonKey: "full_day", TimeOffTypeID: "ESS_Comp_Off", ReasonID: "Full day-COI"},
+          {ReasonKey: "half_day_am", TimeOffTypeID: "ESS_Comp_Off", ReasonID: "Half day AM-COI"},
+          {ReasonKey: "half_day_pm", TimeOffTypeID: "ESS_Comp_Off", ReasonID: "Half day PM-COI"},
+          {ReasonKey: "full_day", TimeOffTypeID: "ESS_Sick_Time_Off", ReasonID: "Full day_Sick_IN"},
+          {ReasonKey: "half_day_am", TimeOffTypeID: "ESS_Sick_Time_Off", ReasonID: "Half day AM_Sick_IN"},
+          {ReasonKey: "half_day_pm", TimeOffTypeID: "ESS_Sick_Time_Off", ReasonID: "Half day PM_Sick_IN"},
+          {ReasonKey: "full_day", TimeOffTypeID: "ESS_Vacation_Hours", ReasonID: "Full Day_Vac"},
+          {ReasonKey: "half_day_am", TimeOffTypeID: "ESS_Vacation_Hours", ReasonID: "Half Day_AM_Vac"},
+          {ReasonKey: "half_day_pm", TimeOffTypeID: "ESS_Vacation_Hours", ReasonID: "Half Day_PM_Vac"}
+        )
+
+    # ================================================================
     # LEAVE TYPE CONFIGURATION
     # Edit keywords below to customize how user phrases map to leave types.
     # Keywords are comma-separated and case-insensitive.
@@ -372,13 +398,11 @@ beginDialog:
                       style: "compact",
                       isRequired: true,
                       errorMessage: "Please select a reason.",
-                      choices: ForAll(
-                        Topic.TimeOffReasonConfig,
-                        {
-                          title: Title,
-                          value: ReasonID
-                        }
-                      )
+                      choices: [
+                        { title: "Full Day", value: "full_day" },
+                        { title: "Half Day AM", value: "half_day_am" },
+                        { title: "Half Day PM", value: "half_day_pm" }
+                      ]
                     },
                     {
                       type: "Input.Text",
@@ -564,6 +588,12 @@ beginDialog:
     # V3: Build list of dates and pass to Plugin
     # ========================================================
 
+    # Map selected Time Off Type + Reason to Workday ReasonID
+    - kind: SetVariable
+      id: resolve_reason_id
+      variable: Topic.resolvedReasonID
+      value: =LookUp(Topic.TimeOffReasonConfig, ReasonKey = Topic.timeOffReason && TimeOffTypeID = Topic.timeOffType).ReasonID
+
     - kind: SetVariable
       id: set_time_off_comment
       variable: Topic.timeOffComment
@@ -629,7 +659,15 @@ beginDialog:
       displayName: Submit Multi-Day Time Off Request
       input:
         binding:
-          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{timeoff_Dates}"",""value"":""" & Topic.dateList & """},{""key"":""{timeoff_Time_Off_Type}"",""value"":""" & Topic.timeOffType & """},{""key"":""{timeoff_Hours_Per_Day}"",""value"":""" & Topic.hoursPerDay & """},{""key"":""{timeoff_Comment}"",""value"":""" & Topic.timeOffComment & """},{""key"":""{timeoff_Reason}"",""value"":""" & Topic.timeOffReason & """}]}"
+          parameters: |-
+            ="{""params"":[" &
+            "{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """}," &
+            "{""key"":""{timeoff_Dates}"",""value"":""" & Topic.dateList & """}," &
+            "{""key"":""{timeoff_Time_Off_Type}"",""value"":""" & Topic.timeOffType & """}," &
+            "{""key"":""{timeoff_Hours_Per_Day}"",""value"":""" & Topic.hoursPerDay & """}," &
+            "{""key"":""{timeoff_Comment}"",""value"":""" & Topic.timeOffComment & """}," &
+            "{""key"":""{timeoff_Reason}"",""value"":""" & Topic.resolvedReasonID & """}" &
+            "]}"
           scenarioName: msdyn_HRWorkdayAbsenceEnterTimeOff_MultiDay
 
       dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
@@ -785,7 +823,7 @@ beginDialog:
                               },
                               {
                                 type: "TableCell",
-                                items: [{ type: "TextBlock", text: Coalesce(LookUp(Topic.TimeOffReasonConfig, ReasonID = Topic.timeOffReason).Title, Topic.timeOffReason), wrap: true }]
+                                items: [{ type: "TextBlock", text: Switch(Topic.timeOffReason, "full_day", "Full Day", "half_day_am", "Half Day AM", "half_day_pm", "Half Day PM", Topic.timeOffReason), wrap: true }]
                               }
                             ]
                           },
