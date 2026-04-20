@@ -83,11 +83,21 @@ beginDialog:
       variable: Topic.TimeOffReasonConfig
       value: |-
         =Table(
-          {Title: "Personal", ReasonID: "REASON_PERSONAL"},
-          {Title: "Medical / Doctor appointment", ReasonID: "REASON_MEDICAL"},
-          {Title: "Family event", ReasonID: "REASON_FAMILY"},
-          {Title: "Travel / Vacation", ReasonID: "REASON_TRAVEL"},
-          {Title: "Other", ReasonID: "REASON_OTHER"}
+          {Title: "Half Day PM Floating", ReasonID: "half_day_pm_floating", TimeOffTypeID: "ESS_Floating_Holiday_Hours"},
+          {Title: "Half Day AM Floating", ReasonID: "half_day_am_floating", TimeOffTypeID: "ESS_Floating_Holiday_Hours"},
+          {Title: "Full Day Floating", ReasonID: "full_day_floating", TimeOffTypeID: "ESS_Floating_Holiday_Hours"},
+
+          {Title: "Full Day Comp", ReasonID: "Full day-COI", TimeOffTypeID: "ESS_Comp_Off"},
+          {Title: "Half Day PM Comp off", ReasonID: "Half day PM-COI", TimeOffTypeID: "ESS_Comp_Off"},
+          {Title: "Half Day AM Comp off", ReasonID: "Half day AM-COI", TimeOffTypeID: "ESS_Comp_Off"},
+
+          {Title: "Half Day PM Sick", ReasonID: "Half day PM_Sick_IN", TimeOffTypeID: "ESS_Sick_Time_Off"},
+          {Title: "Half Day AM Sick", ReasonID: "Half day AM_Sick_IN", TimeOffTypeID: "ESS_Sick_Time_Off"},
+          {Title: "Full Day Sick", ReasonID: "Full day_Sick_IN", TimeOffTypeID: "ESS_Sick_Time_Off"},
+          
+          {Title: "Half Day PM Vacation", ReasonID: "Half Day_PM_Vac", TimeOffTypeID: "ESS_Vacation_Hours"},
+          {Title: "Half Day AM Vacation", ReasonID: "Half Day_AM_Vac", TimeOffTypeID: "ESS_Vacation_Hours"},
+          {Title: "Full Day Vacation", ReasonID: "Full Day_Vac", TimeOffTypeID: "ESS_Vacation_Hours"}
         )
 
     # ================================================================
@@ -271,7 +281,7 @@ beginDialog:
                               width: "stretch",
                               items: [
                                 { type: "TextBlock", text: DisplayName, size: "Small", wrap: true },
-                                { type: "TextBlock", text: Balance, weight: "Bolder", spacing: "Small" }
+                                { type: "TextBlock", text: Text(Balance), weight: "Bolder", spacing: "Small" }
                               ]
                             }
                           )
@@ -301,9 +311,10 @@ beginDialog:
                               isRequired: true,
                               errorMessage: "Please select a type.",
                               choices: [
-                                { title: "Vacation", value: "Vacation_Hours" },
-                                { title: "Floating holiday", value: "Floating_Holiday_Hours" },
+                                { title: "Vacation", value: "ESS_Vacation_Hours" },
+                                { title: "Floating holiday", value: "ESS_Floating_Holiday_Hours" },
                                 { title: "Sick leave", value: "ESS_Sick_Time_Off" },
+                                { title: "Comp off", value: "ESS_Comp_Off" },
                                 { title: "I don't see my leave type listed", value: "NOT_LISTED" }
                               ]
                             }
