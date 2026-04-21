@@ -4,31 +4,33 @@
   "https": true,
   "serveConfigurations": {
     "default": {
-      "pageUrl": "YOUR_SHAREPOINT_SITE",
+      "pageUrl": "https://m365x66364744.sharepoint.com/sites/GlobalSales/SitePages/Home.aspx",
       "customActions": {
-        "bbcf8287-ea2d-4bb6-868f-19b9cf4b0812": {
+        "4c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2": {
           "location": "ClientSideExtension.ApplicationCustomizer",
           "properties": {
-            "botURL": "YOUR_BOT_URL",
-            "customScope" : "YOUR_CUSTOM_SCOPE",
-            "clientID" : "YOUR_CLIENT_ID",
-            "authority" : "YOUR_TENANT",
-            "greet" : true
+            "appClientId": "APP-REGISTRATION-ID",
+            "tenantId": "TENANT-ID",
+            "environmentId": "ENV-ID",
+            "agentIdentifier": "AGENT-ID",
+            "directConnectUrl": "YOUR-DIRECT-CONNECT-URL",
+            "showTyping": true
           }
         }
       }
     },
-    "pvaSso": {
-      "pageUrl": "YOUR_SHAREPOINT_SITE",
+    "sidebarAgent": {
+      "pageUrl": "https://m365x66364744.sharepoint.com/sites/GlobalSales/SitePages/Home.aspx",
       "customActions": {
-        "bbcf8287-ea2d-4bb6-868f-19b9cf4b0812": {
+        "4c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2": {
           "location": "ClientSideExtension.ApplicationCustomizer",
           "properties": {
-            "botURL": "YOUR_BOT_URL",
-            "customScope" : "YOUR_CUSTOM_SCOPE",
-            "clientID" : "YOUR_CLIENT_ID",
-            "authority" : "YOUR_TENANT",
-            "greet" : true
+            "appClientId": "APP-REGISTRATION-ID",
+            "tenantId": "TENANT-ID",
+            "environmentId": "ENV-ID",
+            "agentIdentifier": "AGENT-ID",
+            "directConnectUrl": "YOUR-DIRECT-CONNECT-URL",
+            "showTyping": true
           }
         }
       }

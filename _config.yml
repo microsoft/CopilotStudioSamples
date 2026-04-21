@@ -5,6 +5,10 @@ baseurl: "/CopilotStudioSamples"
 
 theme: just-the-docs
 logo: "/assets/images/logo.png"
+
+# Mermaid diagram support
+mermaid:
+  version: "11"
 favicon_ico: "/favicon.ico"
 
 # Default layout for all pages

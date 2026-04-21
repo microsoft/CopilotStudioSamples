@@ -1,0 +1,28 @@
+{
+  "name": "dynamic-mcp-routing",
+  "version": "1.0.0",
+  "description": "Dynamic MCP routing — a catalog server and multi-instance MCP server with a Power Platform connector that routes to the selected instance",
+  "type": "module",
+  "main": "build/mcp-server/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start:catalog": "node build/catalog/index.js",
+    "start:mcp": "node build/mcp-server/index.js",
+    "start": "npm run start:mcp",
+    "dev:catalog": "npx tsx src/catalog/index.ts",
+    "dev:mcp": "npx tsx src/mcp-server/index.ts",
+    "deploy": "bash scripts/deploy.sh"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.2",
+    "express": "^4.18.2",
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.24.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.3.0"
+  }
+}

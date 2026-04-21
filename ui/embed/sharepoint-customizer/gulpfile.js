@@ -13,23 +13,4 @@ build.rig.getTasks = function () {
   return result;
 };
 
-build.configureWebpack.mergeConfig({
-  additionalConfiguration: (generatedConfiguration) => {
-    generatedConfiguration.module.rules.push(
-      {
-        test: /\.js$/,
-        exclude: /node_modules\/(?!htmlparser2)/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      }
-    );
-
-    return generatedConfiguration;
-  }
-});
-
 build.initialize(require('gulp'));

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
     <ClientSideComponentInstance
-        Title="PvaSso"
+        Title="SidebarAgent"
         Location="ClientSideExtension.ApplicationCustomizer"
-        ComponentId="bbcf8287-ea2d-4bb6-868f-19b9cf4b0812"
-        Properties="{&quot;testMessage&quot;:&quot;Test message&quot;}">
+        ComponentId="4c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2"
+        Properties="">
     </ClientSideComponentInstance>
 </Elements>
