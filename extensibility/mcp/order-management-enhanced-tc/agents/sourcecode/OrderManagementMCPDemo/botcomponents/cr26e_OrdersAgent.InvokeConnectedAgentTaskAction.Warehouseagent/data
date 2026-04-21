@@ -1,0 +1,8 @@
+kind: TaskDialog
+modelDisplayName: Warehouse agent
+modelDescription: warehouse agent used for inventory queries
+action:
+  kind: InvokeConnectedAgentTaskAction
+  botSchemaName: cr26e_Warehouseagent
+  historyType:
+    kind: ConversationHistory

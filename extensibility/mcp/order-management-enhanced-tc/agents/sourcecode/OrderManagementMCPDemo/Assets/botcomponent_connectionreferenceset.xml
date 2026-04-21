@@ -1,0 +1,8 @@
+<botcomponent_connectionreferenceset>
+  <botcomponent_connectionreference botcomponentid.schemaname="cr26e_OrdersAgent.topic.ordersmcp" connectionreferenceid.connectionreferencelogicalname="cr26e_OrdersAgent.shared_new-5forders-20mcp-5fee08b8354fad177a.6be7a421f5184b9ebb376965cf6cd8b8">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_connectionreference>
+  <botcomponent_connectionreference botcomponentid.schemaname="cr26e_Warehouseagent.topic.warehouseserver3" connectionreferenceid.connectionreferencelogicalname="cr26e_Warehouseagent.shared_new-5fwarehouse-20server-203-5fee08b8354fad177a.726ca1c1522e492082b8e68667e2267e">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_connectionreference>
+</botcomponent_connectionreferenceset>

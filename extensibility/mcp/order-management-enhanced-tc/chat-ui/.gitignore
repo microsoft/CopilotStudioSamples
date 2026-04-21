@@ -1,0 +1,5 @@
+.env
+.venv/
+__pycache__/
+.token_cache.json
+activities.jsonl

@@ -1,0 +1,66 @@
+<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26041.143" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26042.00146">
+  <Entities></Entities>
+  <Roles></Roles>
+  <Workflows></Workflows>
+  <FieldSecurityProfiles></FieldSecurityProfiles>
+  <Templates />
+  <EntityMaps />
+  <EntityRelationships />
+  <OrganizationSettings />
+  <optionsets />
+  <CustomControls />
+  <EntityDataProviders />
+  <Connectors>
+    <Connector>
+      <connectorid>e03cf4ce-5b7f-4ba4-b5b7-c90c80bbca98</connectorid>
+      <description>my orders mcp server connector</description>
+      <displayname>orders mcp</displayname>
+      <iconbrandcolor>#007ee5</iconbrandcolor>
+      <name>new_5Forders-20mcp</name>
+      <connectortype>1</connectortype>
+      <openapidefinition>/Connector/new_5Forders-20mcp_openapidefinition.json</openapidefinition>
+      <connectionparameters>/Connector/new_5Forders-20mcp_connectionparameters.json</connectionparameters>
+      <policytemplateinstances>/Connector/new_5Forders-20mcp_policytemplateinstances.json</policytemplateinstances>
+      <iconblob>/Connector/new_5Forders-20mcp_iconblob.Png</iconblob>
+    </Connector>
+    <Connector>
+      <connectorid>ff27b2b6-790d-4782-8725-f63dfefa30d3</connectorid>
+      <description>my warehouse server 3 connector</description>
+      <displayname>warehouse server 3</displayname>
+      <iconbrandcolor></iconbrandcolor>
+      <name>new_5Fwarehouse-20server-203</name>
+      <connectortype>1</connectortype>
+      <openapidefinition>/Connector/new_5Fwarehouse-20server-203_openapidefinition.json</openapidefinition>
+      <connectionparameters>/Connector/new_5Fwarehouse-20server-203_connectionparameters.json</connectionparameters>
+      <policytemplateinstances>/Connector/new_5Fwarehouse-20server-203_policytemplateinstances.json</policytemplateinstances>
+      <iconblob>/Connector/new_5Fwarehouse-20server-203_iconblob.Png</iconblob>
+    </Connector>
+  </Connectors>
+  <connectionreferences>
+    <connectionreference connectionreferencelogicalname="cr26e_OrdersAgent.shared_new-5forders-20mcp-5fee08b8354fad177a.6be7a421f5184b9ebb376965cf6cd8b8">
+      <connectionreferencedisplayname>cr26e_OrdersAgent.shared_new-5forders-20mcp-5fee08b8354fad177a.6be7a421f5184b9ebb376965cf6cd8b8</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_new-5forders-20mcp-5fee08b8354fad177a</connectorid>
+      <customconnectorid>
+        <connectorid>e03cf4ce-5b7f-4ba4-b5b7-c90c80bbca98</connectorid>
+      </customconnectorid>
+      <iscustomizable>0</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="cr26e_Warehouseagent.shared_new-5fwarehouse-20server-203-5fee08b8354fad177a.726ca1c1522e492082b8e68667e2267e">
+      <connectionreferencedisplayname>cr26e_Warehouseagent.shared_new-5fwarehouse-20server-203-5fee08b8354fad177a.726ca1c1522e492082b8e68667e2267e</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_new-5fwarehouse-20server-203-5fee08b8354fad177a</connectorid>
+      <customconnectorid>
+        <connectorid>ff27b2b6-790d-4782-8725-f63dfefa30d3</connectorid>
+      </customconnectorid>
+      <iscustomizable>0</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+  </connectionreferences>
+  <Languages>
+    <Language>1033</Language>
+  </Languages>
+</ImportExportXml>
