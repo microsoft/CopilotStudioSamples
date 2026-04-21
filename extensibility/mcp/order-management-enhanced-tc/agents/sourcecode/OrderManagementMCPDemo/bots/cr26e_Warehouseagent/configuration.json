@@ -1,0 +1,23 @@
+{
+  "$kind": "BotConfiguration",
+  "settings": {
+    "GenerativeActionsEnabled": true,
+    "SmartTaskCompletionEnabled": true
+  },
+  "isAgentConnectable": true,
+  "gPTSettings": {
+    "$kind": "GPTSettings",
+    "defaultSchemaName": "cr26e_Warehouseagent.gpt.default"
+  },
+  "aISettings": {
+    "$kind": "AISettings",
+    "useModelKnowledge": true,
+    "isFileAnalysisEnabled": true,
+    "isSemanticSearchEnabled": true,
+    "contentModeration": "Low",
+    "optInUseLatestModels": false
+  },
+  "recognizer": {
+    "$kind": "CLIAgentRecognizer"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "eval-gate",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Copilot Studio Evaluation API client for CI/CD pipelines",
+  "dependencies": {
+    "@azure/msal-node": "^2.0.0"
+  }
+}
