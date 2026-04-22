@@ -2,26 +2,13 @@ kind: AdaptiveDialog
 inputs:
   - kind: AutomaticTaskInput
     propertyName: InputAction
-    description: "Look for keywords 'add', 'new', or 'create' in the user's request. If found, extract 'add'. Otherwise extract 'manage'."
+    description: "Look for keywords 'add', 'new', or 'create' in the user's request. If found, extract 'add'. Look for keywords 'get', 'view', 'show', 'list', 'see', 'display', or 'what are' in the user's request. If found, extract 'get'. Otherwise extract 'manage'."
     entity: StringPrebuiltEntity
     shouldPromptUser: false
 
 modelDescription: |-
-  You will respond to requests related to managing emergency contacts for the user making the request.
-  This includes adding new emergency contacts or updating existing ones.
-  All emergency contact operations are submitted to Workday (Human_Resources) and pertain exclusively to the requesting user.
-  This data exclusively belongs to the user making the request. Do not respond to questions about other people's data.
-
-  Example invalid requests:
-  "Manage emergency contact for my manager"
-  "Update emergency contact for my colleague"
-
-  Example valid requests:
-  "Manage my emergency contacts"
-  "Update my emergency contact"
-  "Add or update emergency contact"
-  "Change my emergency contact information"
-  "Add a new emergency contact"
+  Manage emergency contacts for the requesting user only. Supports add and update via Workday (Human_Resources). Reject requests about other people's data.
+  Formatting: ALWAYS display contacts in a markdown table with columns: Name, Relationship, Phone, Address. Mark primary with ★. Sort primary first, then by priority. Use "—" for missing fields. Heading: "Your emergency contacts" with divider. Never use bullet lists. Hide internal IDs (WID, Priority number, Country Codes). Show ALL contacts.
 beginDialog:
   kind: OnRecognizedIntent
   id: main
@@ -64,12 +51,18 @@ beginDialog:
 
               dialog: msdyn_copilotforemployeeselfservicehr.topic.GetReferenceData
 
+    # Detect if user wants to view contacts only (get/view/show/list)
+    - kind: SetVariable
+      id: set_is_view_only
+      variable: Topic.isViewOnly
+      value: =(!IsBlank(Topic.InputAction) && "get" in Lower(Topic.InputAction)) || "get" in Lower(System.Activity.Text) || "view" in Lower(System.Activity.Text) || "show" in Lower(System.Activity.Text) || "list" in Lower(System.Activity.Text) || "see my" in Lower(System.Activity.Text) || "what are" in Lower(System.Activity.Text) || "display" in Lower(System.Activity.Text)
+
     # Check if user explicitly wants to add a new contact - skip loading existing contacts
     - kind: ConditionGroup
       id: check_direct_add
       conditions:
         - id: user_wants_add_directly
-          condition: =(!IsBlank(Topic.InputAction) && "add" in Lower(Topic.InputAction)) || "add" in Lower(System.Activity.Text) || "new emergency contact" in Lower(System.Activity.Text) || "create" in Lower(System.Activity.Text)
+          condition: =Topic.isViewOnly <> true && ((!IsBlank(Topic.InputAction) && "add" in Lower(Topic.InputAction)) || "add" in Lower(System.Activity.Text) || "new emergency contact" in Lower(System.Activity.Text) || "create" in Lower(System.Activity.Text))
           displayName: User wants to add a new contact directly
           actions:
             - kind: SetVariable
@@ -227,7 +220,10 @@ beginDialog:
       variable: Topic.contactSelectionList
       value: |
         =ForAll(
-            Topic.parsedContacts.EmergencyContacts,
+            Filter(
+                Topic.parsedContacts.EmergencyContacts,
+                !IsBlank(LookUp(ThisRecord.Emergency_Contact.Emergency_Contact_Reference.ID, '@type' = "WID").'#text')
+            ),
             {
                 DisplayName: ThisRecord.Personal_Data.Name_Data.Legal_Name_Data.Name_Detail_Data.'@Formatted_Name',
                 FirstName: ThisRecord.Personal_Data.Name_Data.Legal_Name_Data.Name_Detail_Data.First_Name,
@@ -278,9 +274,92 @@ beginDialog:
               value: https://impl.workday.com/<TENANT_NAME>/home.htmld
 
             - kind: SetVariable
+              id: build_contact_table
+              displayName: Build formatted contact table
+              variable: Topic.contactTableText
+              value: |
+                ="| Name | Relationship | Phone | Address |" & Char(10) & "|------|-------------|-------|---------|" & Char(10) & Concat(
+                    SortByColumns(Topic.contactSelectionList, "IsPrimary", SortOrder.Descending, "Priority", SortOrder.Ascending),
+                    "| " & If(!IsBlank(ThisRecord.DisplayName), ThisRecord.DisplayName, "Unknown") & If(ThisRecord.IsPrimary = "true" || ThisRecord.IsPrimary = "1", " ★", "") & " | " & If(!IsBlank(ThisRecord.RelationshipType), ThisRecord.RelationshipType, "—") & " | " & If(!IsBlank(ThisRecord.Phone), ThisRecord.Phone, "—") & " | " & If(!IsBlank(ThisRecord.Address), ThisRecord.Address, "—") & " |",
+                    Char(10)
+                )
+
+            # View-only mode: show table as Adaptive Card (full width) and end
+            - kind: ConditionGroup
+              id: check_view_only
+              conditions:
+                - id: is_view_only_mode
+                  condition: =Topic.isViewOnly = true
+                  displayName: User only wants to view contacts
+                  actions:
+                    - kind: SetVariable
+                      id: set_view_intro_text
+                      variable: Topic.viewIntroText
+                      value: ="Here are your emergency contacts from [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
+
+                    - kind: SendActivity
+                      id: view_only_intro
+                      activity: "{Topic.viewIntroText}"
+
+                    - kind: SendActivity
+                      id: view_only_table_card
+                      activity:
+                        attachments:
+                          - kind: AdaptiveCardTemplate
+                            cardContent: |-
+                              ={
+                                type: "AdaptiveCard",
+                                '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                                version: "1.3",
+                                body: [
+                                  {
+                                    type: "TextBlock",
+                                    text: "Your emergency contacts (" & Text(CountRows(Topic.contactSelectionList)) & ")",
+                                    weight: "Bolder",
+                                    size: "Medium",
+                                    wrap: true
+                                  },
+                                  {
+                                    type: "ColumnSet",
+                                    separator: true,
+                                    spacing: "Medium",
+                                    columns: [
+                                      { type: "Column", width: 2, items: [{ type: "TextBlock", text: "Name", weight: "Bolder", wrap: true }] },
+                                      { type: "Column", width: 2, items: [{ type: "TextBlock", text: "Relationship", weight: "Bolder", wrap: true }] },
+                                      { type: "Column", width: 2, items: [{ type: "TextBlock", text: "Phone", weight: "Bolder", wrap: true }] },
+                                      { type: "Column", width: 3, items: [{ type: "TextBlock", text: "Address", weight: "Bolder", wrap: true }] }
+                                    ]
+                                  },
+                                  {
+                                    type: "Container",
+                                    items: ForAll(
+                                      SortByColumns(Topic.contactSelectionList, "IsPrimary", SortOrder.Descending, "Priority", SortOrder.Ascending),
+                                      {
+                                        type: "ColumnSet",
+                                        separator: true,
+                                        columns: [
+                                          { type: "Column", width: 2, items: [{ type: "TextBlock", text: If(!IsBlank(ThisRecord.DisplayName), ThisRecord.DisplayName, "Unknown") & If(ThisRecord.IsPrimary = "true" || ThisRecord.IsPrimary = "1", " ★", ""), wrap: true }] },
+                                          { type: "Column", width: 2, items: [{ type: "TextBlock", text: If(!IsBlank(ThisRecord.RelationshipType), ThisRecord.RelationshipType, "—"), wrap: true }] },
+                                          { type: "Column", width: 2, items: [{ type: "TextBlock", text: If(!IsBlank(ThisRecord.Phone), ThisRecord.Phone, "—"), wrap: true }] },
+                                          { type: "Column", width: 3, items: [{ type: "TextBlock", text: If(!IsBlank(ThisRecord.Address), ThisRecord.Address, "—"), wrap: true }] }
+                                        ]
+                                      }
+                                    )
+                                  }
+                                ]
+                              }
+
+                    - kind: SendActivity
+                      id: view_only_footer
+                      activity: "If you need to update or add any information for these contacts, just let me know which one you'd like to change or if you want to add a new contact."
+
+                    - kind: CancelAllDialogs
+                      id: end_view_only
+
+            - kind: SetVariable
               id: set_intro_msg_text
               variable: Topic.introMsgText
-              value: ="Sure, I can help you with that. Here's where you can both update and add emergency contacts. I've identified " & Text(CountRows(Topic.selectionChoices)) & " emergency contact(s) of yours from [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
+              value: ="Sure, I can help you with that. Here's where you can update and add emergency contacts. I've identified " & Text(CountRows(Topic.selectionChoices)) & " emergency contact(s) of yours from [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
 
             - kind: SendActivity
               id: intro_selection_msg
