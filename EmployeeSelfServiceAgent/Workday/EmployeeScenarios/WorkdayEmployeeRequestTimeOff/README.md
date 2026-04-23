@@ -222,14 +222,8 @@ When this repo publishes a new version of the topic:
 2. **Merge.** Copy your config values from the current topic, pull the updated file, paste your values back, then import.
 3. The XML template is safe to overwrite — unless you changed `Auto_Complete` or the API version.
 
-## Open questions
+## Known limitations
 
-1. **Duplicate `TimeOffReasonConfig`.** The topic sets this variable twice. The first table is immediately overwritten by the second. The first appears to be dead code.
+- **Leave type pre-selection may not work for Vacation and Floating Holiday.** The keyword mapping (`LeaveTypeConfig`) uses `Vacation_Hours` and `Floating_Holiday_Hours`, but the Adaptive Card dropdown expects `ESS_Vacation_Hours` and `ESS_Floating_Holiday_Hours`. To fix this, update the `LeaveTypeValue` entries in `LeaveTypeConfig` to include the `ESS_` prefix.
 
-2. **`{timeoff_Reason}` parameter unused.** The API call passes `{timeoff_Reason}` but the XML template has no matching placeholder. It may be handled by the shared dialog or silently ignored.
-
-3. **LeaveTypeConfig mismatch.** `LeaveTypeConfig` maps vacation to `Vacation_Hours` but the dropdown uses `ESS_Vacation_Hours`. Pre-selection for Vacation and Floating Holiday may not work out of the box.
-
-4. **Success card Switch() mismatch.** The confirmation card checks for `"Vacation_Hours"` but the dropdown submits `"ESS_Vacation_Hours"`. The raw ID may display instead of the friendly name.
-
-5. **Auto_Complete default.** Set to `false`, meaning all requests require manager approval. This may need to be a documented configuration choice.
+- **Success card may show raw IDs instead of friendly names.** After a successful submission, the confirmation card may display `ESS_Vacation_Hours` instead of "Vacation". To work around this, update the `Switch()` expression in the success card to match the `ESS_`-prefixed values from the dropdown.
