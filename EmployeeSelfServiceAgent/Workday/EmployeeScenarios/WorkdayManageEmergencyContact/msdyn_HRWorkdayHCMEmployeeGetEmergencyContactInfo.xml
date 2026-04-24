@@ -11,7 +11,7 @@
                 </endpoint>
                 <responseProperties>
                     <property>
-                        <extractPath>//*[local-name()='Related_Person_Data']//*[local-name()='Related_Person']</extractPath>
+                        <extractPath>//*[local-name()='Related_Person_Data']/*[local-name()='Related_Person'][*[local-name()='Emergency_Contact']]</extractPath>
                         <key>EmergencyContacts</key>
                     </property>
                 </responseProperties>
