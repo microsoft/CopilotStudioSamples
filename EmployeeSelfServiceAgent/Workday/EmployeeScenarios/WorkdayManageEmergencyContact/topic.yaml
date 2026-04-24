@@ -2,12 +2,12 @@ kind: AdaptiveDialog
 inputs:
   - kind: AutomaticTaskInput
     propertyName: InputAction
-    description: "Look for keywords 'get', 'view', 'show', 'list', 'see', 'display', or 'what are' in the user's request. If found, extract 'get'. Otherwise extract 'manage'."
+    description: "Look for keywords 'add', 'new', or 'create' in the user's request. If found, extract 'add'. Look for keywords 'get', 'view', 'show', 'list', 'see', 'display', or 'what are' in the user's request. If found, extract 'get'. Otherwise extract 'manage'."
     entity: StringPrebuiltEntity
     shouldPromptUser: false
 
 modelDescription: |-
-  Update emergency contacts for the requesting user only. Supports update via Workday (Human_Resources). Reject requests about other people's data.
+  Manage emergency contacts for the requesting user only. Supports add and update via Workday (Human_Resources). Reject requests about other people's data.
   Formatting: ALWAYS display contacts in a markdown table with columns: Name, Relationship, Phone, Address. Mark primary with ★. Sort primary first, then by priority. Use "—" for missing fields. Heading: "Your emergency contacts" with divider. Never use bullet lists. Hide internal IDs (WID, Priority number, Country Codes). Show ALL contacts.
 beginDialog:
   kind: OnRecognizedIntent
@@ -51,11 +51,163 @@ beginDialog:
 
               dialog: msdyn_copilotforemployeeselfservicehr.topic.GetReferenceData
 
+    - kind: ConditionGroup
+      id: check_state_province_choices
+      conditions:
+        - id: state_choices_uninitialized
+          condition: =IsBlank(Global.StateProvinceChoices)
+          displayName: If state/province choices are uninitialized
+          actions:
+            - kind: SetVariable
+              id: init_state_province_choices
+              variable: Global.StateProvinceChoices
+              value: |
+                =[
+                  { title: "Alabama", value: "USA-AL", country: "USA" },
+                  { title: "Alaska", value: "USA-AK", country: "USA" },
+                  { title: "Arizona", value: "USA-AZ", country: "USA" },
+                  { title: "Arkansas", value: "USA-AR", country: "USA" },
+                  { title: "California", value: "USA-CA", country: "USA" },
+                  { title: "Colorado", value: "USA-CO", country: "USA" },
+                  { title: "Connecticut", value: "USA-CT", country: "USA" },
+                  { title: "Delaware", value: "USA-DE", country: "USA" },
+                  { title: "Florida", value: "USA-FL", country: "USA" },
+                  { title: "Georgia", value: "USA-GA", country: "USA" },
+                  { title: "Hawaii", value: "USA-HI", country: "USA" },
+                  { title: "Idaho", value: "USA-ID", country: "USA" },
+                  { title: "Illinois", value: "USA-IL", country: "USA" },
+                  { title: "Indiana", value: "USA-IN", country: "USA" },
+                  { title: "Iowa", value: "USA-IA", country: "USA" },
+                  { title: "Kansas", value: "USA-KS", country: "USA" },
+                  { title: "Kentucky", value: "USA-KY", country: "USA" },
+                  { title: "Louisiana", value: "USA-LA", country: "USA" },
+                  { title: "Maine", value: "USA-ME", country: "USA" },
+                  { title: "Maryland", value: "USA-MD", country: "USA" },
+                  { title: "Massachusetts", value: "USA-MA", country: "USA" },
+                  { title: "Michigan", value: "USA-MI", country: "USA" },
+                  { title: "Minnesota", value: "USA-MN", country: "USA" },
+                  { title: "Mississippi", value: "USA-MS", country: "USA" },
+                  { title: "Missouri", value: "USA-MO", country: "USA" },
+                  { title: "Montana", value: "USA-MT", country: "USA" },
+                  { title: "Nebraska", value: "USA-NE", country: "USA" },
+                  { title: "Nevada", value: "USA-NV", country: "USA" },
+                  { title: "New Hampshire", value: "USA-NH", country: "USA" },
+                  { title: "New Jersey", value: "USA-NJ", country: "USA" },
+                  { title: "New Mexico", value: "USA-NM", country: "USA" },
+                  { title: "New York", value: "USA-NY", country: "USA" },
+                  { title: "North Carolina", value: "USA-NC", country: "USA" },
+                  { title: "North Dakota", value: "USA-ND", country: "USA" },
+                  { title: "Ohio", value: "USA-OH", country: "USA" },
+                  { title: "Oklahoma", value: "USA-OK", country: "USA" },
+                  { title: "Oregon", value: "USA-OR", country: "USA" },
+                  { title: "Pennsylvania", value: "USA-PA", country: "USA" },
+                  { title: "Rhode Island", value: "USA-RI", country: "USA" },
+                  { title: "South Carolina", value: "USA-SC", country: "USA" },
+                  { title: "South Dakota", value: "USA-SD", country: "USA" },
+                  { title: "Tennessee", value: "USA-TN", country: "USA" },
+                  { title: "Texas", value: "USA-TX", country: "USA" },
+                  { title: "Utah", value: "USA-UT", country: "USA" },
+                  { title: "Vermont", value: "USA-VT", country: "USA" },
+                  { title: "Virginia", value: "USA-VA", country: "USA" },
+                  { title: "Washington", value: "USA-WA", country: "USA" },
+                  { title: "West Virginia", value: "USA-WV", country: "USA" },
+                  { title: "Wisconsin", value: "USA-WI", country: "USA" },
+                  { title: "Wyoming", value: "USA-WY", country: "USA" },
+                  { title: "District of Columbia", value: "USA-DC", country: "USA" },
+                  { title: "Alberta", value: "CA-AB", country: "CAN" },
+                  { title: "British Columbia", value: "CA-BC", country: "CAN" },
+                  { title: "Manitoba", value: "CA-MB", country: "CAN" },
+                  { title: "New Brunswick", value: "CA-NB", country: "CAN" },
+                  { title: "Newfoundland and Labrador", value: "CA-NL", country: "CAN" },
+                  { title: "Northwest Territories", value: "CA-NT", country: "CAN" },
+                  { title: "Nova Scotia", value: "CA-NS", country: "CAN" },
+                  { title: "Nunavut", value: "CA-NU", country: "CAN" },
+                  { title: "Ontario", value: "CA-ON", country: "CAN" },
+                  { title: "Prince Edward Island", value: "CA-PE", country: "CAN" },
+                  { title: "Quebec", value: "CA-QC", country: "CAN" },
+                  { title: "Saskatchewan", value: "CA-SK", country: "CAN" },
+                  { title: "Yukon", value: "CA-YT", country: "CAN" },
+                  { title: "England", value: "GBR-ENG", country: "GBR" },
+                  { title: "Scotland", value: "GBR-SCT", country: "GBR" },
+                  { title: "Wales", value: "GBR-WLS", country: "GBR" },
+                  { title: "Northern Ireland", value: "GBR-NIR", country: "GBR" },
+                  { title: "Andaman and Nicobar Islands", value: "IN-AN", country: "IND" },
+                  { title: "Andhra Pradesh", value: "IN-AP", country: "IND" },
+                  { title: "Arunachal Pradesh", value: "IN-AR", country: "IND" },
+                  { title: "Assam", value: "IN-AS", country: "IND" },
+                  { title: "Bihar", value: "IN-BR", country: "IND" },
+                  { title: "Chandigarh", value: "IN-CH", country: "IND" },
+                  { title: "Chhattisgarh", value: "IN-CG", country: "IND" },
+                  { title: "Dadra and Nagar Haveli", value: "IN-DN", country: "IND" },
+                  { title: "Daman and Diu", value: "IN-DD", country: "IND" },
+                  { title: "Delhi", value: "IN-DL", country: "IND" },
+                  { title: "Goa", value: "IN-GA", country: "IND" },
+                  { title: "Gujarat", value: "IN-GJ", country: "IND" },
+                  { title: "Haryana", value: "IN-HR", country: "IND" },
+                  { title: "Himachal Pradesh", value: "IN-HP", country: "IND" },
+                  { title: "Jammu and Kashmir", value: "IN-JK", country: "IND" },
+                  { title: "Jharkhand", value: "IN-JH", country: "IND" },
+                  { title: "Karnataka", value: "IN-KA", country: "IND" },
+                  { title: "Kerala", value: "IN-KL", country: "IND" },
+                  { title: "Ladakh", value: "IN-LA", country: "IND" },
+                  { title: "Lakshadweep", value: "IN-LD", country: "IND" },
+                  { title: "Madhya Pradesh", value: "IN-MP", country: "IND" },
+                  { title: "Maharashtra", value: "IN-MH", country: "IND" },
+                  { title: "Manipur", value: "IN-MN", country: "IND" },
+                  { title: "Meghalaya", value: "IN-ML", country: "IND" },
+                  { title: "Mizoram", value: "IN-MZ", country: "IND" },
+                  { title: "Nagaland", value: "IN-NL", country: "IND" },
+                  { title: "Odisha", value: "IN-OD", country: "IND" },
+                  { title: "Puducherry", value: "IN-PY", country: "IND" },
+                  { title: "Punjab", value: "IN-PB", country: "IND" },
+                  { title: "Rajasthan", value: "IN-RJ", country: "IND" },
+                  { title: "Sikkim", value: "IN-SK", country: "IND" },
+                  { title: "Tamil Nadu", value: "IN-TN", country: "IND" },
+                  { title: "Telangana", value: "IN-TS", country: "IND" },
+                  { title: "Tripura", value: "IN-TR", country: "IND" },
+                  { title: "Uttar Pradesh", value: "IN-UP", country: "IND" },
+                  { title: "Uttarakhand", value: "IN-UK", country: "IND" },
+                  { title: "West Bengal", value: "IN-WB", country: "IND" },
+                  { title: "Australian Capital Territory", value: "AU-ACT", country: "AUS" },
+                  { title: "New South Wales", value: "AU-NSW", country: "AUS" },
+                  { title: "Northern Territory", value: "AU-NT", country: "AUS" },
+                  { title: "Queensland", value: "AU-QLD", country: "AUS" },
+                  { title: "South Australia", value: "AU-SA", country: "AUS" },
+                  { title: "Tasmania", value: "AU-TAS", country: "AUS" },
+                  { title: "Victoria", value: "AU-VIC", country: "AUS" },
+                  { title: "Western Australia", value: "AU-WA", country: "AUS" }
+                ]
+
     # Detect if user wants to view contacts only (get/view/show/list)
     - kind: SetVariable
       id: set_is_view_only
       variable: Topic.isViewOnly
       value: =(!IsBlank(Topic.InputAction) && "get" in Lower(Topic.InputAction)) || "get" in Lower(System.Activity.Text) || "view" in Lower(System.Activity.Text) || "show" in Lower(System.Activity.Text) || "list" in Lower(System.Activity.Text) || "see my" in Lower(System.Activity.Text) || "what are" in Lower(System.Activity.Text) || "display" in Lower(System.Activity.Text)
+
+    # Detect if user wants to delete a contact
+    - kind: SetVariable
+      id: set_is_delete_mode
+      variable: Topic.isDeleteIntent
+      value: ="delete" in Lower(System.Activity.Text) || "remove" in Lower(System.Activity.Text)
+
+    # Check if user explicitly wants to add a new contact - skip loading existing contacts
+    - kind: ConditionGroup
+      id: check_direct_add
+      conditions:
+        - id: user_wants_add_directly
+          condition: =Topic.isViewOnly <> true && ((!IsBlank(Topic.InputAction) && "add" in Lower(Topic.InputAction)) || "add" in Lower(System.Activity.Text) || "new emergency contact" in Lower(System.Activity.Text) || "create" in Lower(System.Activity.Text))
+          displayName: User wants to add a new contact directly
+          actions:
+            - kind: SetVariable
+              id: set_add_mode_direct
+              variable: Topic.isUpdateMode
+              value: =false
+            - kind: SendActivity
+              id: direct_add_msg
+              activity: Sure, I can help you add a new emergency contact.
+            - kind: GotoAction
+              id: goto_country_selection_direct
+              actionId: country_selection_card
 
     - kind: BeginDialog
       id: fetch_emergency_contacts
@@ -332,7 +484,7 @@ beginDialog:
 
                     - kind: SendActivity
                       id: view_only_footer
-                      activity: "If you need to update any information for these contacts, just let me know which one you'd like to change."
+                      activity: "If you need to update or add any information for these contacts, just let me know which one you'd like to change or if you want to add a new contact."
 
                     - kind: CancelAllDialogs
                       id: end_view_only
@@ -340,7 +492,7 @@ beginDialog:
             - kind: SetVariable
               id: set_intro_msg_text
               variable: Topic.introMsgText
-              value: ="Sure, I can help you with that. Here's where you can update your emergency contacts. I've identified " & Text(CountRows(Topic.selectionChoices)) & " emergency contact(s) of yours from [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
+              value: ="Sure, I can help you with that. Here's where you can update and add emergency contacts. I've identified " & Text(CountRows(Topic.selectionChoices)) & " emergency contact(s) of yours from [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
 
             - kind: SendActivity
               id: intro_selection_msg
@@ -357,7 +509,7 @@ beginDialog:
                   body: [
                     {
                       type: "TextBlock",
-                      text: "Select an emergency contact to update",
+                      text: If(Topic.isDeleteIntent, "Select an emergency contact to delete", "Select an emergency contact to update, delete, or add a new contact."),
                       weight: "Bolder",
                       size: "Medium",
                       wrap: true,
@@ -365,7 +517,7 @@ beginDialog:
                     },
                     {
                       type: "TextBlock",
-                      text: "You have " & CountRows(Topic.selectionChoices) & " emergency contact(s). Select a contact to update.",
+                      text: If(Topic.isDeleteIntent, "You have " & CountRows(Topic.selectionChoices) & " emergency contact(s). Select the contact you want to delete.", "You have " & CountRows(Topic.selectionChoices) & " emergency contact(s). Select to update or add a new contact."),
                       wrap: true,
                       spacing: "Small"
                     },
@@ -380,9 +532,17 @@ beginDialog:
                       value: First(Topic.selectionChoices).value
                     }
                   ],
-                  actions: [
-                    { type: "Action.Submit", title: "Continue", id: "Continue", data: { actionSubmitId: "Continue" } }
-                  ]
+                  actions: If(Topic.isDeleteIntent,
+                    [
+                      { type: "Action.Submit", title: "Delete contact", id: "DELETE", data: { actionSubmitId: "DELETE" } },
+                      { type: "Action.Submit", title: "Cancel", id: "Cancel", data: { actionSubmitId: "Cancel" }, associatedInputs: "none" }
+                    ],
+                    [
+                      { type: "Action.Submit", title: "Continue", id: "Continue", data: { actionSubmitId: "Continue" } },
+                      { type: "Action.Submit", title: "Delete contact", id: "DELETE", data: { actionSubmitId: "DELETE" } },
+                      { type: "Action.Submit", title: "Add an emergency contact", id: "ADD_NEW", data: { actionSubmitId: "ADD_NEW" }, associatedInputs: "none" }
+                    ]
+                  )
                 }
               output:
                 binding:
@@ -424,13 +584,37 @@ beginDialog:
                       variable: Topic.selectedContactData
                       value: =LookUp(Topic.contactSelectionList, WID = Topic.selectedContactWID)
 
+            - kind: ConditionGroup
+              id: handle_selection_delete
+              conditions:
+                - id: selection_delete_requested
+                  condition: =Topic.selectionActionId = "DELETE"
+                  displayName: User wants to delete from selection card
+                  actions:
+                    - kind: SetVariable
+                      id: set_selected_contact_for_delete
+                      variable: Topic.selectedContactData
+                      value: =LookUp(Topic.contactSelectionList, WID = Topic.selectedContactWID)
+
+                    - kind: GotoAction
+                      id: goto_delete_confirmation
+                      actionId: handle_delete_action
+
+              elseActions:
+                - kind: SetVariable
+                  id: set_add_mode
+                  variable: Topic.isUpdateMode
+                  value: =false
+
       elseActions:
+        - kind: SetVariable
+          id: set_add_mode_no_contacts
+          variable: Topic.isUpdateMode
+          value: =false
+
         - kind: SendActivity
           id: no_contacts_msg
-          activity: You don't have any emergency contacts configured yet. You can add one in [Workday](https://impl.workday.com/<TENANT_NAME>/home.htmld), your company's HR portal.
-
-        - kind: CancelAllDialogs
-          id: end_no_contacts
+          activity: You don't have any emergency contacts configured yet. Let's add one now.
 
     # Show context message before form (only for update mode)
     - kind: ConditionGroup
@@ -485,22 +669,7 @@ beginDialog:
                 { title: "Canada", value: "CAN" },
                 { title: "United Kingdom", value: "GBR" },
                 { title: "India", value: "IND" },
-                { title: "Australia", value: "AUS" },
-                { title: "Germany", value: "DEU" },
-                { title: "France", value: "FRA" },
-                { title: "Japan", value: "JPN" },
-                { title: "China", value: "CHN" },
-                { title: "Brazil", value: "BRA" },
-                { title: "Mexico", value: "MEX" },
-                { title: "Italy", value: "ITA" },
-                { title: "Spain", value: "ESP" },
-                { title: "Netherlands", value: "NLD" },
-                { title: "Singapore", value: "SGP" },
-                { title: "Ireland", value: "IRL" },
-                { title: "Israel", value: "ISR" },
-                { title: "South Korea", value: "KOR" },
-                { title: "Switzerland", value: "CHE" },
-                { title: "Sweden", value: "SWE" }
+                { title: "Australia", value: "AUS" }
               ],
               value: If(Topic.isUpdateMode, Topic.selectedContactData.CountryCode, "USA")
             }
@@ -535,119 +704,17 @@ beginDialog:
 
     # Step 2: Build filtered state/province choices based on selected country
     - kind: SetVariable
-      id: set_all_state_choices
-      variable: Topic.allStateProvinceChoices
-      value: |
-        =[
-          { title: "Alabama", value: "USA-AL", country: "USA" },
-          { title: "Alaska", value: "USA-AK", country: "USA" },
-          { title: "Arizona", value: "USA-AZ", country: "USA" },
-          { title: "Arkansas", value: "USA-AR", country: "USA" },
-          { title: "California", value: "USA-CA", country: "USA" },
-          { title: "Colorado", value: "USA-CO", country: "USA" },
-          { title: "Connecticut", value: "USA-CT", country: "USA" },
-          { title: "Delaware", value: "USA-DE", country: "USA" },
-          { title: "Florida", value: "USA-FL", country: "USA" },
-          { title: "Georgia", value: "USA-GA", country: "USA" },
-          { title: "Hawaii", value: "USA-HI", country: "USA" },
-          { title: "Idaho", value: "USA-ID", country: "USA" },
-          { title: "Illinois", value: "USA-IL", country: "USA" },
-          { title: "Indiana", value: "USA-IN", country: "USA" },
-          { title: "Iowa", value: "USA-IA", country: "USA" },
-          { title: "Kansas", value: "USA-KS", country: "USA" },
-          { title: "Kentucky", value: "USA-KY", country: "USA" },
-          { title: "Louisiana", value: "USA-LA", country: "USA" },
-          { title: "Maine", value: "USA-ME", country: "USA" },
-          { title: "Maryland", value: "USA-MD", country: "USA" },
-          { title: "Massachusetts", value: "USA-MA", country: "USA" },
-          { title: "Michigan", value: "USA-MI", country: "USA" },
-          { title: "Minnesota", value: "USA-MN", country: "USA" },
-          { title: "Mississippi", value: "USA-MS", country: "USA" },
-          { title: "Missouri", value: "USA-MO", country: "USA" },
-          { title: "Montana", value: "USA-MT", country: "USA" },
-          { title: "Nebraska", value: "USA-NE", country: "USA" },
-          { title: "Nevada", value: "USA-NV", country: "USA" },
-          { title: "New Hampshire", value: "USA-NH", country: "USA" },
-          { title: "New Jersey", value: "USA-NJ", country: "USA" },
-          { title: "New Mexico", value: "USA-NM", country: "USA" },
-          { title: "New York", value: "USA-NY", country: "USA" },
-          { title: "North Carolina", value: "USA-NC", country: "USA" },
-          { title: "North Dakota", value: "USA-ND", country: "USA" },
-          { title: "Ohio", value: "USA-OH", country: "USA" },
-          { title: "Oklahoma", value: "USA-OK", country: "USA" },
-          { title: "Oregon", value: "USA-OR", country: "USA" },
-          { title: "Pennsylvania", value: "USA-PA", country: "USA" },
-          { title: "Rhode Island", value: "USA-RI", country: "USA" },
-          { title: "South Carolina", value: "USA-SC", country: "USA" },
-          { title: "South Dakota", value: "USA-SD", country: "USA" },
-          { title: "Tennessee", value: "USA-TN", country: "USA" },
-          { title: "Texas", value: "USA-TX", country: "USA" },
-          { title: "Utah", value: "USA-UT", country: "USA" },
-          { title: "Vermont", value: "USA-VT", country: "USA" },
-          { title: "Virginia", value: "USA-VA", country: "USA" },
-          { title: "Washington", value: "USA-WA", country: "USA" },
-          { title: "West Virginia", value: "USA-WV", country: "USA" },
-          { title: "Wisconsin", value: "USA-WI", country: "USA" },
-          { title: "Wyoming", value: "USA-WY", country: "USA" },
-          { title: "District of Columbia", value: "USA-DC", country: "USA" },
-          { title: "Alberta", value: "CAN-AB", country: "CAN" },
-          { title: "British Columbia", value: "CAN-BC", country: "CAN" },
-          { title: "Manitoba", value: "CAN-MB", country: "CAN" },
-          { title: "New Brunswick", value: "CAN-NB", country: "CAN" },
-          { title: "Newfoundland and Labrador", value: "CAN-NL", country: "CAN" },
-          { title: "Nova Scotia", value: "CAN-NS", country: "CAN" },
-          { title: "Ontario", value: "CAN-ON", country: "CAN" },
-          { title: "Prince Edward Island", value: "CAN-PE", country: "CAN" },
-          { title: "Quebec", value: "CAN-QC", country: "CAN" },
-          { title: "Saskatchewan", value: "CAN-SK", country: "CAN" },
-          { title: "England", value: "GBR-ENG", country: "GBR" },
-          { title: "Scotland", value: "GBR-SCT", country: "GBR" },
-          { title: "Wales", value: "GBR-WLS", country: "GBR" },
-          { title: "Northern Ireland", value: "GBR-NIR", country: "GBR" },
-          { title: "Andhra Pradesh", value: "IND-AP", country: "IND" },
-          { title: "Delhi", value: "IND-DL", country: "IND" },
-          { title: "Gujarat", value: "IND-GJ", country: "IND" },
-          { title: "Haryana", value: "IND-HR", country: "IND" },
-          { title: "Karnataka", value: "IND-KA", country: "IND" },
-          { title: "Kerala", value: "IND-KL", country: "IND" },
-          { title: "Madhya Pradesh", value: "IND-MP", country: "IND" },
-          { title: "Maharashtra", value: "IND-MH", country: "IND" },
-          { title: "Punjab", value: "IND-PB", country: "IND" },
-          { title: "Rajasthan", value: "IND-RJ", country: "IND" },
-          { title: "Tamil Nadu", value: "IND-TN", country: "IND" },
-          { title: "Telangana", value: "IND-TG", country: "IND" },
-          { title: "Uttar Pradesh", value: "IND-UP", country: "IND" },
-          { title: "West Bengal", value: "IND-WB", country: "IND" },
-          { title: "Australian Capital Territory", value: "AUS-ACT", country: "AUS" },
-          { title: "New South Wales", value: "AUS-NSW", country: "AUS" },
-          { title: "Northern Territory", value: "AUS-NT", country: "AUS" },
-          { title: "Queensland", value: "AUS-QLD", country: "AUS" },
-          { title: "South Australia", value: "AUS-SA", country: "AUS" },
-          { title: "Tasmania", value: "AUS-TAS", country: "AUS" },
-          { title: "Victoria", value: "AUS-VIC", country: "AUS" },
-          { title: "Western Australia", value: "AUS-WA", country: "AUS" },
-          { title: "Bavaria", value: "DEU-BY", country: "DEU" },
-          { title: "Berlin", value: "DEU-BE", country: "DEU" },
-          { title: "Hamburg", value: "DEU-HH", country: "DEU" },
-          { title: "Hesse", value: "DEU-HE", country: "DEU" },
-          { title: "North Rhine-Westphalia", value: "DEU-NW", country: "DEU" },
-          { title: "Île-de-France", value: "FRA-IDF", country: "FRA" },
-          { title: "Provence-Alpes-Côte d'Azur", value: "FRA-PAC", country: "FRA" },
-          { title: "Auvergne-Rhône-Alpes", value: "FRA-ARA", country: "FRA" }
-        ]
-
-    - kind: SetVariable
       id: set_filtered_state_choices
       displayName: Filter states by selected country
       variable: Topic.filteredStateProvinceChoices
-      value: =Filter(Topic.allStateProvinceChoices, country = Topic.countryCode)
+      value: =Filter(Global.StateProvinceChoices, country = Topic.countryCode)
 
     # Map address country to default phone dial code
     - kind: SetVariable
       id: set_default_phone_dial_code
       displayName: Default phone dial code for selected country
       variable: Topic.defaultPhoneDialCode
-      value: =Switch(Topic.countryCode, "USA", "1", "CAN", "1", "GBR", "44", "IND", "91", "AUS", "61", "DEU", "49", "FRA", "33", "JPN", "81", "CHN", "86", "BRA", "55", "MEX", "52", "ITA", "39", "ESP", "34", "NLD", "31", "SGP", "65", "IRL", "353", "ISR", "972", "KOR", "82", "CHE", "41", "SWE", "46", "1")
+      value: =Switch(Topic.countryCode, "USA", "1", "CAN", "1", "GBR", "44", "IND", "91", "AUS", "61", "1")
 
     # Step 3: Main emergency contact form (with filtered states)
     - kind: AdaptiveCardPrompt
@@ -661,7 +728,7 @@ beginDialog:
           body: [
             {
               type: "TextBlock",
-              text: "Update emergency contact",
+              text: If(Topic.isUpdateMode, "Update emergency contact", "Add emergency contact"),
               weight: "Bolder",
               size: "Medium",
               wrap: true,
@@ -900,7 +967,7 @@ beginDialog:
                     },
                     {
                       type: "TextBlock",
-                      text: LookUp([{v:"USA",t:"United States"},{v:"CAN",t:"Canada"},{v:"GBR",t:"United Kingdom"},{v:"IND",t:"India"},{v:"AUS",t:"Australia"},{v:"DEU",t:"Germany"},{v:"FRA",t:"France"},{v:"JPN",t:"Japan"},{v:"CHN",t:"China"},{v:"BRA",t:"Brazil"},{v:"MEX",t:"Mexico"},{v:"ITA",t:"Italy"},{v:"ESP",t:"Spain"},{v:"NLD",t:"Netherlands"},{v:"SGP",t:"Singapore"},{v:"IRL",t:"Ireland"},{v:"ISR",t:"Israel"},{v:"KOR",t:"South Korea"},{v:"CHE",t:"Switzerland"},{v:"SWE",t:"Sweden"}], v = Topic.countryCode).t,
+                      text: LookUp([{v:"USA",t:"United States"},{v:"CAN",t:"Canada"},{v:"GBR",t:"United Kingdom"},{v:"IND",t:"India"},{v:"AUS",t:"Australia"}], v = Topic.countryCode).t,
                       wrap: true,
                       spacing: "Small"
                     }
@@ -909,11 +976,16 @@ beginDialog:
               ]
             }
           ],
-          actions: [
+          actions: If(Topic.isUpdateMode,
+            [
               { type: "Action.Submit", title: "Submit changes", id: "Submit", data: { actionSubmitId: "Submit" } },
-              { type: "Action.Submit", title: "Delete contact", id: "Delete", data: { actionSubmitId: "Delete" }, associatedInputs: "none" },
+              { type: "Action.Submit", title: "Cancel", id: "Cancel", data: { actionSubmitId: "Cancel" }, associatedInputs: "none" }
+            ],
+            [
+              { type: "Action.Submit", title: "Submit", id: "Submit", data: { actionSubmitId: "Submit" } },
               { type: "Action.Submit", title: "Cancel", id: "Cancel", data: { actionSubmitId: "Cancel" }, associatedInputs: "none" }
             ]
+          )
         }
       output:
         binding:
@@ -960,12 +1032,12 @@ beginDialog:
             - kind: CancelAllDialogs
               id: form_cancel_all
 
-    # Handle delete action - show confirmation
+    # Handle delete action - show confirmation (reached from selection card or form)
     - kind: ConditionGroup
       id: handle_delete_action
       conditions:
         - id: delete_requested
-          condition: =Topic.formActionId = "Delete"
+          condition: =Topic.formActionId = "Delete" || Topic.selectionActionId = "DELETE"
           displayName: User wants to delete contact
           actions:
             # Check if contact is primary - don't allow delete
@@ -1145,20 +1217,43 @@ beginDialog:
           condition: =Topic.formActionId = "Submit"
           displayName: User submitted the form
           actions:
-            - kind: BeginDialog
-              id: execute_update
-              displayName: Execute Workday Update
-              input:
-                binding:
-                  parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Emergency_Contact_WID}"",""value"":""" & Topic.selectedContactWID & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Updating emergency contact""}]}"
-                  scenarioName: msdyn_UpdateEmergencyContact
+            - kind: ConditionGroup
+              id: submit_to_workday
+              conditions:
+                - id: is_update_submit
+                  condition: =Topic.isUpdateMode = true
+                  displayName: Submit update to Workday
+                  actions:
+                    - kind: BeginDialog
+                      id: execute_update
+                      displayName: Execute Workday Update
+                      input:
+                        binding:
+                          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Emergency_Contact_WID}"",""value"":""" & Topic.selectedContactWID & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Updating emergency contact""}]}"
+                          scenarioName: msdyn_UpdateEmergencyContact
 
-              dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
-              output:
-                binding:
-                  errorResponse: Topic.errorResponse
-                  isSuccess: Topic.isSuccess
-                  workdayResponse: Topic.workdayResponse
+                      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+                      output:
+                        binding:
+                          errorResponse: Topic.errorResponse
+                          isSuccess: Topic.isSuccess
+                          workdayResponse: Topic.workdayResponse
+
+              elseActions:
+                - kind: BeginDialog
+                  id: execute_add
+                  displayName: Execute Workday Add
+                  input:
+                    binding:
+                      parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Adding emergency contact""}]}"
+                      scenarioName: msdyn_HRWorkdayHCMEmployeeAddEmergencyContact
+
+                  dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+                  output:
+                    binding:
+                      errorResponse: Topic.errorResponse
+                      isSuccess: Topic.isSuccess
+                      workdayResponse: Topic.workdayResponse
 
             - kind: ConditionGroup
               id: report_result
@@ -1185,7 +1280,7 @@ beginDialog:
                     - kind: SetVariable
                       id: set_failure_msg_text
                       variable: Topic.failureMsgText
-                      value: ="An error occurred and your emergency contact was not updated."
+                      value: =If(Topic.isUpdateMode, "An error occurred and your emergency contact was not updated.", "An error occurred and your emergency contact was not added.")
 
                     - kind: SendActivity
                       id: failure_msg
@@ -1208,7 +1303,7 @@ beginDialog:
                 - kind: SetVariable
                   id: set_success_intro_text
                   variable: Topic.successIntroText
-                  value: ="Great! You've updated your emergency contact."
+                  value: =If(Topic.isUpdateMode, "Great! You've updated your emergency contact.", "Great! You've added a new emergency contact.")
 
                 - kind: SendActivity
                   id: success_intro_msg
@@ -1227,7 +1322,7 @@ beginDialog:
                             body: [
                               {
                                 type: "TextBlock",
-                                text: "✅ Emergency contact updated",
+                                text: If(Topic.isUpdateMode, "✅ Emergency contact updated", "✅ Emergency contact added"),
                                 weight: "Bolder",
                                 size: "Medium",
                                 wrap: true, 
@@ -1263,7 +1358,7 @@ inputType:
   properties:
     InputAction:
       displayName: InputAction
-      description: The action the user wants to perform (update, manage).
+      description: The action the user wants to perform (add, update, manage).
       type: String
 
 outputType: {}
