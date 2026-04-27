@@ -1,0 +1,223 @@
+# Copilot Studio Eval Gate Pipeline
+#
+# Runs Copilot Studio evaluations on every push to a PR targeting main.
+# Used as a branch policy gate — PRs cannot merge unless eval pass rate
+# meets the threshold defined in eval-config.json.
+#
+# Prerequisites:
+#   1. Azure Key Vault with secrets (see README for full list)
+#   2. ADO Service Connection (ARM) with Key Vault Secrets Officer role
+#   3. eval-config.json populated with environment details and botSchemaName
+#   4. Test set created in Copilot Studio Evaluate tab (travels with the solution)
+#   5. Pipeline set to max 1 concurrent run (sequential execution)
+#   6. First run: approve service connection permissions when prompted
+#
+# Agent options:
+#   - Self-hosted (macOS/Linux): Uses pac CLI directly (current config)
+#   - Microsoft-hosted (Windows/Linux): Use PowerPlatform Build Tools tasks instead
+#     (see commented-out section below)
+
+trigger: none
+
+# Run eval on every push to a PR targeting main
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/*
+
+# ---------------------------------------------------------------------------
+# Option A: Self-hosted agent (uses pac CLI directly)
+# ---------------------------------------------------------------------------
+pool: 'self-hosted'
+
+# ---------------------------------------------------------------------------
+# Option B: Microsoft-hosted agent (uncomment and use instead of Option A)
+# ---------------------------------------------------------------------------
+# pool:
+#   vmImage: 'ubuntu-latest'
+
+variables:
+  # Azure Resource Manager service connection for Key Vault access
+  AZURE_SERVICE_CONNECTION: '<your-arm-service-connection-name>'
+  # Key Vault name storing refresh token, MCS connection ID, and CI Dev SPN secret
+  KEY_VAULT_NAME: '<your-key-vault-name>'
+  # CI Dev environment details (for pac CLI auth)
+  CI_DEV_ENV_URL: '<your-ci-dev-environment-url>'   # e.g., https://org12345.crm.dynamics.com/
+  CI_DEV_APP_ID: '<your-ci-dev-spn-app-id>'
+  CI_DEV_TENANT_ID: '<your-tenant-id>'
+
+steps:
+  - checkout: self
+
+  - task: NodeTool@0
+    displayName: 'Install Node.js'
+    inputs:
+      versionSpec: '18.x'
+
+  - script: cd $(Build.SourcesDirectory)/scripts && npm install
+    displayName: 'Install dependencies'
+
+  # Fetch all secrets from Key Vault
+  - task: AzureKeyVault@2
+    displayName: 'Fetch secrets from Key Vault'
+    inputs:
+      azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+      KeyVaultName: '$(KEY_VAULT_NAME)'
+      SecretsFilter: 'copilot-studio-eval-refresh-token,copilot-studio-eval-mcs-connection-id,copilot-studio-ci-dev-client-secret'
+      RunAsPreJob: false
+
+  # ---------------------------------------------------------------------------
+  # Option A: Self-hosted agent — pack, import, and resolve via pac CLI
+  # ---------------------------------------------------------------------------
+  - script: |
+      set -euo pipefail
+      set +x  # Prevent secrets from appearing in debug/trace logs
+
+      export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
+      PAC="$HOME/.dotnet/tools/pac"
+
+      # Auth to CI Dev with SPN (secret via env var, not CLI arg)
+      $PAC auth create \
+        --environment "$(CI_DEV_ENV_URL)" \
+        --applicationId "$(CI_DEV_APP_ID)" \
+        --clientSecret "$SPN_CLIENT_SECRET" \
+        --tenant "$(CI_DEV_TENANT_ID)"
+
+      # Pack unmanaged solution
+      echo "Packing solution from src/..."
+      $PAC solution pack \
+        --zipfile "$(Build.ArtifactStagingDirectory)/solution_unmanaged.zip" \
+        --folder "$(Build.SourcesDirectory)/src"
+
+      # Import into CI Dev
+      echo "Importing solution into CI Dev..."
+      $PAC solution import \
+        --path "$(Build.ArtifactStagingDirectory)/solution_unmanaged.zip" \
+        --environment "$(CI_DEV_ENV_URL)" \
+        --async
+
+      # Resolve bot ID via Dataverse OData query using SPN client credentials
+      BOT_SCHEMA_NAME=$(python3 -c "import json; print(json.load(open('eval-config.json'))['botSchemaName'])")
+      ENV_URL=$(python3 -c "import json; print(json.load(open('eval-config.json'))['environmentUrl'])")
+
+      echo "Resolving bot ID for: $BOT_SCHEMA_NAME in $ENV_URL"
+
+      TOKEN=$(curl -sf --no-progress-meter -X POST \
+        "https://login.microsoftonline.com/${SPN_TENANT_ID}/oauth2/v2.0/token" \
+        -d "client_id=${SPN_APP_ID}" \
+        -d "client_secret=${SPN_CLIENT_SECRET}" \
+        -d "scope=${ENV_URL}.default" \
+        -d "grant_type=client_credentials" 2>/dev/null \
+        | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+      BOT_ID=$(curl -sf "${ENV_URL}api/data/v9.2/bots?\$filter=schemaname%20eq%20'${BOT_SCHEMA_NAME}'&\$select=botid" \
+        -H "Authorization: Bearer $TOKEN" \
+        -H "Accept: application/json" \
+        -H "OData-MaxVersion: 4.0" \
+        -H "OData-Version: 4.0" \
+        | python3 -c "import sys,json; print(json.load(sys.stdin)['value'][0]['botid'])")
+
+      echo "Resolved bot ID: $BOT_ID"
+      echo "##vso[task.setvariable variable=RESOLVED_BOT_ID]$BOT_ID"
+    displayName: 'Pack, import, and resolve bot ID'
+    env:
+      SPN_TENANT_ID: $(CI_DEV_TENANT_ID)
+      SPN_APP_ID: $(CI_DEV_APP_ID)
+      SPN_CLIENT_SECRET: $(copilot-studio-ci-dev-client-secret)
+
+  # ---------------------------------------------------------------------------
+  # Option B: Microsoft-hosted agent — use Power Platform Build Tools instead
+  # (uncomment this section and comment out Option A above)
+  # ---------------------------------------------------------------------------
+  # - task: PowerPlatformToolInstaller@2
+  #     displayName: 'Install Power Platform CLI'
+  #
+  # - task: PowerPlatformPackSolution@2
+  #   displayName: 'Pack unmanaged solution'
+  #   inputs:
+  #     SolutionSourceFolder: '$(Build.SourcesDirectory)/src'
+  #     SolutionOutputFile: '$(Build.ArtifactStagingDirectory)/solution_unmanaged.zip'
+  #     SolutionType: 'Unmanaged'
+  #
+  # - task: PowerPlatformImportSolution@2
+  #   displayName: 'Import into CI Dev'
+  #   inputs:
+  #     authenticationType: 'PowerPlatformSPN'
+  #     PowerPlatformSPN: '<your-pp-service-connection>'
+  #     SolutionInputFile: '$(Build.ArtifactStagingDirectory)/solution_unmanaged.zip'
+  #     AsyncOperation: true
+  #     MaxAsyncWaitTime: 60
+  #
+  # # Note: You still need to resolve the bot ID via Dataverse query or hardcode it.
+  # # The Build Tools tasks don't resolve bot IDs automatically.
+
+  # Run the eval gate
+  - script: |
+      set -euo pipefail
+      set +x
+
+      TOKEN_OUTPUT="$(Agent.TempDirectory)/updated-refresh-token"
+
+      MCS_FLAG=""
+      if [ -n "${MCS_CONNECTION_ID:-}" ]; then
+        MCS_FLAG="--mcs-connection-id $MCS_CONNECTION_ID"
+      fi
+
+      node scripts/eval-gate.mjs run \
+        --config eval-config.json \
+        --agent-id "$(RESOLVED_BOT_ID)" \
+        $MCS_FLAG \
+        --run-name "PR $(System.PullRequest.PullRequestNumber) @ $(Build.SourceVersion)" \
+        --output "$(Build.ArtifactStagingDirectory)/eval-results.json" \
+        --junit-output "$(Build.ArtifactStagingDirectory)/eval-results.junit.xml" \
+        --token-output "$TOKEN_OUTPUT"
+
+      echo "##vso[task.setvariable variable=TOKEN_OUTPUT_PATH]$TOKEN_OUTPUT"
+    displayName: 'Run Copilot Studio Eval'
+    env:
+      EVAL_REFRESH_TOKEN: $(copilot-studio-eval-refresh-token)
+      MCS_CONNECTION_ID: $(copilot-studio-eval-mcs-connection-id)
+
+  # Publish test results to ADO Tests tab
+  - task: PublishTestResults@2
+    displayName: 'Publish eval test results'
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '$(Build.ArtifactStagingDirectory)/eval-results.junit.xml'
+      testRunTitle: 'Copilot Studio Eval'
+      failTaskOnFailedTests: false
+
+  # Write updated refresh token back to Key Vault
+  - task: AzureCLI@2
+    displayName: 'Update refresh token in Key Vault'
+    condition: always()
+    inputs:
+      azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        set +x
+        TOKEN_FILE="$(Agent.TempDirectory)/updated-refresh-token"
+        if [ -f "$TOKEN_FILE" ]; then
+          az keyvault secret set \
+            --vault-name "$(KEY_VAULT_NAME)" \
+            --name "copilot-studio-eval-refresh-token" \
+            --value "$(cat "$TOKEN_FILE")" \
+            --output none
+          rm -f "$TOKEN_FILE"
+          echo "Refresh token updated in Key Vault and temp file cleaned up"
+        else
+          echo "No updated refresh token found — skipping"
+        fi
+
+  # Publish eval results as artifact
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish eval results'
+    condition: always()
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'eval-$(Build.SourceVersion)'

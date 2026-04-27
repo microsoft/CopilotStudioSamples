@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr26e_OrdersAgent.InvokeConnectedAgentTaskAction.Warehouseagent">
+  <componenttype>9</componenttype>
+  <description>warehouse agent</description>
+  <iscustomizable>0</iscustomizable>
+  <name>Warehouse agent</name>
+  <parentbotid>
+    <schemaname>cr26e_OrdersAgent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>
