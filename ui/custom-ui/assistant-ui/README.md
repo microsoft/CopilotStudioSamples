@@ -1,3 +1,9 @@
+---
+title: Assistant UI
+parent: Custom UI
+grand_parent: UI
+nav_order: 3
+---
 # Copilot Studio + Assistant UI Integration Sample
 
 This project demonstrates how to integrate Copilot Studio with Assistant UI to create a modern, responsive chat interface with AI capabilities.
@@ -10,7 +16,7 @@ This sample showcases:
 - Multiple conversation threads
 
 <p align="center">
-  <img src="./docs/images/screenshot.png" alt="Screenshot of the Assistant UI with Copilot Studio">
+  <img src="./assistant-ui-mcs/docs/images/screenshot.png" alt="Screenshot of the Assistant UI with Copilot Studio">
 </p>
 
 ## Prerequisites
@@ -50,18 +56,12 @@ This sample showcases:
 1. Clone this repository and navigate to the project directory:
    ```bash
    git clone https://github.com/microsoft/CopilotStudioSamples
-   cd CopilotStudioSamples/AssistantUICopilotStudioClient/assistant-ui-mcs
+   cd CopilotStudioSamples/ui/custom-ui/assistant-ui/assistant-ui-mcs
    ```
 
 2. Install dependencies:
    ```bash
    npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   # or
-   bun install
    ```
 3. Create a `.env.local` file in the root of the project and add the following environment variables:
    ```env
@@ -75,12 +75,6 @@ This sample showcases:
 4. Start the development server:
    ```bash
    npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   # or
-   bun dev
    ```
 5. Open your browser and navigate to `http://localhost:3000` to see the application in action.
 6. You will be prompted to sign in with Microsoft credentials
