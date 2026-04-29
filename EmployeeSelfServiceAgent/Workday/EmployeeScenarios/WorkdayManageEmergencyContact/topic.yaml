@@ -2,7 +2,7 @@ kind: AdaptiveDialog
 inputs:
   - kind: AutomaticTaskInput
     propertyName: InputAction
-    description: "Look for keywords 'add', 'new', or 'create' in the user's request. If found, extract 'add'. Look for keywords 'get', 'view', 'show', 'list', 'see', 'display', or 'what are' in the user's request. If found, extract 'get'. Otherwise extract 'manage'."
+    description: "Look for keywords 'add', 'new', or 'create' in the user's request. If found, extract 'add'. Look for keywords 'get', 'view', 'show', 'list', 'see', 'display', or 'what are' in the user's request. If found, extract 'get'. Look for keywords 'delete' or 'remove' in the user's request. If found, extract 'delete'. Otherwise extract 'manage'."
     entity: StringPrebuiltEntity
     shouldPromptUser: false
 
@@ -188,7 +188,7 @@ beginDialog:
     - kind: SetVariable
       id: set_is_delete_mode
       variable: Topic.isDeleteIntent
-      value: ="delete" in Lower(System.Activity.Text) || "remove" in Lower(System.Activity.Text)
+      value: =(!IsBlank(Topic.InputAction) && "delete" in Lower(Topic.InputAction)) || "delete" in Lower(System.Activity.Text) || "remove" in Lower(System.Activity.Text)
 
     # Check if user explicitly wants to add a new contact - skip loading existing contacts
     - kind: ConditionGroup
