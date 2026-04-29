@@ -78,28 +78,6 @@ beginDialog:
       variable: Topic.AsOfEffectiveDate
       value: =Today()
 
-    - kind: SetVariable
-      id: set_time_off_reason_config
-      variable: Topic.TimeOffReasonConfig
-      value: |-
-        =Table(
-          {Title: "Half Day PM Floating", ReasonID: "half_day_pm_floating", TimeOffTypeID: "ESS_Floating_Holiday_Hours"},
-          {Title: "Half Day AM Floating", ReasonID: "half_day_am_floating", TimeOffTypeID: "ESS_Floating_Holiday_Hours"},
-          {Title: "Full Day Floating", ReasonID: "full_day_floating", TimeOffTypeID: "ESS_Floating_Holiday_Hours"},
-
-          {Title: "Full Day Comp", ReasonID: "Full day-COI", TimeOffTypeID: "ESS_Comp_Off"},
-          {Title: "Half Day PM Comp off", ReasonID: "Half day PM-COI", TimeOffTypeID: "ESS_Comp_Off"},
-          {Title: "Half Day AM Comp off", ReasonID: "Half day AM-COI", TimeOffTypeID: "ESS_Comp_Off"},
-
-          {Title: "Half Day PM Sick", ReasonID: "Half day PM_Sick_IN", TimeOffTypeID: "ESS_Sick_Time_Off"},
-          {Title: "Half Day AM Sick", ReasonID: "Half day AM_Sick_IN", TimeOffTypeID: "ESS_Sick_Time_Off"},
-          {Title: "Full Day Sick", ReasonID: "Full day_Sick_IN", TimeOffTypeID: "ESS_Sick_Time_Off"},
-          
-          {Title: "Half Day PM Vacation", ReasonID: "Half Day_PM_Vac", TimeOffTypeID: "ESS_Vacation_Hours"},
-          {Title: "Half Day AM Vacation", ReasonID: "Half Day_AM_Vac", TimeOffTypeID: "ESS_Vacation_Hours"},
-          {Title: "Full Day Vacation", ReasonID: "Full Day_Vac", TimeOffTypeID: "ESS_Vacation_Hours"}
-        )
-
     # ================================================================
     # REASON MAPPING CONFIGURATION
     # Maps generic reason (Full Day / Half Day AM / Half Day PM) +
@@ -137,8 +115,8 @@ beginDialog:
       variable: Topic.LeaveTypeConfig
       value: |-
         =Table(
-          {Keywords: "vacation,annual,pto,holiday pay", LeaveTypeValue: "Vacation_Hours"},
-          {Keywords: "floating,floater,float day", LeaveTypeValue: "Floating_Holiday_Hours"},
+          {Keywords: "vacation,annual,pto,holiday pay", LeaveTypeValue: "ESS_Vacation_Hours"},
+          {Keywords: "floating,floater,float day", LeaveTypeValue: "ESS_Floating_Holiday_Hours"},
           {Keywords: "sick,illness,medical,unwell,not feeling well", LeaveTypeValue: "ESS_Sick_Time_Off"}
         )
 
@@ -784,7 +762,7 @@ beginDialog:
                               },
                               {
                                 type: "TableCell",
-                                items: [{ type: "TextBlock", text: Switch(Topic.timeOffType, "Vacation_Hours", "Vacation", "Floating_Holiday_Hours", "Floating holiday", "Sick Leave", "Sick leave", Topic.timeOffType), wrap: true }]
+                                items: [{ type: "TextBlock", text: Switch(Topic.timeOffType, "ESS_Vacation_Hours", "Vacation", "ESS_Floating_Holiday_Hours", "Floating holiday", "ESS_Sick_Time_Off", "Sick leave", "ESS_Comp_Off", "Comp off", Topic.timeOffType), wrap: true }]
                               }
                             ]
                           },
