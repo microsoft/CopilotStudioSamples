@@ -1,0 +1,188 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Shows the employee's open tasks from their Workday inbox.
+  Available fields per task: task title (descriptor), due date, assigned date, step type, initiator (who submitted), overall process name.
+
+  Display rules:
+  - Heading: "Your open tasks in Workday"
+  - Show total count: "You have N open task(s)"
+  - If total exceeds the shown count, note: "showing the most recent N"
+  - List each task with: title, process, who it is from, step type, assigned date, due date
+  - If no tasks: "Your Workday inbox is empty. No open tasks found."
+  - Answer only for the requesting user's own tasks. Do not retrieve tasks for others.
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - What tasks do I have in Workday?
+      - Show my open tasks
+      - What's in my Workday inbox?
+      - Do I have any pending tasks?
+      - What actions are waiting for me in Workday?
+      - Show me my to-do list in Workday
+      - My Workday tasks
+      - Any tasks I need to complete?
+
+  actions:
+    - kind: SetVariable
+      id: set_max_tasks
+      displayName: Set max tasks to show
+      variable: Topic.MaxTasks
+      value: =20
+
+    - kind: BeginDialog
+      id: get_inbox_tasks
+      displayName: Get Workday inbox tasks
+      input:
+        binding:
+          parameters: ="{""workerID"":""Employee_ID=" & Global.ESS_UserContext_Employee_Id & """,""limit"":" & Topic.MaxTasks & ",""offset"":0}"
+          operationName: GetWorkerInboxTasks
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ConditionGroup
+      id: handle_result
+      conditions:
+        - id: success
+          condition: =Topic.isSuccess = true
+          actions:
+            - kind: ParseValue
+              id: parse_inbox
+              displayName: Parse inbox tasks response
+              variable: Topic.parsedInbox
+              valueType:
+                kind: Record
+                properties:
+                  data:
+                    type:
+                      kind: Table
+                      properties:
+                        id: String
+                        descriptor: String
+                        due: String
+                        assigned: String
+                        stepType:
+                          type:
+                            kind: Record
+                            properties:
+                              descriptor: String
+                        initiator:
+                          type:
+                            kind: Record
+                            properties:
+                              descriptor: String
+                        overallProcess:
+                          type:
+                            kind: Record
+                            properties:
+                              descriptor: String
+                  total:
+                    type: Number
+
+              value: =Topic.workdayResponse
+
+            - kind: SetVariable
+              id: set_shown_count
+              variable: Topic.ShownCount
+              value: =CountRows(Topic.parsedInbox.data)
+
+            - kind: SetVariable
+              id: set_total
+              variable: Topic.TotalTasks
+              value: =Coalesce(Topic.parsedInbox.total, Topic.ShownCount)
+
+            - kind: ConditionGroup
+              id: check_empty
+              conditions:
+                - id: has_tasks
+                  condition: =Topic.ShownCount > 0
+                  actions:
+                    - kind: SendActivity
+                      id: show_tasks_card
+                      activity:
+                        attachments:
+                          - kind: AdaptiveCardTemplate
+                            cardContent: |-
+                              ={
+                                type: "AdaptiveCard",
+                                '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                                version: "1.5",
+                                body: [
+                                  {
+                                    type: "TextBlock",
+                                    text: "Your open tasks in Workday",
+                                    weight: "Bolder",
+                                    size: "Medium",
+                                    wrap: true
+                                  },
+                                  {
+                                    type: "TextBlock",
+                                    text: "You have " & Topic.TotalTasks & " open task" & If(Topic.TotalTasks = 1, "", "s") & If(Topic.TotalTasks > Topic.ShownCount, ", showing the most recent " & Topic.ShownCount, ""),
+                                    wrap: true,
+                                    spacing: "Small",
+                                    isSubtle: true
+                                  },
+                                  {
+                                    type: "Container",
+                                    spacing: "Medium",
+                                    items: ForAll(
+                                      Topic.parsedInbox.data,
+                                      {
+                                        type: "Container",
+                                        style: "emphasis",
+                                        bleed: false,
+                                        spacing: "Small",
+                                        items: [
+                                          {
+                                            type: "TextBlock",
+                                            text: Coalesce(descriptor, "Untitled task"),
+                                            weight: "Bolder",
+                                            wrap: true
+                                          },
+                                          {
+                                            type: "FactSet",
+                                            spacing: "Small",
+                                            facts: [
+                                              { title: "Process", value: If(IsBlank(overallProcess.descriptor), "-", overallProcess.descriptor) },
+                                              { title: "From", value: If(IsBlank(initiator.descriptor), "-", initiator.descriptor) },
+                                              { title: "Type", value: If(IsBlank(stepType.descriptor), "-", stepType.descriptor) },
+                                              { title: "Assigned", value: If(IsBlank(assigned), "-", Left(assigned, 10)) },
+                                              { title: "Due", value: If(IsBlank(due), "-", Left(due, 10)) }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    )
+                                  }
+                                ],
+                                actions: []
+                              }
+
+                    - kind: CancelAllDialogs
+                      id: end_dialogs
+
+              elseActions:
+                - kind: SendActivity
+                  id: no_tasks
+                  activity: Your Workday inbox is empty. No open tasks found. Is there anything else I can help with?
+
+                - kind: CancelAllDialogs
+                  id: end_no_tasks
+
+      elseActions:
+        - kind: SendActivity
+          id: error_msg
+          activity: I was not able to retrieve your tasks right now. Please try again or check your Workday inbox directly.
+
+        - kind: CancelAllDialogs
+          id: end_error
+
+inputType: {}
+outputType: {}
