@@ -1,6 +1,6 @@
 # Workday Extended Topics
 
-These topics extend the base ESS agent with additional Workday scenarios. They use the Workday REST API via the WorkdayRESTExecution flow and WorkdaySystemGetRESTExecution system topic included in the base solution. Add only the topics relevant to your organization.
+These topics extend the base ESS agent with additional Workday scenarios. They use the Workday REST API via the WorkdayRESTExecution flow and WorkdaySystemGetRESTExecution system topic included in the base solution. Add only the topics relevant to your organization and also ensure that the OAuth Client in Workday has needed scopes to access the data.
 
 | File | Who uses it | What it does |
 | --- | --- | --- |
