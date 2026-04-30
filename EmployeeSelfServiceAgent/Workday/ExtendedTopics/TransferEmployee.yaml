@@ -1,0 +1,607 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Allows a manager to transfer one of their direct reports to a different manager.
+  The scenario is "Transfer to Different Manager" (move the worker to a new supervisory org).
+
+  Steps:
+  1. Manager selects one of their direct reports to transfer
+  2. Manager provides the new manager's email address
+  3. Agent resolves the new manager's supervisory org (via REST search)
+  4. Manager confirms effective date and submits
+  5. Agent shows confirmation with job change details and Workday link
+
+  NOTE: The jobChangeReason field may be required by your Workday tenant.
+  Set TRANSFER_REASON_ID to your tenant's transfer job change reason ID.
+  If not required, leave it blank and the connector will omit it.
+
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: ReporteeName
+    description: Name of the direct report to transfer, if mentioned in the trigger message
+    entity: PersonNamePrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - Transfer an employee to a new manager
+      - I want to transfer someone to a different manager
+      - Move a direct report to another team
+      - Transfer employee
+      - Reassign a reportee to a new manager
+      - Change manager for an employee
+
+  actions:
+    - kind: BeginDialog
+      id: check_manager
+      displayName: Check manager criteria
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdayManagerCheck
+
+    # ================================================================
+    # CONFIGURATION - customize for your environment
+    # TRANSFER_REASON_ID: your Workday job change reason ID for transfers.
+    # Leave blank ("") if your Workday tenant does not require it.
+    # ================================================================
+    - kind: SetVariable
+      id: set_reason_id
+      displayName: Set job change reason ID
+      variable: Topic.TransferReasonId
+      value: ""
+
+    # Step 1 - Get direct reports and let manager select one
+    - kind: BeginDialog
+      id: get_direct_reports
+      displayName: Get direct reports
+      input:
+        binding:
+          parameters: ="{""workerID"":""Employee_ID=" & Global.ESS_UserContext_Employee_Id & """,""limit"":50,""offset"":0}"
+          operationName: GetWorkerDirectReports
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.reportsError
+          isSuccess: Topic.reportsSuccess
+          workdayResponse: Topic.reportsResponse
+
+    - kind: ConditionGroup
+      id: check_reports_fetched
+      conditions:
+        - id: reports_failed
+          condition: =Topic.reportsSuccess = false
+          actions:
+            - kind: SendActivity
+              id: reports_error_msg
+              activity: I was not able to retrieve your direct reports right now. Please try again.
+
+            - kind: CancelAllDialogs
+              id: cancel_reports_failed
+
+    - kind: ParseValue
+      id: parse_reports
+      displayName: Parse direct reports
+      variable: Topic.parsedReports
+      valueType:
+        kind: Record
+        properties:
+          data:
+            type:
+              kind: Table
+              properties:
+                id: String
+                descriptor: String
+
+      value: =Topic.reportsResponse
+
+    - kind: ConditionGroup
+      id: check_has_reports
+      conditions:
+        - id: no_reports
+          condition: =CountRows(Topic.parsedReports.data) = 0
+          actions:
+            - kind: SendActivity
+              id: no_reports_msg
+              activity: You do not have any direct reports to transfer.
+
+            - kind: CancelAllDialogs
+              id: cancel_no_reports
+
+    # P1: Autofill reportee from trigger message if name was provided
+    - kind: SetVariable
+      id: autofill_reportee
+      displayName: Autofill reportee selection if name was provided
+      variable: Topic.autofillReporteeId
+      value: =If(IsBlank(Topic.ReporteeName), "", Coalesce(LookUp(Topic.parsedReports.data, descriptor = Topic.ReporteeName).id, LookUp(Topic.parsedReports.data, StartsWith(descriptor, Topic.ReporteeName)).id, ""))
+
+    - kind: AdaptiveCardPrompt
+      id: select_reportee
+      displayName: Select direct report to transfer
+      card: |-
+        ={
+          type: "AdaptiveCard",
+          '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+          version: "1.5",
+          body: [
+            {
+              type: "TextBlock",
+              text: "Transfer an employee to a new manager",
+              weight: "Bolder",
+              size: "Medium",
+              wrap: true
+            },
+            {
+              type: "TextBlock",
+              text: "Select the direct report you want to transfer:",
+              wrap: true,
+              spacing: "Small"
+            },
+            {
+              type: "Input.ChoiceSet",
+              id: "reporteeId",
+              style: "compact",
+              isRequired: true,
+              errorMessage: "Please select an employee to transfer.",
+              value: Topic.autofillReporteeId,
+              choices: ForAll(
+                Topic.parsedReports.data,
+                { title: descriptor, value: id }
+              )
+            }
+          ],
+          actions: [
+            { type: "Action.Submit", title: "Next", id: "Next" },
+            { type: "Action.Submit", title: "Cancel", id: "Cancel", associatedInputs: "none" }
+          ]
+        }
+      output:
+        binding:
+          actionSubmitId: Topic.actionSubmitId
+          reporteeId: Topic.targetWorkerID
+
+      outputType:
+        properties:
+          actionSubmitId: String
+          reporteeId: String
+
+    - kind: ConditionGroup
+      id: handle_reportee_cancel
+      conditions:
+        - id: cancelled
+          condition: =Topic.actionSubmitId = "Cancel"
+          actions:
+            - kind: SendActivity
+              id: cancel_msg
+              activity: Transfer cancelled. Let me know if you need anything else.
+
+            - kind: CancelAllDialogs
+              id: cancel_all
+
+    - kind: SetVariable
+      id: set_reportee_name
+      variable: Topic.targetWorkerName
+      value: =LookUp(Topic.parsedReports.data, id = Topic.targetWorkerID).descriptor
+
+    # Step 2 - Ask for new manager's name
+    - kind: AdaptiveCardPrompt
+      id: collect_transfer_details
+      displayName: Collect new manager details and effective date
+      card: |-
+        ={
+          type: "AdaptiveCard",
+          '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+          version: "1.5",
+          body: [
+            {
+              type: "TextBlock",
+              text: "Transfer " & Topic.targetWorkerName,
+              weight: "Bolder",
+              size: "Medium",
+              wrap: true
+            },
+            {
+              type: "TextBlock",
+              text: "Provide the new manager's details:",
+              wrap: true,
+              spacing: "Small"
+            },
+            {
+              type: "Input.Text",
+              id: "newManagerSearch",
+              label: "New manager's name",
+              placeholder: "Search by name...",
+              isRequired: true,
+              errorMessage: "Please enter the new manager's name."
+            },
+            {
+              type: "Input.Date",
+              id: "effectiveDate",
+              label: "Effective date for the transfer",
+              value: Text(Today(), "yyyy-MM-dd"),
+              isRequired: true,
+              errorMessage: "Please provide an effective date."
+            }
+          ],
+          actions: [
+            { type: "Action.Submit", title: "Next", id: "Next" },
+            { type: "Action.Submit", title: "Cancel", id: "Cancel", associatedInputs: "none" }
+          ]
+        }
+      output:
+        binding:
+          actionSubmitId: Topic.actionSubmitId2
+          newManagerSearch: Topic.newManagerSearch
+          effectiveDate: Topic.effectiveDate
+
+      outputType:
+        properties:
+          actionSubmitId: String
+          newManagerSearch: String
+          effectiveDate: String
+
+    - kind: ConditionGroup
+      id: handle_details_cancel
+      conditions:
+        - id: cancelled
+          condition: =Topic.actionSubmitId2 = "Cancel"
+          actions:
+            - kind: SendActivity
+              id: cancel_msg2
+              activity: Transfer cancelled. Let me know if you need anything else.
+
+            - kind: CancelAllDialogs
+              id: cancel_all2
+
+    # Step 3 - Search for new manager by name to get their worker ID
+    - kind: BeginDialog
+      id: search_new_manager
+      displayName: Search for new manager by name
+      input:
+        binding:
+          parameters: ="{""search"":""" & Topic.newManagerSearch & """,""limit"":5,""offset"":0}"
+          operationName: SearchWorkers
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.searchError
+          isSuccess: Topic.searchSuccess
+          workdayResponse: Topic.searchResponse
+
+    - kind: ConditionGroup
+      id: check_manager_found
+      conditions:
+        - id: search_failed
+          condition: =Topic.searchSuccess = false
+          actions:
+            - kind: SendActivity
+              id: search_fail_msg
+              activity: I could not search for that name in Workday. Please try again.
+
+            - kind: CancelAllDialogs
+              id: cancel_search_failed
+
+    - kind: ParseValue
+      id: parse_manager_search
+      displayName: Parse new manager search result
+      variable: Topic.parsedManager
+      valueType:
+        kind: Record
+        properties:
+          data:
+            type:
+              kind: Table
+              properties:
+                id: String
+                descriptor: String
+                primaryWorkEmail: String
+                businessTitle: String
+          total:
+            type: Number
+
+      value: =Topic.searchResponse
+
+    - kind: ConditionGroup
+      id: check_manager_result
+      conditions:
+        - id: not_found
+          condition: =CountRows(Topic.parsedManager.data) = 0
+          actions:
+            - kind: SendActivity
+              id: not_found_msg
+              activity: No Workday worker found matching **{Topic.newManagerSearch}**. Please check the name and try again.
+
+            - kind: CancelAllDialogs
+              id: cancel_not_found
+
+        - id: single_result
+          condition: =CountRows(Topic.parsedManager.data) = 1
+          actions:
+            - kind: SetVariable
+              id: set_new_manager_id_single
+              variable: Topic.newManagerWorkerID
+              value: =First(Topic.parsedManager.data).id
+
+            - kind: SetVariable
+              id: set_new_manager_name_single
+              variable: Topic.newManagerName
+              value: =First(Topic.parsedManager.data).descriptor
+
+      elseActions:
+        - kind: AdaptiveCardPrompt
+          id: pick_manager
+          displayName: Ask manager to select from multiple results
+          card: |-
+            ={
+              type: "AdaptiveCard",
+              '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+              version: "1.5",
+              body: [
+                {
+                  type: "TextBlock",
+                  text: "Select the new manager",
+                  weight: "Bolder",
+                  size: "Medium",
+                  wrap: true
+                },
+                {
+                  type: "TextBlock",
+                  text: "Multiple workers match. Please select the correct manager:",
+                  wrap: true,
+                  spacing: "Small",
+                  isSubtle: true
+                },
+                {
+                  type: "Input.ChoiceSet",
+                  id: "selectedManagerId",
+                  style: "compact",
+                  isRequired: true,
+                  errorMessage: "Please select a manager.",
+                  choices: ForAll(
+                    Topic.parsedManager.data,
+                    {
+                      title: descriptor & If(IsBlank(businessTitle), "", " - " & businessTitle) & If(IsBlank(primaryWorkEmail), "", " (" & primaryWorkEmail & ")"),
+                      value: id
+                    }
+                  )
+                }
+              ],
+              actions: [
+                { type: "Action.Submit", title: "Select", id: "Select" },
+                { type: "Action.Submit", title: "Cancel", id: "Cancel", associatedInputs: "none" }
+              ]
+            }
+          output:
+            binding:
+              actionSubmitId: Topic.actionSubmitId3
+              selectedManagerId: Topic.selectedManagerId
+
+          outputType:
+            properties:
+              actionSubmitId: String
+              selectedManagerId: String
+
+        - kind: ConditionGroup
+          id: handle_manager_pick_cancel
+          conditions:
+            - id: cancelled
+              condition: =Topic.actionSubmitId3 = "Cancel"
+              actions:
+                - kind: SendActivity
+                  id: manager_pick_cancel_msg
+                  activity: Transfer cancelled. Let me know if you need anything else.
+
+                - kind: CancelAllDialogs
+                  id: cancel_manager_pick
+
+        - kind: SetVariable
+          id: set_new_manager_id_multi
+          variable: Topic.newManagerWorkerID
+          value: =Topic.selectedManagerId
+
+        - kind: SetVariable
+          id: set_new_manager_name_multi
+          variable: Topic.newManagerName
+          value: =LookUp(Topic.parsedManager.data, id = Topic.selectedManagerId).descriptor
+
+    # Step 4 - Get supervisory org managed by the new manager
+    - kind: BeginDialog
+      id: get_manager_org
+      displayName: Get supervisory org managed by new manager
+      input:
+        binding:
+          parameters: ="{""workerID"":""" & Topic.newManagerWorkerID & """,""limit"":5,""offset"":0}"
+          operationName: GetSupervisoryOrganizationsManaged
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.orgError
+          isSuccess: Topic.orgSuccess
+          workdayResponse: Topic.orgResponse
+
+    - kind: ConditionGroup
+      id: check_org_found
+      conditions:
+        - id: org_failed
+          condition: =Topic.orgSuccess = false
+          actions:
+            - kind: SendActivity
+              id: org_fail_msg
+              activity: I found **{Topic.newManagerName}** in Workday but could not retrieve their supervisory organization. They may not manage a team yet.
+
+            - kind: CancelAllDialogs
+              id: cancel_org_failed
+
+    - kind: ParseValue
+      id: parse_org
+      displayName: Parse supervisory org
+      variable: Topic.parsedOrg
+      valueType:
+        kind: Record
+        properties:
+          data:
+            type:
+              kind: Table
+              properties:
+                id: String
+                descriptor: String
+          total:
+            type: Number
+
+      value: =Topic.orgResponse
+
+    - kind: ConditionGroup
+      id: check_org_exists
+      conditions:
+        - id: no_org
+          condition: =CountRows(Topic.parsedOrg.data) = 0
+          actions:
+            - kind: SendActivity
+              id: no_org_msg
+              activity: "**{Topic.newManagerName}** does not manage a supervisory organization in Workday. A manager must have an active org before an employee can be transferred to them."
+
+            - kind: CancelAllDialogs
+              id: cancel_no_org
+
+    # Use the first org (the primary one). If manager has multiple orgs, use the first.
+    - kind: SetVariable
+      id: set_org_id
+      variable: Topic.supervisoryOrgId
+      value: =First(Topic.parsedOrg.data).id
+
+    - kind: SetVariable
+      id: set_org_name
+      variable: Topic.supervisoryOrgName
+      value: =First(Topic.parsedOrg.data).descriptor
+
+    # Step 5 - Confirm and submit
+    - kind: Question
+      id: confirm_transfer
+      interruptionPolicy:
+        allowInterruption: false
+      variable: Topic.confirmTransfer
+      prompt: |-
+        Please confirm the transfer details:
+        - **Employee:** {Topic.targetWorkerName}
+        - **New manager:** {Topic.newManagerName}
+        - **New supervisory org:** {Topic.supervisoryOrgName}
+        - **Effective date:** {Topic.effectiveDate}
+
+        Proceed with the transfer?
+      entity: BooleanPrebuiltEntity
+
+    - kind: ConditionGroup
+      id: handle_confirm
+      conditions:
+        - id: not_confirmed
+          condition: =Topic.confirmTransfer = false
+          actions:
+            - kind: SendActivity
+              id: not_confirmed_msg
+              activity: Transfer cancelled. Let me know if you need anything else.
+
+            - kind: CancelAllDialogs
+              id: cancel_not_confirmed
+
+    - kind: BeginDialog
+      id: submit_transfer
+      displayName: Submit employee transfer
+      input:
+        binding:
+          parameters: ="{""workerID"":""" & Topic.targetWorkerID & """,""supervisoryOrganizationId"":""" & Topic.supervisoryOrgId & """" & If(IsBlank(Topic.TransferReasonId), "", ",""jobChangeReasonId"":""" & Topic.TransferReasonId & """") & ",""effective"":""" & Topic.effectiveDate & """,""moveManagersTeam"":false}"
+          operationName: TransferEmployee
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ConditionGroup
+      id: show_result
+      conditions:
+        - id: success
+          condition: =Topic.isSuccess = true
+          actions:
+            - kind: ParseValue
+              id: parse_transfer_result
+              variable: Topic.parsedTransfer
+              valueType:
+                kind: Record
+                properties:
+                  id: String
+                  descriptor: String
+                  effective: String
+
+              value: =Topic.workdayResponse
+
+            - kind: SendActivity
+              id: success_card
+              activity:
+                attachments:
+                  - kind: AdaptiveCardTemplate
+                    cardContent: |-
+                      ={
+                        type: "AdaptiveCard",
+                        '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                        version: "1.5",
+                        body: [
+                          {
+                            type: "TextBlock",
+                            text: "Transfer submitted",
+                            weight: "Bolder",
+                            size: "Medium",
+                            wrap: true
+                          },
+                          {
+                            type: "TextBlock",
+                            text: "The job change has been submitted in Workday and is pending processing.",
+                            wrap: true,
+                            spacing: "Small"
+                          },
+                          {
+                            type: "FactSet",
+                            spacing: "Medium",
+                            facts: [
+                              { title: "Employee", value: Topic.targetWorkerName },
+                              { title: "New manager", value: Topic.newManagerName },
+                              { title: "Effective date", value: Coalesce(Topic.parsedTransfer.effective, Topic.effectiveDate) },
+                              { title: "Job change ID", value: Topic.parsedTransfer.id }
+                            ]
+                          }
+                        ],
+                        actions: []
+                      }
+
+            - kind: CancelAllDialogs
+              id: end_success
+
+      elseActions:
+        - kind: AnswerQuestionWithAI
+          id: generate_error
+          autoSend: false
+          variable: Topic.friendlyError
+          userInput: =Topic.errorResponse
+          additionalInstructions: Reframe this Workday error for a manager in one short sentence. Do not apologize or include technical IDs.
+
+        - kind: SendActivity
+          id: error_msg
+          activity: "{If(IsBlank(Topic.friendlyError), \"The transfer could not be submitted. Please verify the details in Workday.\", Topic.friendlyError)}"
+
+        - kind: CancelAllDialogs
+          id: end_error
+
+inputType:
+  properties:
+    ReporteeName:
+      displayName: ReporteeName
+      description: Name of the direct report to transfer, if mentioned in the trigger message
+      type: String
+
+outputType: {}
