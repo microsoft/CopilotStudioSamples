@@ -1,0 +1,106 @@
+<workdayEntityConfigurationTemplate>
+    <scenario name="msdyn_HRWorkdayHCMEmployeeGetResidentialAddress">
+        <apiRequests>
+            <apiRequest>
+                <authType>User</authType>
+                <endpoint>
+                    <request>Template_GetResidentialAddressRequest</request>
+                    <serviceName>Human_Resources</serviceName>
+                    <version>v42.0</version>
+                </endpoint>
+                <responseProperties>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/@*[local-name()='Formatted_Address']</extractPath>
+                        <key>FormattedAddress</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Address_ID']/text()</extractPath>
+                        <key>AddressID</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Country_Reference']/*[local-name()='ID' and @*[local-name()='type']='ISO_3166-1_Alpha-3_Code']/text()</extractPath>
+                        <key>CountryCode</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Country_Region_Reference']/*[local-name()='ID' and @*[local-name()='type']='Country_Region_ID']/text()</extractPath>
+                        <key>StateProvinceCode</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Municipality']/text()</extractPath>
+                        <key>City</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Postal_Code']/text()</extractPath>
+                        <key>PostalCode</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Address_Line_Data' and @*[local-name()='Type']='ADDRESS_LINE_1']/text()</extractPath>
+                        <key>AddressLine1</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Address_Line_Data' and @*[local-name()='Type']='ADDRESS_LINE_2']/text()</extractPath>
+                        <key>AddressLine2</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Usage_Data']/*[local-name()='Type_Data']/@*[local-name()='Primary']</extractPath>
+                        <key>IsPrimary</key>
+                    </property>
+                    <property>
+                        <extractPath>//*[local-name()='Contact_Data']/*[local-name()='Address_Data']/*[local-name()='Usage_Data']/*[local-name()='Type_Data']/*[local-name()='Type_Reference']/*[local-name()='ID' and @*[local-name()='type']='Communication_Usage_Type_ID']/text()</extractPath>
+                        <key>UsageType</key>
+                    </property>
+                </responseProperties>
+            </apiRequest>
+        </apiRequests>
+    </scenario>
+    <requestTemplates>
+        <requestTemplate name="Template_GetResidentialAddressRequest">
+            <bsvc:Get_Workers_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v42.0">
+                <bsvc:Request_References bsvc:Skip_Non_Existing_Instances="false" bsvc:Ignore_Invalid_References="true">
+                    <bsvc:Worker_Reference bsvc:Descriptor="Employee_ID">
+                        <bsvc:ID bsvc:type="Employee_ID">{Employee_ID}</bsvc:ID>
+                    </bsvc:Worker_Reference>
+                </bsvc:Request_References>
+                <bsvc:Response_Filter>
+                    <bsvc:As_Of_Effective_Date>{As_Of_Effective_Date}</bsvc:As_Of_Effective_Date>
+                </bsvc:Response_Filter>
+                <bsvc:Response_Group>
+                    <bsvc:Include_Reference>true</bsvc:Include_Reference>
+                    <bsvc:Include_Personal_Information>true</bsvc:Include_Personal_Information>
+                    <bsvc:Include_Employment_Information>false</bsvc:Include_Employment_Information>
+                    <bsvc:Include_Organizations>false</bsvc:Include_Organizations>
+                    <bsvc:Exclude_Organization_Support_Role_Data>true</bsvc:Exclude_Organization_Support_Role_Data>
+                    <bsvc:Exclude_Location_Hierarchies>true</bsvc:Exclude_Location_Hierarchies>
+                    <bsvc:Exclude_Cost_Centers>true</bsvc:Exclude_Cost_Centers>
+                    <bsvc:Exclude_Cost_Center_Hierarchies>true</bsvc:Exclude_Cost_Center_Hierarchies>
+                    <bsvc:Exclude_Companies>true</bsvc:Exclude_Companies>
+                    <bsvc:Exclude_Company_Hierarchies>true</bsvc:Exclude_Company_Hierarchies>
+                    <bsvc:Exclude_Matrix_Organizations>true</bsvc:Exclude_Matrix_Organizations>
+                    <bsvc:Exclude_Pay_Groups>true</bsvc:Exclude_Pay_Groups>
+                    <bsvc:Exclude_Regions>true</bsvc:Exclude_Regions>
+                    <bsvc:Exclude_Region_Hierarchies>true</bsvc:Exclude_Region_Hierarchies>
+                    <bsvc:Exclude_Supervisory_Organizations>true</bsvc:Exclude_Supervisory_Organizations>
+                    <bsvc:Exclude_Teams>true</bsvc:Exclude_Teams>
+                    <bsvc:Exclude_Custom_Organizations>true</bsvc:Exclude_Custom_Organizations>
+                    <bsvc:Include_Roles>false</bsvc:Include_Roles>
+                    <bsvc:Include_Management_Chain_Data>false</bsvc:Include_Management_Chain_Data>
+                    <bsvc:Include_Benefit_Enrollments>false</bsvc:Include_Benefit_Enrollments>
+                    <bsvc:Include_Benefit_Eligibility>false</bsvc:Include_Benefit_Eligibility>
+                    <bsvc:Include_Related_Persons>false</bsvc:Include_Related_Persons>
+                    <bsvc:Include_Qualifications>false</bsvc:Include_Qualifications>
+                    <bsvc:Include_Employee_Review>false</bsvc:Include_Employee_Review>
+                    <bsvc:Include_Goals>false</bsvc:Include_Goals>
+                    <bsvc:Include_Development_Items>false</bsvc:Include_Development_Items>
+                    <bsvc:Include_Skills>false</bsvc:Include_Skills>
+                    <bsvc:Include_Photo>false</bsvc:Include_Photo>
+                    <bsvc:Include_Worker_Documents>false</bsvc:Include_Worker_Documents>
+                    <bsvc:Include_Transaction_Log_Data>false</bsvc:Include_Transaction_Log_Data>
+                    <bsvc:Include_Succession_Profile>false</bsvc:Include_Succession_Profile>
+                    <bsvc:Include_Talent_Assessment>false</bsvc:Include_Talent_Assessment>
+                    <bsvc:Include_User_Account>false</bsvc:Include_User_Account>
+                    <bsvc:Include_Career>false</bsvc:Include_Career>
+                </bsvc:Response_Group>
+            </bsvc:Get_Workers_Request>
+        </requestTemplate>
+    </requestTemplates>
+</workdayEntityConfigurationTemplate>

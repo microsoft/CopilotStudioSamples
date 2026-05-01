@@ -1,0 +1,242 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Use this topic when the user asks to VIEW or READ THEIR OWN education / academic history / schooling stored in Workday — degree (bachelor's, master's, MBA, PhD), diploma, certificate, school/university/college/institution, alma mater, major, field of study, minor, graduation year/date, GPA, academic qualifications, or credentials.
+
+  Trigger on "my" education-related queries: "What's my education?", "Show my degree", "Where did I study?", "What university is on my profile?", "What's my major / field of study?", "Show my academic background / qualifications / credentials", "What schooling do I have on file?".
+
+  Data is retrieved from Workday and belongs exclusively to the requesting user.
+
+  Do NOT trigger for general questions about tuition reimbursement, learning programs, or training
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: EmployeeName
+    description: The name of the person whose employment data is being requested.
+    entity: PersonNamePrebuiltEntity
+    shouldPromptUser: false
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - Show my Education Details
+      - From which school I completed my BS degree Education?
+      - Show my Education Degrees
+      - What was my field of Study during Education?
+      - Show my First Year attended for BS degree Education?
+      - Show my Last Year attended for BS degree Education?
+
+  actions:
+    - kind: BeginDialog
+      id: zQU3vE
+      displayName: Check access
+      input:
+        binding:
+          EmployeeName: =Topic.EmployeeName
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemAccessCheck
+
+    - kind: BeginDialog
+      id: B7ae9T
+      displayName: Redirect to Get CommonExecution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: ="msdyn_HRWorkdayHCMEmployeeGetEducation"
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ParseValue
+      id: yJ0sSR
+      displayName: Parse Workday response
+      variable: Topic.parsedWorkdayResponse
+      valueType:
+        kind: Record
+        properties:
+          EducationData:
+            type:
+              kind: Table
+              properties:
+                Education_Data:
+                  type:
+                    kind: Table
+                    properties:
+                      Country_Reference:
+                        type:
+                          kind: Record
+                          properties:
+                      "@Descriptor": String
+                      ID:
+                        type:
+                          kind: Table
+                          properties:
+                            "@type": String
+                            "#text": String
+
+                      Date_Degree_Received: String
+                      Degree_Completed_Reference:
+                        type:
+                          kind: Record
+                          properties:
+                            "@Descriptor": String
+                            ID:
+                              type:
+                                kind: Table
+                                properties:
+                                  "@type": String
+                                  "#text": String
+
+                      Degree_Reference:
+                        type:
+                          kind: Record
+                          properties:
+                            "@Descriptor": String
+                            ID:
+                              type:
+                                kind: Table
+                                properties:
+                                  "@type": String
+                                  "#text": String
+
+                      Education_ID: String
+                      Field_Of_Study_Reference:
+                        type:
+                          kind: Record
+                          properties:
+                            "@Descriptor": String
+                            ID:
+                              type:
+                                kind: Table
+                                properties:
+                                  "@type": String
+                                  "#text": String
+
+                      First_Year_Attended: String
+                      Is_Highest_Level_of_Education: String
+                      Last_Year_Attended: String
+                      Location: String
+                      School_Name: String
+                      School_Reference:
+                        type:
+                          kind: Record
+                          properties:
+                            "@Descriptor": String
+                            ID:
+                              type:
+                                kind: Table
+                                properties:
+                                  "@type": String
+                                  "#text": String
+
+                Education_Reference:
+                  type:
+                    kind: Record
+                    properties:
+                      "@Descriptor": String
+                      ID:
+                        type:
+                          kind: Table
+                          properties:
+                            "@type": String
+    - kind: BeginDialog
+      id: M8G7as
+      displayName: Refresh country name reference data
+      input:
+        binding:
+          IsTableEmpty: =IsBlank(Global.CountryNameLookupTable)
+          ReferenceDataKey: ISO_3166-1_Alpha-2_Code
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
+
+    - kind: BeginDialog
+      id: iM5A5i
+      displayName: Refresh degree reference data
+      input:
+        binding:
+          IsTableEmpty: =IsBlank(Global.DegreeTypeLookupTable)
+          ReferenceDataKey: Degree_ID
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
+
+    - kind: BeginDialog
+      id: zG3du7
+      displayName: Refresh field of study reference data
+      input:
+        binding:
+          IsTableEmpty: =IsBlank(Global.FieldOfStudyLookupTable)
+          ReferenceDataKey: Field_Of_Study_ID
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
+
+    - kind: SetVariable
+      id: setVariable_nD5Gkb
+      displayName: Set final result data
+      variable: Topic.FinalizedEducationData
+      value: |
+        =ForAll(
+            Topic.parsedWorkdayResponse.EducationData,
+                ForAll(
+                    ThisRecord.Education_Data,
+                    With(
+                        {currentRecord: ThisRecord},
+                        {
+                            EmployeeName: Global.ESS_UserContext_Employee_Firstname & " " & Global.ESS_UserContext_Employee_Lastname,
+                            Country: LookUp(
+                                Global.CountryNameLookupTable,
+                                ID = LookUp(
+                                    currentRecord.Country_Reference.ID,
+                                    '@type' = First(Global.CountryNameLookupTable).Reference_ID_Type
+                                ).'#text'
+                            ).Referenced_Object_Descriptor,
+                            School: currentRecord.School_Name,
+                            Degree: LookUp(
+                                Global.DegreeTypeLookupTable,
+                                ID = LookUp(
+                                    currentRecord.Degree_Reference.ID,
+                                    '@type' = First(Global.DegreeTypeLookupTable).Reference_ID_Type
+                                ).'#text'
+                            ).Referenced_Object_Descriptor,
+                            FieldOfStudy: LookUp(
+                                Global.FieldOfStudyLookupTable,
+                                ID = LookUp(
+                                    currentRecord.Field_Of_Study_Reference.ID,
+                                    '@type' = First(Global.FieldOfStudyLookupTable).Reference_ID_Type
+                                ).'#text'
+                            ).Referenced_Object_Descriptor,
+                            FirstYearAttended: currentRecord.First_Year_Attended,
+                            LastYearAttended: currentRecord.Last_Year_Attended
+                        }
+                )
+            )
+        )
+
+inputType:
+  properties:
+    EmployeeName:
+      displayName: EmployeeName
+      description: The name of the person whose employment data is being requested.
+      type: String
+
+outputType:
+  properties:
+    FinalizedEducationData:
+      displayName: FinalizedEducationData
+      type:
+        kind: Table
+        properties:
+          Value:
+            type:
+              kind: Table
+              properties:
+                Country: String
+                Degree: String
+                EmployeeName: String
+                FieldOfStudy: String
+                FirstYearAttended: String
+                LastYearAttended: String
+                School: String

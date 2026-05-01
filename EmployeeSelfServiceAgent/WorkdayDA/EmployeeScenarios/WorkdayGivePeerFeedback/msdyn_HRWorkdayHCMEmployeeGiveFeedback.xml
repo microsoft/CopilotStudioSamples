@@ -1,0 +1,60 @@
+<workdayEntityConfigurationTemplate>
+	<scenario name="GiveFeedbackRequest">
+		<apiRequests>
+			<apiRequest>
+				<authType>User</authType>
+				<endpoint>
+					<request>msdyn_HRWorkdayHCMEmployeeGiveFeedback</request>
+					<serviceName>Talent</serviceName>
+					<version>v42.0</version>
+				</endpoint>
+				<requestParameters>
+					<parameter>
+						<name>Employee_ID</name>
+						<value>{Employee_ID}</value>
+					</parameter>
+					<parameter>
+						<name>Employee_ID_Of_Receiver</name>
+						<value>{Employee_ID_Of_Receiver}</value>
+					</parameter>
+					<parameter>
+						<name>Comment</name>
+						<value>{Comment}</value>
+					</parameter>
+				</requestParameters>
+				<responseProperties>
+					<property>
+						<key>WID</key>
+						<extractPath>
+                          //*[local-name()='Give_Feedback_Response']
+                          /*[local-name()='Give_Feedback_Event_Reference']
+                          /*[local-name()='ID'][@*[local-name()='type']='WID']/text()
+                        </extractPath>
+					</property>
+				</responseProperties>
+			</apiRequest>
+		</apiRequests>
+	</scenario>
+	<requestTemplates>
+		<requestTemplate name="msdyn_HRWorkdayHCMEmployeeGiveFeedback">
+			<bsvc:Give_Feedback_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v42.0">
+				<bsvc:Business_Process_Parameters>
+					<bsvc:Run_Now>true</bsvc:Run_Now>
+					<bsvc:Auto_Complete>true</bsvc:Auto_Complete>
+				</bsvc:Business_Process_Parameters>
+				<bsvc:Give_Feedback_Data>
+					<bsvc:From_Worker_Reference>
+						<bsvc:ID bsvc:type="Employee_ID">{Employee_ID}</bsvc:ID>
+					</bsvc:From_Worker_Reference>
+					<bsvc:To_Workers_Reference>
+						<bsvc:ID bsvc:type="Employee_ID">{Employee_ID_Of_Receiver}</bsvc:ID>
+					</bsvc:To_Workers_Reference>
+					<bsvc:Comment>{Comment}</bsvc:Comment>
+					<bsvc:Show_Name>true</bsvc:Show_Name>
+					<bsvc:Confidential>false</bsvc:Confidential>
+					<bsvc:Private>false</bsvc:Private>
+				</bsvc:Give_Feedback_Data>
+			</bsvc:Give_Feedback_Request>
+		</requestTemplate>
+	</requestTemplates>
+</workdayEntityConfigurationTemplate>

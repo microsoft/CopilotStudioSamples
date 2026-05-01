@@ -1,0 +1,144 @@
+kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: AsOfEffectiveDate
+    description: The as-of effective date (YYYY-MM-DD) to use when retrieving vacation balances. If the user includes a date in their prompt, the NLU should populate this automatically.
+    entity: DateTimePrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+modelDescription: |-
+  Use this topic when the user asks about THEIR OWN time off balance / leave balance / vacation balance / PTO balance / remaining days / accrued hours stored in Workday — vacation, PTO (paid time off), annual leave, sick leave, sick days, personal days, personal time, floating holidays, comp time, accrued hours, remaining days, carryover, or any leave-type balance.
+
+  Triggers: "What's my vacation balance?", "How many PTO days do I have left?", "How much sick leave do I have?", "Show my time off balance", "Remaining vacation days", "Accrued hours", "How many days off do I have?", "What's my carryover?".
+
+  Data belongs exclusively to the requesting user.
+
+  Do NOT trigger for:
+  - REQUESTING / submitting time off (use the RequestTimeOff topic)
+  - Cancelling or modifying a submitted leave request
+  - General questions about leave policy or accrual rules
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - What is my vacation balance?
+      - How much time off can I take?
+      - what is my workday vacation balance?
+
+  actions:
+    - kind: SetVariable
+      id: set_workday_url
+      variable: Topic.WorkdayUrl
+      value: https://impl.workday.com/<TENANT_NAME>/home.htmld
+
+    - kind: SetVariable
+      id: set_intro_msg_text
+      variable: Topic.introMsgText
+      value: ="Sure, here's what I found on your time off balance from [Workday](" & Topic.WorkdayUrl & "), an HR platform your company uses."
+
+    - kind: SendActivity
+      id: intro_msg
+      activity: "{Topic.introMsgText}"
+
+    - kind: SetVariable
+      id: setVariable_8qSSM1
+      variable: Topic.date
+      value: =Text(Today(), "yyyy-MM-dd")
+
+    - kind: ConditionGroup
+      id: ask_effective_date_if_blank
+      conditions:
+        - id: isBlank
+          condition: =IsBlank(Topic.AsOfEffectiveDate)
+          actions:
+            - kind: AdaptiveCardPrompt
+              id: askDateCard1
+              displayName: Select As-Of Date
+              card: |-
+                ={
+                  type: "AdaptiveCard",
+                  '$schema': "https://adaptivecards.io/schemas/adaptive-card.json",
+                  version: "1.5",
+                  body: [
+                    {
+                      type: "TextBlock",
+                      text: "Which date would you like to check your vacation balance for?",
+                      weight: "Bolder",
+                      wrap: true
+                    },
+                    {
+                      type: "Input.Date",
+                      id: "asOfDate",
+                      label: "Select date",
+                      value: Topic.date
+                    }
+                  ],
+                  actions: [
+                    {
+                      type: "Action.Submit",
+                      title: "Submit"
+                    }
+                  ]
+                }
+              output:
+                binding:
+                  actionSubmitId: Topic.actionSubmitId
+                  asOfDate: Topic.asOfDate
+
+              outputType:
+                properties:
+                  actionSubmitId: String
+                  asOfDate: Date
+
+    - kind: SetVariable
+      id: ensure_effective_date2
+      variable: Topic.AsOfEffectiveDate
+      value: =If(IsBlank(Topic.AsOfEffectiveDate), DateTimeValue(Topic.asOfDate), Topic.AsOfEffectiveDate)
+
+    - kind: BeginDialog
+      id: Y74Om43
+      displayName: Redirect to Workday Get Common Execution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Topic.AsOfEffectiveDate, "yyyy-MM-dd") &"""}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetVacationBalance
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: AnswerQuestionWithAI
+      id: igank32
+      autoSend: false
+      variable: Topic.VacationBalance
+      userInput: =Topic.workdayResponse
+      additionalInstructions: Do not show citation. Display each vacation balances in a separate line and highlight vacation name. Only reply back with the Vacation Balance. Format the response in in friendly way and make sure to tie it back directly to the orginal question of the user. ({System.Activity.Text}). Display ({Topic.asOfDate}) with the message as of.  Never include the "Plan ID".
+
+inputType:
+  properties:
+    AsOfEffectiveDate:
+      displayName: AsOfEffectiveDate
+      description: The effective date to use when retrieving vacation balances (YYYY-MM-DD). Defaults to today's date if not provided.
+      type: DateTime
+
+outputType:
+  properties:
+    finalizedData:
+      displayName: finalizedData
+      type:
+        kind: Record
+        properties:
+          CostCenterCode: String
+          CostCenterName: String
+          EmployeeName: String
+
+    VacationBalance:
+      displayName: VacationBalance
+      type: String

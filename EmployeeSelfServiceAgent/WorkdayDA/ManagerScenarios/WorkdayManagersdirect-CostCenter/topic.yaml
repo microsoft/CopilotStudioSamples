@@ -1,0 +1,167 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Use this topic when a MANAGER asks about the COST CENTER / cost center code / cost center name / cost center number of THEIR DIRECT REPORTS in Workday. ONLY for direct reports (people who report to the user) — NOT for self, manager, peers, spouse, sibling, or any non-direct-report.
+
+  Triggers:
+  - "What is the cost center of my direct reports?"
+  - "Cost center of my reports / team"
+  - "Show cost centers for my direct reports"
+  - "Which cost center is each of my reports under?"
+  - "Cost center and company for my team"
+  - "Direct reports' cost center"
+
+  Result data contains a list of direct reports with their company name and cost center.
+
+  Invalid (do NOT trigger): questions about another person's cost center who isn't a direct report — manager, sister, peer. Self-cost-center questions belong to the WorkdayCostCenter topic.
+
+  Output rules:
+  - Output MUST be a nested list in markdown
+  - Use ONLY data from {Topic.workdayResponseTable}
+  - Do NOT return data if you don't have enough info
+
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: EmployeeName
+    description: Employee name whose cost center needs to be retrieved
+    entity: PersonNamePrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - Show me my team's cost center data?
+      - What cost centers are assigned to my reports?
+      - What are my team's cost centers?
+
+  actions:
+    - kind: BeginDialog
+      id: 3VGa9O
+      displayName: Check manager status
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdayManagerCheck
+
+    - kind: BeginDialog
+      id: jJpz3n
+      displayName: Redirect to Workday Get Common Execution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: ="msdyn_HRWorkdayHCMManagerDirectCostCenter"
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ParseValue
+      id: aXVFNu
+      displayName: Parse value to a record
+      variable: Topic.workdayResponseRecord
+      valueType:
+        kind: Record
+        properties:
+          CostCenterCode:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          CostCenterName:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          LegalNameData:
+            type:
+              kind: Table
+              properties:
+                Name_Detail_Data:
+                  type:
+                    kind: Record
+                    properties:
+                      "@Formatted_Name": String
+                      First_Name: String
+                      Last_Name: String
+
+          WorkerID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+      value: =Topic.workdayResponse
+
+    - kind: SetVariable
+      id: setVariable_ztXmui
+      displayName: Extract data to table
+      variable: Topic.workdayResponseTable
+      value: |-
+        =ForAll(
+            Sequence(CountRows(Topic.workdayResponseRecord.WorkerID)),
+            {
+                FirstName: Last(FirstN(Topic.workdayResponseRecord.LegalNameData, Value)).Name_Detail_Data.First_Name,
+                LastName: Last(FirstN(Topic.workdayResponseRecord.LegalNameData, Value)).Name_Detail_Data.Last_Name,
+                CostCenterCode: Last(FirstN(Topic.workdayResponseRecord.CostCenterCode, Value)).Value,
+                CostCenterName: Last(FirstN(Topic.workdayResponseRecord.CostCenterName, Value)).Value
+            }
+        )
+
+    - kind: ConditionGroup
+      id: conditionGroup_eEjEWp
+      conditions:
+        - id: conditionItem_yv6Ggl
+          condition: =!IsBlank(Topic.EmployeeName)
+          displayName: Check if EmployeeName provided
+          actions:
+            - kind: SetVariable
+              id: setVariable_njPUra
+              displayName: Filter for the given EmployeeName
+              variable: Topic.workdayResponseTable
+              value: =Filter(Topic.workdayResponseTable,'FirstName' = Topic.EmployeeName Or 'LastName' = Topic.EmployeeName Or Concatenate('FirstName', " ", 'LastName') = Topic.EmployeeName Or Concatenate('LastName', " ", 'FirstName') = Topic.EmployeeName)
+
+            - kind: ConditionGroup
+              id: conditionGroup_tAWzhS
+              conditions:
+                - id: conditionItem_sV8WXF
+                  condition: =IsEmpty(Topic.workdayResponseTable)
+                  displayName: Check is filtered data empty
+                  actions:
+                    - kind: SendActivity
+                      id: sendActivity_3owxH6
+                      displayName: Respond with no access message
+                      activity: It looks like you don't have access to this information. Try making a new request.
+
+                    - kind: SetVariable
+                      id: setVariable_wd0UBE
+                      displayName: Clear workday response
+                      variable: Topic.workdayResponse
+                      value: =""
+
+                    - kind: EndDialog
+                      id: HsUkV7
+
+inputType:
+  properties:
+    EmployeeName:
+      displayName: EmployeeName
+      description: Employee name whose cost center needs to be retrieved
+      type: String
+
+outputType:
+  properties:
+    workdayResponseTable:
+      displayName: workdayResponseTable
+      type:
+        kind: Table
+        properties:
+          CostCenterCode: String
+          CostCenterName: String
+          FirstName: String
+          LastName: String

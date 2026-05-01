@@ -1,0 +1,170 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Use this topic when a MANAGER asks about the COMPANY CODE / company name / legal entity / employing entity of THEIR DIRECT REPORTS in Workday. ONLY for direct reports (people who report to the user) — NOT for self, manager, peers, spouse, sibling, or any non-direct-report.
+
+  Triggers:
+  - "What is the company code of my direct reports?"
+  - "What's the company / legal entity for my reports?"
+  - "Show the employing company of my team"
+  - "Direct reports' company code"
+  - "My reportees' company / legal entity"
+  - "Which company is each of my reports employed by?"
+
+  do NOT trigger for self-company-code questions belong to the WorkdayCompanyCode topic.
+
+  Output rules:
+  - Output MUST be a nested list in markdown
+  - Use ONLY data from {Topic.workdayResponseTable}
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: EmployeeName
+    description: Employee name whose company code needs to be fetched
+    entity: PersonNamePrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - Show me my team’s Company codes? 
+      - What are the company codes for my reports? 
+      - What company codes are mapped to my team members?
+
+  actions:
+    - kind: BeginDialog
+      id: dAhS4T
+      displayName: Check manager status
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdayManagerCheck
+
+    - kind: BeginDialog
+      id: Gt044B
+      displayName: Redirect to Workday Get Common Execution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: msdyn_HRWorkdayHCMManagerDirectCompanyCode
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ParseValue
+      id: aIxWzK
+      displayName: Parse value to a table
+      variable: Topic.WorkdayResponseRecord
+      valueType:
+        kind: Record
+        properties:
+          CompanyCode:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          CompanyName:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          FirstName:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          LastName:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          WorkerID:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+      value: =Topic.workdayResponse
+
+    - kind: SetVariable
+      id: HC2h7w
+      displayName: Merge all records in table
+      variable: Topic.workdayResponseTable
+      value: |-
+        =ForAll(
+            Sequence(CountRows(Topic.WorkdayResponseRecord.WorkerID)),
+            {
+                FirstName: Last(FirstN(Topic.WorkdayResponseRecord.FirstName, Value)).Value,
+                LastName: Last(FirstN(Topic.WorkdayResponseRecord.LastName, Value)).Value,
+                CompanyCode: Last(FirstN(Topic.WorkdayResponseRecord.CompanyCode, Value)).Value,
+                CompanyName: Last(FirstN(Topic.WorkdayResponseRecord.CompanyName, Value)).Value
+            }
+        )
+
+    - kind: ConditionGroup
+      id: conditionGroup_yepfHF
+      conditions:
+        - id: conditionItem_86c1ij
+          condition: =!IsBlank(Topic.EmployeeName)
+          displayName: Check if EmployeeName provided
+          actions:
+            - kind: SetVariable
+              id: setVariable_z1fKB1
+              displayName: Filter for the given EmployeeName
+              variable: Topic.workdayResponseTable
+              value: |
+                =Filter(
+                    Topic.workdayResponseTable,
+                    FirstName = Topic.EmployeeName Or 
+                    LastName = Topic.EmployeeName Or 
+                    Concatenate(FirstName, " ", LastName) = Topic.EmployeeName Or 
+                    Concatenate(LastName, " ", FirstName) = Topic.EmployeeName
+                )
+
+            - kind: ConditionGroup
+              id: conditionGroup_BVYTlV
+              conditions:
+                - id: conditionItem_QmVzq2
+                  condition: =IsEmpty(Topic.workdayResponseTable)
+                  displayName: Check is filtered data empty
+                  actions:
+                    - kind: SendActivity
+                      id: SN9frD
+                      displayName: Respond with no access message
+                      activity: It looks like you don't have access to this information. Try making a new request.
+
+                    - kind: SetVariable
+                      id: setVariable_wd0UBE
+                      displayName: Clear workday response
+                      variable: Topic.workdayResponse
+                      value: =""
+
+                    - kind: EndDialog
+                      id: xVALae
+
+inputType:
+  properties:
+    EmployeeName:
+      displayName: EmployeeName
+      description: Employee name whose company code needs to be fetched
+      type: String
+
+outputType:
+  properties:
+    workdayResponseTable:
+      displayName: workdayResponseTable
+      type:
+        kind: Table
+        properties:
+          CompanyCode: String
+          CompanyName: String
+          FirstName: String
+          LastName: String

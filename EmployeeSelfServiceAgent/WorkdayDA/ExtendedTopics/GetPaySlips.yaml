@@ -1,0 +1,185 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Shows the employee's pay slip history from Workday.
+  Available fields per pay slip: pay period name (descriptor), pay date, gross pay, net pay, status.
+
+  Display rules:
+  - Heading: "Your pay slips"
+  - Show count: "Here are your N most recent pay slips from Workday."
+  - Each slip shows: pay period name, pay date, gross pay, net pay, status
+  - If no pay slips found: "No pay slips were found in Workday."
+  - Answer only if the user is asking about their own pay slips.
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - Show my pay slips
+      - View my pay stubs
+      - Where can I find my payslip?
+      - Show my pay history
+      - I want to see my paycheck
+      - Download my pay stub
+      - What is my latest paycheck?
+      - Show me my salary slips
+      - Pay slips
+
+  actions:
+    - kind: SetVariable
+      id: set_max_slips
+      displayName: Set max pay slips to fetch
+      variable: Topic.MaxSlips
+      value: =10
+
+    - kind: BeginDialog
+      id: get_pay_slips
+      displayName: Get pay slips
+      input:
+        binding:
+          parameters: ="{""workerID"":""Employee_ID=" & Global.ESS_UserContext_Employee_Id & """,""limit"":" & Topic.MaxSlips & ",""offset"":0}"
+          operationName: GetWorkerPaySlips
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ConditionGroup
+      id: handle_result
+      conditions:
+        - id: success
+          condition: =Topic.isSuccess = true
+          actions:
+            - kind: ParseValue
+              id: parse_payslips
+              displayName: Parse pay slips response
+              variable: Topic.parsedPaySlips
+              valueType:
+                kind: Record
+                properties:
+                  data:
+                    type:
+                      kind: Table
+                      properties:
+                        id: String
+                        descriptor: String
+                        date: String
+                        gross: Number
+                        net: Number
+                        status:
+                          type:
+                            kind: Record
+                            properties:
+                              descriptor: String
+                  total:
+                    type: Number
+
+              value: =Topic.workdayResponse
+
+            - kind: SetVariable
+              id: set_count
+              variable: Topic.slipCount
+              value: =CountRows(Topic.parsedPaySlips.data)
+
+            - kind: ConditionGroup
+              id: check_empty
+              conditions:
+                - id: has_slips
+                  condition: =Topic.slipCount > 0
+                  actions:
+                    - kind: SendActivity
+                      id: show_slips
+                      activity:
+                        attachments:
+                          - kind: AdaptiveCardTemplate
+                            cardContent: |-
+                              ={
+                                type: "AdaptiveCard",
+                                '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                                version: "1.5",
+                                body: [
+                                  {
+                                    type: "TextBlock",
+                                    text: "Your pay slips",
+                                    weight: "Bolder",
+                                    size: "Medium",
+                                    wrap: true
+                                  },
+                                  {
+                                    type: "TextBlock",
+                                    text: "Here are your " & Topic.slipCount & " most recent pay slip" & If(Topic.slipCount = 1, "", "s") & " from Workday.",
+                                    wrap: true,
+                                    spacing: "Small",
+                                    isSubtle: true
+                                  },
+                                  {
+                                    type: "Container",
+                                    spacing: "Medium",
+                                    items: ForAll(
+                                      Topic.parsedPaySlips.data,
+                                      {
+                                        type: "Container",
+                                        style: "emphasis",
+                                        bleed: false,
+                                        spacing: "Small",
+                                        items: [
+                                          {
+                                            type: "TextBlock",
+                                            text: Coalesce(descriptor, "Pay slip"),
+                                            weight: "Bolder",
+                                            wrap: true
+                                          },
+                                          {
+                                            type: "FactSet",
+                                            spacing: "Small",
+                                            facts: [
+                                              {
+                                                title: "Pay date",
+                                                value: If(IsBlank(date), "-", Left(date, 10))
+                                              },
+                                              {
+                                                title: "Gross pay",
+                                                value: If(IsBlank(Text(gross)), "-", Text(gross, "#,##0.00"))
+                                              },
+                                              {
+                                                title: "Net pay",
+                                                value: If(IsBlank(Text(net)), "-", Text(net, "#,##0.00"))
+                                              },
+                                              {
+                                                title: "Status",
+                                                value: Coalesce(status.descriptor, "-")
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    )
+                                  }
+                                ],
+                                actions: []
+                              }
+
+                    - kind: CancelAllDialogs
+                      id: end_dialogs
+
+              elseActions:
+                - kind: SendActivity
+                  id: no_slips
+                  activity: No pay slips were found in Workday. If you recently started, pay slips may not be available yet.
+
+                - kind: CancelAllDialogs
+                  id: end_no_slips
+
+      elseActions:
+        - kind: SendActivity
+          id: error_msg
+          activity: I was not able to retrieve your pay slips. Please try again or view them directly in Workday.
+
+        - kind: CancelAllDialogs
+          id: end_error
+
+inputType: {}
+outputType: {}
