@@ -45,6 +45,12 @@
                         <wd:Time_Off_Type_Reference wd:Descriptor="?">
                             <wd:ID wd:type="Time_Off_Type_ID">{timeoff_Time_Off_Type}</wd:ID>
                         </wd:Time_Off_Type_Reference>
+                        <!-- TIME OFF REASON (Required if configured as mandatory in tenant) -->
+                        <!-- Update Time_Off_Reason_ID values to match your Workday configuration. -->
+                        <!-- Find valid values under: Workday > Setup > Absence > Maintain Time Off Reasons -->
+                        <wd:Time_Off_Reason_Reference>
+                            <wd:ID wd:type="Time_Off_Reason_ID">{timeoff_Reason}</wd:ID>
+                        </wd:Time_Off_Reason_Reference>
                         <wd:Comment>{timeoff_Comment}</wd:Comment>
                     </wd:Enter_Time_Off_Entry_Data>
 
