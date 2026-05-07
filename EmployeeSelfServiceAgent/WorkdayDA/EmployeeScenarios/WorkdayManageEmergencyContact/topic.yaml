@@ -47,7 +47,7 @@ beginDialog:
                 binding:
                   referenceDataKey: Country_Phone_Code_ID
 
-              dialog: msdyn_copilotforemployeeselfservicehr.topic.GetReferenceData
+              dialog: msdyn_copilotforemployeeselfservicedahr.topic.GetReferenceData
 
     - kind: ConditionGroup
       id: check_relationship_types
@@ -63,7 +63,7 @@ beginDialog:
                 binding:
                   referenceDataKey: Related_Person_Relationship_ID
 
-              dialog: msdyn_copilotforemployeeselfservicehr.topic.GetReferenceData
+              dialog: msdyn_copilotforemployeeselfservicedahr.topic.GetReferenceData
 
     - kind: ConditionGroup
       id: check_state_province_choices
@@ -231,7 +231,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMEmployeeGetEmergencyContactInfo
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.fetchErrorResponse
@@ -1137,7 +1137,7 @@ beginDialog:
                               parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Emergency_Contact_WID}"",""value"":""" & Topic.selectedContactWID & """},{""key"":""{Priority}"",""value"":""" & Topic.selectedContactData.Priority & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.selectedContactData.RelationshipTypeID & """},{""key"":""{Comment}"",""value"":""Removing emergency contact via Copilot""}]}"
                               scenarioName: msdyn_DeleteEmergencyContact
 
-                          dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+                          dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
                           output:
                             binding:
                               errorResponse: Topic.errorResponse
@@ -1246,7 +1246,7 @@ beginDialog:
                           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Emergency_Contact_WID}"",""value"":""" & Topic.selectedContactWID & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Updating emergency contact""}]}"
                           scenarioName: msdyn_UpdateEmergencyContact
 
-                      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+                      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
                       output:
                         binding:
                           errorResponse: Topic.errorResponse
@@ -1262,7 +1262,7 @@ beginDialog:
                       parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Primary}"",""value"":""" & Topic.isPrimaryContact & """},{""key"":""{Priority}"",""value"":""" & If(Topic.isPrimaryContact = "true", "1", Topic.priority) & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipType & """},{""key"":""{Phone_Number}"",""value"":""" & Topic.phoneNumber & """},{""key"":""{Phone_Device_Type}"",""value"":""" & Topic.phoneDeviceType & """},{""key"":""{Phone_Country_Code}"",""value"":""" & Last(Split(Topic.phoneCountryCode, "_")).Value & """},{""key"":""{Address_Line_1}"",""value"":""" & Topic.addressLine1 & """},{""key"":""{City}"",""value"":""" & Topic.city & """},{""key"":""{State_Province}"",""value"":""" & Topic.stateProvince & """},{""key"":""{Postal_Code}"",""value"":""" & Topic.postalCode & """},{""key"":""{Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Address_Country_Code}"",""value"":""" & Topic.countryCode & """},{""key"":""{Comment}"",""value"":""Adding emergency contact""}]}"
                       scenarioName: msdyn_HRWorkdayHCMEmployeeAddEmergencyContact
 
-                  dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+                  dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
                   output:
                     binding:
                       errorResponse: Topic.errorResponse

@@ -60,7 +60,7 @@ beginDialog:
               input:
                 binding:
                   referenceDataKey: Related_Person_Relationship_ID
-              dialog: msdyn_copilotforemployeeselfservicehr.topic.GetReferenceData
+              dialog: msdyn_copilotforemployeeselfservicedahr.topic.GetReferenceData
 
     # Step 2: Fetch existing dependents
     - kind: BeginDialog
@@ -70,7 +70,7 @@ beginDialog:
         binding:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Now(), "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMEmployeeGetDependents
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
@@ -334,7 +334,7 @@ beginDialog:
         binding:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{First_Name}"",""value"":""" & Topic.firstName & """},{""key"":""{Last_Name}"",""value"":""" & Topic.lastName & """},{""key"":""{Date_Of_Birth}"",""value"":""" & Topic.dateOfBirth & """},{""key"":""{Gender}"",""value"":""" & Topic.gender & """},{""key"":""{Relationship_Type}"",""value"":""" & Topic.relationshipTypeId & """},{""key"":""{Country_Code}"",""value"":""" & Topic.country & """}]}"
           scenarioName: msdyn_HRWorkdayHCMEmployeeAddDependent
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.addErrorResponse
