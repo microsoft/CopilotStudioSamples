@@ -50,7 +50,7 @@ beginDialog:
     - kind: BeginDialog
       id: Y8gqWh
       displayName: Check manager status
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdayManagerCheck
+      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdayManagerCheck
 
     - kind: BeginDialog
       id: 7Va4UU
@@ -60,7 +60,7 @@ beginDialog:
           parameters: ="{""params"":[{""key"":""{ManagerOrgId}"",""value"":""" & Global.ESS_UserContext_ManagerOrganizationId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
           scenarioName: msdyn_HRWorkdayHCMManagerJobTaxonomy
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
       output:
         binding:
           errorResponse: Topic.errorResponse
@@ -126,7 +126,7 @@ beginDialog:
           IsTableEmpty: =IsBlank(Global.JobFamilyLookupTable)
           ReferenceDataKey: Job_Family_ID
 
-      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemRefreshReferenceData
+      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemRefreshReferenceData
 
     - kind: SetVariable
       id: setVariable_EFFdlM
