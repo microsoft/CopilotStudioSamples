@@ -1,0 +1,138 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Use this topic when the user asks about THEIR OWN job function / job family / job profile / job classification / job taxonomy / role taxonomy / internal title / external title / job code / job category stored in Workday. Data belongs exclusively to the requesting user.
+
+  Valid: "What is my external title?", "What's my internal title?", "What's my job function / job family / job profile / job category?", "Show me my job classification", "What is my job code?", "What's my role taxonomy?"
+
+  do NOT trigger for general HR policy or org-structure questions they are out of scope.
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - What is my job title?
+      - What job function do I belong to? 
+      - What is my job function? 
+      - What job category do I belong to? 
+      - What is my role? 
+      - What job Family do I belong to? 
+      - What is my Job Profile? 
+      - What is my internal title? 
+      - What is my external title?
+
+  actions:
+    - kind: BeginDialog
+      id: 7R6DUf
+      displayName: Redirect to Workday Get Common Execution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetJobTaxonomy
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ParseValue
+      id: tLP86E
+      displayName: Parse job profiles
+      variable: Topic.workdayResponseTable
+      valueType:
+        kind: Record
+        properties:
+          BusinessTitle:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          JobFamilyId:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          JobProfile:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+          JobTitle:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+      value: =Topic.workdayResponse
+
+    - kind: SetVariable
+      id: setVariable_FRHCD9
+      variable: Topic.transformResponse
+      value: |-
+        ={
+            JobTitle: First(Topic.workdayResponseTable.JobTitle).Value,
+            BusinessTitle: First(Topic.workdayResponseTable.BusinessTitle).Value,
+            JobProfile: First(Topic.workdayResponseTable.JobProfile).Value,
+            JobFamilyId: First(Topic.workdayResponseTable.JobFamilyId).Value
+        }
+
+    - kind: BeginDialog
+      id: RZJGDY
+      displayName: Redirect to Workday Get Common Execution
+      input:
+        binding:
+          parameters: ="{""params"":[{""key"":""{Job_Family_ID}"",""value"":""" & Topic.transformResponse.JobFamilyId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetJobTaxonomyGeneric
+
+      dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    - kind: ParseValue
+      id: rPHxhw
+      displayName: Parse Job Family Name
+      variable: Topic.jobFamilyTable
+      valueType:
+        kind: Record
+        properties:
+          JobFamily:
+            type:
+              kind: Table
+              properties:
+                Value: String
+
+      value: =Topic.workdayResponse
+
+    - kind: SetVariable
+      id: setVariable_mS3r3D
+      displayName: Init Job Taxonomy Data
+      variable: Topic.jobFunctionData
+      value: |-
+        ={
+           EmployeeName: Global.ESS_UserContext_Employee_Firstname & " " & Global.ESS_UserContext_Employee_Lastname,
+           JobTitle: Topic.transformResponse.JobTitle,
+           JobProfile: Topic.transformResponse.JobProfile,
+           BusinessTitle: Topic.transformResponse.BusinessTitle,
+           JobFamily: First(Topic.jobFamilyTable.JobFamily).Value
+        }
+
+outputType:
+  properties:
+    jobFunctionData:
+      displayName: jobFunctionData
+      type:
+        kind: Record
+        properties:
+          BusinessTitle: String
+          EmployeeName: String
+          JobFamily: String
+          JobProfile: String
+          JobTitle: String

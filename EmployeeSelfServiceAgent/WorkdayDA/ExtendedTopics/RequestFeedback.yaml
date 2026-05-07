@@ -1,0 +1,393 @@
+kind: AdaptiveDialog
+modelDescription: |-
+  Allows an employee to request feedback FROM a coworker about themselves.
+  The employee is the subject of the feedback; the coworker (responder) is who provides it.
+
+  Trigger: "I want to request feedback from Carl"
+
+  Steps:
+  1. Find the coworker (responder) by name search - skipped if name was in the trigger
+  2. Select a feedback template, sharing preference, and expiration date in one combined card
+  3. Submit and show confirmation
+
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: ResponderName
+    description: Name of the coworker the employee wants feedback from, if mentioned in the trigger message
+    entity: PersonNamePrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: =Blank()
+
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - I want to request feedback from someone
+      - Request feedback from a coworker
+      - Ask Carl for feedback
+      - Get feedback from a colleague
+      - Request peer feedback
+      - I want feedback on my performance
+      - Request feedback
+
+  actions:
+    # Step 1 - Get responder name. Skip prompt if name came from the trigger message.
+    - kind: ConditionGroup
+      id: check_name_in_trigger
+      conditions:
+        - id: name_provided
+          condition: =!IsBlank(Topic.ResponderName)
+          actions:
+            - kind: SetVariable
+              id: use_trigger_name
+              variable: Topic.responderSearch
+              value: =Topic.ResponderName
+
+      elseActions:
+        - kind: Question
+          id: ask_responder_name
+          interruptionPolicy:
+            allowInterruption: false
+          variable: Topic.responderSearch
+          prompt: Who would you like to request feedback from? Please enter their name.
+          entity: StringPrebuiltEntity
+
+    # Search for the coworker by name
+    - kind: BeginDialog
+      id: search_responder
+      displayName: Search for responder by name
+      input:
+        binding:
+          parameters: ="{""search"":""" & Topic.responderSearch & """,""limit"":10,""offset"":0}"
+          operationName: SearchWorkers
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.searchError
+          isSuccess: Topic.searchSuccess
+          workdayResponse: Topic.searchResponse
+
+    - kind: ConditionGroup
+      id: check_search_result
+      conditions:
+        - id: search_failed
+          condition: =Topic.searchSuccess = false
+          actions:
+            - kind: SendActivity
+              id: search_fail_msg
+              activity: I could not search for that name in Workday. Please try again.
+
+            - kind: CancelAllDialogs
+              id: cancel_search_failed
+
+    - kind: ParseValue
+      id: parse_responder
+      displayName: Parse responder search result
+      variable: Topic.parsedResponder
+      valueType:
+        kind: Record
+        properties:
+          data:
+            type:
+              kind: Table
+              properties:
+                id: String
+                descriptor: String
+                primaryWorkEmail: String
+                businessTitle: String
+          total:
+            type: Number
+
+      value: =Topic.searchResponse
+
+    - kind: ConditionGroup
+      id: check_responder_found
+      conditions:
+        - id: not_found
+          condition: =CountRows(Topic.parsedResponder.data) = 0
+          actions:
+            - kind: SendActivity
+              id: not_found_msg
+              activity: No Workday worker found matching **{Topic.responderSearch}**. Please check the name and try again.
+
+            - kind: CancelAllDialogs
+              id: cancel_not_found
+
+    # Pre-set worker ID and name for single result - no picker needed in the combined form
+    - kind: SetVariable
+      id: pre_set_responder_id
+      variable: Topic.responderWorkerID
+      value: =If(CountRows(Topic.parsedResponder.data) = 1, First(Topic.parsedResponder.data).id, "")
+
+    - kind: SetVariable
+      id: pre_set_responder_name
+      variable: Topic.responderName
+      value: =If(CountRows(Topic.parsedResponder.data) = 1, First(Topic.parsedResponder.data).descriptor, "")
+
+    # Get feedback templates - always scoped to the requesting employee, not the responder
+    - kind: BeginDialog
+      id: get_templates
+      displayName: Get feedback templates
+      input:
+        binding:
+          parameters: ="{""workerID"":""Employee_ID=" & Global.ESS_UserContext_Employee_Id & """,""limit"":20,""offset"":0}"
+          operationName: GetFeedbackTemplates
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.templateError
+          isSuccess: Topic.templateSuccess
+          workdayResponse: Topic.templateResponse
+
+    - kind: ParseValue
+      id: parse_templates
+      displayName: Parse feedback templates
+      variable: Topic.parsedTemplates
+      valueType:
+        kind: Record
+        properties:
+          data:
+            type:
+              kind: Table
+              properties:
+                id: String
+                descriptor: String
+          total:
+            type: Number
+
+      value: =If(Topic.templateSuccess, Topic.templateResponse, "{""data"":[],""total"":0}")
+
+    # Step 2 - Combined card: worker picker (only when multiple results) + template + sharing + expiration
+    - kind: AdaptiveCardPrompt
+      id: collect_feedback_form
+      displayName: Combined feedback request form
+      card: |-
+        ={
+          type: "AdaptiveCard",
+          '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+          version: "1.5",
+          body: [
+            {
+              type: "TextBlock",
+              text: "Request feedback",
+              weight: "Bolder",
+              size: "Medium",
+              wrap: true
+            },
+            If(
+              CountRows(Topic.parsedResponder.data) = 1,
+              {
+                type: "TextBlock",
+                text: "Requesting feedback from " & Topic.responderName,
+                wrap: true,
+                spacing: "Small",
+                isSubtle: true
+              },
+              {
+                type: "Input.ChoiceSet",
+                id: "selectedResponderId",
+                label: "Select coworker",
+                style: "compact",
+                isRequired: true,
+                errorMessage: "Please select a coworker.",
+                choices: ForAll(
+                  Topic.parsedResponder.data,
+                  {
+                    title: descriptor & If(IsBlank(businessTitle), "", " - " & businessTitle) & If(IsBlank(primaryWorkEmail), "", " (" & primaryWorkEmail & ")"),
+                    value: id
+                  }
+                )
+              }
+            ),
+            {
+              type: "Input.ChoiceSet",
+              id: "feedbackTemplateId",
+              label: "Feedback template",
+              style: "compact",
+              isRequired: true,
+              errorMessage: "Please select a feedback template.",
+              spacing: "Medium",
+              choices: If(
+                CountRows(Topic.parsedTemplates.data) = 0,
+                [ { title: "No templates available. Check Workday configuration.", value: "" } ],
+                ForAll(Topic.parsedTemplates.data, { title: descriptor, value: id })
+              )
+            },
+            {
+              type: "Input.ChoiceSet",
+              id: "feedbackSharing",
+              label: "Who can see this feedback?",
+              style: "compact",
+              isRequired: false,
+              value: "shareWithMe",
+              choices: [
+                { title: "Share with me only", value: "shareWithMe" },
+                { title: "Also share with my manager", value: "shareWithManager" }
+              ]
+            },
+            {
+              type: "Input.Date",
+              id: "expirationDate",
+              label: "Request expires on",
+              value: Text(DateAdd(Today(), 14, TimeUnit.Days), "yyyy-MM-dd"),
+              isRequired: false
+            }
+          ],
+          actions: [
+            { type: "Action.Submit", title: "Submit Request", id: "Submit" },
+            { type: "Action.Submit", title: "Cancel", id: "Cancel", associatedInputs: "none" }
+          ]
+        }
+      output:
+        binding:
+          actionSubmitId: Topic.actionSubmitId
+          selectedResponderId: Topic.selectedResponderId
+          feedbackTemplateId: Topic.feedbackTemplateId
+          feedbackSharing: Topic.feedbackSharing
+          expirationDate: Topic.expirationDate
+
+      outputType:
+        properties:
+          actionSubmitId: String
+          selectedResponderId: String
+          feedbackTemplateId: String
+          feedbackSharing: String
+          expirationDate: String
+
+    - kind: ConditionGroup
+      id: handle_form_cancel
+      conditions:
+        - id: cancelled
+          condition: =Topic.actionSubmitId = "Cancel"
+          actions:
+            - kind: SendActivity
+              id: form_cancel_msg
+              activity: Feedback request cancelled. Let me know if you need anything else.
+
+            - kind: CancelAllDialogs
+              id: cancel_form
+
+    # Resolve final worker ID - use picker selection if multiple results were shown
+    - kind: SetVariable
+      id: resolve_responder_id
+      variable: Topic.responderWorkerID
+      value: =If(IsBlank(Topic.selectedResponderId), Topic.responderWorkerID, Topic.selectedResponderId)
+
+    - kind: SetVariable
+      id: resolve_responder_name
+      variable: Topic.responderName
+      value: =If(IsBlank(Topic.selectedResponderId), Topic.responderName, LookUp(Topic.parsedResponder.data, id = Topic.selectedResponderId).descriptor)
+
+    # Map feedbackSharing choice to Workday fields:
+    # "shareWithMe"      - feedbackConfidential=false, showFeedbackProviderName=true
+    # "shareWithManager" - feedbackConfidential=true,  showFeedbackProviderName=true
+    - kind: SetVariable
+      id: set_confidential
+      variable: Topic.feedbackConfidential
+      value: =If(Topic.feedbackSharing = "shareWithManager", "true", "false")
+
+    # Step 3 - Submit the feedback request
+    - kind: BeginDialog
+      id: submit_feedback
+      displayName: Submit feedback request
+      input:
+        binding:
+          parameters: ="{""workerID"":""Employee_ID=" & Global.ESS_UserContext_Employee_Id & """,""feedbackTemplateId"":""" & Topic.feedbackTemplateId & """,""feedbackResponders"":[{""id"":""" & Topic.responderWorkerID & """}],""expirationDate"":""" & Topic.expirationDate & """,""feedbackConfidential"":" & Topic.feedbackConfidential & ",""showFeedbackProviderName"":true}"
+          operationName: RequestFeedback
+
+      dialog: msdyn_copilotforemployeeselfservice.topic.WorkdaySystemGetRESTExecution
+      output:
+        binding:
+          errorResponse: Topic.errorResponse
+          isSuccess: Topic.isSuccess
+          workdayResponse: Topic.workdayResponse
+
+    # Step 4 - Show result
+    - kind: ConditionGroup
+      id: show_result
+      conditions:
+        - id: success
+          condition: =Topic.isSuccess = true
+          actions:
+            - kind: ParseValue
+              id: parse_feedback_result
+              variable: Topic.parsedFeedback
+              valueType:
+                kind: Record
+                properties:
+                  id: String
+                  descriptor: String
+                  requestDate: String
+                  feedbackOverallStatus: String
+
+              value: =Topic.workdayResponse
+
+            - kind: SendActivity
+              id: success_card
+              activity:
+                attachments:
+                  - kind: AdaptiveCardTemplate
+                    cardContent: |-
+                      ={
+                        type: "AdaptiveCard",
+                        '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                        version: "1.5",
+                        body: [
+                          {
+                            type: "TextBlock",
+                            text: "Feedback request sent",
+                            weight: "Bolder",
+                            size: "Medium",
+                            wrap: true
+                          },
+                          {
+                            type: "TextBlock",
+                            text: "Your feedback request has been submitted. " & Topic.responderName & " will receive a notification.",
+                            wrap: true,
+                            spacing: "Small"
+                          },
+                          {
+                            type: "FactSet",
+                            spacing: "Medium",
+                            facts: [
+                              { title: "Feedback from", value: Topic.responderName },
+                              { title: "Request date", value: Coalesce(Topic.parsedFeedback.requestDate, Text(Today(), "yyyy-MM-dd")) },
+                              { title: "Expires", value: Topic.expirationDate },
+                              { title: "Visibility", value: If(Topic.feedbackSharing = "shareWithManager", "Shared with you and your manager", "Visible to you only") }
+                            ]
+                          }
+                        ],
+                        actions: []
+                      }
+
+            - kind: CancelAllDialogs
+              id: end_success
+
+      elseActions:
+        - kind: AnswerQuestionWithAI
+          id: generate_error
+          autoSend: false
+          variable: Topic.friendlyError
+          userInput: =Topic.errorResponse
+          additionalInstructions: Reframe this Workday error for an employee in one short sentence. Do not apologize or include technical details.
+
+        - kind: SendActivity
+          id: error_msg
+          activity: "{If(IsBlank(Topic.friendlyError), \"The feedback request could not be submitted. Please check that the template is configured correctly in Workday.\", Topic.friendlyError)}"
+
+        - kind: CancelAllDialogs
+          id: end_error
+
+inputType:
+  properties:
+    ResponderName:
+      displayName: ResponderName
+      description: Name of the coworker to request feedback from, if mentioned in the trigger message
+      type: String
+
+outputType: {}

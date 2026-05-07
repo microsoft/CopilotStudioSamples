@@ -1,0 +1,69 @@
+<workdayEntityConfigurationTemplate>
+    <scenario name="msdyn_HRWorkdayHCMEmployeeAddResidentialAddress">
+        <apiRequests>
+            <apiRequest>
+                <authType>User</authType>
+                <endpoint>
+                    <request>Template_AddResidentialAddressRequest</request>
+                    <serviceName>Human_Resources</serviceName>
+                    <version>v42.0</version>
+                </endpoint>
+                <responseProperties>
+                    <property>
+                        <extractPath>//*[local-name()='Event_Reference']/*[local-name()='ID' and @*[local-name()='type']='WID']/text()</extractPath>
+                        <key>EventWID</key>
+                    </property>
+                </responseProperties>
+            </apiRequest>
+        </apiRequests>
+    </scenario>
+    <requestTemplates>
+        <requestTemplate name="Template_AddResidentialAddressRequest">
+            <bsvc:Change_Home_Contact_Information_Request xmlns:bsvc="urn:com.workday/bsvc" bsvc:version="v42.0">
+                <bsvc:Business_Process_Parameters>
+                    <bsvc:Auto_Complete>false</bsvc:Auto_Complete>
+                    <bsvc:Run_Now>true</bsvc:Run_Now>
+                    <bsvc:Discard_On_Exit_Validation_Error>true</bsvc:Discard_On_Exit_Validation_Error>
+                    <bsvc:Comment_Data>
+                        <bsvc:Comment>New address added via Copilot</bsvc:Comment>
+                        <bsvc:Worker_Reference>
+                            <bsvc:ID bsvc:type="Employee_ID">{Employee_ID}</bsvc:ID>
+                        </bsvc:Worker_Reference>
+                    </bsvc:Comment_Data>
+                </bsvc:Business_Process_Parameters>
+                <bsvc:Change_Home_Contact_Information_Data>
+                    <bsvc:Person_Reference>
+                        <bsvc:ID bsvc:type="Employee_ID">{Employee_ID}</bsvc:ID>
+                    </bsvc:Person_Reference>
+                    <bsvc:Event_Effective_Date>{Event_Effective_Date}</bsvc:Event_Effective_Date>
+                    <bsvc:Person_Contact_Information_Data>
+                        <bsvc:Person_Address_Information_Data bsvc:Replace_All="false">
+                            <bsvc:Address_Information_Data bsvc:Delete="false">
+                                <bsvc:Address_Data>
+                                    <bsvc:Country_Reference>
+                                        <bsvc:ID bsvc:type="ISO_3166-1_Alpha-3_Code">{Country_Code}</bsvc:ID>
+                                    </bsvc:Country_Reference>
+                                    <bsvc:Country_Region_Reference>
+                                        <bsvc:ID bsvc:type="Country_Region_ID">{State_Province_Code}</bsvc:ID>
+                                    </bsvc:Country_Region_Reference>
+                                    <bsvc:Address_Line_Data bsvc:Type="ADDRESS_LINE_1">{Address_Line_1}</bsvc:Address_Line_Data>
+                                    <bsvc:Address_Line_Data bsvc:Type="ADDRESS_LINE_2">{Address_Line_2}</bsvc:Address_Line_Data>
+                                    <bsvc:Postal_Code>{Postal_Code}</bsvc:Postal_Code>
+                                    <bsvc:Municipality>{City}</bsvc:Municipality>
+                                </bsvc:Address_Data>
+                                <bsvc:Usage_Data bsvc:Public="false">
+                                    <bsvc:Type_Data bsvc:Primary="{Is_Primary}">
+                                        <bsvc:Type_Reference>
+                                            <bsvc:ID bsvc:type="Communication_Usage_Type_ID">HOME</bsvc:ID>
+                                        </bsvc:Type_Reference>
+                                    </bsvc:Type_Data>
+                                </bsvc:Usage_Data>
+                                <!-- NOTE: No Address_Reference element - this creates a NEW address -->
+                            </bsvc:Address_Information_Data>
+                        </bsvc:Person_Address_Information_Data>
+                    </bsvc:Person_Contact_Information_Data>
+                </bsvc:Change_Home_Contact_Information_Data>
+            </bsvc:Change_Home_Contact_Information_Request>
+        </requestTemplate>
+    </requestTemplates>
+</workdayEntityConfigurationTemplate>
