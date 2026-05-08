@@ -246,7 +246,6 @@ beginDialog:
                   actions: [
                     { type: "Action.Submit", title: "Continue",       id: "Continue", data: { actionSubmitId: "Continue" } },
                     { type: "Action.Submit", title: "Add an address", id: "AddNew",   data: { actionSubmitId: "AddNew" },   associatedInputs: "none" },
-                    // 🔧 FIX 2: Added a real Cancel button so handleSelectionCancel below is actually reachable.
                     { type: "Action.Submit", title: "Cancel",         id: "Cancel",   data: { actionSubmitId: "Cancel" },   associatedInputs: "none" }
                   ]
                 }
