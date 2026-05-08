@@ -1,13 +1,14 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  You will respond only to requests related to update, change, edit, modify, or correct the requesting user's own residential/home address in Workday.
+  You will respond only to requests related to to update, change, edit, modify, or correct the requesting user's own residential/home address in Workday. 
+   
+  TRIGGER THIS when user wants to: update/change/fix/correct their home address, report they moved or relocated, fix a wrong address on file, change street/city/state/zip 
+  code.
 
-  TRIGGER THIS when user wants to: update/change/fix/correct their home address, report they moved or relocated, fix a wrong address on file, change street/city/state/zip code.
-
-  All address data is retrieved from and updated through Workday, and pertains exclusively to the requesting user.
+  All address data is retrieved from and updated through Workday, and pertains exclusively to the requesting user. 
 
   Do not respond about other people's data.
-
+    
   Example valid requests:
   "Update my home address"
   "I want to update my residential address"
@@ -199,7 +200,7 @@ beginDialog:
               id: buildAddressChoices
               displayName: Build address selection choices
               variable: Topic.addressChoices
-              value: |-
+              value: |
                 =ForAll(
                     Topic.homeAddresses,
                     {
@@ -207,11 +208,6 @@ beginDialog:
                         value: ThisRecord.AddressID
                     }
                 )
-
-            - kind: SetVariable
-              id: set_workday_icon_url
-              variable: Topic.WorkdayIconUrl
-              value: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAExUlEQVR4nOVbSUwUQRT9XSJxQVExLoQZLwJGGZfEJcY5KJx0Er2piF7d4hkTTby5njxoRE9eHM5oxqOY2O5jXFAjYFzAgBrEDKIxGpf8xta2+ld1z3T1TPfMSwiZ7vrd9V69/931H...
 
             - kind: AdaptiveCardPrompt
               id: selectAddressCard
@@ -222,40 +218,6 @@ beginDialog:
                   '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
                   version: "1.5",
                   body: [
-                    {
-                      type: "ColumnSet",
-                      columns: [
-                        {
-                          type: "Column",
-                          width: "auto",
-                          items: [
-                            {
-                              type: "Image",
-                              url: Topic.WorkdayIconUrl,
-                              style: "RoundedCorners",
-                              size: "Small",
-                              height: "20px",
-                              width: "20px"
-                            }
-                          ],
-                          verticalContentAlignment: "Center"
-                        },
-                        {
-                          type: "Column",
-                          width: "auto",
-                          items: [
-                            {
-                              type: "TextBlock",
-                              text: "Workday",
-                              size: "Small",
-                              weight: "Bolder"
-                            }
-                          ],
-                          verticalContentAlignment: "Center",
-                          spacing: "Small"
-                        }
-                      ]
-                    },
                     {
                       type: "TextBlock",
                       text: "Select an address to update",
@@ -284,6 +246,7 @@ beginDialog:
                   actions: [
                     { type: "Action.Submit", title: "Continue",       id: "Continue", data: { actionSubmitId: "Continue" } },
                     { type: "Action.Submit", title: "Add an address", id: "AddNew",   data: { actionSubmitId: "AddNew" },   associatedInputs: "none" },
+                    // 🔧 FIX 2: Added a real Cancel button so handleSelectionCancel below is actually reachable.
                     { type: "Action.Submit", title: "Cancel",         id: "Cancel",   data: { actionSubmitId: "Cancel" },   associatedInputs: "none" }
                   ]
                 }
@@ -378,6 +341,7 @@ beginDialog:
                   id: setCurrentIsPrimary
                   variable: Topic.currentIsPrimary
                   value: =Topic.selectedAddress.IsPrimary
+
           elseActions:
             - kind: SetVariable
               id: clearCurrentAddressLine1
@@ -696,40 +660,6 @@ beginDialog:
                         '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
                         version: "1.5",
                         body: [
-                          {
-                            type: "ColumnSet",
-                            columns: [
-                              {
-                                type: "Column",
-                                width: "auto",
-                                items: [
-                                  {
-                                    type: "Image",
-                                    url: Topic.WorkdayIconUrl,
-                                    style: "RoundedCorners",
-                                    size: "Small",
-                                    height: "20px",
-                                    width: "20px"
-                                  }
-                                ],
-                                verticalContentAlignment: "Center"
-                              },
-                              {
-                                type: "Column",
-                                width: "auto",
-                                items: [
-                                  {
-                                    type: "TextBlock",
-                                    text: "Workday",
-                                    size: "Small",
-                                    weight: "Bolder"
-                                  }
-                                ],
-                                verticalContentAlignment: "Center",
-                                spacing: "Small"
-                              }
-                            ]
-                          },
                           {
                             type: "TextBlock",
                             text: "✅ Address updated",
