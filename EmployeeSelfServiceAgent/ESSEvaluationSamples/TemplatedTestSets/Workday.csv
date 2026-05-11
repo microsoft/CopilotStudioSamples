@@ -18,5 +18,5 @@ What is my official job title?,Job title <Title>,CompareMeaning,70
 Do I have access to view my compensation data?,Base compensation <Amount + Currency>,CompareMeaning,70
 Are there any trainings and certifications needed for my role?,Required trainings or certifications <List>,CompareMeaning,70
 Where can I see my official work location?,Work location <Location>,CompareMeaning,70
-Can I update my preferred language for HR communications?,Preferred language information <List>,CompareMeaning,70
+What is my language preference and how can I update it for HR communication?,Preferred language information <List>,CompareMeaning,70
 Show me my hire date and my rehire date if I have one.,Hire date <MM/DD/YYYY> and rehire date <MM/DD/YYYY or None>,CompareMeaning,70
