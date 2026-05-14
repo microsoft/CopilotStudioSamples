@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Connector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <connectorid>8e8f2ece-3d1f-44b3-8a76-1e1bc5fa8567</connectorid>
+  <description>Query usage data for a defined scope using Azure Cost Management.</description>
+  <displayname>AzureUsage</displayname>
+  <iconbrandcolor>#007ee5</iconbrandcolor>
+  <name>mcscat_azureusage</name>
+  <connectortype>1</connectortype>
+  <openapidefinition>/Connector/mcscat_azureusage_openapidefinition.json</openapidefinition>
+  <connectionparameters>/Connector/mcscat_azureusage_connectionparameters.json</connectionparameters>
+  <policytemplateinstances>/Connector/mcscat_azureusage_policytemplateinstances.json</policytemplateinstances>
+  <iconblob>/Connector/mcscat_azureusage_iconblob.Png</iconblob>
+</Connector>

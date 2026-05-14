@@ -1,0 +1,304 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_powerplatformbilliinpolicy-5fcb336cc1377ded3a-5fe4caae088dbe83f8": {
+        "api": {
+          "name": "shared_powerplatformbilliinpolicy-5fcb336cc1377ded3a-5fe4caae088dbe83f8",
+          "logicalName": "mcscat_powerplatformbilliinpolicy"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "mcscat_sharedpowerplatformbilliinpolicy5fcb336cc1377ded3a5fe4caae088dbe_25348"
+        },
+        "runtimeSource": "embedded"
+      },
+      "shared_powerplatformadminv2": {
+        "api": {
+          "name": "shared_powerplatformadminv2"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedpowerplatformadminv2_498a1"
+        },
+        "runtimeSource": "embedded"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Http",
+          "inputs": {
+            "triggerAuthenticationType": "User",
+            "triggerAllowedUsers": "a59e02a3-52aa-4023-8dc2-88601770ae1c",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "resourceGroupName": {
+                  "type": "string"
+                },
+                "subscriptionid": {
+                  "type": "string"
+                }
+              }
+            },
+            "method": "POST"
+          }
+        }
+      },
+      "actions": {
+        "Parse_JSON": {
+          "runAfter": {
+            "Initialize_variable": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "bae1e482-5799-4a43-b245-e84e625becdc"
+          },
+          "type": "ParseJson",
+          "inputs": {
+            "content": "@outputs('List_billing_policies')?['body/value']",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "billingInstrument": {
+                    "type": "object",
+                    "properties": {
+                      "subscriptionId": {
+                        "type": "string"
+                      },
+                      "resourceGroup": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "provisioningStatus": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "createdOn": {
+                    "type": "string"
+                  },
+                  "createdBy": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "lastModifiedOn": {
+                    "type": "string"
+                  },
+                  "lastModifiedBy": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "type",
+                  "status",
+                  "location",
+                  "billingInstrument",
+                  "createdOn",
+                  "createdBy",
+                  "lastModifiedOn",
+                  "lastModifiedBy"
+                ]
+              }
+            }
+          }
+        },
+        "List_billing_policies": {
+          "runAfter": {},
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "api-version": "2022-03-01-preview"
+            },
+            "host": {
+              "apiId": "",
+              "operationId": "ListBillingPolicies",
+              "connectionName": "shared_powerplatformbilliinpolicy-5fcb336cc1377ded3a-5fe4caae088dbe83f8"
+            }
+          }
+        },
+        "For_each": {
+          "foreach": "@outputs('Parse_JSON')['body']",
+          "actions": {
+            "Condition": {
+              "actions": {
+                "Get_the_list_of_environments_linked_to_the_billing_policy": {
+                  "runAfter": {
+                    "Append_to_string_variable": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "api-version": "2022-03-01-preview",
+                      "billingPolicyId": "@items('For_each')['id']"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerplatformadminv2",
+                      "operationId": "ListBillingPolicyEnvironments",
+                      "connectionName": "shared_powerplatformadminv2"
+                    }
+                  }
+                },
+                "Apply_to_each": {
+                  "foreach": "@outputs('Get_the_list_of_environments_linked_to_the_billing_policy')?['body/value']",
+                  "actions": {
+                    "Unlink_billing_policy_ID_from_environments": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "api-version": "2022-03-01-preview",
+                          "billingPolicyId": "@items('For_each')['id']",
+                          "body/environmentIds": [
+                            "@items('Apply_to_each')?['environmentId']"
+                          ]
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerplatformadminv2",
+                          "operationId": "RemoveBillingPolicyEnvironment",
+                          "connectionName": "shared_powerplatformadminv2"
+                        }
+                      }
+                    },
+                    "Append_to_string_variable_1": {
+                      "runAfter": {
+                        "Unlink_billing_policy_ID_from_environments": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "AppendToStringVariable",
+                      "inputs": {
+                        "name": "OperationStatus",
+                        "value": "Unlinked Environment: @{items('Apply_to_each')?['environmentId']} from @{items('For_each')['name']}(GUID:@{items('Apply_to_each')?['billingPolicyId']})"
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Get_the_list_of_environments_linked_to_the_billing_policy": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "Foreach"
+                },
+                "Append_to_string_variable": {
+                  "type": "AppendToStringVariable",
+                  "inputs": {
+                    "name": "OperationStatus",
+                    "value": "Found Policy with name: @{items('For_each')['name']}(Guid: @{items('For_each')['id']}). \nRetrieving list of linked environments"
+                  }
+                }
+              },
+              "else": {
+                "actions": {}
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@items('For_each')['billingInstrument']['subscriptionId']",
+                      "@triggerBody()?['subscriptionid']"
+                    ]
+                  },
+                  {
+                    "equals": [
+                      "@items('For_each')['billingInstrument']['resourceGroup']",
+                      "@triggerBody()?['resourceGroupName']"
+                    ]
+                  }
+                ]
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Parse_JSON": [
+              "Succeeded"
+            ]
+          },
+          "type": "Foreach"
+        },
+        "Initialize_variable": {
+          "runAfter": {
+            "List_billing_policies": [
+              "Succeeded"
+            ]
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "OperationStatus",
+                "type": "string",
+                "value": "Operation Initiatlizing, Searching for Policies"
+              }
+            ]
+          }
+        },
+        "Response": {
+          "runAfter": {
+            "For_each": [
+              "Succeeded"
+            ]
+          },
+          "type": "Response",
+          "kind": "Http",
+          "inputs": {
+            "statusCode": 200,
+            "body": "@variables('OperationStatus')"
+          }
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

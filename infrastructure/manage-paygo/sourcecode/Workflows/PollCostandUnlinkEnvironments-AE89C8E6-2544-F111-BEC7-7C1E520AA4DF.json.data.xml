@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Workflow WorkflowId="{ae89c8e6-2544-f111-bec7-7c1e520aa4df}" Name="Poll Cost and Unlink Environments" Description="This is flow that is triggered every four hours. It demonstrates how to leverage the CostQuery custom connector to get the actual cost and invoke the child flow : UnlinkEnvironmentsfromResourceGroup to stop the consumption when the cost reaches a certain threshold." xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <JsonFileName>/Workflows/PollCostandUnlinkEnvironments-AE89C8E6-2544-F111-BEC7-7C1E520AA4DF.json</JsonFileName>
+  <Type>1</Type>
+  <Subprocess>0</Subprocess>
+  <Category>5</Category>
+  <Mode>0</Mode>
+  <Scope>4</Scope>
+  <OnDemand>0</OnDemand>
+  <TriggerOnCreate>0</TriggerOnCreate>
+  <TriggerOnDelete>0</TriggerOnDelete>
+  <AsyncAutodelete>0</AsyncAutodelete>
+  <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+  <StateCode>1</StateCode>
+  <StatusCode>2</StatusCode>
+  <RunAs>1</RunAs>
+  <IsTransacted>1</IsTransacted>
+  <IntroducedVersion>1.0.0.0</IntroducedVersion>
+  <IsCustomizable>1</IsCustomizable>
+  <BusinessProcessType>0</BusinessProcessType>
+  <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+  <ModernFlowType>0</ModernFlowType>
+  <PrimaryEntity>none</PrimaryEntity>
+  <LocalizedNames>
+    <LocalizedName languagecode="1033" description="Poll Cost and Unlink Environments" />
+  </LocalizedNames>
+  <Descriptions>
+    <Description languagecode="1033" description="This is flow that is triggered every four hours. It demonstrates how to leverage the CostQuery custom connector to get the actual cost and invoke the child flow : UnlinkEnvironmentsfromResourceGroup to stop the consumption when the cost reaches a certain threshold." />
+  </Descriptions>
+</Workflow>

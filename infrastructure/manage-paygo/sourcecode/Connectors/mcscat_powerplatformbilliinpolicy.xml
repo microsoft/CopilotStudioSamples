@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Connector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <connectorid>170d0ffc-6b55-4a20-8d11-99f2ea12afe4</connectorid>
+  <description>Retrieve and manage billing policies for a Power Platform tenant via the Power Platform API.</description>
+  <displayname>PowerPlatformBilliinPolicy</displayname>
+  <iconbrandcolor>#007ee5</iconbrandcolor>
+  <name>mcscat_powerplatformbilliinpolicy</name>
+  <connectortype>1</connectortype>
+  <openapidefinition>/Connector/mcscat_powerplatformbilliinpolicy_openapidefinition.json</openapidefinition>
+  <connectionparameters>/Connector/mcscat_powerplatformbilliinpolicy_connectionparameters.json</connectionparameters>
+  <policytemplateinstances>/Connector/mcscat_powerplatformbilliinpolicy_policytemplateinstances.json</policytemplateinstances>
+  <iconblob>/Connector/mcscat_powerplatformbilliinpolicy_iconblob.Png</iconblob>
+</Connector>
