@@ -1,0 +1,289 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_azureusage-5fcb336cc1377ded3a-5fe4caae088dbe83f8": {
+        "api": {
+          "name": "shared_azureusage-5fcb336cc1377ded3a-5fe4caae088dbe83f8",
+          "logicalName": "mcscat_azureusage"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "mcscat_sharedazureusage5fcb336cc1377ded3a5fe4caae088dbe83f8_63b07"
+        },
+        "runtimeSource": "embedded"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "recurrence": {
+            "frequency": "Hour",
+            "interval": 4,
+            "startTime": "2026-04-29T17:00:00Z"
+          },
+          "metadata": {
+            "operationMetadataId": "d81dc400-4177-4edf-a191-88b0166c3ba8"
+          },
+          "type": "Recurrence"
+        }
+      },
+      "actions": {
+        "Query_Usage": {
+          "runAfter": {
+            "Initialize_variable": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "95fdfa40-cc6e-416f-be23-f57b470c17f3"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "scope": "@variables('QueryScope')",
+              "api-version": "2025-03-01",
+              "body/type": "ActualCost",
+              "body/timeframe": "TheLastBillingMonth",
+              "body/dataset/granularity": "None",
+              "body/dataset/aggregation": {
+                "totalCost": {
+                  "name": "PreTaxCost",
+                  "function": "Sum"
+                }
+              },
+              "body/dataset/grouping": [
+                {
+                  "name": "BillingPeriod",
+                  "type": "Dimension"
+                }
+              ]
+            },
+            "host": {
+              "apiId": "",
+              "operationId": "Query_Usage",
+              "connectionName": "shared_azureusage-5fcb336cc1377ded3a-5fe4caae088dbe83f8"
+            }
+          }
+        },
+        "Parse_JSON": {
+          "runAfter": {
+            "Query_Usage": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "074b7b7e-f0de-49fd-a3bc-c0a1eb2cf1ba"
+          },
+          "type": "ParseJson",
+          "inputs": {
+            "content": "@body('Query_Usage')",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "location": {},
+                "sku": {},
+                "eTag": {},
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "nextLink": {},
+                    "columns": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "type"
+                        ]
+                      }
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "CostData": {
+          "runAfter": {
+            "Check_if_result_set_is_zero": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e5b2a032-94b6-4dac-9b64-80c989f66232"
+          },
+          "type": "Select",
+          "inputs": {
+            "from": "@body('Parse_JSON')?['properties']?['rows']",
+            "select": {
+              "preTaxcost": "@float(item()[0])",
+              "BillingPeriodStart": "@substring(item()[1], add(indexOf(item()[1], '('), 1), 10)",
+              "BillingPeriodEnd": "@substring(item()[1], add(indexOf(item()[1], ' - '), 3), 10)"
+            }
+          }
+        },
+        "BillingPeriodCost": {
+          "runAfter": {
+            "CostData": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "917d7791-127e-44e0-ab83-95da55c0c375"
+          },
+          "type": "Compose",
+          "inputs": "@Last(sort(body('CostData'),'BillingPeriodStart'))"
+        },
+        "Condition": {
+          "actions": {
+            "Run_a_Child_Flow": {
+              "metadata": {
+                "operationMetadataId": "bec15f67-98f1-4797-b935-96a8cd57b3ab"
+              },
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "9290b17c-8c42-f111-bec6-0022481db41c"
+                },
+                "body": {
+                  "resourceGroupName": "@last(split(variables('QueryScope'),'/'))",
+                  "subscriptionid": "@split(variables('QueryScope'),'/')[2]"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Initialize_variable_2": [
+              "Succeeded"
+            ]
+          },
+          "else": {
+            "actions": {}
+          },
+          "expression": {
+            "greater": [
+              "@outputs('BillingPeriodCost')['preTaxcost']",
+              65
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a8a2fd77-260e-4ac9-9a58-f53970592514"
+          },
+          "type": "If"
+        },
+        "Initialize_variable": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "5e022bfb-4719-421e-a04d-3b8f5756e464"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "QueryScope",
+                "type": "string",
+                "value": "/subscriptions/8be5abeb-d89e-4b5e-a459-154ebc5a4601/resourceGroups/Azurevnetforpowerplatform"
+              }
+            ]
+          }
+        },
+        "Initialize_variable_2": {
+          "runAfter": {
+            "BillingPeriodCost": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9e99077a-9a6a-4298-860e-ad16ee2008f9"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "ActualCost",
+                "type": "float",
+                "value": "@outputs('BillingPeriodCost')['preTaxcost']"
+              }
+            ]
+          }
+        },
+        "Check_if_result_set_is_zero": {
+          "actions": {
+            "Terminate": {
+              "metadata": {
+                "operationMetadataId": "6b90ce8e-a1b8-4ed1-b4ed-782079fc2b17"
+              },
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Failed",
+                "runError": {
+                  "code": "101",
+                  "message": "No billing costs returned"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Parse_JSON": [
+              "Succeeded"
+            ]
+          },
+          "else": {
+            "actions": {}
+          },
+          "expression": {
+            "and": [
+              {
+                "equals": [
+                  "@length(body('Parse_JSON')?['properties']?['rows'])",
+                  0
+                ]
+              }
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c8657465-d79c-4130-8276-0feb045c2a70"
+          },
+          "type": "If"
+        }
+      },
+      "description": "This is flow that is triggered every four hours. It demonstrates how to leverage the CostQuery custom connector to get the actual cost and invoke the child flow : UnlinkEnvironmentsfromResourceGroup to stop the consumption when the cost reaches a certain threshold."
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

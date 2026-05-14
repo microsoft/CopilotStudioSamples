@@ -13,4 +13,5 @@ Deployment templates and infrastructure configurations for Copilot Studio.
 
 | Folder | Description |
 |--------|-------------|
+| [manage-paygo/](./manage-paygo/) | PAYG billing policy management — bulk assignment, cost monitoring, and auto-unlinking |
 | [vnet-support/](./vnet-support/) | VNet integration ARM templates |

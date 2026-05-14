@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26043.140" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26043.00151">
+  <Entities />
+  <Roles />
+  <Workflows />
+  <FieldSecurityProfiles />
+  <Templates />
+  <EntityMaps />
+  <EntityRelationships />
+  <OrganizationSettings />
+  <optionsets />
+  <CustomControls />
+  <EntityDataProviders />
+  <Connectors />
+  <connectionreferences>
+    <connectionreference connectionreferencelogicalname="mcscat_sharedazureusage5fcb336cc1377ded3a5fe4caae088dbe83f8_63b07">
+      <connectionreferencedisplayname>AzureUsage BillingPolicyManagement-63b07</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_azureusage-5fcb336cc1377ded3a-5fe4caae088dbe83f8</connectorid>
+      <customconnectorid>
+        <connectorid>8e8f2ece-3d1f-44b3-8a76-1e1bc5fa8567</connectorid>
+      </customconnectorid>
+      <iscustomizable>1</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="mcscat_sharedpowerplatformadminv2_df188">
+      <connectionreferencedisplayname>Power Platform for Admins V2 BillingPolicyManagement-df188</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_powerplatformadminv2</connectorid>
+      <iscustomizable>1</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="mcscat_sharedpowerplatformbilliinpolicy5fcb336cc1377ded3a5fe4caae088dbe_25348">
+      <connectionreferencedisplayname>PowerPlatformBilliinPolicy BillingPolicyManagement-25348</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_powerplatformbilliinpolicy-5fcb336cc1377ded3a-5fe4caae088dbe83f8</connectorid>
+      <customconnectorid>
+        <connectorid>170d0ffc-6b55-4a20-8d11-99f2ea12afe4</connectorid>
+      </customconnectorid>
+      <iscustomizable>1</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="new_sharedpowerplatformadminv2_498a1">
+      <connectionreferencedisplayname>Power Platform for Admins V2</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_powerplatformadminv2</connectorid>
+      <iscustomizable>1</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+  </connectionreferences>
+  <Languages>
+    <Language>1033</Language>
+  </Languages>
+</ImportExportXml>
