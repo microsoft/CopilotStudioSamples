@@ -1,3 +1,8 @@
+---
+title: Human-in-the-Loop
+parent: Extensibility
+nav_order: 4
+---
 # Human-in-the-Loop Custom Connector
 
 A custom connector that pauses a Copilot Studio agent or Power Automate flow and waits for a human to respond via a web console. When the human submits their response, the agent or flow resumes with the data.
