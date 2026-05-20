@@ -83,7 +83,7 @@ callbackServer.listen(CALLBACK_PORT, async () => {
       body: JSON.stringify(request),
     });
 
-    if (res.status === 202) {
+    if (res.status === 201 || res.status === 202) {
       console.log("Request accepted — agent/flow is paused.");
       console.log("Open http://localhost:3978 and submit the form.\n");
       console.log("Waiting for callback...\n");

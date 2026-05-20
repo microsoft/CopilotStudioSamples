@@ -1,0 +1,10 @@
+<environmentvariabledefinition schemaname="cat_HitlHostUrl">
+  <displayname default="HitlHostUrl">
+    <label description="HitlHostUrl" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.2</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

@@ -1,52 +1,29 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# setup.sh — Sets up the HITL sample end-to-end:
+# setup.sh — Starts the HITL backend and creates a public tunnel.
+#
 #   1. Installs npm dependencies
 #   2. Creates a dev tunnel (public HTTPS URL → localhost:3978)
-#   3. Deploys the custom connector via paconn
+#   3. Starts the server and tunnel
+#
+# After running this script, import solution/customHIL_1_0_0_3.zip into
+# your Power Platform environment and set the HitlHostUrl environment
+# variable to the tunnel URL printed below.
 #
 # Prerequisites:
 #   - Node.js 18+
 #   - devtunnel CLI (brew install devtunnel)
-#   - paconn (pip install paconn) — Power Platform Connectors CLI
 #
 # Usage:
-#   ./setup.sh                              # interactive
-#   ./setup.sh --env <environment-id>       # skip environment prompt
-#   ./setup.sh --tunnel-only                # just create tunnel, skip connector deploy
+#   ./setup.sh
 # ─────────────────────────────────────────────────────────────────────────────
-set -euo pipefail
+set -eo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PORT=3978
 TUNNEL_NAME="hitl-sample"
-ENV_ID=""
-TUNNEL_ONLY=false
 
-# paconn may be in a venv — check common locations
-PACONN="paconn"
-if ! command -v paconn &>/dev/null; then
-  for candidate in \
-    /tmp/paconn-venv/bin/paconn \
-    "$HOME/.local/bin/paconn" \
-    "$HOME/paconn-venv/bin/paconn"; do
-    if [[ -x "$candidate" ]]; then
-      PACONN="$candidate"
-      break
-    fi
-  done
-fi
-
-# ── Parse args ──────────────────────────────────────────────────────────────
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    --env)         ENV_ID="$2"; shift 2 ;;
-    --tunnel-only) TUNNEL_ONLY=true; shift ;;
-    *)             echo "Unknown arg: $1"; exit 1 ;;
-  esac
-done
-
-# ── Colors ──────────────────────────────────────────────────────────────────
+# ── Colors ──
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
@@ -56,54 +33,45 @@ step() { echo -e "\n${BLUE}▸ $1${NC}"; }
 ok()   { echo -e "${GREEN}  ✓ $1${NC}"; }
 warn() { echo -e "${YELLOW}  ⚠ $1${NC}"; }
 
-# ── 1. Install dependencies ────────────────────────────────────────────────
+# ── 1. Install dependencies ──
 step "Installing npm dependencies"
 cd "$SCRIPT_DIR"
 npm install --silent
-ok "Dependencies installed"
+ok "Done"
 
-# ── 2. Create dev tunnel ───────────────────────────────────────────────────
+# ── 2. Create dev tunnel ──
 step "Setting up dev tunnel"
 
-# Check devtunnel is available
 if ! command -v devtunnel &>/dev/null; then
   warn "devtunnel CLI not found. Install with: brew install devtunnel"
   exit 1
 fi
 
-# Check if devtunnel is logged in
 if ! devtunnel user show &>/dev/null; then
   echo "  You need to log in to devtunnel first."
   devtunnel user login
 fi
 
-# Delete existing tunnel if present (ignore errors)
-devtunnel delete "$TUNNEL_NAME" &>/dev/null || true
-
-# Create tunnel with anonymous access (so Power Platform can call it)
+devtunnel delete "$TUNNEL_NAME" 2>/dev/null || true
+sleep 2
 devtunnel create "$TUNNEL_NAME" --allow-anonymous
-devtunnel port create "$TUNNEL_NAME" --port-number "$PORT" --protocol https
-ok "Tunnel '$TUNNEL_NAME' created"
+devtunnel port create "$TUNNEL_NAME" --port-number "$PORT" --protocol http
+ok "Tunnel created"
 
-# Get the tunnel URL from JSON output
+# Get tunnel URL
 TUNNEL_URL=""
-
 TUNNEL_URL=$(devtunnel show "$TUNNEL_NAME" --json 2>/dev/null \
   | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
-tunnel = data.get('tunnel', data)
-tid = tunnel.get('tunnelId', '')
-# tunnelId format: name.cluster (e.g. hitl-sample.eun1)
+tid = data.get('tunnel', data).get('tunnelId', '')
 parts = tid.rsplit('.', 1)
 if len(parts) == 2:
-    name, cluster = parts
-    print(f'https://{name}-${PORT}.{cluster}.devtunnels.ms')
+    print(f'https://{parts[0]}-${PORT}.{parts[1]}.devtunnels.ms')
 elif tid:
     print(f'https://{tid}-${PORT}.devtunnels.ms')
 " 2>/dev/null) || true
 
-# Fallback: parse text output for tunnel ID
 if [[ -z "$TUNNEL_URL" ]]; then
   TUNNEL_ID=$(devtunnel show "$TUNNEL_NAME" 2>/dev/null | grep 'Tunnel ID' | awk '{print $NF}')
   if [[ -n "$TUNNEL_ID" ]]; then
@@ -114,92 +82,50 @@ if [[ -z "$TUNNEL_URL" ]]; then
 fi
 
 if [[ -z "$TUNNEL_URL" ]]; then
-  warn "Could not extract tunnel URL automatically."
-  echo "  Run: devtunnel show $TUNNEL_NAME"
-  echo "  Then set TUNNEL_URL= and re-run."
+  warn "Could not extract tunnel URL. Run: devtunnel show $TUNNEL_NAME"
   exit 1
 fi
 
-ok "Tunnel URL: $TUNNEL_URL"
-
-# Extract host for swagger spec
 TUNNEL_HOST=$(echo "$TUNNEL_URL" | sed 's|https://||')
 
-# ── 3. Update connector spec with tunnel URL ──────────────────────────────
-step "Updating connector spec with tunnel URL"
-SWAGGER_FILE="$SCRIPT_DIR/connector/apiDefinition.swagger.json"
+# ── 3. Start server ──
+step "Starting server"
 
-python3 -c "
-import json
-with open('$SWAGGER_FILE', 'r') as f:
-    spec = json.load(f)
-spec['host'] = '$TUNNEL_HOST'
-with open('$SWAGGER_FILE', 'w') as f:
-    json.dump(spec, f, indent=2)
-"
-ok "Host set to: $TUNNEL_HOST"
+pkill -f "node $SCRIPT_DIR/server.js" 2>/dev/null || true
+sleep 1
 
-if $TUNNEL_ONLY; then
-  echo ""
-  echo -e "${GREEN}════════════════════════════════════════════════════════${NC}"
-  echo -e "${GREEN}  Tunnel ready!${NC}"
-  echo ""
-  echo "  Terminal 1:  npm start"
-  echo "  Terminal 2:  devtunnel host $TUNNEL_NAME"
-  echo ""
-  echo "  Tunnel URL:  $TUNNEL_URL"
-  echo -e "${GREEN}════════════════════════════════════════════════════════${NC}"
-  exit 0
-fi
+node "$SCRIPT_DIR/server.js" &
+SERVER_PID=$!
+sleep 2
 
-# ── 4. Deploy custom connector via paconn ─────────────────────────────────
-step "Deploying custom connector via paconn"
-
-# Check paconn is available
-if ! command -v "$PACONN" &>/dev/null && [[ ! -x "$PACONN" ]]; then
-  warn "paconn not found."
-  echo "  Install with: pip install paconn (or pipx install paconn)"
-  echo ""
-  echo "  You can also create the connector manually:"
-  echo "  1. Go to make.powerapps.com → Custom Connectors"
-  echo "  2. Import connector/apiDefinition.swagger.json"
-  echo "  3. Set the host to: $TUNNEL_HOST"
+if ! kill -0 $SERVER_PID 2>/dev/null; then
+  warn "Server failed to start"
   exit 1
 fi
+ok "Server running (PID $SERVER_PID)"
 
-# Build paconn args
-PACONN_ARGS=(
-  create
-  --api-def "$SWAGGER_FILE"
-  --api-prop "$SCRIPT_DIR/connector/apiProperties.json"
-)
-
-if [[ -n "$ENV_ID" ]]; then
-  PACONN_ARGS+=(--env "$ENV_ID")
-fi
-
-echo "  Running: $PACONN ${PACONN_ARGS[*]}"
-echo ""
-
-# paconn create is interactive (prompts for environment if not provided)
-$PACONN "${PACONN_ARGS[@]}"
-
-ok "Connector deployed"
-
-# ── Done ───────────────────────────────────────────────────────────────────
+# ── 4. Print instructions and start tunnel ──
 echo ""
 echo -e "${GREEN}════════════════════════════════════════════════════════${NC}"
-echo -e "${GREEN}  Setup complete!${NC}"
+echo -e "${GREEN}  HITL backend ready!${NC}"
 echo ""
-echo "  To start:"
-echo "    Terminal 1:  npm start"
-echo "    Terminal 2:  devtunnel host $TUNNEL_NAME"
-echo ""
-echo "  Tunnel URL:    $TUNNEL_URL"
-echo "  Console UI:    $TUNNEL_URL"
+echo "  Tunnel URL:   $TUNNEL_URL"
+echo "  Tunnel host:  $TUNNEL_HOST"
 echo ""
 echo "  Next steps:"
-echo "    • In Copilot Studio: add the connector as an action"
-echo "    • In Power Automate: add 'Request Human Input' step"
-echo "    • Open the console UI to see and respond to requests"
+echo "    1. Import solution/customHIL_1_0_0_3.zip into your environment"
+echo "    2. When prompted, set HitlHostUrl to:"
+echo ""
+echo -e "       ${BLUE}${TUNNEL_HOST}${NC}"
+echo ""
+echo "    3. Create a flow or agent action using the connector"
+echo ""
+echo "  Starting tunnel (Ctrl+C to stop everything)..."
 echo -e "${GREEN}════════════════════════════════════════════════════════${NC}"
+echo ""
+
+trap "echo ''; echo 'Stopping server...'; kill $SERVER_PID 2>/dev/null; exit 0" INT TERM
+
+devtunnel host "$TUNNEL_NAME"
+
+kill $SERVER_PID 2>/dev/null

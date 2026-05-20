@@ -11,21 +11,31 @@ app.use(express.static(path.join(__dirname, "public")));
 const requests = new Map();
 
 // ─────────────────────────────────────────────────────────────────────────────
-// POST /api/requests
+// POST /api/requests/$subscriptions
 //
 // Called by the custom connector when Copilot Studio or Power Automate invokes
 // the "Request Human Input" action.
 //
 // The platform injects a callback URL into the `notificationUrl` field
-// (via the x-ms-notification-url OpenAPI extension). Returning 202 tells
+// (via the x-ms-notification-url OpenAPI extension). Returning 201 tells
 // the platform to pause the agent/flow and wait for a callback.
 // ─────────────────────────────────────────────────────────────────────────────
-app.post("/api/requests/\\$subscriptions", (req, res) => {
+function handleCreateRequest(req, res) {
   const { notificationUrl, body: innerBody } = req.body;
   const { title, message, inputs, assignedTo } = innerBody || req.body;
 
   if (!notificationUrl) {
     return res.status(400).json({ error: "notificationUrl is required" });
+  }
+
+  // Validate notificationUrl — only allow HTTPS callbacks to Power Platform domains
+  try {
+    const url = new URL(notificationUrl);
+    if (url.protocol !== "https:") {
+      return res.status(400).json({ error: "notificationUrl must use HTTPS" });
+    }
+  } catch {
+    return res.status(400).json({ error: "notificationUrl is not a valid URL" });
   }
 
   const id = uuidv4();
@@ -45,19 +55,15 @@ app.post("/api/requests/\\$subscriptions", (req, res) => {
   requests.set(id, request);
 
   console.log(`[HITL] Created: ${id} — "${request.title}"`);
-  console.log(`[HITL]   callback: ${notificationUrl}`);
 
   // 201 Created — matches the Teams connector pattern (webhook action, not trigger)
   // Location header for webhook unsubscribe
   res.setHeader("Location", `/api/requests/${id}`);
   res.status(201).json({ id, status: "pending" });
-});
+}
 
-// Also accept POST /api/requests for backward compat (test script)
-app.post("/api/requests", (req, res, next) => {
-  req.url = "/api/requests/$subscriptions";
-  next();
-});
+app.post("/api/requests/\\$subscriptions", handleCreateRequest);
+app.post("/api/requests", handleCreateRequest);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/requests?status=pending|completed|all
@@ -69,7 +75,9 @@ app.get("/api/requests", (req, res) => {
   const filtered = [...requests.values()]
     .filter((r) => status === "all" || r.status === status)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  res.json(filtered);
+
+  // Don't expose notificationUrl to the browser
+  res.json(filtered.map(({ notificationUrl, ...rest }) => rest));
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -78,7 +86,8 @@ app.get("/api/requests", (req, res) => {
 app.get("/api/requests/:id", (req, res) => {
   const request = requests.get(req.params.id);
   if (!request) return res.status(404).json({ error: "Request not found" });
-  res.json(request);
+  const { notificationUrl, ...rest } = request;
+  res.json(rest);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -96,6 +105,9 @@ app.post("/api/requests/:id/respond", async (req, res) => {
     return res.status(409).json({ error: "Request already completed" });
   }
 
+  // Mark as processing immediately to prevent double-submit
+  request.status = "processing";
+
   const responseData = req.body;
   console.log(`[HITL] Response for ${request.id}: ${JSON.stringify(responseData)}`);
 
@@ -108,6 +120,7 @@ app.post("/api/requests/:id/respond", async (req, res) => {
       id: request.id,
       status: "completed",
       response: responseData,
+      responseText: responseData.response || responseData[Object.keys(responseData)[0]] || "",
       respondedAt: new Date().toISOString(),
     };
 
@@ -120,12 +133,11 @@ app.post("/api/requests/:id/respond", async (req, res) => {
     console.log(`[HITL] Callback status: ${callbackResponse.status}`);
 
     if (!callbackResponse.ok) {
-      const errorBody = await callbackResponse.text().catch(() => "");
-      console.error(`[HITL] Callback failed: ${callbackResponse.status} ${errorBody}`);
+      console.error(`[HITL] Callback failed: ${callbackResponse.status}`);
+      request.status = "pending"; // Roll back so user can retry
       return res.status(502).json({
         error: "Failed to notify caller",
         status: callbackResponse.status,
-        detail: errorBody,
       });
     }
 
@@ -137,6 +149,7 @@ app.post("/api/requests/:id/respond", async (req, res) => {
     res.json({ success: true, requestId: request.id });
   } catch (err) {
     console.error(`[HITL] Callback error:`, err.message);
+    request.status = "pending"; // Roll back so user can retry
     res.status(502).json({
       error: "Failed to call notificationUrl",
       detail: err.message,
@@ -152,10 +165,10 @@ app.post("/api/requests/:id/respond", async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 app.delete("/api/requests/:id", (req, res) => {
   const request = requests.get(req.params.id);
-  if (!request) return res.status(200).json({ ok: true });
-
-  request.status = "cancelled";
-  console.log(`[HITL] Cancelled: ${request.id}`);
+  if (request) {
+    console.log(`[HITL] Cancelled: ${request.id}`);
+  }
+  requests.delete(req.params.id);
   res.status(200).json({ ok: true });
 });
 
@@ -166,6 +179,21 @@ app.get("/api/health", (req, res) => {
   const pending = [...requests.values()].filter((r) => r.status === "pending").length;
   res.json({ status: "ok", pendingRequests: pending });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auto-expire: remove requests older than 30 minutes.
+// If PA times out without calling DELETE, this cleans up stale entries.
+// ─────────────────────────────────────────────────────────────────────────────
+const EXPIRY_MS = 30 * 60 * 1000;
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, request] of requests.entries()) {
+    if (now - new Date(request.createdAt).getTime() > EXPIRY_MS) {
+      requests.delete(id);
+      console.log(`[HITL] Expired: ${id} (${request.title})`);
+    }
+  }
+}, 60 * 1000);
 
 const PORT = process.env.PORT || 3978;
 app.listen(PORT, () => {

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Connector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <connectorid>f1215b12-282a-43e5-a2bc-9381c9d4f23b</connectorid>
+  <description>Request input from a human via a web-based console. The agent or flow pauses until the human responds.</description>
+  <displayname>Human-in-the-Loop</displayname>
+  <iconbrandcolor>#0078d4</iconbrandcolor>
+  <name>cat_human-2din-2dthe-2dloop</name>
+  <connectortype>1</connectortype>
+  <openapidefinition>/Connector/cat_human-2din-2dthe-2dloop_openapidefinition.json</openapidefinition>
+  <connectionparameters>/Connector/cat_human-2din-2dthe-2dloop_connectionparameters.json</connectionparameters>
+  <policytemplateinstances>/Connector/cat_human-2din-2dthe-2dloop_policytemplateinstances.json</policytemplateinstances>
+  <iconblob>/Connector/cat_human-2din-2dthe-2dloop_iconblob.Png</iconblob>
+</Connector>

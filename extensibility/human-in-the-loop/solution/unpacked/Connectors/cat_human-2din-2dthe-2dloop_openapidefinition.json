@@ -5,7 +5,7 @@
     "description": "Request input from a human via a web-based console. The agent or flow pauses until the human responds.",
     "version": "1.0.0"
   },
-  "host": "hitl-sample-3978.uks1.devtunnels.ms",
+  "host": "@environmentVariables(\"cat_HitlHostUrl\")",
   "basePath": "/",
   "schemes": [
     "https"

@@ -3,73 +3,424 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Human-in-the-Loop Console</title>
+  <title>Human-in-the-Loop | Copilot Studio CAT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+    :root {
+      --c-bg: #f8f8f8;
+      --c-surface: #ffffff;
+      --c-surface-raised: #f3f3f3;
+      --c-border: #e1dfdd;
+      --c-border-subtle: #ebebeb;
+      --c-text: #242424;
+      --c-text-secondary: #616161;
+      --c-text-muted: #a19f9d;
+      --c-primary: #0078D4;
+      --c-primary-light: #e8f4fd;
+      --c-primary-dark: #005a9e;
+      --c-purple: #7F39FB;
+      --c-pink: #D83B73;
+      --c-orange: #FF8C00;
+      --c-green: #22c55e;
+      --c-green-light: #edfcf2;
+      --c-yellow: #b8860b;
+      --c-yellow-light: #fdf8ec;
+      --c-dark: #1b1b1b;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --gradient: linear-gradient(90deg, #0078D4, #5B8DEF, #7F39FB, #C26CF3, #D83B73, #FF8C00);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 2px 12px rgba(0,0,0,0.06);
+    }
 
-    header { background: #0078d4; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { font-size: 18px; font-weight: 600; }
-    .badge { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 12px; font-size: 13px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
+    html { height: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--c-bg);
+      color: var(--c-text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100%;
+    }
 
-    .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
-    .tab { padding: 8px 16px; border: none; background: #e0e0e0; cursor: pointer; border-radius: 6px 6px 0 0; font-size: 14px; }
-    .tab.active { background: white; font-weight: 600; }
+    /* ── Gradient bar ── */
+    .gradient-bar { height: 3px; background: var(--gradient); }
 
-    .empty-state { text-align: center; padding: 48px 24px; color: #888; }
-    .empty-state p { margin-top: 8px; }
+    /* ── Header ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: var(--c-surface);
+      border-bottom: 1px solid var(--c-border-subtle);
+    }
 
-    .request-card { background: white; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
-    .request-header { padding: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-    .request-header:hover { background: #fafafa; }
-    .request-title { font-weight: 600; font-size: 15px; }
-    .request-meta { font-size: 12px; color: #888; margin-top: 4px; }
-    .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; text-transform: uppercase; }
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-completed { background: #d4edda; color: #155724; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-paw { width: 32px; height: 32px; border-radius: 8px; }
+    .topbar-text { display: flex; flex-direction: column; }
+    .topbar-title { font-size: 0.88rem; font-weight: 700; letter-spacing: -0.01em; }
+    .topbar-sub { font-size: 0.7rem; color: var(--c-text-muted); font-weight: 500; }
 
-    .request-body { padding: 0 16px 16px; display: none; }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--c-green);
+    }
+
+    .live-dot {
+      width: 6px; height: 6px;
+      background: var(--c-green);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-pending {
+      background: var(--c-primary-light);
+      color: var(--c-primary);
+    }
+
+    /* ── Container ── */
+    .container {
+      max-width: 720px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 20px;
+      background: var(--c-border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+      width: fit-content;
+    }
+
+    .tab {
+      padding: 7px 18px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      font-family: var(--font-body);
+      color: var(--c-text-muted);
+      transition: all 0.15s ease;
+    }
+
+    .tab:hover { color: var(--c-text); }
+
+    .tab.active {
+      background: var(--c-surface);
+      color: var(--c-text);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 56px 24px;
+      color: var(--c-text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    .empty-state h3 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--c-text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .empty-state p { font-size: 0.82rem; }
+
+    /* ── Request card ── */
+    .request-card {
+      background: var(--c-surface);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      border: 1px solid var(--c-border-subtle);
+      overflow: hidden;
+      transition: box-shadow 0.15s ease, opacity 0.3s ease;
+      animation: cardIn 0.25s ease;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .request-card:hover { box-shadow: var(--shadow-md); }
+
+    .request-header {
+      padding: 14px 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      transition: background 0.1s ease;
+    }
+
+    .request-header:hover { background: var(--c-surface-raised); }
+
+    .request-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+    }
+
+    .request-meta {
+      font-size: 0.7rem;
+      color: var(--c-text-muted);
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .request-meta .dot { opacity: 0.35; }
+
+    .status-badge {
+      font-size: 0.62rem;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .status-pending { background: var(--c-yellow-light); color: var(--c-yellow); }
+    .status-completed { background: var(--c-green-light); color: var(--c-green); }
+    .status-cancelled { background: var(--c-surface-raised); color: var(--c-text-muted); }
+
+    /* ── Card body ── */
+    .request-body {
+      padding: 0 16px 16px;
+      display: none;
+    }
+
     .request-body.open { display: block; }
-    .request-message { background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; line-height: 1.5; }
 
+    .request-message {
+      background: var(--c-bg);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--c-text);
+      border-left: 3px solid var(--c-primary);
+    }
+
+    /* ── Form ── */
     .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
-    .form-group .required { color: #d32f2f; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: inherit;
+
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--c-text-muted);
+      margin-bottom: 5px;
     }
-    .form-group textarea { resize: vertical; min-height: 80px; }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      outline: none; border-color: #0078d4; box-shadow: 0 0 0 2px rgba(0,120,212,0.2);
+
+    .form-group .required { color: var(--c-pink); }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-family: var(--font-body);
+      color: var(--c-text);
+      background: var(--c-surface);
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .form-group .hint { font-size: 12px; color: #888; margin-top: 2px; }
 
-    .submit-row { display: flex; gap: 8px; align-items: center; margin-top: 16px; }
-    .btn { padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; }
-    .btn-primary { background: #0078d4; color: white; }
-    .btn-primary:hover { background: #106ebe; }
-    .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
-    .submit-status { font-size: 13px; }
-    .submit-status.error { color: #d32f2f; }
-    .submit-status.success { color: #155724; }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 88px;
+    }
 
-    .completed-response { background: #f0fff0; padding: 12px; border-radius: 6px; margin-top: 12px; }
-    .completed-response h4 { font-size: 13px; margin-bottom: 8px; color: #155724; }
-    .completed-response pre { font-size: 12px; white-space: pre-wrap; }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--c-primary);
+      box-shadow: 0 0 0 3px rgba(0,120,212,0.08);
+    }
 
-    .auto-refresh { font-size: 12px; color: rgba(255,255,255,0.7); }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--c-text-muted);
+    }
+
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 5px 0;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--c-text);
+      cursor: pointer;
+    }
+
+    .checkbox-option input[type="checkbox"] {
+      width: 15px; height: 15px;
+      accent-color: var(--c-primary);
+    }
+
+    /* ── Submit ── */
+    .submit-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--c-border-subtle);
+    }
+
+    .btn {
+      padding: 8px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: var(--font-body);
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--c-dark);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
+    .submit-status { font-size: 0.78rem; font-weight: 500; }
+    .submit-status.error { color: var(--c-pink); }
+    .submit-status.success { color: var(--c-green); }
+
+    /* ── Completed response ── */
+    .completed-response {
+      background: var(--c-green-light);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      margin-top: 6px;
+      border: 1px solid #d4e8dc;
+    }
+
+    .completed-response h4 {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      color: var(--c-green);
+      font-weight: 700;
+    }
+
+    .completed-response pre {
+      font-size: 0.78rem;
+      white-space: pre-wrap;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--c-text);
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 24px 0 16px;
+      font-size: 0.72rem;
+      color: var(--c-text-muted);
+    }
+
+    .footer a {
+      color: var(--c-purple);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .topbar { padding: 12px 16px; }
+      .container { padding: 0 12px; margin: 16px auto; }
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--c-text-muted); }
   </style>
 </head>
 <body>
-  <header>
-    <div>
-      <h1>Human-in-the-Loop Console</h1>
-      <div class="auto-refresh">Auto-refreshes every 5s</div>
+  <div class="gradient-bar"></div>
+  <div class="topbar">
+    <div class="topbar-left">
+      <img src="https://raw.githubusercontent.com/microsoft/mcscatblog/main/assets/img/paw.png" alt="CAT" class="topbar-paw">
+      <div class="topbar-text">
+        <div class="topbar-title">Human-in-the-Loop</div>
+        <div class="topbar-sub">Copilot Studio CAT</div>
+      </div>
     </div>
-    <div class="badge" id="pending-count">0 pending</div>
-  </header>
+    <div class="topbar-right">
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        Live
+      </div>
+      <div class="badge badge-pending" id="pending-count">0 pending</div>
+    </div>
+  </div>
 
   <div class="container">
     <div class="tabs">
@@ -78,13 +429,15 @@
       <button class="tab" data-status="all">All</button>
     </div>
     <div id="requests-list"></div>
+    <div class="footer">
+      From the <a href="https://microsoft.github.io/mcscatblog/">Copilot Studio CAT</a> team
+    </div>
   </div>
 
   <script>
     let currentStatus = 'pending';
     let openCards = new Set();
 
-    // Tab switching
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -114,20 +467,56 @@
 
       if (requests.length === 0) {
         list.innerHTML = `<div class="empty-state">
-          <p><strong>No ${currentStatus === 'all' ? '' : currentStatus} requests</strong></p>
-          <p>Requests from Copilot Studio agents and Power Automate flows will appear here.</p>
+          <div class="empty-state-icon">&#128065;</div>
+          <h3>No ${currentStatus === 'all' ? '' : currentStatus + ' '}requests</h3>
+          <p>Requests from agents and flows will appear here.</p>
         </div>`;
         return;
       }
 
-      list.innerHTML = requests.map(req => `
+      const incomingIds = new Set(requests.map(r => r.id));
+      const existingCards = list.querySelectorAll('.request-card');
+
+      existingCards.forEach(card => {
+        const id = card.id.replace('card-', '');
+        if (!incomingIds.has(id)) card.remove();
+      });
+
+      const existingIds = new Set([...list.querySelectorAll('.request-card')].map(c => c.id.replace('card-', '')));
+      const newRequests = requests.filter(req => !existingIds.has(req.id));
+      const existingRequests = requests.filter(req => existingIds.has(req.id));
+
+      existingRequests.forEach(req => {
+        const badge = document.querySelector(`#card-${req.id} .status-badge`);
+        if (badge && req.status !== badge.textContent.trim().toLowerCase()) {
+          badge.textContent = req.status;
+          badge.className = `status-badge status-${req.status}`;
+        }
+      });
+
+      if (newRequests.length > 0 || (!existingIds.size && requests.length > 0)) {
+        if (!existingIds.size) {
+          list.innerHTML = requests.map(req => buildCardHtml(req)).join('');
+          return;
+        }
+        const fragment = document.createElement('div');
+        fragment.innerHTML = newRequests.map(req => buildCardHtml(req)).join('');
+        while (fragment.firstChild) {
+          list.insertBefore(fragment.firstChild, list.firstChild);
+        }
+      }
+    }
+
+    function buildCardHtml(req) {
+      const timeAgo = formatTimeAgo(new Date(req.createdAt));
+      return `
         <div class="request-card" id="card-${req.id}">
           <div class="request-header" onclick="toggleCard('${req.id}')">
             <div>
               <div class="request-title">${escapeHtml(req.title)}</div>
               <div class="request-meta">
-                ${new Date(req.createdAt).toLocaleString()}
-                ${req.assignedTo ? ` &middot; Assigned to: ${escapeHtml(req.assignedTo)}` : ''}
+                <span>${timeAgo}</span>
+                ${req.assignedTo ? `<span class="dot">&middot;</span><span>${escapeHtml(req.assignedTo)}</span>` : ''}
               </div>
             </div>
             <span class="status-badge status-${req.status}">${req.status}</span>
@@ -136,15 +525,17 @@
             ${req.message ? `<div class="request-message">${escapeHtml(req.message)}</div>` : ''}
             ${req.status === 'pending' ? renderForm(req) : renderCompletedResponse(req)}
           </div>
-        </div>
-      `).join('');
+        </div>`;
     }
 
     function renderForm(req) {
       if (!req.inputs || req.inputs.length === 0) {
-        return `<p style="color:#888;font-size:13px;">No input fields defined. Submit to acknowledge.</p>
+        return `<div class="form-group">
+            <label>Response <span class="required">*</span></label>
+            <textarea id="field-_response" placeholder="Type your response..." required></textarea>
+          </div>
           <div class="submit-row">
-            <button class="btn btn-primary" onclick="submitResponse('${req.id}')">Submit</button>
+            <button class="btn btn-primary" id="submit-${req.id}" onclick="submitResponse('${req.id}')">Submit Response</button>
             <span class="submit-status" id="status-${req.id}"></span>
           </div>`;
       }
@@ -156,9 +547,9 @@
         switch (input.type) {
           case 'choiceset':
             if (input.isMultiSelect) {
-              const checkboxes = (input.items || []).map((item, i) =>
-                `<label style="display:block;margin:4px 0;font-weight:normal;font-size:14px;">
-                  <input type="checkbox" name="${input.id}" value="${escapeHtml(item)}" style="width:auto;margin-right:6px;">
+              const checkboxes = (input.items || []).map(item =>
+                `<label class="checkbox-option">
+                  <input type="checkbox" name="${escapeHtml(input.id)}" value="${escapeHtml(item)}">
                   ${escapeHtml(item)}
                 </label>`
               ).join('');
@@ -172,8 +563,8 @@
             ).join('');
             return `<div class="form-group">
               <label>${escapeHtml(input.title || input.id)} ${required}</label>
-              <select id="field-${input.id}" ${requiredAttr}>
-                <option value="">-- Select --</option>
+              <select id="field-${escapeHtml(input.id)}" ${requiredAttr}>
+                <option value="">Select an option...</option>
                 ${options}
               </select>
             </div>`;
@@ -181,32 +572,32 @@
           case 'date':
             return `<div class="form-group">
               <label>${escapeHtml(input.title || input.id)} ${required}</label>
-              <input type="date" id="field-${input.id}" ${requiredAttr}>
+              <input type="date" id="field-${escapeHtml(input.id)}" ${requiredAttr}>
             </div>`;
 
           case 'time':
             return `<div class="form-group">
               <label>${escapeHtml(input.title || input.id)} ${required}</label>
-              <input type="time" id="field-${input.id}" ${requiredAttr}>
+              <input type="time" id="field-${escapeHtml(input.id)}" ${requiredAttr}>
             </div>`;
 
           case 'number':
             return `<div class="form-group">
               <label>${escapeHtml(input.title || input.id)} ${required}</label>
-              <input type="number" id="field-${input.id}" placeholder="${escapeHtml(input.placeholder || '')}" ${requiredAttr}>
+              <input type="number" id="field-${escapeHtml(input.id)}" placeholder="${escapeHtml(input.placeholder || '')}" ${requiredAttr}>
             </div>`;
 
-          default: // text
+          default:
             return `<div class="form-group">
               <label>${escapeHtml(input.title || input.id)} ${required}</label>
-              <textarea id="field-${input.id}" placeholder="${escapeHtml(input.placeholder || '')}" ${requiredAttr}></textarea>
+              <textarea id="field-${escapeHtml(input.id)}" placeholder="${escapeHtml(input.placeholder || '')}" ${requiredAttr}></textarea>
             </div>`;
         }
       }).join('');
 
       return `${fields}
         <div class="submit-row">
-          <button class="btn btn-primary" id="submit-${req.id}" onclick="submitResponse('${req.id}')">Submit</button>
+          <button class="btn btn-primary" id="submit-${req.id}" onclick="submitResponse('${req.id}')">Submit Response</button>
           <span class="submit-status" id="status-${req.id}"></span>
         </div>`;
     }
@@ -214,7 +605,7 @@
     function renderCompletedResponse(req) {
       if (!req.response) return '';
       return `<div class="completed-response">
-        <h4>Response submitted ${req.respondedAt ? new Date(req.respondedAt).toLocaleString() : ''}</h4>
+        <h4>Responded ${req.respondedAt ? formatTimeAgo(new Date(req.respondedAt)) : ''}</h4>
         <pre>${escapeHtml(JSON.stringify(req.response, null, 2))}</pre>
       </div>`;
     }
@@ -234,47 +625,60 @@
       const statusEl = document.getElementById(`status-${requestId}`);
       const submitBtn = document.getElementById(`submit-${requestId}`);
 
-      // Collect form values
       const res = await fetch(`/api/requests/${requestId}`);
       const req = await res.json();
 
       const responseData = {};
-      for (const input of (req.inputs || [])) {
-        if (input.type === 'choiceset' && input.isMultiSelect) {
-          const checked = document.querySelectorAll(`input[name="${input.id}"]:checked`);
-          responseData[input.id] = [...checked].map(cb => cb.value).join(',');
-        } else {
-          const el = document.getElementById(`field-${input.id}`);
-          if (el) responseData[input.id] = el.value;
+      if (!req.inputs || req.inputs.length === 0) {
+        const el = document.getElementById('field-_response');
+        if (el) responseData.response = el.value;
+      } else {
+        for (const input of req.inputs) {
+          if (input.type === 'choiceset' && input.isMultiSelect) {
+            const checked = document.querySelectorAll(`input[name="${escapeHtml(input.id)}"]:checked`);
+            responseData[input.id] = [...checked].map(cb => cb.value).join(',');
+          } else {
+            const el = document.getElementById(`field-${input.id}`);
+            if (el) responseData[input.id] = el.value;
+          }
         }
       }
 
-      statusEl.textContent = 'Submitting...';
-      statusEl.className = 'submit-status';
       if (submitBtn) submitBtn.disabled = true;
 
-      try {
-        const result = await fetch(`/api/requests/${requestId}/respond`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(responseData),
-        });
-
-        if (result.ok) {
-          statusEl.textContent = 'Submitted successfully!';
-          statusEl.className = 'submit-status success';
-          setTimeout(() => loadRequests(), 1000);
-        } else {
-          const err = await result.json();
-          statusEl.textContent = `Error: ${err.error || 'Unknown error'}`;
-          statusEl.className = 'submit-status error';
-          if (submitBtn) submitBtn.disabled = false;
-        }
-      } catch (err) {
-        statusEl.textContent = `Error: ${err.message}`;
-        statusEl.className = 'submit-status error';
-        if (submitBtn) submitBtn.disabled = false;
+      // Remove card immediately with fade-out
+      const card = document.getElementById(`card-${requestId}`);
+      if (card) {
+        card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(-4px)';
+        setTimeout(() => card.remove(), 250);
       }
+      openCards.delete(requestId);
+
+      fetch(`/api/requests/${requestId}/respond`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(responseData),
+      }).then(result => {
+        if (!result.ok) result.json().then(err => console.error('Callback error:', err));
+        loadRequests();
+      }).catch(err => {
+        console.error('Callback error:', err);
+        if (submitBtn) submitBtn.disabled = false;
+      });
+    }
+
+    function formatTimeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+      if (seconds < 60) return 'just now';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      if (days < 7) return `${days}d ago`;
+      return date.toLocaleDateString();
     }
 
     function escapeHtml(str) {
@@ -282,7 +686,6 @@
       return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // Initial load + auto-refresh
     loadRequests();
     setInterval(loadRequests, 5000);
   </script>
