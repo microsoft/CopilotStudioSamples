@@ -32,7 +32,8 @@ function warn(msg) { console.log(yellow(`  ⚠ ${msg}`)); }
 
 function run(cmd, opts = {}) {
   try {
-    return execSync(cmd, { cwd: DIR, encoding: "utf8", stdio: opts.quiet ? "pipe" : "inherit", ...opts }).trim();
+    const result = execSync(cmd, { cwd: DIR, encoding: "utf8", stdio: opts.quiet ? "pipe" : "inherit", ...opts });
+    return (result || "").trim();
   } catch (err) {
     if (opts.ignoreError) return "";
     throw err;
@@ -40,7 +41,11 @@ function run(cmd, opts = {}) {
 }
 
 function runQuiet(cmd) {
-  return run(cmd, { quiet: true, ignoreError: true, stdio: "pipe" });
+  try {
+    return (execSync(cmd, { cwd: DIR, encoding: "utf8", stdio: "pipe" }) || "").trim();
+  } catch {
+    return "";
+  }
 }
 
 // ── 1. Install dependencies ──
