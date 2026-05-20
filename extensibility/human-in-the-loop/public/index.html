@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Human-in-the-Loop Console</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+
+    header { background: #0078d4; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 18px; font-weight: 600; }
+    .badge { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 12px; font-size: 13px; }
+
+    .container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
+
+    .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+    .tab { padding: 8px 16px; border: none; background: #e0e0e0; cursor: pointer; border-radius: 6px 6px 0 0; font-size: 14px; }
+    .tab.active { background: white; font-weight: 600; }
+
+    .empty-state { text-align: center; padding: 48px 24px; color: #888; }
+    .empty-state p { margin-top: 8px; }
+
+    .request-card { background: white; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
+    .request-header { padding: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .request-header:hover { background: #fafafa; }
+    .request-title { font-weight: 600; font-size: 15px; }
+    .request-meta { font-size: 12px; color: #888; margin-top: 4px; }
+    .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; text-transform: uppercase; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-completed { background: #d4edda; color: #155724; }
+
+    .request-body { padding: 0 16px 16px; display: none; }
+    .request-body.open { display: block; }
+    .request-message { background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; line-height: 1.5; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    .form-group .required { color: #d32f2f; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: inherit;
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: #0078d4; box-shadow: 0 0 0 2px rgba(0,120,212,0.2);
+    }
+    .form-group .hint { font-size: 12px; color: #888; margin-top: 2px; }
+
+    .submit-row { display: flex; gap: 8px; align-items: center; margin-top: 16px; }
+    .btn { padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; }
+    .btn-primary { background: #0078d4; color: white; }
+    .btn-primary:hover { background: #106ebe; }
+    .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+    .submit-status { font-size: 13px; }
+    .submit-status.error { color: #d32f2f; }
+    .submit-status.success { color: #155724; }
+
+    .completed-response { background: #f0fff0; padding: 12px; border-radius: 6px; margin-top: 12px; }
+    .completed-response h4 { font-size: 13px; margin-bottom: 8px; color: #155724; }
+    .completed-response pre { font-size: 12px; white-space: pre-wrap; }
+
+    .auto-refresh { font-size: 12px; color: rgba(255,255,255,0.7); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Human-in-the-Loop Console</h1>
+      <div class="auto-refresh">Auto-refreshes every 5s</div>
+    </div>
+    <div class="badge" id="pending-count">0 pending</div>
+  </header>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" data-status="pending">Pending</button>
+      <button class="tab" data-status="completed">Completed</button>
+      <button class="tab" data-status="all">All</button>
+    </div>
+    <div id="requests-list"></div>
+  </div>
+
+  <script>
+    let currentStatus = 'pending';
+    let openCards = new Set();
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentStatus = tab.dataset.status;
+        loadRequests();
+      });
+    });
+
+    async function loadRequests() {
+      try {
+        const res = await fetch(`/api/requests?status=${currentStatus}`);
+        const requests = await res.json();
+        renderRequests(requests);
+
+        const pendingCount = currentStatus === 'pending'
+          ? requests.length
+          : (await (await fetch('/api/requests?status=pending')).json()).length;
+        document.getElementById('pending-count').textContent = `${pendingCount} pending`;
+      } catch (err) {
+        console.error('Failed to load requests:', err);
+      }
+    }
+
+    function renderRequests(requests) {
+      const list = document.getElementById('requests-list');
+
+      if (requests.length === 0) {
+        list.innerHTML = `<div class="empty-state">
+          <p><strong>No ${currentStatus === 'all' ? '' : currentStatus} requests</strong></p>
+          <p>Requests from Copilot Studio agents and Power Automate flows will appear here.</p>
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = requests.map(req => `
+        <div class="request-card" id="card-${req.id}">
+          <div class="request-header" onclick="toggleCard('${req.id}')">
+            <div>
+              <div class="request-title">${escapeHtml(req.title)}</div>
+              <div class="request-meta">
+                ${new Date(req.createdAt).toLocaleString()}
+                ${req.assignedTo ? ` &middot; Assigned to: ${escapeHtml(req.assignedTo)}` : ''}
+              </div>
+            </div>
+            <span class="status-badge status-${req.status}">${req.status}</span>
+          </div>
+          <div class="request-body ${openCards.has(req.id) ? 'open' : ''}" id="body-${req.id}">
+            ${req.message ? `<div class="request-message">${escapeHtml(req.message)}</div>` : ''}
+            ${req.status === 'pending' ? renderForm(req) : renderCompletedResponse(req)}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderForm(req) {
+      if (!req.inputs || req.inputs.length === 0) {
+        return `<p style="color:#888;font-size:13px;">No input fields defined. Submit to acknowledge.</p>
+          <div class="submit-row">
+            <button class="btn btn-primary" onclick="submitResponse('${req.id}')">Submit</button>
+            <span class="submit-status" id="status-${req.id}"></span>
+          </div>`;
+      }
+
+      const fields = req.inputs.map(input => {
+        const required = input.isRequired ? '<span class="required">*</span>' : '';
+        const requiredAttr = input.isRequired ? 'required' : '';
+
+        switch (input.type) {
+          case 'choiceset':
+            if (input.isMultiSelect) {
+              const checkboxes = (input.items || []).map((item, i) =>
+                `<label style="display:block;margin:4px 0;font-weight:normal;font-size:14px;">
+                  <input type="checkbox" name="${input.id}" value="${escapeHtml(item)}" style="width:auto;margin-right:6px;">
+                  ${escapeHtml(item)}
+                </label>`
+              ).join('');
+              return `<div class="form-group">
+                <label>${escapeHtml(input.title || input.id)} ${required}</label>
+                ${checkboxes}
+              </div>`;
+            }
+            const options = (input.items || []).map(item =>
+              `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`
+            ).join('');
+            return `<div class="form-group">
+              <label>${escapeHtml(input.title || input.id)} ${required}</label>
+              <select id="field-${input.id}" ${requiredAttr}>
+                <option value="">-- Select --</option>
+                ${options}
+              </select>
+            </div>`;
+
+          case 'date':
+            return `<div class="form-group">
+              <label>${escapeHtml(input.title || input.id)} ${required}</label>
+              <input type="date" id="field-${input.id}" ${requiredAttr}>
+            </div>`;
+
+          case 'time':
+            return `<div class="form-group">
+              <label>${escapeHtml(input.title || input.id)} ${required}</label>
+              <input type="time" id="field-${input.id}" ${requiredAttr}>
+            </div>`;
+
+          case 'number':
+            return `<div class="form-group">
+              <label>${escapeHtml(input.title || input.id)} ${required}</label>
+              <input type="number" id="field-${input.id}" placeholder="${escapeHtml(input.placeholder || '')}" ${requiredAttr}>
+            </div>`;
+
+          default: // text
+            return `<div class="form-group">
+              <label>${escapeHtml(input.title || input.id)} ${required}</label>
+              <textarea id="field-${input.id}" placeholder="${escapeHtml(input.placeholder || '')}" ${requiredAttr}></textarea>
+            </div>`;
+        }
+      }).join('');
+
+      return `${fields}
+        <div class="submit-row">
+          <button class="btn btn-primary" id="submit-${req.id}" onclick="submitResponse('${req.id}')">Submit</button>
+          <span class="submit-status" id="status-${req.id}"></span>
+        </div>`;
+    }
+
+    function renderCompletedResponse(req) {
+      if (!req.response) return '';
+      return `<div class="completed-response">
+        <h4>Response submitted ${req.respondedAt ? new Date(req.respondedAt).toLocaleString() : ''}</h4>
+        <pre>${escapeHtml(JSON.stringify(req.response, null, 2))}</pre>
+      </div>`;
+    }
+
+    function toggleCard(id) {
+      const body = document.getElementById(`body-${id}`);
+      if (body.classList.contains('open')) {
+        body.classList.remove('open');
+        openCards.delete(id);
+      } else {
+        body.classList.add('open');
+        openCards.add(id);
+      }
+    }
+
+    async function submitResponse(requestId) {
+      const statusEl = document.getElementById(`status-${requestId}`);
+      const submitBtn = document.getElementById(`submit-${requestId}`);
+
+      // Collect form values
+      const res = await fetch(`/api/requests/${requestId}`);
+      const req = await res.json();
+
+      const responseData = {};
+      for (const input of (req.inputs || [])) {
+        if (input.type === 'choiceset' && input.isMultiSelect) {
+          const checked = document.querySelectorAll(`input[name="${input.id}"]:checked`);
+          responseData[input.id] = [...checked].map(cb => cb.value).join(',');
+        } else {
+          const el = document.getElementById(`field-${input.id}`);
+          if (el) responseData[input.id] = el.value;
+        }
+      }
+
+      statusEl.textContent = 'Submitting...';
+      statusEl.className = 'submit-status';
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        const result = await fetch(`/api/requests/${requestId}/respond`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(responseData),
+        });
+
+        if (result.ok) {
+          statusEl.textContent = 'Submitted successfully!';
+          statusEl.className = 'submit-status success';
+          setTimeout(() => loadRequests(), 1000);
+        } else {
+          const err = await result.json();
+          statusEl.textContent = `Error: ${err.error || 'Unknown error'}`;
+          statusEl.className = 'submit-status error';
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      } catch (err) {
+        statusEl.textContent = `Error: ${err.message}`;
+        statusEl.className = 'submit-status error';
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // Initial load + auto-refresh
+    loadRequests();
+    setInterval(loadRequests, 5000);
+  </script>
+</body>
+</html>

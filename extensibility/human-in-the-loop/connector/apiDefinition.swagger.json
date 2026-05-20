@@ -1,0 +1,116 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Human-in-the-Loop",
+    "description": "Request input from a human via a web-based console. The agent or flow pauses until the human responds. Works with both Copilot Studio and Power Automate.",
+    "version": "1.0.0"
+  },
+  "host": "YOUR-HOST.example.com",
+  "basePath": "/",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/api/requests": {
+      "x-ms-notification-content": {
+        "description": "Human's response",
+        "schema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "post": {
+        "operationId": "RequestHumanInput",
+        "summary": "Request human input",
+        "description": "Sends a request to the Human-in-the-Loop console and pauses the agent or flow until a human responds.",
+        "x-ms-trigger": "single",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["title"],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Title shown to the human",
+                  "x-ms-summary": "Title"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Instructions or context for the human",
+                  "x-ms-summary": "Message"
+                },
+                "inputs": {
+                  "type": "array",
+                  "description": "Form fields the human needs to fill in",
+                  "x-ms-summary": "Input fields",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "description": "Field type: text, number, date, time, or choiceset",
+                        "enum": ["text", "number", "date", "time", "choiceset"],
+                        "x-ms-summary": "Type"
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "Unique field identifier (used as key in the response)",
+                        "x-ms-summary": "Field ID"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Label displayed to the human",
+                        "x-ms-summary": "Label"
+                      },
+                      "placeholder": {
+                        "type": "string",
+                        "description": "Placeholder text for text/number inputs",
+                        "x-ms-summary": "Placeholder"
+                      },
+                      "isRequired": {
+                        "type": "boolean",
+                        "description": "Whether this field must be filled in",
+                        "x-ms-summary": "Required"
+                      },
+                      "items": {
+                        "type": "array",
+                        "description": "Options for choiceset fields",
+                        "items": { "type": "string" },
+                        "x-ms-summary": "Choices"
+                      },
+                      "isMultiSelect": {
+                        "type": "boolean",
+                        "description": "Allow selecting multiple options (choiceset only)",
+                        "x-ms-summary": "Multi-select"
+                      }
+                    }
+                  }
+                },
+                "assignedTo": {
+                  "type": "string",
+                  "description": "Who should respond (display only, e.g. email address)",
+                  "x-ms-summary": "Assigned to"
+                },
+                "notificationUrl": {
+                  "type": "string",
+                  "description": "Callback URL — auto-filled by the platform",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted — waiting for human response"
+          }
+        }
+      }
+    }
+  }
+}
