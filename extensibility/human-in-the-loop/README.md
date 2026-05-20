@@ -6,12 +6,11 @@ A custom connector that pauses a Copilot Studio agent or Power Automate flow and
 
 ## Overview
 
-This sample demonstrates an undocumented Power Platform connector pattern: using `x-ms-notification-url` **without** `x-ms-trigger` to create a **webhook action** — an action that pauses a flow mid-execution and waits for an external callback, the same pattern used by the Teams "Post adaptive card and wait for a response" action.
+This sample shows how to build a custom connector that uses the **webhook action** pattern — the same pattern used by the Teams "Post adaptive card and wait for a response" action. When a flow or agent calls this connector, execution pauses until a human responds through the web console.
 
 The solution includes:
-1. **Custom Connector** with the webhook action pattern and an environment variable for the host URL
-2. **Node.js Backend** that receives requests, presents them in a web console, and calls back when a human responds
-3. **Power Platform Solution** (importable `.zip`) containing the connector and environment variable
+- **Custom Connector** — a Power Platform solution with the connector and an environment variable for the host URL
+- **Node.js Backend** — receives requests from the connector, presents them in a web console, and calls back when a human responds
 
 ```mermaid
 sequenceDiagram
@@ -31,123 +30,105 @@ sequenceDiagram
     PP->>Agent: Resume with human's response
 ```
 
-## Key Discovery: Webhook Actions
-
-The standard Power Platform documentation only covers webhook **triggers** (`x-ms-trigger: single`), which start new flow runs. This sample uses an undocumented pattern to create webhook **actions** that pause flows:
-
-| | Webhook Trigger | Webhook Action (this sample) |
-|---|---|---|
-| Annotation | `x-ms-trigger: single` | No `x-ms-trigger` |
-| `x-ms-notification-url` | Yes | Yes |
-| `x-ms-notification-content` | Yes | Yes |
-| Behavior | Starts a **new** flow run | **Pauses** the current flow |
-| PA action type | `ApiConnectionNotification` | `OpenApiConnectionWebhook` |
-
-This is the same pattern used internally by the Teams connector's "Post adaptive card and wait for a response" action.
-
 ## Prerequisites
 
 - **Node.js 18+**
-- **devtunnel CLI** — `brew install devtunnel` ([docs](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started))
+- **devtunnel CLI** — [Install instructions](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started)
 - A **Power Platform environment** with Copilot Studio
 
-## Quick Start
+## Setup
 
-### 1. Start the backend
+### Step 1: Start the backend
 
 ```bash
+# macOS / Linux
 ./setup.sh
+
+# Windows
+setup.bat
 ```
 
-This installs dependencies, creates a dev tunnel, starts the server, and prints the tunnel host URL.
+The script installs dependencies, creates a public dev tunnel, starts the server, and prints the tunnel host URL. Keep it running.
 
-### 2. Import the solution
+### Step 2: Import the solution
 
-1. Go to [make.powerapps.com](https://make.powerapps.com) → Solutions → Import
+1. Go to [make.powerapps.com](https://make.powerapps.com) → **Solutions** → **Import**
 2. Upload `solution/customHIL_1_0_0_3.zip`
-3. When prompted, set the **HitlHostUrl** environment variable to the tunnel host URL from step 1
+3. When prompted, set the **HitlHostUrl** environment variable to the tunnel host URL printed by the script (e.g. `hitl-sample-3978.uks1.devtunnels.ms`)
 
-### 3. Use the connector
+### Step 3: Create a flow using the connector
 
-**In Copilot Studio:** Add the "Human-in-the-Loop" connector as an action in your agent.
+1. In Copilot Studio, create a new topic
+2. Add the **Human-in-the-Loop** connector as an action
+3. Configure the action with a title, message, and optionally assign it to someone
 
-**In Power Automate:** Add the "Request human input and wait for a response" action to your flow. The flow pauses until the human responds.
+![Flow using the connector](docs/flow.png)
 
-### 4. Respond
+### Step 4: Test it
 
-Open the tunnel URL in a browser to see the web console. Pending requests appear automatically. Fill in the form and click Submit — the agent or flow resumes with your response.
+1. Trigger the agent or flow — it will pause at the "Request human input" step
+2. Open the tunnel URL in a browser to see the web console
+3. The request appears in the console — fill in the form and click **Submit Response**
+4. The agent or flow resumes with the human's response
 
-## How It Works
+## How the Webhook Action Pattern Works
 
-### The Webhook Action Pattern
+The connector uses `x-ms-notification-url` in its OpenAPI definition to create a webhook action. When Power Platform calls the connector:
 
-The connector's OpenAPI definition uses three annotations that together create a webhook action:
+1. The platform generates a callback URL and injects it into the `notificationUrl` field
+2. The backend stores the request and returns **201 Created**
+3. The flow **pauses** — it dehydrates and consumes no resources while waiting
+4. When the human responds, the backend POSTs to `notificationUrl`
+5. The flow **resumes** with the response data from `x-ms-notification-content`
+
+The key part of the OpenAPI definition:
 
 ```yaml
-paths:
-  /api/requests/$subscriptions:
-    x-ms-notification-content:         # Schema of the callback payload
-      schema:
-        type: object
-        properties:
-          responseText:
-            type: string
-          # ...
-    post:
-      # No x-ms-trigger — this makes it an ACTION, not a trigger
-      parameters:
-        - name: body
-          schema:
-            properties:
-              notificationUrl:
-                type: string
-                x-ms-notification-url: true    # Platform injects callback URL here
-                x-ms-visibility: internal
-              body:
-                # ... user-visible fields
-      responses:
-        '201':
-          description: Created
+/api/requests/$subscriptions:
+  x-ms-notification-content:
+    description: Human's response
+    schema:
+      type: object
+      properties:
+        responseText:
+          type: string
+  post:
+    operationId: RequestHumanInput
+    parameters:
+      - name: body
+        schema:
+          properties:
+            notificationUrl:
+              type: string
+              x-ms-notification-url: true
+              x-ms-visibility: internal
+            body:
+              # ... user-visible fields (title, message, inputs)
+    responses:
+      '201':
+        description: Created
 ```
 
-When Power Platform calls this action:
-1. It generates a callback URL and injects it into `notificationUrl`
-2. The backend returns **201 Created** with a `Location` header
-3. The flow **pauses** (dehydrates) — no polling, no resources consumed
-4. When the backend POSTs to `notificationUrl`, the flow **resumes** with the response data
-
-### Environment Variable for Host URL
-
-The connector uses `@environmentVariables("cat_HitlHostUrl")` for the host, so the URL is set at solution import time — no need to edit the connector after import.
-
-### Server Endpoints
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| `POST` | `/api/requests/$subscriptions` | Receives request from connector, returns 201 |
-| `GET` | `/api/requests?status=pending` | Lists requests for the web console |
-| `POST` | `/api/requests/:id/respond` | Human submits response → POSTs to callback URL |
-| `DELETE` | `/api/requests/:id` | Webhook unsubscribe (called by platform on cancel) |
+The `DELETE /api/requests/{id}` endpoint handles webhook unsubscribe when a flow is cancelled.
 
 ## Project Structure
 
 ```
 human-in-the-loop/
 ├── server.js                      # Express backend
-├── public/index.html              # Web console UI (CAT-branded)
+├── public/index.html              # Web console UI
 ├── connector/
-│   ├── apiDefinition.swagger.json # OpenAPI spec (webhook action pattern)
+│   ├── apiDefinition.swagger.json # OpenAPI definition
 │   └── apiProperties.json         # Connector metadata
 ├── solution/
 │   ├── customHIL_1_0_0_3.zip     # Importable Power Platform solution
-│   └── unpacked/                  # Solution unpacked with pac solution unpack
-│       ├── Connectors/            # Connector definition + icon
-│       ├── environmentvariabledefinitions/
-│       └── Other/                 # Solution.xml, Customizations.xml
-├── setup.sh                       # Setup script (tunnel + server)
-├── test-local.js                  # Local test (no MCS/PA needed)
+│   └── unpacked/                  # Unpacked with pac solution unpack
+├── setup.sh                       # Setup script (macOS / Linux)
+├── setup.bat                      # Setup script (Windows)
+├── test-local.js                  # Local test harness
 └── docs/
-    └── console.png                # Screenshot
+    ├── console.png                # Console screenshot
+    └── flow.png                   # Flow screenshot
 ```
 
 ## Local Testing (No Power Platform Required)
@@ -159,24 +140,10 @@ npm install && npm start
 # Terminal 2: Simulate a connector call
 node test-local.js
 
-# Browser: Open http://localhost:3978 — fill in the form and submit
+# Browser: Open http://localhost:3978
 ```
 
-The test script starts a mock callback server, sends a sample HITL request, waits for you to respond in the browser, and prints the callback data.
-
-## Input Field Types
-
-The connector supports these form field types via the `inputs` array:
-
-| Type | Renders As | Extra Properties |
-|------|-----------|-----------------|
-| `text` | Multi-line textarea | `placeholder` |
-| `number` | Number input | `placeholder` |
-| `date` | Date picker | — |
-| `time` | Time picker | — |
-| `choiceset` | Dropdown or checkboxes | `items[]`, `isMultiSelect` |
-
-All types support `id` (required), `title`, and `isRequired`.
+The test script starts a mock callback server, sends a sample request, and waits for you to respond in the browser.
 
 ## Production Considerations
 
@@ -187,4 +154,3 @@ This is a sample. For production use, consider:
 - **Authorization** — validate that the person responding is authorized
 - **Notifications** — push alerts when new requests arrive
 - **HTTPS hosting** — deploy to Azure App Service, Container Apps, etc.
-- **Retry logic** — handle callback failures with retries
