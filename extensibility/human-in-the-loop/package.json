@@ -1,0 +1,16 @@
+{
+  "name": "copilot-studio-hitl-sample",
+  "version": "1.0.0",
+  "description": "Custom Human-in-the-Loop connector sample for Copilot Studio and Power Automate",
+  "main": "server.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test-local.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "uuid": "^11.1.0"
+  }
+}

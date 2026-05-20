@@ -1,0 +1,191 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Human-in-the-Loop",
+    "description": "Request input from a human via a web-based console. The agent or flow pauses until the human responds.",
+    "version": "1.0.0"
+  },
+  "host": "hitl-sample-3978.uks1.devtunnels.ms",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/requests/$subscriptions": {
+      "x-ms-notification-content": {
+        "description": "Human's response \u2014 delivered when the human submits the form",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Request ID",
+              "x-ms-summary": "Request ID"
+            },
+            "status": {
+              "type": "string",
+              "description": "Status",
+              "x-ms-summary": "Status"
+            },
+            "response": {
+              "type": "object",
+              "description": "The human's response data (all fields)",
+              "x-ms-summary": "Response"
+            },
+            "responseText": {
+              "type": "string",
+              "description": "The primary response text",
+              "x-ms-summary": "Response text"
+            },
+            "respondedAt": {
+              "type": "string",
+              "description": "When the human responded",
+              "x-ms-summary": "Responded at"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "RequestHumanInput",
+        "summary": "Request human input and wait for a response",
+        "description": "Sends a request to the Human-in-the-Loop console and waits for a human to respond. The flow pauses until the response arrives.",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "notificationUrl",
+                "body"
+              ],
+              "properties": {
+                "notificationUrl": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                },
+                "body": {
+                  "type": "object",
+                  "required": [
+                    "title"
+                  ],
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Title shown to the human",
+                      "x-ms-summary": "Title"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Instructions or context for the human",
+                      "x-ms-summary": "Message"
+                    },
+                    "inputs": {
+                      "type": "array",
+                      "description": "Form fields the human needs to fill in",
+                      "x-ms-summary": "Input fields",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "description": "Field type: text, number, date, time, or choiceset",
+                            "enum": [
+                              "text",
+                              "number",
+                              "date",
+                              "time",
+                              "choiceset"
+                            ],
+                            "x-ms-summary": "Type"
+                          },
+                          "id": {
+                            "type": "string",
+                            "description": "Unique field identifier",
+                            "x-ms-summary": "Field ID"
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Label displayed to the human",
+                            "x-ms-summary": "Label"
+                          },
+                          "placeholder": {
+                            "type": "string",
+                            "description": "Placeholder text",
+                            "x-ms-summary": "Placeholder"
+                          },
+                          "isRequired": {
+                            "type": "boolean",
+                            "description": "Whether this field must be filled in",
+                            "x-ms-summary": "Required"
+                          },
+                          "items": {
+                            "type": "array",
+                            "description": "Options for choiceset fields",
+                            "items": {
+                              "type": "string"
+                            },
+                            "x-ms-summary": "Choices"
+                          },
+                          "isMultiSelect": {
+                            "type": "boolean",
+                            "description": "Allow selecting multiple options",
+                            "x-ms-summary": "Multi-select"
+                          }
+                        }
+                      }
+                    },
+                    "assignedTo": {
+                      "type": "string",
+                      "description": "Who should respond (e.g. email address)",
+                      "x-ms-summary": "Assigned to"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Request created \u2014 waiting for human response"
+          },
+          "default": {
+            "description": "Operation failed"
+          }
+        }
+      }
+    },
+    "/api/requests/{id}": {
+      "delete": {
+        "operationId": "DeleteRequest",
+        "summary": "Cancel a request",
+        "description": "Cancel a pending human-in-the-loop request (webhook unsubscribe).",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Request ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
+    }
+  }
+}
