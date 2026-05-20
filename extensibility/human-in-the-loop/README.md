@@ -41,11 +41,7 @@ sequenceDiagram
 ### Step 1: Start the backend
 
 ```bash
-# macOS / Linux
-./setup.sh
-
-# Windows
-setup.bat
+node setup.js
 ```
 
 The script installs dependencies, creates a public dev tunnel, starts the server, and prints the tunnel host URL. Keep it running.
@@ -123,8 +119,7 @@ human-in-the-loop/
 ├── solution/
 │   ├── customHIL_1_0_0_3.zip     # Importable Power Platform solution
 │   └── unpacked/                  # Unpacked with pac solution unpack
-├── setup.sh                       # Setup script (macOS / Linux)
-├── setup.bat                      # Setup script (Windows)
+├── setup.js                       # Setup script (cross-platform)
 ├── test-local.js                  # Local test harness
 └── docs/
     ├── console.png                # Console screenshot
