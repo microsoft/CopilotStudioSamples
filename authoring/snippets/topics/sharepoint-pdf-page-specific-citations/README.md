@@ -12,9 +12,15 @@ An optional variable is included to control whether Office files (Word, Excel, P
 
 ## Features
 
-- **Page-specific PDF citations** — appends `#page=N` to PDF links using page markers **when** they are returned by the SharePoint knowledge source.
+- **Page-specific PDF citations** — appends `#page=N` to PDF links using page markers **when** they are returned in the citations held in System.Response.Citations.
 - **Optional Office web-open control** — a configurable variable that, when enabled, appends web=1 parameter to Office file links to open in the browser instead of the desktop app. 
-- Works with SharePoint knowledge sources and Generative Orchestration. When page markers are returned by SharePoint for PDFs in the System.Citations table variable in Copilot Studio, the format for a page marker is different to the format used for [Unstructured data as a knowledge source](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-unstructured-data), for example uploaded files. For uploaded file scenarios, refer to [citation-swap](../citation-swap/).
+- Works with SharePoint knowledge sources and Generative Orchestration. When page markers are returned by SharePoint for PDFs in the System.Response.Citations table variable in Copilot Studio, the format for a page marker is different to the format used for [Unstructured data as a knowledge source](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-unstructured-data), for example uploaded files. For uploaded file scenarios, refer to [citation-swap](../citation-swap/).
+- Emits multiple citations for the pages a response was grounded on when the orchestrator returns multiple citations for chunks returned from a single PDF document. The page emitted in each citation uses the first page marker identified in each citation.
+<br><br>
+
+> In evaluations, GPT-5 Chat does not return multiple citations for a single file, while Claude Sonnet 4.6 does. That difference enables multiple page-specific citations for a document when several parts of the same PDF are used to ground a response.
+
+
 
 ## Prerequisites
 
