@@ -1,0 +1,90 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Dynamic MCP Connector",
+    "description": "Select an MCP server instance from the catalog, then interact via MCP Streamable HTTP.",
+    "version": "1.0.0"
+  },
+  "host": "CATALOG_HOST_PLACEHOLDER",
+  "basePath": "/",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/instances": {
+      "get": {
+        "operationId": "ListInstances",
+        "summary": "List Instances",
+        "description": "Returns the MCP server instances available in the catalog.",
+        "x-ms-visibility": "internal",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Instance"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp": {
+      "post": {
+        "operationId": "InvokeMCP",
+        "summary": "Invoke MCP Server",
+        "description": "Interact with the selected MCP server instance via Streamable HTTP.",
+        "x-ms-agentic-protocol": "mcp-streamable-1.0",
+        "parameters": [
+          {
+            "name": "instanceUrl",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Instance",
+            "description": "Select an MCP server instance.",
+            "x-ms-dynamic-values": {
+              "operationId": "ListInstances",
+              "value-path": "mcpUrl",
+              "value-title": "name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Instance": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Instance identifier",
+          "x-ms-summary": "Instance ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the instance",
+          "x-ms-summary": "Name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the instance",
+          "x-ms-summary": "Description"
+        },
+        "mcpUrl": {
+          "type": "string",
+          "description": "MCP endpoint URL for this instance",
+          "x-ms-summary": "MCP URL"
+        }
+      }
+    }
+  }
+}

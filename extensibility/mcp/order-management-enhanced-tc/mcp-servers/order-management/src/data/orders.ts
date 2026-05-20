@@ -1,0 +1,106 @@
+import { Order } from "../types.js";
+
+export const orders: Order[] = [
+  {
+    id: "ORD-10421",
+    customer: { id: "C-001", name: "Sarah Mitchell", email: "sarah.mitchell@example.com" },
+    date: "2026-04-10",
+    status: "shipped",
+    items: [
+      { sku: "SKU-WH1000", name: "Sony WH-1000XM5 Headphones", quantity: 1, unitPrice: 349.99 },
+      { sku: "SKU-USBC3", name: "USB-C Charging Cable (3-pack)", quantity: 1, unitPrice: 14.99 },
+    ],
+    shippingAddress: "742 Evergreen Terrace, Springfield, IL 62704",
+    paymentMethod: "Visa ending in 4242",
+    total: 364.98,
+  },
+  {
+    id: "ORD-10422",
+    customer: { id: "C-001", name: "Sarah Mitchell", email: "sarah.mitchell@example.com" },
+    date: "2026-04-15",
+    status: "processing",
+    items: [
+      { sku: "SKU-KINDLE", name: "Kindle Paperwhite (16GB)", quantity: 1, unitPrice: 149.99 },
+    ],
+    shippingAddress: "742 Evergreen Terrace, Springfield, IL 62704",
+    paymentMethod: "Visa ending in 4242",
+    total: 149.99,
+  },
+  {
+    id: "ORD-10318",
+    customer: { id: "C-001", name: "Sarah Mitchell", email: "sarah.mitchell@example.com" },
+    date: "2026-03-22",
+    status: "delivered",
+    items: [
+      { sku: "SKU-AIRPOD", name: "AirPods Pro (2nd Gen)", quantity: 1, unitPrice: 249.00 },
+      { sku: "SKU-CASE01", name: "Silicone AirPods Case - Midnight", quantity: 1, unitPrice: 19.99 },
+    ],
+    shippingAddress: "742 Evergreen Terrace, Springfield, IL 62704",
+    paymentMethod: "Visa ending in 4242",
+    total: 268.99,
+  },
+  {
+    id: "ORD-10455",
+    customer: { id: "C-002", name: "James Rivera", email: "j.rivera@example.com" },
+    date: "2026-04-12",
+    status: "shipped",
+    items: [
+      { sku: "SKU-HOODIE", name: "Nike Tech Fleece Hoodie - Black (L)", quantity: 1, unitPrice: 120.00 },
+      { sku: "SKU-JOGGER", name: "Nike Sportswear Joggers - Grey (L)", quantity: 1, unitPrice: 85.00 },
+    ],
+    shippingAddress: "88 Sunset Blvd, Apt 4B, Los Angeles, CA 90028",
+    paymentMethod: "Mastercard ending in 8811",
+    total: 205.00,
+  },
+  {
+    id: "ORD-10460",
+    customer: { id: "C-002", name: "James Rivera", email: "j.rivera@example.com" },
+    date: "2026-04-18",
+    status: "processing",
+    items: [
+      { sku: "SKU-SWITCH", name: "Nintendo Switch OLED", quantity: 1, unitPrice: 349.99 },
+      { sku: "SKU-ZELDA", name: "The Legend of Zelda: Tears of the Kingdom", quantity: 1, unitPrice: 59.99 },
+    ],
+    shippingAddress: "88 Sunset Blvd, Apt 4B, Los Angeles, CA 90028",
+    paymentMethod: "Mastercard ending in 8811",
+    total: 409.98,
+  },
+  {
+    id: "ORD-10389",
+    customer: { id: "C-003", name: "Emily Chen", email: "emily.chen@example.com" },
+    date: "2026-03-28",
+    status: "delivered",
+    items: [
+      { sku: "SKU-DUNE2", name: "Dune: Part Two (4K Blu-ray)", quantity: 1, unitPrice: 29.99 },
+      { sku: "SKU-FOUNDATION", name: "Foundation (Isaac Asimov) - Paperback", quantity: 1, unitPrice: 12.99 },
+      { sku: "SKU-3BODY", name: "The Three-Body Problem - Paperback", quantity: 1, unitPrice: 14.99 },
+    ],
+    shippingAddress: "1200 Main Street, Unit 7C, Seattle, WA 98101",
+    paymentMethod: "Amex ending in 3003",
+    total: 57.97,
+  },
+  {
+    id: "ORD-10470",
+    customer: { id: "C-003", name: "Emily Chen", email: "emily.chen@example.com" },
+    date: "2026-04-14",
+    status: "shipped",
+    items: [
+      { sku: "SKU-ERGOCHAIR", name: "ErgoChair Pro - Matte Black", quantity: 1, unitPrice: 499.00 },
+    ],
+    shippingAddress: "1200 Main Street, Unit 7C, Seattle, WA 98101",
+    paymentMethod: "Amex ending in 3003",
+    total: 499.00,
+  },
+  {
+    id: "ORD-10401",
+    customer: { id: "C-002", name: "James Rivera", email: "j.rivera@example.com" },
+    date: "2026-04-01",
+    status: "cancelled",
+    items: [
+      { sku: "SKU-IPAD", name: "iPad Air (M2, 256GB)", quantity: 1, unitPrice: 699.00 },
+    ],
+    shippingAddress: "88 Sunset Blvd, Apt 4B, Los Angeles, CA 90028",
+    paymentMethod: "Mastercard ending in 8811",
+    total: 699.00,
+  },
+];

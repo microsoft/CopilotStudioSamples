@@ -1,0 +1,12 @@
+kind: TaskDialog
+modelDisplayName: orders mcp
+modelDescription: my orders mcp server connector
+action:
+  kind: InvokeExternalAgentTaskAction
+  connectionReference: cr26e_OrdersAgent.shared_new-5forders-20mcp-5fee08b8354fad177a.6be7a421f5184b9ebb376965cf6cd8b8
+  connectionProperties:
+    mode: Maker
+
+  operationDetails:
+    kind: ModelContextProtocolMetadata
+    operationId: InvokeServer

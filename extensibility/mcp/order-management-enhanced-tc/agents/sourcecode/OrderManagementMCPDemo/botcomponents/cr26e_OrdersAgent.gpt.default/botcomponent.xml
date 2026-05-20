@@ -1,0 +1,10 @@
+<botcomponent schemaname="cr26e_OrdersAgent.gpt.default">
+  <componenttype>15</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Orders Agent</name>
+  <parentbotid>
+    <schemaname>cr26e_OrdersAgent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

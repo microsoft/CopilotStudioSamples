@@ -1,0 +1,12 @@
+kind: TaskDialog
+modelDisplayName: warehouse server 3
+modelDescription: my warehouse server 3 connector
+action:
+  kind: InvokeExternalAgentTaskAction
+  connectionReference: cr26e_Warehouseagent.shared_new-5fwarehouse-20server-203-5fee08b8354fad177a.726ca1c1522e492082b8e68667e2267e
+  connectionProperties:
+    mode: Invoker
+
+  operationDetails:
+    kind: ModelContextProtocolMetadata
+    operationId: InvokeServer

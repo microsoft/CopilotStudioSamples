@@ -1,0 +1,12 @@
+kind: GptComponentMetadata
+instructions:
+gptCapabilities:
+  webBrowsing: true
+  codeInterpreter: true
+
+aISettings:
+  model:
+    modelNameHint: Sonnet46
+
+  extensionData:
+    lastUsedCustomModel: {}

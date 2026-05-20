@@ -1,0 +1,96 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Copilot Studio CAT",
+    "description": "Copilot Studio CAT custom connector"
+  },
+  "host": "YOUR_FUNCTION_APP_HOSTNAME",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/SyncToAsyncService": {
+      "post": {
+        "summary": "call agent and wait for response",
+        "description": "call agent and wait for response",
+        "operationId": "callAgent",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "application/json",
+            "description": "Content-Type"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "environmentId": {
+                  "type": "string",
+                  "description": "environmentId"
+                },
+                "agentIdentifier": {
+                  "type": "string",
+                  "description": "agentIdentifier"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "message"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "description": "Optional. Set to continue a conversation context"
+                }
+              },
+              "default": {
+                "environmentId": "YOUR_ENVIRONMENT_ID",
+                "agentIdentifier": "YOUR_AGENT_IDENTIFIER",
+                "message": "Hello, how can you help me?",
+                "conversationId": "YOUR_CONVERSATION_ID"
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {
+        "CopilotStudio.Copilots.Invoke": "CopilotStudio.Copilots.Invoke"
+      },
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize"
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": [
+        "CopilotStudio.Copilots.Invoke"
+      ]
+    }
+  ],
+  "tags": []
+}

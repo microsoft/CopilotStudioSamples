@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr26e_Warehouseagent.topic.warehouseserver3">
+  <componenttype>9</componenttype>
+  <description>my warehouse server 3 connector</description>
+  <iscustomizable>0</iscustomizable>
+  <name>warehouse server 3</name>
+  <parentbotid>
+    <schemaname>cr26e_Warehouseagent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>
