@@ -85,31 +85,32 @@ devtunnel create "$TUNNEL_NAME" --allow-anonymous
 devtunnel port create "$TUNNEL_NAME" --port-number "$PORT" --protocol https
 ok "Tunnel '$TUNNEL_NAME' created"
 
-# Get the tunnel URL
+# Get the tunnel URL from JSON output
 TUNNEL_URL=""
 
-# Try JSON output first
-TUNNEL_URL=$(devtunnel show "$TUNNEL_NAME" --output json 2>/dev/null \
+TUNNEL_URL=$(devtunnel show "$TUNNEL_NAME" --json 2>/dev/null \
   | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
-ports = data.get('ports', [])
-for p in ports:
-    uri = p.get('portForwardingUris', [])
-    if uri:
-        print(uri[0].rstrip('/'))
-        sys.exit(0)
 tunnel = data.get('tunnel', data)
 tid = tunnel.get('tunnelId', '')
-cluster = tunnel.get('clusterId', '')
-if tid and cluster:
-    print(f'https://{tid}-{PORT}.{cluster}.devtunnels.ms')
+# tunnelId format: name.cluster (e.g. hitl-sample.eun1)
+parts = tid.rsplit('.', 1)
+if len(parts) == 2:
+    name, cluster = parts
+    print(f'https://{name}-${PORT}.{cluster}.devtunnels.ms')
+elif tid:
+    print(f'https://{tid}-${PORT}.devtunnels.ms')
 " 2>/dev/null) || true
 
-# Fallback: parse text output
+# Fallback: parse text output for tunnel ID
 if [[ -z "$TUNNEL_URL" ]]; then
-  TUNNEL_URL=$(devtunnel show "$TUNNEL_NAME" 2>/dev/null \
-    | grep -oE 'https://[^ ]+devtunnels\.ms[^ ]*' | head -1 | sed 's:/*$::') || true
+  TUNNEL_ID=$(devtunnel show "$TUNNEL_NAME" 2>/dev/null | grep 'Tunnel ID' | awk '{print $NF}')
+  if [[ -n "$TUNNEL_ID" ]]; then
+    NAME=$(echo "$TUNNEL_ID" | cut -d. -f1)
+    CLUSTER=$(echo "$TUNNEL_ID" | cut -d. -f2)
+    TUNNEL_URL="https://${NAME}-${PORT}.${CLUSTER}.devtunnels.ms"
+  fi
 fi
 
 if [[ -z "$TUNNEL_URL" ]]; then

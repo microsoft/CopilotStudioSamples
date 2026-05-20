@@ -20,8 +20,9 @@ const requests = new Map();
 // (via the x-ms-notification-url OpenAPI extension). Returning 202 tells
 // the platform to pause the agent/flow and wait for a callback.
 // ─────────────────────────────────────────────────────────────────────────────
-app.post("/api/requests", (req, res) => {
-  const { title, message, inputs, assignedTo, notificationUrl } = req.body;
+app.post("/api/requests/\\$subscriptions", (req, res) => {
+  const { notificationUrl, body: innerBody } = req.body;
+  const { title, message, inputs, assignedTo } = innerBody || req.body;
 
   if (!notificationUrl) {
     return res.status(400).json({ error: "notificationUrl is required" });
@@ -46,8 +47,16 @@ app.post("/api/requests", (req, res) => {
   console.log(`[HITL] Created: ${id} — "${request.title}"`);
   console.log(`[HITL]   callback: ${notificationUrl}`);
 
-  // 202 Accepted — the agent/flow pauses here
-  res.status(202).json({ id, status: "pending" });
+  // 201 Created — matches the Teams connector pattern (webhook action, not trigger)
+  // Location header for webhook unsubscribe
+  res.setHeader("Location", `/api/requests/${id}`);
+  res.status(201).json({ id, status: "pending" });
+});
+
+// Also accept POST /api/requests for backward compat (test script)
+app.post("/api/requests", (req, res, next) => {
+  req.url = "/api/requests/$subscriptions";
+  next();
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -94,10 +103,18 @@ app.post("/api/requests/:id/respond", async (req, res) => {
   try {
     console.log(`[HITL] Calling back: ${request.notificationUrl}`);
 
+    // POST body must match x-ms-notification-content schema
+    const callbackBody = {
+      id: request.id,
+      status: "completed",
+      response: responseData,
+      respondedAt: new Date().toISOString(),
+    };
+
     const callbackResponse = await fetch(request.notificationUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(responseData),
+      body: JSON.stringify(callbackBody),
     });
 
     console.log(`[HITL] Callback status: ${callbackResponse.status}`);
@@ -125,6 +142,21 @@ app.post("/api/requests/:id/respond", async (req, res) => {
       detail: err.message,
     });
   }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DELETE /api/requests/:id
+//
+// Called by Power Platform to unsubscribe/cancel a webhook registration.
+// Required by the connector validation.
+// ─────────────────────────────────────────────────────────────────────────────
+app.delete("/api/requests/:id", (req, res) => {
+  const request = requests.get(req.params.id);
+  if (!request) return res.status(200).json({ ok: true });
+
+  request.status = "cancelled";
+  console.log(`[HITL] Cancelled: ${request.id}`);
+  res.status(200).json({ ok: true });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
