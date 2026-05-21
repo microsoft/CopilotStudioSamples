@@ -140,6 +140,3 @@ beginDialog:
             - kind: EndDialog
               id: end-topic
               clearTopicQueue: true
-
-
-              
