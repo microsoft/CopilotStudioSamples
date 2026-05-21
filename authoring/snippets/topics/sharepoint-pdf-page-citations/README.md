@@ -38,7 +38,7 @@ An optional variable is included to control whether Office files (Word, Excel, P
 
 | File | Description |
 |------|-------------|
-| [sharepoint-pdf-citations.yml](./sharepoint-pdf-citations.yml) | Topic YAML for page-specific citations for PDFs when using SharePoint as a knowledge source — paste this into the Code editor for a new topic |
+| [sharepoint-pdf-citations.yml](https://github.com/microsoft/CopilotStudioSamples/blob/main/authoring/snippets/topics/sharepoint-pdf-page-citations/sharepoint-pdf-citations.yml) | Topic YAML for page-specific citations for PDFs when using SharePoint as a knowledge source — paste this into the Code editor for a new topic |
 
 ## Limitations
 
