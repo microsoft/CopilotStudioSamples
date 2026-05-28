@@ -1,3 +1,4 @@
+.env
 /log.log
 /abc.log
 /__azurite_db_queue_extent__.json
