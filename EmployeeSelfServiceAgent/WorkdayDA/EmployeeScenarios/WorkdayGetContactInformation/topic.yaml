@@ -375,6 +375,12 @@ beginDialog:
             homeAddress: First(Topic.homeContactData.HomeAddress).Value
         }
 
+    - kind: SendActivity
+      id: sendActivity_Shc3jt
+      activity: |-
+        Here is your contact information:
+        {Topic.finalizedContactInformation}
+
 inputType:
   properties:
     EmployeeName:

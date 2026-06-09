@@ -150,6 +150,12 @@ beginDialog:
                     - kind: EndDialog
                       id: xVALae
 
+    - kind: SendActivity
+      id: sendActivity_Yqhll9
+      activity: |-
+        Here is your team's company code information:
+        {Topic.workdayResponseTable}
+
 inputType:
   properties:
     EmployeeName:

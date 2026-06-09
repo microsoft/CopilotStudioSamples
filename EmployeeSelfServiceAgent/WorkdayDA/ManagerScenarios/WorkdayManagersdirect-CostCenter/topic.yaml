@@ -147,6 +147,12 @@ beginDialog:
                     - kind: EndDialog
                       id: HsUkV7
 
+    - kind: SendActivity
+      id: sendActivity_SBD1Zi
+      activity: |-
+        Here is your team's cost center information:
+        {Topic.workdayResponseTable}
+
 inputType:
   properties:
     EmployeeName:
