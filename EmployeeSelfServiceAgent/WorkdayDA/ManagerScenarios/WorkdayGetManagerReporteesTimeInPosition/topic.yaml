@@ -159,6 +159,12 @@ beginDialog:
             )
         )
 
+    - kind: SendActivity
+      id: sendActivity_bDM9UT
+      activity: |-
+        Here is your team's time in position information:
+        {Topic.workdayResponseTableWithTimeInPosition}
+
 inputType: {}
 outputType:
   properties:

@@ -203,6 +203,10 @@ beginDialog:
       variable: Topic.workdayResponse
       value: "\"\""
 
+    - kind: SendActivity
+      id: sendActivity_gO8pkz
+      activity: "{Topic.workdayResponseTable}"
+
     - kind: EndDialog
       id: Y2VqKn
 

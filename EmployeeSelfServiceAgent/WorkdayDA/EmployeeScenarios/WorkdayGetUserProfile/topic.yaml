@@ -207,6 +207,12 @@ beginDialog:
                 Topic.daysOfService & " day" & If(Topic.daysOfService <> 1, "s", "")
         }
 
+    - kind: SendActivity
+      id: sendActivity_0SDSlB
+      activity: |-
+        Here is your employee profile:
+        {Topic.finalizedData}
+
 inputType: {}
 outputType:
   properties:

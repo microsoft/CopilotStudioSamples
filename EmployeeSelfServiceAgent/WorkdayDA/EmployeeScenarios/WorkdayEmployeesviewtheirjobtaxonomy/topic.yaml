@@ -124,6 +124,12 @@ beginDialog:
            JobFamily: First(Topic.jobFamilyTable.JobFamily).Value
         }
 
+    - kind: SendActivity
+      id: sendActivity_AT4n5c
+      activity: |-
+        Here is your job information:
+        {Topic.jobFunctionData}
+
 outputType:
   properties:
     jobFunctionData:

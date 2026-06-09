@@ -121,6 +121,12 @@ beginDialog:
       userInput: =Topic.workdayResponse
       additionalInstructions: Do not show citation. Display each vacation balances in a separate line and highlight vacation name. Only reply back with the Vacation Balance. Format the response in in friendly way and make sure to tie it back directly to the orginal question of the user. ({System.Activity.Text}). Display ({Topic.asOfDate}) with the message as of.  Never include the "Plan ID".
 
+    - kind: SendActivity
+      id: sendActivity_56apKp
+      activity: |-
+        Here is your vacation balance:
+        {Topic.VacationBalance}
+
 inputType:
   properties:
     AsOfEffectiveDate:

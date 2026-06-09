@@ -215,6 +215,12 @@ beginDialog:
             )
         )
 
+    - kind: SendActivity
+      id: sendActivity_s9a274
+      activity: |-
+        Here is your education information:
+        {Topic.FinalizedEducationData}
+
 inputType:
   properties:
     EmployeeName:
