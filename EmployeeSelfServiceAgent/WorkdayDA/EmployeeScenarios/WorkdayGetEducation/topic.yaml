@@ -1,4 +1,11 @@
 kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: EmployeeName
+    description: The name of the person whose employment data is being requested.
+    entity: PersonNamePrebuiltEntity
+    shouldPromptUser: false
+
 modelDescription: |-
   Use this topic when the user asks to VIEW or READ THEIR OWN education / academic history / schooling stored in Workday — degree (bachelor's, master's, MBA, PhD), diploma, certificate, school/university/college/institution, alma mater, major, field of study, minor, graduation year/date, GPA, academic qualifications, or credentials.
 
@@ -7,24 +14,17 @@ modelDescription: |-
   Data is retrieved from Workday and belongs exclusively to the requesting user.
 
   Do NOT trigger for general questions about tuition reimbursement, learning programs, or training
-inputs:
-  - kind: AutomaticTaskInput
-    propertyName: EmployeeName
-    description: The name of the person whose employment data is being requested.
-    entity: PersonNamePrebuiltEntity
-    shouldPromptUser: false
-
 beginDialog:
   kind: OnRecognizedIntent
   id: main
   intent:
     triggerQueries:
-      - Show my Education Details
-      - From which school I completed my BS degree Education?
-      - Show my Education Degrees
-      - What was my field of Study during Education?
-      - Show my First Year attended for BS degree Education?
-      - Show my Last Year attended for BS degree Education?
+      - "Show my Education Details "
+      - "From which school I completed my BS degree Education? "
+      - "Show my Education Degrees "
+      - "What was my field of Study during Education? "
+      - "Show my First Year attended for BS degree Education? "
+      - "Show my Last Year attended for BS degree Education? "
 
   actions:
     - kind: BeginDialog
@@ -42,7 +42,7 @@ beginDialog:
       input:
         binding:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
-          scenarioName: ="msdyn_HRWorkdayHCMEmployeeGetEducation"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetEducation
 
       dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
       output:
@@ -70,13 +70,13 @@ beginDialog:
                         type:
                           kind: Record
                           properties:
-                      "@Descriptor": String
-                      ID:
-                        type:
-                          kind: Table
-                          properties:
-                            "@type": String
-                            "#text": String
+                            "@Descriptor": String
+                            ID:
+                              type:
+                                kind: Table
+                                properties:
+                                  "@type": String
+                                  "#text": String
 
                       Date_Degree_Received: String
                       Degree_Completed_Reference:
@@ -143,6 +143,10 @@ beginDialog:
                           kind: Table
                           properties:
                             "@type": String
+                            "#text": String
+
+      value: =Topic.workdayResponse
+
     - kind: BeginDialog
       id: M8G7as
       displayName: Refresh country name reference data
@@ -216,7 +220,7 @@ beginDialog:
         )
 
     - kind: SendActivity
-      id: sendActivity_s9a274
+      id: sendActivity_educationResponse
       activity: |-
         Here is your education information:
         {Topic.FinalizedEducationData}

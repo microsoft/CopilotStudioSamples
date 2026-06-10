@@ -140,6 +140,12 @@ beginDialog:
             )
         )
 
+    - kind: SendActivity
+      id: sendActivity_uxFMLZ
+      activity: |-
+        Here is your government ID information:
+        {Topic.finalizedResponseTableData}
+
 inputType:
   properties:
     EmployeeName:
