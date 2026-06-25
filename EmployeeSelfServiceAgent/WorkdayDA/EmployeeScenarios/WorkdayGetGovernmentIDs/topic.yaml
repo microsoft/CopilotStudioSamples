@@ -5,42 +5,18 @@ modelDescription: |-
   Trigger on "my" government-ID queries: "What is my SSN / PAN / Aadhaar / NI number?", "What's my passport number?", "When does my visa / work permit expire?", "Show my driver's license on file", "What's my tax ID?", "What government IDs are on my Workday profile?", "What's my green card / PR status?".
 
   Do NOT trigger for general questions about ID applications, renewals, immigration law, or work authorization policy
-inputs:
-  - kind: AutomaticTaskInput
-    propertyName: EmployeeName
-    description: The name of the employee whose data is being requested.
-    entity: PersonNamePrebuiltEntity
-    shouldPromptUser: false
-    inputSettings:
-      repeatCount: 0
-
 beginDialog:
   kind: OnRecognizedIntent
   id: main
-  intent:
-    triggerQueries:
-      - What are my Government Ids?
-      - Which Government ids are available on my profile?
-      - Show my Government Ids?
-      - Show me [EmployeeName]'s government Ids
-
+  intent: {}
   actions:
-    - kind: BeginDialog
-      id: GlRaX3
-      displayName: Check user access
-      input:
-        binding:
-          EmployeeName: =Topic.EmployeeName
-
-      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemAccessCheck
-
     - kind: BeginDialog
       id: 3bFDxH
       displayName: Redirect to Workday System Get Common Execution
       input:
         binding:
           parameters: ="{""params"":[{""key"":""{Employee_ID}"",""value"":""" & Global.ESS_UserContext_Employee_Id & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
-          scenarioName: ="msdyn_HRWorkdayHCMEmployeeGetGovernmentIds"
+          scenarioName: msdyn_HRWorkdayHCMEmployeeGetGovernmentIds
 
       dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
       output:
@@ -140,11 +116,22 @@ beginDialog:
             )
         )
 
-    - kind: SendActivity
-      id: sendActivity_uxFMLZ
-      activity: |-
-        Here is your government ID information:
-        {Topic.finalizedResponseTableData}
+    - kind: ConditionGroup
+      id: conditionGroup_PLj70M
+      conditions:
+        - id: conditionItem_TCBTE7
+          condition: =IsBlank(Topic.parsedWorkdayResponse.GovernmentId)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_jPX7sn
+              activity: There are no government IDs listed for you in the system. If this information should be included, you can update it directly in Workday or reach out to HR for assistance.
+
+      elseActions:
+        - kind: SendActivity
+          id: sendActivity_uxFMLZ
+          activity: |-
+            Here is your government ID information:
+            {Topic.finalizedResponseTableData}
 
 inputType:
   properties:
