@@ -1,11 +1,4 @@
 kind: AdaptiveDialog
-inputs:
-  - kind: AutomaticTaskInput
-    propertyName: EmployeeName
-    description: The name of the person whose employment data is being requested.
-    entity: PersonNamePrebuiltEntity
-    shouldPromptUser: false
-
 modelDescription: |-
   Use this topic when the user asks to VIEW or READ THEIR OWN education / academic history / schooling stored in Workday — degree (bachelor's, master's, MBA, PhD), diploma, certificate, school/university/college/institution, alma mater, major, field of study, minor, graduation year/date, GPA, academic qualifications, or credentials.
 
@@ -17,25 +10,8 @@ modelDescription: |-
 beginDialog:
   kind: OnRecognizedIntent
   id: main
-  intent:
-    triggerQueries:
-      - "Show my Education Details "
-      - "From which school I completed my BS degree Education? "
-      - "Show my Education Degrees "
-      - "What was my field of Study during Education? "
-      - "Show my First Year attended for BS degree Education? "
-      - "Show my Last Year attended for BS degree Education? "
-
+  intent: {}
   actions:
-    - kind: BeginDialog
-      id: zQU3vE
-      displayName: Check access
-      input:
-        binding:
-          EmployeeName: =Topic.EmployeeName
-
-      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemAccessCheck
-
     - kind: BeginDialog
       id: B7ae9T
       displayName: Redirect to Get CommonExecution
@@ -219,11 +195,22 @@ beginDialog:
             )
         )
 
-    - kind: SendActivity
-      id: sendActivity_educationResponse
-      activity: |-
-        Here is your education information:
-        {Topic.FinalizedEducationData}
+    - kind: ConditionGroup
+      id: conditionGroup_PLj70M
+      conditions:
+        - id: conditionItem_TCBTE7
+          condition: =IsBlank(Topic.parsedWorkdayResponse.EducationData)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_jPX7sn
+              activity: There is no education information listed for you in the system. If this information should be included, you can update it directly in Workday or reach out to HR for assistance.
+
+      elseActions:
+        - kind: SendActivity
+          id: sendActivity_educationResponse
+          activity: |-
+            Here is your education information:
+            {Topic.FinalizedEducationData}
 
 inputType:
   properties:
