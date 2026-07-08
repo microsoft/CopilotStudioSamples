@@ -257,9 +257,9 @@ beginDialog:
                         type:
                           kind: Record
                           properties:
-                      "@Primary": String
-                      "@Priority": String
-                      Emergency_Contact_ID: String
+                            "@Primary": String
+                            "@Priority": String
+                            Emergency_Contact_ID: String
 
                       Emergency_Contact_Reference:
                         type:
