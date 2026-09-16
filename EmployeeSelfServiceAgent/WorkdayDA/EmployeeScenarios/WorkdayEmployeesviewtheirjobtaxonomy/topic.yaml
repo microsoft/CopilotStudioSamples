@@ -37,6 +37,19 @@ beginDialog:
           isSuccess: Topic.isSuccess
           workdayResponse: Topic.workdayResponse
 
+    - kind: ConditionGroup
+      id: checkJobTaxonomySuccess
+      conditions:
+        - id: jobTaxonomyFailed
+          condition: =Topic.isSuccess = false
+          actions:
+            - kind: SendActivity
+              id: sendJobTaxonomyError
+              activity: I encountered an error retrieving your job information. Please try again later or contact support.
+
+            - kind: EndDialog
+              id: endJobTaxonomyOnError
+
     - kind: ParseValue
       id: tLP86E
       displayName: Parse job profiles
@@ -82,34 +95,14 @@ beginDialog:
         }
 
     - kind: BeginDialog
-      id: RZJGDY
-      displayName: Redirect to Workday Get Common Execution
+      id: refreshJobFamilyReferenceData
+      displayName: Refresh JobFamily reference data
       input:
         binding:
-          parameters: ="{""params"":[{""key"":""{Job_Family_ID}"",""value"":""" & Topic.transformResponse.JobFamilyId & """},{""key"":""{As_Of_Effective_Date}"",""value"":"""& Text(Today(), "yyyy-MM-dd") &"""}]}"
-          scenarioName: msdyn_HRWorkdayHCMEmployeeGetJobTaxonomyGeneric
+          IsTableEmpty: =IsBlank(Global.JobFamilyLookupTable)
+          ReferenceDataKey: Job_Family_ID
 
-      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution
-      output:
-        binding:
-          errorResponse: Topic.errorResponse
-          isSuccess: Topic.isSuccess
-          workdayResponse: Topic.workdayResponse
-
-    - kind: ParseValue
-      id: rPHxhw
-      displayName: Parse Job Family Name
-      variable: Topic.jobFamilyTable
-      valueType:
-        kind: Record
-        properties:
-          JobFamily:
-            type:
-              kind: Table
-              properties:
-                Value: String
-
-      value: =Topic.workdayResponse
+      dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemRefreshReferenceData
 
     - kind: SetVariable
       id: setVariable_mS3r3D
@@ -121,7 +114,10 @@ beginDialog:
            JobTitle: Topic.transformResponse.JobTitle,
            JobProfile: Topic.transformResponse.JobProfile,
            BusinessTitle: Topic.transformResponse.BusinessTitle,
-           JobFamily: First(Topic.jobFamilyTable.JobFamily).Value
+           JobFamily: LookUp(
+               Global.JobFamilyLookupTable,
+               ID = Topic.transformResponse.JobFamilyId
+           ).Referenced_Object_Descriptor
         }
 
     - kind: SendActivity
