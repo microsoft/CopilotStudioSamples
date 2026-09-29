@@ -116,10 +116,19 @@ beginDialog:
            JobTitle: Topic.transformResponse.JobTitle,
            JobProfile: Topic.transformResponse.JobProfile,
            BusinessTitle: Topic.transformResponse.BusinessTitle,
-           JobFamily: LookUp(
-               Global.JobFamilyLookupTable,
-               ID = Topic.transformResponse.JobFamilyId
-           ).Referenced_Object_Descriptor
+           JobFamily: With(
+               {
+                   JobFamilyDescriptor: LookUp(
+                       Global.JobFamilyLookupTable,
+                       ID = Topic.transformResponse.JobFamilyId
+                   ).Referenced_Object_Descriptor
+               },
+               If(
+                   IsBlank(JobFamilyDescriptor),
+                   Topic.transformResponse.JobFamilyId,
+                   JobFamilyDescriptor
+               )
+           )
         }
 
 outputType:
