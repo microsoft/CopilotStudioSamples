@@ -1,0 +1,116 @@
+kind: AdaptiveDialog
+modelDescription: Regarding feedback or survey
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Capture Feedback
+
+  actions:
+    - kind: SendActivity
+      id: sendActivity_XauhTN
+      activity:
+        text:
+          - Please share your feedback with us!
+        attachments:
+          - kind: AdaptiveCardTemplate
+            cardContent: |-
+              {
+                  "type": "AdaptiveCard",
+                  "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+                  "version": "1.5",
+                  "body": [
+                      {
+                          "type": "Container",
+                          "items": [
+                              {
+                                  "type": "ColumnSet",
+                                  "columns": [
+                                      {
+                                          "type": "Column",
+                                          "width": "auto",
+                                          "items": [
+                                              {
+                                                  "type": "Icon",
+                                                  "name": "TaskListSquareRtl",
+                                                  "size": "Small"
+                                              }
+                                          ],
+                                          "spacing": "Small"
+                                      },
+                                      {
+                                          "type": "Column",
+                                          "width": "stretch",
+                                          "spacing": "Small",
+                                          "items": [
+                                              {
+                                                  "type": "TextBlock",
+                                                  "text": "Survey",
+                                                  "wrap": true,
+                                                  "weight": "Bolder"
+                                              }
+                                          ],
+                                          "verticalContentAlignment": "Center"
+                                      }
+                                  ]
+                              }
+                          ],
+                          "showBorder": false
+                      },
+                      {
+                          "type": "Container",
+                          "separator": true,
+                          "spacing": "Medium",
+                          "items": [
+                              {
+                                  "type": "TextBlock",
+                                  "text": "Experience Feedback",
+                                  "wrap": true,
+                                  "size": "Large",
+                                  "weight": "Bolder"
+                              }
+                          ]
+                      },
+                      {
+                          "type": "Input.Rating",
+                          "isRequired": true,
+                          "errorMessage": "Please select rating stars.",
+                          "id": "ratingStars",
+                          "color": "Marigold",
+                          "label": "How was your overall experience?"
+                      },
+                      {
+                          "id": "txtComments",
+                          "type": "Input.Text",
+                          "placeholder": "Provide your comments",
+                          "isMultiline": true,
+                          "maxLength": 255,
+                          "label": "Any other comments?"
+                      },
+                      {
+                          "type": "ActionSet",
+                          "actions": [
+                              {
+                                  "type": "Action.Execute",
+                                  "title": "Submit",
+                                  "data": {
+                                      "actionType": "submitted"
+                                  },
+                                  "verb": "feedbackSubmitForm",
+                                  "fallback": "Action.Submit",
+                                  "style": "positive"
+                              },
+                              {
+                                  "type": "Action.Execute",
+                                  "title": "Skip",
+                                  "data": {
+                                      "actionType": "skipped"
+                                  },
+                                  "associatedInputs": "none",
+                                  "verb": "feedbackSkipForm",
+                                  "fallback": "Action.Submit"
+                              }
+                          ]
+                      }
+                  ]
+              }
