@@ -40,7 +40,7 @@ search_procedures(query)
         ├─ 2. TypeSafe Jev: one request per candidate, 5 Noul questions, run in parallel
         ├─ 3. route() in code: include / conflicting_evidence / exclude
         ▼
-{ status, guidance, evidence[], conflicts[], excluded_passages }
+{ status, guidance, evidence[], conflicts[], excluded_passages, audit_id }
         │
         ▼
 Agent answers from evidence with citations, reports conflicts, or abstains
@@ -62,11 +62,13 @@ The tool output also carries a `guidance` string with these instructions, so the
 src/
 ├── index.ts        # Express + MCP Streamable HTTP server, search_procedures tool, optional API key
 ├── gate.ts         # Jev questions, thresholds, route(), tool output
+├── audit.ts        # One audit record per answer (JSON lines)
 ├── search.ts       # Azure AI Search retriever + BM25 demo retriever
 └── data/
     └── passages.json   # 12 fictional procedures, including near-duplicates and a planted injection
 scripts/
-└── ingest.ts       # Creates the Azure AI Search index and uploads passages
+├── ingest.ts       # Creates the Azure AI Search index and uploads passages
+└── replay.ts       # Replays past decisions with new thresholds, without calling Jev
 test/
 └── gate.test.ts    # Offline tests with a fake TypeSafe endpoint, including an MCP client round trip
 ```
@@ -93,7 +95,7 @@ npm run build
 
 Copy `.env.example` to `.env` and set at least `TYPESAFE_API_KEY`. Without the Azure variables, the server searches the bundled demo corpus.
 
-To use your own library, split documents into passages of a few hundred words, export them as a JSON array with the same shape as `src/data/passages.json`, and run:
+To use your own library, split documents into passages of a few hundred words, export them as a JSON array with the same shape as `src/data/passages.json` (add a `version` field if your documents have revisions), and run:
 
 ```bash
 npm run ingest -- path/to/passages.json
@@ -156,6 +158,20 @@ Two of the five questions come from this run. The cookbook's injection question 
 The default thresholds come from the cookbook and are a starting point, not defaults to trust. Tune them on a set of real questions from your users (`GATE_RELEVANT_MIN`, `GATE_EVIDENCE_MIN`, `GATE_CONTRADICTS_MIN`, `GATE_INJECTION_MAX`, `GATE_SUPERSEDED_MAX`) and pin `TYPESAFE_MODEL` to a version ID such as `jev-1.13.0`: the `jev-latest` alias moves when a new model ships, which can shift the probabilities your thresholds were tuned on.
 
 `GATE_CANDIDATES` (default 12) sets how many passages are gated per question. Each candidate is one TypeSafe request, so cost and rate-limit usage scale with it; see [Models](https://docs.typesafe.ai/models) for current pricing and limits. The TypeSafe SDK retries `429` and `529` responses with backoff.
+
+## Audit and replay
+
+Set `AUDIT_LOG_PATH` to append one JSON record per answer. Each record holds the query, the versioned model ID, the thresholds in force, and every candidate passage with its document version, its five scores and its route. The tool output carries the matching `audit_id`, so a reviewer can trace an agent answer back to the passages and scores behind it.
+
+Because `route()` only reads stored scores, past decisions can be replayed with new thresholds without calling Jev again:
+
+```bash
+GATE_EVIDENCE_MIN=0.6 npm run replay -- audit.jsonl
+```
+
+The script lists the passages whose route would change and the answers whose status would change. The records contain user questions: in production, send them to your logging pipeline (for example Application Insights) with the retention your organisation requires rather than to a local file.
+
+Stale documents are best handled in two layers: filter archived revisions out at retrieval with index metadata (the `version` field, or a status field of your own), and keep `is_superseded` as the safety net for the cases the metadata misses.
 
 ## Limitations
 

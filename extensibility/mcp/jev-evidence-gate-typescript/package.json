@@ -9,6 +9,7 @@
     "start": "node build/index.js",
     "dev": "tsx src/index.ts",
     "ingest": "tsx scripts/ingest.ts",
+    "replay": "tsx scripts/replay.ts",
     "test": "tsx --test test/*.test.ts"
   },
   "dependencies": {
