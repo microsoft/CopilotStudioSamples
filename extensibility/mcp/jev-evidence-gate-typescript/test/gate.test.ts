@@ -1,12 +1,16 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
+import { mkdtemp, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { gate, route, THRESHOLDS } from "../src/gate.js";
 import { DemoRetriever } from "../src/search.js";
 import { createApp } from "../src/index.js";
+import { buildAuditRecord, writeAuditRecord } from "../src/audit.js";
 
 // Fake TypeSafe endpoint: canned scores per passage id, so the tests run offline.
 // Values recorded from jev-1.13.0 on 2026-10-03, rounded. LOTO-03 only answers the lockout question.
@@ -95,9 +99,33 @@ test("MCP: Copilot Studio-style call over Streamable HTTP, with API key", async 
     assert.ok(out.evidence.some((p: any) => p.id === "LOTO-03"));
     assert.ok(out.guidance.length > 0);
     assert.ok(out.evidence.every((p: any) => p.url.startsWith("https://")));
+    assert.match(out.audit_id, /^[0-9a-f-]{36}$/);
     await mcp.close();
   } finally {
     server.close();
     delete process.env.MCP_API_KEY;
   }
+});
+
+test("audit: one record per answer, with every candidate, its version, scores and route", async () => {
+  const query = "Pump P-200 bearings need grease every 500 hours, how much do I add each time?";
+  const passages = await new DemoRetriever().search(query, 12);
+  const result = await gate(client, query, passages, { model: "jev-1.13.0" });
+  const record = buildAuditRecord(query, result);
+  const path = join(await mkdtemp(join(tmpdir(), "audit-")), "audit.jsonl");
+  await writeAuditRecord(record, path);
+  await writeAuditRecord(record, path);
+  const lines = (await readFile(path, "utf8")).trim().split("\n");
+  assert.equal(lines.length, 2);
+  const saved = JSON.parse(lines[0]);
+  assert.equal(saved.status, "premise_conflict");
+  assert.equal(saved.model, "jev-1.13.0");
+  assert.equal(saved.passages.length, passages.length);
+  const r1 = saved.passages.find((p: any) => p.id === "MP-P200-01-r1");
+  assert.equal(r1.version, "rev. 1 (superseded)");
+  assert.equal(r1.route, "exclude");
+  assert.equal(r1.scores.is_superseded, 0.98);
+  // Replaying with a looser superseded threshold, from stored scores only, changes the decision.
+  assert.equal(route(r1.scores, { ...saved.thresholds, superseded_max: 0.99 }), "include");
+  assert.equal(saved.thresholds.superseded_max, 0.7);
 });
