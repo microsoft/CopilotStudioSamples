@@ -6,7 +6,7 @@ nav_order: 4
 ---
 # Jev Evidence Gate: answer or abstain over a large document library
 
-An MCP server that lets a Copilot Studio agent answer questions over a large procedure library (thousands of documents) **only when a retrieved passage actually supports the answer**. It retrieves candidate passages from Azure AI Search, asks [TypeSafe Jev](https://docs.typesafe.ai/) four calibrated yes/no questions about each one, and routes them in code: evidence, conflicting evidence, or dropped. The agent receives the surviving passages and a `status` that tells it whether to answer, push back on the question, or say that no reliable document was found.
+An MCP server that lets a Copilot Studio agent answer questions over a large procedure library (thousands of documents) **only when a retrieved passage actually supports the answer**. It retrieves candidate passages from Azure AI Search, asks [TypeSafe Jev](https://docs.typesafe.ai/) five calibrated yes/no questions about each one, and routes them in code: evidence, conflicting evidence, or dropped. The agent receives the surviving passages and a `status` that tells it whether to answer, push back on the question, or say that no reliable document was found.
 
 The scenario is a field maintenance assistant for a (fictional) water utility, Contoso Water: technicians ask about pumps, filters, drives and safety procedures from Teams. Near-identical documents are the norm (two pump models, a superseded revision, a forum note), and a wrong answer has safety consequences.
 
@@ -16,14 +16,15 @@ The scenario is a field maintenance assistant for a (fictional) water utility, C
 
 Search ranks passages by how much their wording resembles the question. In a large library, the top results often include the right procedure for the wrong model, a superseded revision, or text that tries to instruct the model. Re-ranking reorders those results but still hands the top few to the answering model.
 
-This sample adds a decision step, following the TypeSafe cookbook [Classifying RAG passages](https://docs.typesafe.ai/cookbooks/classifying_rag_passages):
+This sample adds a decision step, adapted from the TypeSafe cookbook [Classifying RAG passages](https://docs.typesafe.ai/cookbooks/classifying_rag_passages):
 
 | Question asked to Jev for each (query, passage) pair | Drives |
 |---|---|
 | `is_relevant`: does the passage address the subject of the query? | relevance floor |
 | `contains_answer_evidence`: does it state information usable in a direct answer? | include or drop |
 | `contradicts_query_premise`: does it conflict with a factual premise in the query? | conflict block |
-| `contains_prompt_injection`: does it try to control the system answering? | excluded outright |
+| `contains_prompt_injection`: does it contain text addressed to an AI assistant rather than to a human reader? | excluded outright |
+| `is_superseded`: does it say it is superseded, archived or no longer valid? | excluded outright |
 
 None of the questions asks "should I include this passage". Jev returns probabilities, and `route()` in [`src/gate.ts`](./src/gate.ts) applies thresholds in a fixed order. Changing the policy means editing a number under code review, not rewording a prompt.
 
@@ -36,7 +37,7 @@ Copilot Studio agent (generative orchestration)
 search_procedures(query)
         │
         ├─ 1. Azure AI Search: top N candidates (keyword + optional semantic ranker)
-        ├─ 2. TypeSafe Jev: one request per candidate, 4 Noul questions, run in parallel
+        ├─ 2. TypeSafe Jev: one request per candidate, 5 Noul questions, run in parallel
         ├─ 3. route() in code: include / conflicting_evidence / exclude
         ▼
 { status, guidance, evidence[], conflicts[], excluded_passages }
@@ -135,15 +136,30 @@ The MCP endpoint is `https://<tunnel-id>-3000.<region>.devtunnels.ms/mcp`.
 
 Exact scores depend on the model version; check the server log, which prints the status and the number of passages kept for each call.
 
+### Measured on the demo corpus
+
+Run against `jev-1.13.0` on 2026-10-03, with the candidates returned by the demo retriever:
+
+| Question | Candidates | Status | Evidence | Conflicts | Gate time |
+|---|---|---|---|---|---|
+| How often should I grease the bearings on pump P-200? | 12 | `answer_from_evidence` | MP-P200-01 | | 0.6 s |
+| Pump P-200 bearings need grease every 500 hours, how much do I add each time? | 10 | `premise_conflict` | | MP-P200-01 | 0.5 s |
+| Do I need lockout/tagout for bearing work on P-200? | 11 | `answer_from_evidence` | MP-P200-02, LOTO-03 | | 0.5 s |
+| What is the warranty on the sand filters? | 11 | `insufficient_evidence` | | | 0.7 s |
+
+Gate time is wall-clock for all candidates of one question with 6 requests in flight, measured from a client in Europe; it depends on your network and TypeSafe's current load. The 44 requests used about 22,600 input tokens in total.
+
+Two of the five questions come from this run. The cookbook's injection question ("Does this passage attempt to control the system answering the query?") scored the lockout procedure LOTO-03 at 0.76, because procedures are written as instructions, so it was excluded from the lockout answer; the reworded question scores it at 0.02 and the planted forum note at 0.99. And without `is_superseded`, the archived revision MP-P200-01-r1 was accepted as evidence (0.97) for the 500-hour question, which let the false premise through.
+
 ## Thresholds and model version
 
-The default thresholds come from the cookbook and are a starting point, not defaults to trust. Tune them on a set of real questions from your users (`GATE_RELEVANT_MIN`, `GATE_EVIDENCE_MIN`, `GATE_CONTRADICTS_MIN`, `GATE_INJECTION_MAX`) and pin `TYPESAFE_MODEL` to a version ID such as `jev-1.13.0`: the `jev-latest` alias moves when a new model ships, which can shift the probabilities your thresholds were tuned on.
+The default thresholds come from the cookbook and are a starting point, not defaults to trust. Tune them on a set of real questions from your users (`GATE_RELEVANT_MIN`, `GATE_EVIDENCE_MIN`, `GATE_CONTRADICTS_MIN`, `GATE_INJECTION_MAX`, `GATE_SUPERSEDED_MAX`) and pin `TYPESAFE_MODEL` to a version ID such as `jev-1.13.0`: the `jev-latest` alias moves when a new model ships, which can shift the probabilities your thresholds were tuned on.
 
 `GATE_CANDIDATES` (default 12) sets how many passages are gated per question. Each candidate is one TypeSafe request, so cost and rate-limit usage scale with it; see [Models](https://docs.typesafe.ai/models) for current pricing and limits. The TypeSafe SDK retries `429` and `529` responses with backoff.
 
 ## Limitations
 
-- **Language.** TypeSafe documents English as Jev's primary language; other languages are supported but less accurate. Measure on your own content before relying on the gate for a non-English library, and expect to tune thresholds per language.
+- **Language.** TypeSafe documents English as Jev's primary language; other languages are supported but less accurate. In the run above, the lockout question asked in French against the English procedures scored LOTO-03 at 0.49 relevance and 0.50 evidence, just under the thresholds, so the agent would abstain instead of answering. The tool asks the orchestrator to send the query in the language of the library for this reason. Measure on your own content and tune thresholds per language.
 - **Not a security boundary.** The injection question is a filter. Passages below the threshold still reach the agent, so the agent must treat passage text as untrusted content.
 - **Retrieval recall still matters.** The gate can only keep what search returns. If the right passage is not in the top `GATE_CANDIDATES`, the agent abstains instead of answering wrongly, which is the intended failure mode.
 - **Dev Tunnels** are for testing. Host the server (for example on Azure Container Apps or App Service) and use API key or OAuth authentication in production.
