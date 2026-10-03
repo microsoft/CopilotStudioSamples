@@ -1,6 +1,6 @@
 // Creates the Azure AI Search index used by the server and uploads passages.
 // Usage: npm run ingest -- path/to/passages.json
-// The file is a JSON array of { id, title, text, url, sourceType } (same shape as src/data/passages.json).
+// The file is a JSON array of { id, title, text, url, sourceType, version? } (same shape as src/data/passages.json).
 // Split long documents into passages of a few hundred words before ingesting: the gate
 // evaluates one passage per TypeSafe request, and shorter passages score more precisely.
 import { readFile } from "node:fs/promises";
@@ -35,6 +35,7 @@ await call("PUT", `/indexes/${index}`, {
     { name: "content", type: "Edm.String", searchable: true },
     { name: "url", type: "Edm.String", retrievable: true },
     { name: "source_type", type: "Edm.String", filterable: true, facetable: true },
+    { name: "version", type: "Edm.String", filterable: true },
   ],
   semantic: {
     configurations: [
@@ -46,7 +47,7 @@ await call("PUT", `/indexes/${index}`, {
   },
 });
 
-type Passage = { id: string; title: string; text: string; url: string; sourceType: string };
+type Passage = { id: string; title: string; text: string; url: string; sourceType: string; version?: string };
 const passages = JSON.parse(await readFile(file, "utf8")) as Passage[];
 for (let i = 0; i < passages.length; i += 500) {
   const value = passages.slice(i, i + 500).map((p) => ({
@@ -57,6 +58,7 @@ for (let i = 0; i < passages.length; i += 500) {
     content: p.text,
     url: p.url,
     source_type: p.sourceType,
+    version: p.version ?? null,
   }));
   await call("POST", `/indexes/${index}/docs/index`, { value });
   console.log(`Uploaded ${Math.min(i + 500, passages.length)} / ${passages.length}`);
