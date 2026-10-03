@@ -59,6 +59,9 @@ export interface GateResult {
   evidence: GatedPassage[];
   conflicts: GatedPassage[];
   excluded: number;
+  // Every candidate with its scores and route, in retrieval order (used for the audit record).
+  gated: GatedPassage[];
+  thresholds: typeof THRESHOLDS;
   model: string;
   input_tokens: number;
   ms: number;
@@ -119,6 +122,8 @@ export async function gate(
     evidence,
     conflicts,
     excluded: gated.length - evidence.length - conflicts.length,
+    gated,
+    thresholds: { ...THRESHOLDS },
     model,
     input_tokens: inputTokens,
     ms: Date.now() - started,

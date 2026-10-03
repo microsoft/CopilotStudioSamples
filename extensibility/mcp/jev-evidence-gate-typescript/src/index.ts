@@ -4,6 +4,7 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 import { z } from "zod";
 import { gate, toToolOutput } from "./gate.js";
+import { buildAuditRecord, writeAuditRecord } from "./audit.js";
 import { createRetriever, Retriever } from "./search.js";
 
 const CANDIDATES = Number(process.env.GATE_CANDIDATES ?? 12);
@@ -54,7 +55,9 @@ export function createMcpServer(client: TypeSafeClient, retriever: Retriever): M
           `(${result.evidence.length} evidence, ${result.conflicts.length} conflicts, ${result.excluded} excluded, ` +
           `${candidates.length} candidates from ${retriever.name}, gate ${result.ms} ms, ${result.model})`,
       );
-      return { content: [{ type: "text", text: JSON.stringify(toToolOutput(result)) }] };
+      const audit = buildAuditRecord(query, result);
+      await writeAuditRecord(audit).catch((error) => console.error("Could not write audit record:", error));
+      return { content: [{ type: "text", text: JSON.stringify({ ...toToolOutput(result), audit_id: audit.audit_id }) }] };
     },
   );
 

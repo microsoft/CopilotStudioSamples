@@ -6,6 +6,8 @@ export interface Passage {
   text: string;
   url: string;
   sourceType: string;
+  // Optional document version or revision, recorded in the audit log.
+  version?: string;
 }
 
 export interface Retriever {
@@ -30,7 +32,7 @@ export class AzureSearchRetriever implements Retriever {
     const body: Record<string, unknown> = {
       search: query,
       top,
-      select: "id,title,content,url,source_type",
+      select: "id,title,content,url,source_type,version",
     };
     if (this.semanticConfig) {
       body.queryType = "semantic";
@@ -49,6 +51,7 @@ export class AzureSearchRetriever implements Retriever {
       text: d.content,
       url: d.url,
       sourceType: d.source_type ?? "document",
+      version: d.version ?? undefined,
     }));
   }
 }
