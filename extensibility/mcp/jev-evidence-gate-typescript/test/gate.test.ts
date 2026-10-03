@@ -9,23 +9,26 @@ import { DemoRetriever } from "../src/search.js";
 import { createApp } from "../src/index.js";
 
 // Fake TypeSafe endpoint: canned scores per passage id, so the tests run offline.
-const CANNED: Record<string, [number, number, number, number]> = {
-  // [is_relevant, contains_answer_evidence, contradicts_query_premise, contains_prompt_injection]
-  "MP-P200-01": [0.98, 0.97, 0.9, 0.1],
-  "MP-P200-01-r1": [0.9, 0.6, 0.05, 0.1],
-  "FORUM-118": [0.8, 0.3, 0.2, 0.99],
-  "MP-P300-01": [0.3, 0.2, 0.1, 0.1],
+// Values recorded from jev-1.13.0 on 2026-10-03, rounded. LOTO-03 only answers the lockout question.
+const CANNED: Record<string, [number, number, number, number, number]> = {
+  // [is_relevant, contains_answer_evidence, contradicts_query_premise, contains_prompt_injection, is_superseded]
+  "MP-P200-01": [0.83, 0.88, 0.94, 0.01, 0.02],
+  "MP-P200-01-r1": [0.97, 0.97, 0.09, 0.02, 0.98],
+  "FORUM-118": [0.23, 0.07, 0.09, 0.99, 0.02],
+  "MP-P300-01": [0.3, 0.2, 0.1, 0.02, 0.02],
 };
 const requests: Array<{ state: any; questions: Record<string, unknown>; model: string }> = [];
 const fakeFetch = async (_url: string, init?: RequestInit) => {
   const body = JSON.parse(String(init?.body));
   requests.push(body);
-  const [r, e, c, i] = CANNED[body.state.passage.id] ?? [0.1, 0.1, 0.1, 0.1];
+  const lockout = /lockout/i.test(body.state.query) && body.state.passage.id === "LOTO-03";
+  const [r, e, c, i, o] = lockout ? [0.87, 0.85, 0.08, 0.02, 0.01] : CANNED[body.state.passage.id] ?? [0.1, 0.1, 0.1, 0.02, 0.02];
   const answers = {
     is_relevant: { type: "noul", noul: r },
     contains_answer_evidence: { type: "noul", noul: e },
     contradicts_query_premise: { type: "noul", noul: c },
     contains_prompt_injection: { type: "noul", noul: i },
+    is_superseded: { type: "noul", noul: o },
   };
   return new Response(JSON.stringify({ model: "jev-1.13.0", answers, usage: { input_tokens: 300, output_tokens: 20 } }), {
     status: 200,
@@ -34,30 +37,36 @@ const fakeFetch = async (_url: string, init?: RequestInit) => {
 };
 const client = new TypeSafeClient({ apiKey: "test", fetch: fakeFetch as any, retry: { maxRetries: 0 } });
 
-test("route: injection beats relevance, contradiction beats evidence", () => {
-  assert.equal(route({ is_relevant: 0.9, contains_answer_evidence: 0.9, contradicts_query_premise: 0.1, contains_prompt_injection: 0.95 }), "exclude");
-  assert.equal(route({ is_relevant: 0.9, contains_answer_evidence: 0.9, contradicts_query_premise: 0.9, contains_prompt_injection: 0.1 }), "conflicting_evidence");
-  assert.equal(route({ is_relevant: 0.3, contains_answer_evidence: 0.9, contradicts_query_premise: 0.1, contains_prompt_injection: 0.1 }), "exclude");
-  assert.equal(route({ is_relevant: 0.9, contains_answer_evidence: 0.6, contradicts_query_premise: 0.1, contains_prompt_injection: 0.1 }), "include");
+test("route: injection and superseded beat everything, contradiction beats evidence", () => {
+  const base = { is_relevant: 0.9, contains_answer_evidence: 0.9, contradicts_query_premise: 0.1, contains_prompt_injection: 0.02, is_superseded: 0.02 };
+  assert.equal(route({ ...base, contains_prompt_injection: 0.95 }), "exclude");
+  assert.equal(route({ ...base, is_superseded: 0.98 }), "exclude");
+  assert.equal(route({ ...base, is_superseded: 0.98, contradicts_query_premise: 0.9 }), "exclude");
+  assert.equal(route({ ...base, contradicts_query_premise: 0.9 }), "conflicting_evidence");
+  assert.equal(route({ ...base, is_relevant: 0.3 }), "exclude");
+  assert.equal(route({ ...base, contains_answer_evidence: 0.6 }), "include");
   assert.equal(THRESHOLDS.evidence_min, 0.55);
 });
 
-test("gate: one request per passage, pinned model, query and passage in state", async () => {
+test("gate: false premise from a superseded revision -> premise_conflict, old revision and injection dropped", async () => {
   requests.length = 0;
-  const passages = await new DemoRetriever().search("How often should I grease the P-200 bearings? Every 500 hours?", 12);
-  const result = await gate(client, "Every 500 hours?", passages, { model: "jev-1.13.0", concurrency: 3 });
+  const query = "Pump P-200 bearings need grease every 500 hours, how much do I add each time?";
+  const passages = await new DemoRetriever().search(query, 12);
+  const result = await gate(client, query, passages, { model: "jev-1.13.0", concurrency: 3 });
   assert.equal(requests.length, passages.length);
-  assert.ok(requests.every((r) => r.model === "jev-1.13.0" && r.state.query === "Every 500 hours?"));
+  assert.ok(requests.every((r) => r.model === "jev-1.13.0" && r.state.query === query));
   assert.deepEqual(Object.keys(requests[0].questions).sort(), [
     "contains_answer_evidence",
     "contains_prompt_injection",
     "contradicts_query_premise",
     "is_relevant",
+    "is_superseded",
   ]);
-  assert.equal(result.status, "answer_from_evidence");
-  assert.deepEqual(result.evidence.map((g) => g.passage.id), ["MP-P200-01-r1"]);
+  assert.equal(result.status, "premise_conflict");
+  assert.deepEqual(result.evidence, []);
   assert.deepEqual(result.conflicts.map((g) => g.passage.id), ["MP-P200-01"]);
-  assert.ok(!result.evidence.concat(result.conflicts).some((g) => g.passage.id === "FORUM-118"));
+  const kept = result.evidence.concat(result.conflicts).map((g) => g.passage.id);
+  assert.ok(!kept.includes("MP-P200-01-r1") && !kept.includes("FORUM-118"));
 });
 
 test("gate: nothing usable -> insufficient_evidence", async () => {
@@ -80,9 +89,10 @@ test("MCP: Copilot Studio-style call over Streamable HTTP, with API key", async 
     await mcp.connect(new StreamableHTTPClientTransport(url, { requestInit: { headers: { "x-api-key": "secret" } } }));
     const { tools } = await mcp.listTools();
     assert.deepEqual(tools.map((t) => t.name), ["search_procedures"]);
-    const res: any = await mcp.callTool({ name: "search_procedures", arguments: { query: "How often should I grease pump P-200 bearings?" } });
+    const res: any = await mcp.callTool({ name: "search_procedures", arguments: { query: "Do I need lockout/tagout for bearing work on P-200?" } });
     const out = JSON.parse(res.content[0].text);
     assert.equal(out.status, "answer_from_evidence");
+    assert.ok(out.evidence.some((p: any) => p.id === "LOTO-03"));
     assert.ok(out.guidance.length > 0);
     assert.ok(out.evidence.every((p: any) => p.url.startsWith("https://")));
     await mcp.close();
