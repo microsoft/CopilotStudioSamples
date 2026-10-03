@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title>Web Chat: Custom CSAT Rating</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      For simplicity and code clarity, we are using Babel and React from unpkg.com.
+    -->
+    <script crossorigin="anonymous" src="https://unpkg.com/@babel/standalone@7.8.7/babel.min.js"></script>
+    <script crossorigin="anonymous" src="https://unpkg.com/react@16.8.6/umd/react.development.js"></script>
+    <script crossorigin="anonymous" src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.development.js"></script>
+    <script crossorigin="anonymous" src="https://unpkg.com/react-redux@7.1.0/dist/react-redux.min.js"></script>
+    <!--
+      This CDN points to the latest official release of Web Chat. If you need to test against Web Chat's latest bits, please refer to using Web Chat's latest bits:
+      https://github.com/microsoft/BotFramework-WebChat#how-to-test-with-web-chats-latest-bits
+    -->
+    <script crossorigin="anonymous" src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <!-- RxJS is needed for the mock Direct Line object.
+         Remove this script when connecting to a real Copilot Studio agent. -->
+    <script crossorigin="anonymous" src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      #webchat {
+        height: 100%;
+        width: 100%;
+      }
+
+      .csatRating {
+        margin: 10px;
+        font-family: Calibri, 'Helvetica Neue', Arial, sans-serif;
+      }
+
+      .csatRating__prompt {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      .csatRating__options {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+      }
+
+      .csatRating__button {
+        background: none;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 32px;
+        line-height: 1;
+        padding: 8px;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+        min-width: 48px;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .csatRating__button:hover {
+        transform: scale(1.25);
+      }
+
+      .csatRating__button:focus {
+        outline: 2px solid #0078d4;
+        outline-offset: 2px;
+      }
+
+      .csatRating__button--selected {
+        border-color: #0078d4;
+        background-color: #e8f0fe;
+      }
+
+      .csatRating__button:disabled {
+        cursor: default;
+        opacity: 0.5;
+      }
+
+      .csatRating__button:disabled.csatRating__button--selected {
+        opacity: 1;
+      }
+
+      .csatRating__label {
+        font-size: 11px;
+        color: #666;
+        text-align: center;
+        margin-top: 4px;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 8px;
+      }
+
+      .csatRating__thanks {
+        font-size: 14px;
+        color: #0078d4;
+        text-align: center;
+        padding: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="webchat" role="main"></div>
+    <script type="text/babel" data-presets="es2015,react,stage-3">
+      (async function () {
+        'use strict';
+
+        const {
+          hooks: { useSendPostBack },
+          ReactWebChat
+        } = window.WebChat;
+
+        const { useCallback, useState } = window.React;
+
+        // ---------------------------------------------------------------------------
+        // CSAT detection heuristic
+        //
+        // Copilot Studio's built-in CSATQuestion node sends an Adaptive Card with
+        // Action.Submit buttons whose data payloads look like { "rate": "1" } through
+        // { "rate": "5" }. We detect this by walking the card tree and checking for
+        // Action.Submit nodes that carry a "rate" key in their data.
+        //
+        // This is a heuristic. If your bot sends other Adaptive Cards whose submit
+        // actions also use a "rate" field, this function will match those too. Adjust
+        // the detection logic to suit your bot.
+        // ---------------------------------------------------------------------------
+        function isCSATCard(activity) {
+          if (activity.type !== 'message') return false;
+
+          const attachment = (activity.attachments || [])[0];
+          if (!attachment || attachment.contentType !== 'application/vnd.microsoft.card.adaptive') return false;
+
+          const card = attachment.content;
+          if (!card || card.type !== 'AdaptiveCard') return false;
+
+          // Walk the card tree to find Action.Submit nodes with a "rate" data key.
+          // A visited set prevents double-counting nodes reachable from multiple paths.
+          const submitActions = [];
+          const visited = new Set();
+          const walk = (node) => {
+            if (!node || typeof node !== 'object' || visited.has(node)) return;
+            visited.add(node);
+            if (node.type === 'Action.Submit' && node.data && 'rate' in node.data) {
+              submitActions.push(node);
+            }
+            for (const value of Object.values(node)) {
+              if (Array.isArray(value)) value.forEach(walk);
+              else if (typeof value === 'object') walk(value);
+            }
+          };
+          walk(card);
+
+          return submitActions.length >= 3; // At least 3 rating options
+        }
+
+        // ---------------------------------------------------------------------------
+        // Custom CSAT React component
+        //
+        // Renders 5 emoji buttons that map 1:1 to the original card's { rate: "N" }
+        // payload. Clicking an emoji sends the exact same postBack the Adaptive Card
+        // would have sent, so the bot flow continues normally.
+        // ---------------------------------------------------------------------------
+        const RATINGS = [
+          { value: '1', emoji: '\u{1F620}', label: 'Terrible' },
+          { value: '2', emoji: '\u{1F641}', label: 'Poor' },
+          { value: '3', emoji: '\u{1F610}', label: 'Okay' },
+          { value: '4', emoji: '\u{1F603}', label: 'Good' },
+          { value: '5', emoji: '\u{1F929}', label: 'Amazing' }
+        ];
+
+        const CSATRatingActivity = ({ activity }) => {
+          const sendPostBack = useSendPostBack();
+          const [selected, setSelected] = useState(null);
+
+          // Extract prompt text from the original card (falls back to a default).
+          const promptText =
+            ((activity.attachments[0].content.body || []).find(b => b.type === 'TextBlock') || {}).text ||
+            'Please rate your experience.';
+
+          const handleRate = useCallback(
+            (value) => {
+              setSelected(value);
+              // Send the same payload the original Adaptive Card would send.
+              sendPostBack({ rate: value });
+            },
+            [sendPostBack, setSelected]
+          );
+
+          if (selected) {
+            const chosen = RATINGS.find(r => r.value === selected);
+            return (
+              <div className="csatRating">
+                <div className="csatRating__thanks">
+                  {chosen.emoji} Thanks for your feedback!
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="csatRating">
+              <div className="csatRating__prompt">{promptText}</div>
+              <div className="csatRating__options" role="radiogroup" aria-label="Rate your experience">
+                {RATINGS.map(({ value, emoji, label }) => (
+                  <button
+                    key={value}
+                    className="csatRating__button"
+                    onClick={() => handleRate(value)}
+                    aria-label={label + ', rate ' + value + ' of 5'}
+                    title={label}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+              <div className="csatRating__label">
+                <span>Terrible</span>
+                <span>Amazing</span>
+              </div>
+            </div>
+          );
+        };
+
+        // ---------------------------------------------------------------------------
+        // Mock Direct Line
+        //
+        // Simulates a bot that sends a greeting and then a CSAT card identical to what
+        // Copilot Studio's CSATQuestion node produces. This lets you test the custom
+        // component without connecting to a real agent.
+        // ---------------------------------------------------------------------------
+
+        // This is the exact Adaptive Card structure that Copilot Studio's CSATQuestion
+        // node sends. The only change is replacing the large base64-encoded emoji PNGs
+        // with small SVG placeholders to keep the sample file small.
+        // Original card captured from a live Copilot Studio conversation transcript.
+        const CSAT_CARD = {
+          "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+          "type": "AdaptiveCard",
+          "version": "1.0",
+          "body": [
+            {
+              "type": "TextBlock",
+              "text": "Great! Please rate your experience.",
+              "wrap": true
+            },
+            {
+              "type": "ColumnSet",
+              "columns": [
+                {
+                  "type": "Column",
+                  "items": [{
+                    "type": "Image",
+                    "size": "small",
+                    "altText": "1",
+                    "url": "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"><text y="28" font-size="28">&#x1F620;</text></svg>'),
+                    "selectAction": { "type": "Action.Submit", "title": "Rate 1", "data": { "rate": "1" } },
+                    "horizontalAlignment": "center"
+                  }]
+                },
+                {
+                  "type": "Column",
+                  "items": [{
+                    "type": "Image",
+                    "size": "small",
+                    "altText": "2",
+                    "url": "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"><text y="28" font-size="28">&#x1F641;</text></svg>'),
+                    "selectAction": { "type": "Action.Submit", "title": "Rate 2", "data": { "rate": "2" } },
+                    "horizontalAlignment": "center"
+                  }]
+                },
+                {
+                  "type": "Column",
+                  "items": [{
+                    "type": "Image",
+                    "size": "small",
+                    "altText": "3",
+                    "url": "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"><text y="28" font-size="28">&#x1F610;</text></svg>'),
+                    "selectAction": { "type": "Action.Submit", "title": "Rate 3", "data": { "rate": "3" } },
+                    "horizontalAlignment": "center"
+                  }]
+                },
+                {
+                  "type": "Column",
+                  "items": [{
+                    "type": "Image",
+                    "size": "small",
+                    "altText": "4",
+                    "url": "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"><text y="28" font-size="28">&#x1F603;</text></svg>'),
+                    "selectAction": { "type": "Action.Submit", "title": "Rate 4", "data": { "rate": "4" } },
+                    "horizontalAlignment": "center"
+                  }]
+                },
+                {
+                  "type": "Column",
+                  "items": [{
+                    "type": "Image",
+                    "size": "small",
+                    "altText": "5",
+                    "url": "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"><text y="28" font-size="28">&#x1F929;</text></svg>'),
+                    "selectAction": { "type": "Action.Submit", "title": "Rate 5", "data": { "rate": "5" } },
+                    "horizontalAlignment": "center"
+                  }]
+                }
+              ]
+            }
+          ]
+        };
+
+        function createMockDirectLine() {
+          const { BehaviorSubject, Subject, Observable } = window.rxjs;
+
+          const activitySubject = new Subject();
+          const connectionStatusSubject = new BehaviorSubject(0);
+
+          setTimeout(() => connectionStatusSubject.next(1), 50);
+          setTimeout(() => connectionStatusSubject.next(2), 150);
+
+          function emitBotActivity(activity, delay) {
+            setTimeout(() => {
+              activitySubject.next({
+                id: 'bot-' + Date.now(),
+                timestamp: new Date().toISOString(),
+                from: { id: 'bot', role: 'bot', name: 'Agent' },
+                ...activity
+              });
+            }, delay);
+          }
+
+          // Simulate the bot greeting with suggested actions
+          emitBotActivity({
+            type: 'message',
+            text: 'Hello! How can I help you today?',
+            suggestedActions: {
+              actions: [
+                { type: 'imBack', title: 'Goodbye', value: 'Goodbye' },
+                { type: 'imBack', title: 'Thanks', value: 'Thanks' },
+                { type: 'imBack', title: "That's all", value: "That's all" }
+              ]
+            }
+          }, 500);
+
+          return {
+            activity$: activitySubject.asObservable(),
+            connectionStatus$: connectionStatusSubject.asObservable(),
+
+            postActivity: function (activity) {
+              return new Observable(function (observer) {
+                observer.next('id-' + Date.now());
+                observer.complete();
+
+                // If the user sent a text message, reply with the CSAT card after a short delay
+                if (activity.type === 'message' && activity.text) {
+                  emitBotActivity({ type: 'message', text: 'Thanks, goodbye!' }, 600);
+                  emitBotActivity({
+                    type: 'message',
+                    attachments: [{
+                      contentType: 'application/vnd.microsoft.card.adaptive',
+                      content: CSAT_CARD
+                    }]
+                  }, 1200);
+                }
+
+                // If the user sent a postBack (the CSAT rating), acknowledge it.
+                // In a real Copilot Studio conversation the user's postBack looks like:
+                //   { type: "message", value: { rate: "3" }, channelData: { postBack: true } }
+                // and the bot replies with "Thanks for your feedback."
+                if (activity.value && activity.value.rate) {
+                  emitBotActivity({
+                    type: 'message',
+                    text: 'Thanks for your feedback.'
+                  }, 600);
+                }
+              });
+            },
+
+            end: function () {},
+            getSessionId: function () {
+              return new Observable(function (o) { o.next('mock-session'); o.complete(); });
+            }
+          };
+        }
+
+        // ---------------------------------------------------------------------------
+        // WebChat setup
+        // ---------------------------------------------------------------------------
+        const activityMiddleware =
+          () =>
+          next =>
+          ({ activity, ...otherArgs }) => {
+            if (isCSATCard(activity)) {
+              return () => <CSATRatingActivity activity={activity} />;
+            }
+            return next({ activity, ...otherArgs });
+          };
+
+        // -------------------------------------------------------------------------
+        // Connect to a real Copilot Studio agent
+        //
+        // Replace createMockDirectLine() below with a real Direct Line connection:
+        //
+        //   const TOKEN_ENDPOINT = 'https://YOUR_REGION.directline.botframework.com/...';
+        //   // Or use a Copilot Studio token endpoint URL from:
+        //   // Settings > Security > Web channel security in Copilot Studio
+        //   const res = await fetch(TOKEN_ENDPOINT, { method: 'GET' });
+        //   const { token } = await res.json();
+        //   const directLine = window.WebChat.createDirectLine({ token });
+        //
+        // Then pass it to ReactWebChat:
+        //   <ReactWebChat activityMiddleware={activityMiddleware} directLine={directLine} />
+        //
+        // See: https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-sso-web
+        // -------------------------------------------------------------------------
+
+        window.ReactDOM.render(
+          <ReactWebChat
+            activityMiddleware={activityMiddleware}
+            directLine={createMockDirectLine()}
+          />,
+          document.getElementById('webchat')
+        );
+
+        document.querySelector('#webchat > *').focus();
+      })().catch(err => console.error(err));
+    </script>
+  </body>
+</html>
