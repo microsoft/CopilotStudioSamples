@@ -24,7 +24,10 @@ export function createMcpServer(client: TypeSafeClient, retriever: Retriever): M
         query: z
           .string()
           .min(3)
-          .describe("The user's question, rewritten as a complete standalone question (include equipment names and model numbers)."),
+          .describe(
+            "The user's question, rewritten as a complete standalone question in the language of the procedure library " +
+              "(English for the demo corpus), including equipment names and model numbers.",
+          ),
       },
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
