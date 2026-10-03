@@ -38,3 +38,4 @@ Drop a Copilot Studio chat widget into an existing platform:
 | [pcf-canvas-app/](./embed/pcf-canvas-app/) | PCF control to embed a chat agent in Power Apps canvas apps |
 | [servicenow-widget/](./embed/servicenow-widget/) | Floating chat widget for ServiceNow Service Portal |
 | [sharepoint-customizer/](./embed/sharepoint-customizer/) | SharePoint app customizer with SSO |
+| [zendesk-widget/](./embed/zendesk-widget/) | Floating chat widget for Zendesk Help Center |
