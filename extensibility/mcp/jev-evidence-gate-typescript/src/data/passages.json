@@ -4,7 +4,8 @@
     "title": "Centrifugal pump P-200: bearing lubrication",
     "text": "Grease the drive-end and non-drive-end bearings of pump P-200 every 2,000 operating hours with lithium-complex grease NLGI 2. Add 15 g per bearing with the pump running, then run for 30 minutes and check that bearing temperature stays below 80 °C. Over-greasing is the most common cause of bearing overheating on this model.",
     "url": "https://contoso.example/procedures/MP-P200-01",
-    "sourceType": "maintenance_procedure"
+    "sourceType": "maintenance_procedure",
+    "version": "rev. 2 (2025-03)"
   },
   {
     "id": "MP-P300-01",
@@ -25,7 +26,8 @@
     "title": "Centrifugal pump P-200: bearing lubrication (revision 1, superseded)",
     "text": "Superseded by revision 2 in March 2025. Grease the bearings of pump P-200 every 500 operating hours with 30 g of grease per bearing.",
     "url": "https://contoso.example/procedures/archive/MP-P200-01-r1",
-    "sourceType": "archived_procedure"
+    "sourceType": "archived_procedure",
+    "version": "rev. 1 (superseded)"
   },
   {
     "id": "LOTO-03",
