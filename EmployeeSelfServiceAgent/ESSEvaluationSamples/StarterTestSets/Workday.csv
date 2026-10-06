@@ -8,7 +8,9 @@ Can you show me the passport I have on file?,Passport information on file,Compar
 Show me the government ID I have on file,Government ID information on file,CompareMeaning,70
 What is my service anniversary,Next service anniversary date and milestone years,CompareMeaning,70
 Show me the Visa information I have in my employee profile,Visa information on file,CompareMeaning,70
-Show me my employee profile summary.,"Employee profile summary including personal details, job information, hire dates, contact information, and address",CompareMeaning,70
+Show me my employee profile summary.,"Your employee profile. Personal information: personal details, contact information, and address. Hiring details: employee ID, hire dates, length of service, and employment status. Role and work: job information, organization, manager, location, and work contact information.",CompareMeaning,70
+Show me my full employee record.,"Your employee profile. Personal information, Hiring details, and Role and work.",CompareMeaning,70
+What is my employee ID?,Employee ID only,CompareMeaning,70
 Who is listed as my emergency contact?,"List of emergency contacts with name, relationship, phone number, and address",CompareMeaning,70
 How can I update my preferences for being contacted by phone?,Phone contact preference settings,CompareMeaning,70
 Show me my certifications on file.,Certifications listed in profile,CompareMeaning,70
