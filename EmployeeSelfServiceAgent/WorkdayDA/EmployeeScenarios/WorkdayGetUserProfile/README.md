@@ -6,6 +6,8 @@ search_exclude: false
 
 This scenario enables employees to retrieve their profile information from Workday through a conversational interface. It provides comprehensive employee data including personal details, employment information, contact details, and tenure calculations.
 
+Explicit full-profile requests use a deterministic response so the layout is consistent across supported models. Requests for individual fields and tenure information continue to return only the information the employee requested.
+
 ## Features
 
 - **Personal Information**: Name, Date of Birth, Gender
@@ -13,6 +15,7 @@ This scenario enables employees to retrieve their profile information from Workd
 - **Contact Information**: Work Email, Work Phone, Home Email, Home Phone, Home Address
 - **Employment Status**: Active/Inactive status, Hire Date
 - **Tenure Calculation**: Continuous Service Date and calculated Length of Service (years, months, days)
+- **Deterministic Full Profile**: Complete profile requests are grouped under `Personal information`, `Hiring details`, and `Role and work`
 
 ## Trigger Phrases
 
@@ -66,9 +69,46 @@ The topic extracts the following fields from Workday:
 | `ContinuousServiceDate` | Worker_Status_Data/Continuous_Service_Date | Service start date |
 | `LengthOfService` | *Calculated* | Years, months, days of service |
 
+## Response Modes
+
+The topic classifies the current user message into a `ResponseScope`:
+
+| Scope | Behavior |
+|-------|----------|
+| `full-profile` | Sends the complete employee profile directly with the required grouped layout |
+| `tenure` | Returns only position and length-of-service information |
+| `field` | Returns only the profile fields explicitly requested; this is the default when scope is uncertain |
+
+The `field` default prevents an ambiguous or unrecognized request from returning the employee's complete profile. The scope is derived inside the topic so M365 does not need to confirm a read-only profile action parameter.
+
+If the current conversation does not yet have a Workday employee ID, the topic initializes Workday user context before retrieving the profile. This supports both direct Custom Engine Agent conversations and invocation through a Declarative Agent.
+
+### Full-profile Layout
+
+The deterministic full-profile response maps fields as follows:
+
+| Section | Fields |
+|---------|--------|
+| `Personal information` | Name, date of birth, gender, home address, home email, home phone |
+| `Hiring details` | Employee ID, hire date, continuous service date, length of service, employment status |
+| `Role and work` | Business title, organization, manager, location, work email, work phone |
+
+The DA response uses a read-only Adaptive Card and an explicit orchestration instruction to preserve the section names and order. Fields that Workday does not return are omitted from the card.
+
+## Validation
+
+After importing the topic, validate these prompts in the Copilot Studio Test pane:
+
+| Prompt | Expected behavior |
+|--------|-------------------|
+| `Show me my employee profile summary.` | Returns one response with the heading `Your employee profile` and the sections `Personal information`, `Hiring details`, and `Role and work` |
+| `What is my employee ID?` | Returns the employee ID without the complete profile |
+
+Repeat the full-profile prompt with an account that has blank optional contact fields and confirm that empty bullets and empty sections are omitted. Simulate a failed Workday request and confirm that the topic returns the friendly retrieval error instead of an empty profile.
+
 ## Flow Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    User Triggers Topic                       │
 │         (e.g., "What is my profile?")                       │
@@ -94,8 +134,8 @@ The topic extracts the following fields from Workday:
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│           Return finalizedData Record                        │
-│       (All fields available for AI to respond)              │
+│        Select response using ResponseScope                   │
+│  (direct full profile or selective AI-composed response)    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -103,7 +143,7 @@ The topic extracts the following fields from Workday:
 
 The topic automatically calculates the employee's length of service from their Continuous Service Date:
 
-```
+```text
 Years:  RoundDown(DateDiff(ServiceDate, Today, Months) / 12, 0)
 Months: Mod(DateDiff(ServiceDate, Today, Months), 12)
 Days:   DateDiff(AdjustedDate, Today, Days)
@@ -114,7 +154,7 @@ Output format: "X year(s) Y month(s) Z day(s)"
 ## Dependencies
 
 This topic requires the following system topics/dialogs:
-- `msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetCommonExecution` - For executing Workday API calls
+- `msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetCommonExecution` - For executing Workday API calls
 
 ## Global Variables Used
 
@@ -161,8 +201,11 @@ outputType:
 
 4. **Response Optimization**: The Get_Workers request is optimized to exclude unnecessary data (benefits, qualifications, photos, etc.) to improve performance.
 
+5. **Full-profile Formatting**: Complete profile requests use a read-only card plus an explicit instruction that the orchestration model must preserve the required title, section names, and order.
+
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1 | October 2026 | Added deterministic grouped rendering for full-profile requests and fail-closed response-scope detection |
 | 1.0 | December 2025 | Initial release with comprehensive profile retrieval |
