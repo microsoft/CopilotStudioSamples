@@ -1,0 +1,20 @@
+# Workday request templates for this topic - one `SetVariable` per template.
+#
+# In the "Workday [System] - 1: Set Runtime Template Configurations" topic:
+#   1. Paste the actions below under `beginDialog` > `actions`.
+#   2. Add the lookup rows at the end of this file to the
+#      `Global.ESS_WorkdayHCM_Template_Configurations` action.
+#
+# Each `Key` must equal the `scenarioName` the topic passes - the runtime resolves
+# templates with `LookUp(..., Key=Topic.scenarioName, Value)`. Miss step 2 and the
+# template is set but never found, so the Workday call returns blank.
+
+    - kind: SetVariable
+      id: setVariable_FOpc6Q
+      displayName: Set msdyn_WorkdayHCMRuntimeEmployeeGetEducation
+      variable: Topic.msdyn_WorkdayHCMRuntimeEmployeeGetEducation
+      value: |-
+        ="<?xml version=""1.0"" encoding=""utf-8"" ?><workdayEntityConfigurationTemplate><scenario name=""WorkdayHCMRuntimeEmployeeGetEducation""><apiRequests><apiRequest><authType>User</authType><endpoint><request>WorkdayHCMRuntimeEmployeeGetEducationRequest</request><serviceName>Human_Resources</serviceName><version>v41.0</version></endpoint><responseProperties><property><extractPath>//*[local-name()='Worker']/*[local-name()='Worker_Data']/*[local-name()='Qualification_Data']/*[local-name()='Education']</extractPath><key>EducationData</key></property></responseProperties></apiRequest></apiRequests></scenario><requestTemplates><requestTemplate name=""WorkdayHCMRuntimeEmployeeGetEducationRequest""><bsvc:Get_Workers_Request xmlns:bsvc=""urn:com.workday/bsvc"" bsvc:version=""v41.0""><bsvc:Request_References bsvc:Skip_Non_Existing_Instances=""false"" bsvc:Ignore_Invalid_References=""true""><bsvc:Worker_Reference bsvc:Descriptor=""Employee_ID""><bsvc:ID bsvc:type=""Employee_ID"">{Employee_ID}</bsvc:ID></bsvc:Worker_Reference></bsvc:Request_References><bsvc:Response_Filter><bsvc:As_Of_Effective_Date>{As_Of_Effective_Date}</bsvc:As_Of_Effective_Date></bsvc:Response_Filter><bsvc:Response_Group><bsvc:Include_Qualifications>true</bsvc:Include_Qualifications></bsvc:Response_Group></bsvc:Get_Workers_Request></requestTemplate></requestTemplates></workdayEntityConfigurationTemplate>"
+
+# Step 2 - add these rows to `Global.ESS_WorkdayHCM_Template_Configurations`:
+#     { Key: "msdyn_WorkdayHCMRuntimeEmployeeGetEducation", Value: Topic.msdyn_WorkdayHCMRuntimeEmployeeGetEducation },
