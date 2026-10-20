@@ -143,7 +143,10 @@ export class MetaClient {
 
   async download(media: NonNullable<Incoming["media"]>, signal: AbortSignal): Promise<MediaFile> {
     const spec = mediaType(media.mime);
-    if (spec.kind !== media.kind) throw new RelayError("media_type_mismatch", "The attachment type does not match its metadata.");
+    // WhatsApp's Document option can carry other supported media types.
+    if (media.kind !== "document" && spec.kind !== media.kind) {
+      throw new RelayError("media_type_mismatch", "The attachment type does not match its metadata.");
+    }
     const metadata = record(await this.request(`${encodeURIComponent(media.id)}?phone_number_id=${this.config.phoneId}`, { method: "GET" }, signal));
     const size = Number(metadata.file_size);
     if (!Number.isSafeInteger(size) || size <= 0 || size > spec.max || mediaType(text(metadata.mime_type)).mime !== spec.mime) {

@@ -286,6 +286,8 @@ Sign-in is bound to the sender and current session, expires after 10 minutes, an
 
 **Incoming media:** the webhook supplies a Meta media ID. After sign-in, the relay fetches metadata and downloads the bytes with its Meta access token. It validates size, MIME family, basic file signatures, and the supplied hash, then constructs an SDK attachment containing a base64 data URL. It never gives the agent a Meta credential or an inaccessible private Meta URL.
 
+WhatsApp's **Document** option can also carry supported image, audio, or video files. The relay preserves the file's MIME type and applies that type's validation and size cap regardless of the message category. For example, a PNG sent as a document still has a 5 MiB limit, not the 16 MiB document limit.
+
 **Important contract limitation:** the plugin demonstrates text input and outgoing inline attachments. It does not establish that every GHCP harness accepts incoming `Activity.attachments` data URLs or can interpret audio/video. This sample implements that input representation for validation, not a claim that the runtime supports every modality. An agent may reject or ignore an attachment; a successful HTTP response is not sufficient proof. There is no fallback transcription, vision model, or transcoding.
 
 **Outgoing media:** completed message attachments can use inline base64 data URLs, or public/signed HTTPS URLs from exact administrator-configured `GHCP_FILE_ORIGINS`. URL downloads prohibit redirects and never forward the user's bearer token. Other authenticated file endpoints and arbitrary cards are rejected explicitly. Bytes are uploaded to Meta first, then sent by media ID.

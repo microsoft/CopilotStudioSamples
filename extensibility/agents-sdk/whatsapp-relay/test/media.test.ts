@@ -3,9 +3,9 @@ import { createHash } from "node:crypto";
 import { test } from "node:test";
 import { limits } from "../src/config.js";
 import { fileFromBytes, MemoryBudget, outgoingFile } from "../src/media.js";
-import { MetaClient } from "../src/meta.js";
+import { MetaClient, parseWebhook } from "../src/meta.js";
 import { readBytes } from "../src/common.js";
-import { config, signal } from "./fixtures.js";
+import { config, signal, webhook } from "./fixtures.js";
 
 export const samples = [
   { mime: "image/png", kind: "image", bytes: Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0]) },
@@ -48,6 +48,76 @@ for (const sample of samples) {
     assert.equal(await client.sendFile("user", inline, signal()), "sent-id");
     assert.equal(requests.length, 4);
     assert(requests.every(item => item.init?.redirect === "error"));
+  });
+}
+
+for (const sample of samples.filter(item => item.kind !== "document")) {
+  test(`${sample.kind}: a document envelope preserves the file's MIME type and bytes`, async () => {
+    const [event] = parseWebhook(webhook([{
+      from: "sender", id: "document-message", timestamp: String(Math.floor(Date.now() / 1000)),
+      type: "document",
+      document: { id: "media-id", mime_type: sample.mime, filename: "file", caption: "Inspect this file." },
+    }]), config);
+    assert(event?.kind === "message" && event.media);
+    assert.equal(event.media.kind, "document");
+    assert.equal(event.text, "Inspect this file.");
+    let calls = 0;
+    const client = new MetaClient(config, async input => {
+      calls++;
+      return String(input).includes("graph.facebook.com") ? Response.json({
+        url: "https://lookaside.fbsbx.com/media", mime_type: sample.mime,
+        file_size: sample.bytes.length, sha256: createHash("sha256").update(sample.bytes).digest("hex"),
+      }) : new Response(new Uint8Array(sample.bytes));
+    });
+    const file = await client.download(event.media, signal());
+    assert.equal(file.kind, sample.kind);
+    assert.equal(file.mime, sample.mime);
+    assert.deepEqual(file.bytes, sample.bytes);
+    assert.equal(calls, 2);
+  });
+}
+
+test("non-document envelopes still reject mismatched MIME categories before any request", async () => {
+  const client = new MetaClient(config, async () => { throw new Error("Must not request media."); });
+  for (const kind of ["image", "audio", "video"] as const) {
+    for (const sample of samples.filter(item => item.kind !== kind)) {
+      await assert.rejects(client.download({ id: "media-id", mime: sample.mime, kind }, signal()),
+        /media_type_mismatch/);
+    }
+  }
+});
+
+test("a document envelope cannot increase the image size cap", async () => {
+  const image = samples[0];
+  let calls = 0;
+  const client = new MetaClient(config, async () => {
+    calls++;
+    return Response.json({
+      url: "https://lookaside.fbsbx.com/media", mime_type: image.mime, file_size: 5 * 1024 * 1024 + 1,
+    });
+  });
+  await assert.rejects(client.download({ id: "media-id", mime: image.mime, kind: "document" }, signal()),
+    /media_size_type/);
+  assert.equal(calls, 1);
+});
+
+for (const scenario of [
+  { name: "metadata MIME mismatch", mime: "image/jpeg", bytes: samples[0].bytes, hash: undefined, code: "media_size_type", calls: 1 },
+  { name: "invalid file signature", mime: "image/png", bytes: Buffer.from("invalid image"), hash: undefined, code: "media_signature", calls: 2 },
+  { name: "digest mismatch", mime: "image/png", bytes: samples[0].bytes, hash: "0".repeat(64), code: "media_digest", calls: 2 },
+]) {
+  test(`a document envelope still rejects ${scenario.name}`, async () => {
+    let calls = 0;
+    const client = new MetaClient(config, async input => {
+      calls++;
+      return String(input).includes("graph.facebook.com") ? Response.json({
+        url: "https://lookaside.fbsbx.com/media", mime_type: scenario.mime,
+        file_size: scenario.bytes.length, sha256: scenario.hash,
+      }) : new Response(new Uint8Array(scenario.bytes));
+    });
+    await assert.rejects(client.download({ id: "media-id", mime: "image/png", kind: "document" }, signal()),
+      new RegExp(scenario.code));
+    assert.equal(calls, scenario.calls);
   });
 }
 
