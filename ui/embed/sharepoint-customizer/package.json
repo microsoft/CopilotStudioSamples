@@ -9,19 +9,24 @@
   "scripts": {
     "build": "gulp bundle",
     "clean": "gulp clean",
-    "test": "gulp test"
+    "test": "tsc -p tsconfig.test.json && node --test tests/*.test.cjs",
+    "serve": "gulp serve --nobrowser",
+    "sideload": "node scripts/sideload.cjs"
   },
   "dependencies": {
     "@azure/msal-browser": "^4.13.1",
     "@fluentui/react": "^8.121.4",
-    "@microsoft/agents-copilotstudio-client": "^1.0.0",
+    "@microsoft/agents-activity": "1.10.0-beta.7.g65f69dfa27",
+    "@microsoft/agents-copilotstudio-client": "1.10.0-beta.7.g65f69dfa27",
     "@microsoft/decorators": "1.21.1",
     "@microsoft/sp-application-base": "1.21.1",
     "@microsoft/sp-core-library": "1.21.1",
-    "botframework-webchat": "4.18.1-main.20250804.93043a9",
-    "botframework-webchat-fluent-theme": "4.18.1-main.20250804.93043a9",
+    "@microsoft/sp-component-base": "1.21.1",
+    "botframework-webchat": "4.19.2",
+    "botframework-webchat-fluent-theme": "4.19.2",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "rxjs": "7.8.2",
     "tslib": "2.3.1"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 {
   "extends": "./node_modules/@microsoft/rush-stack-compiler-5.3/includes/tsconfig-web.json",
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2019",
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -22,7 +22,7 @@
       "webpack-env"
     ],
     "lib": [
-      "es5",
+      "es2019",
       "dom",
       "es2015.collection",
       "es2015.promise"
