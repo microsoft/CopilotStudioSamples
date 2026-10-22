@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "botName": {
+      "value": "AzureAgentToM365ATK-${{RESOURCE_SUFFIX}}-${{APP_NAME_SUFFIX}}"
+    },
+    "botId": {
+      "value": "${{BOT_ID}}"
+    },
+    "botEndpoint": {
+      "value": "${{BOT_ENDPOINT}}"
+    },
+    "tenantId": {
+      "value": "${{TEAMS_APP_TENANT_ID}}"
+    },
+    "ssoAppId": {
+      "value": "${{SSO_APP_ID}}"
+    }
+  }
+}
