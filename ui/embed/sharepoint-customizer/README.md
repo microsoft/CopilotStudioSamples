@@ -6,13 +6,16 @@ nav_order: 6
 ---
 # Copilot Studio side panel for SharePoint
 
+Beta SDK dependency
+{: .label .label-yellow }
+
 Embed a Microsoft-authenticated Copilot Studio agent in a SharePoint Framework (SPFx) Application Customizer. The panel uses the Microsoft 365 Agents SDK to discover the agent's conversation endpoints and WebChat's Fluent composer for messages, local files, cards, and suggested replies.
 
 {: .important }
 > This is an open-source reference sample, not a production-supported SharePoint channel. For production deployments, consider the [built-in SharePoint channel](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint#configure-the-sharepoint-channel). Its capabilities differ from this custom SDK integration; this sample does not enable file uploads in the built-in channel.
 
 {: .warning }
-> Endpoint discovery currently requires the pinned public SDK preview, `1.10.0-beta.7.g65f69dfa27`. Stable SDK `1.9.1` does not contain discovery. WebChat and its Fluent theme are pinned together at `4.19.2`. Review preview dependency suitability before deploying.
+> **This sample currently uses a beta SDK client.** Both `@microsoft/agents-copilotstudio-client` and `@microsoft/agents-activity` are pinned to `1.10.0-beta.7.g65f69dfa27`. The beta is required for endpoint discovery for now; stable SDK `1.9.1` does not contain discovery. These SDK dependencies are prerelease, so review their suitability before production use. WebChat and its Fluent theme use the released version `4.19.2`.
 
 ## Features
 
