@@ -1,6 +1,6 @@
 import { Activity } from '@microsoft/agents-activity';
 import { ChatConfiguration } from '../../configuration';
-import { ActivityDetail, emptyActivityDetails, hasDetailEntities, isInformative, isToolEvent, record, updateActivityDetails } from './activityDetails';
+import { ActivityDetail, emptyActivityDetails, hasDetailEntities, isInformative, isPlanEvent, record, updateActivityDetails } from './activityDetails';
 
 export function createPreChatActivity(configuration: ChatConfiguration): Partial<Activity> {
   return {
@@ -53,7 +53,8 @@ export class NativeActivityAdapter {
   constructor(private readonly configuration: ChatConfiguration) {}
 
   startTurn(): void {
-    this.state = emptyActivityDetails();
+    // Standard plans can resume after a clarification or connector sign-in on a later turn.
+    this.state = { ...emptyActivityDetails(), toolNames: this.state.toolNames };
     this.sequenceIds.clear();
     this.timestamp = new Date().toISOString();
     this.outcome = undefined;
@@ -62,7 +63,7 @@ export class NativeActivityAdapter {
 
   transform(activity: Partial<Activity>): Partial<Activity>[] {
     if (activity.type === 'event' && activity.name === 'turn.complete') return this.finishTurn();
-    if (hasDetailEntities(activity) || isInformative(activity) || isToolEvent(activity)) {
+    if (hasDetailEntities(activity) || isInformative(activity) || isPlanEvent(activity)) {
       const previous = this.state;
       this.state = updateActivityDetails(previous, activity, this.configuration);
       if (typeof activity.from?.id === 'string') this.author = { id: activity.from.id, role: 'bot' };

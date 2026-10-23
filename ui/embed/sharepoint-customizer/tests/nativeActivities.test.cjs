@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { normalizeConfiguration } = require('../temp/tests/configuration');
 const { createPreChatActivity, NativeActivityAdapter } = require('../temp/tests/components/Chat/nativeActivities');
-const { thought, toolCall } = require('./fixtures/sdkActivities.cjs');
+const { thought, toolCall, standardPlan, standardStep } = require('./fixtures/sdkActivities.cjs');
 
 const configuration = overrides => normalizeConfiguration({
   appClientId: 'client', tenantId: 'tenant', environmentId: 'environment', schemaName: 'agent', ...overrides
@@ -38,7 +38,7 @@ for (const showReasoning of [false, true]) {
         ...adapter.transform(tool('DynamicPlanReceived', {
           toolDefinitions: [{ schemaName: 'lookup', displayName: 'Search reference material' }]
         })),
-        ...adapter.transform(tool('DynamicPlanStepTriggered', { arguments: 'PRIVATE_ARGUMENT', thought: 'PRIVATE_THOUGHT' })),
+        ...adapter.transform(tool('DynamicPlanStepTriggered', { arguments: 'PRIVATE_ARGUMENT' })),
         ...adapter.transform(tool('DynamicPlanStepBindUpdate', { arguments: 'PRIVATE_BINDING' })),
         ...adapter.transform(tool('DynamicPlanStepFinished', { result: 'PRIVATE_RESULT' }))
       ];
@@ -129,4 +129,47 @@ test('unclassified informative updates are not mislabeled or replayed into the t
   assert.deepEqual(adapter.transform({
     type: 'typing', text: 'Working', entities: [{ type: 'streaminfo', streamType: 'informative' }]
   }), []);
+});
+
+test('standard reasoning and tools share the native group but have separate stable identities', () => {
+  const adapter = new NativeActivityAdapter(configuration({ showReasoning: true, showToolCalls: true }));
+  adapter.startTurn();
+  adapter.transform(standardPlan());
+  const activity = standardStep('DynamicPlanStepTriggered', { thought: 'Check the requested city.' });
+  activity.channelData = { 'webchat:sequence-id': 4 };
+  const [reasoning, tool] = adapter.transform(activity);
+  assert.equal(reasoning.entities[0].abstract, 'Reasoning');
+  assert.equal(reasoning.text, 'Check the requested city.');
+  assert.equal(tool.entities[0].abstract, 'Get current weather');
+  assert.notEqual(reasoning.id, tool.id);
+  assert.equal(reasoning.entities[0].isPartOf['@id'], tool.entities[0].isPartOf['@id']);
+  assert.equal(reasoning.channelData['webchat:sequence-id'], 4);
+  assert.equal(tool.channelData['webchat:sequence-id'], 4);
+  assert.deepEqual([reasoning.entities[0].position, tool.entities[0].position], [1, 2]);
+  const finished = adapter.transform(standardStep('DynamicPlanStepFinished'));
+  assert.equal(finished[0].id, tool.id);
+  assert.equal(finished[0].text, 'Finished');
+  assert.equal(finished[0].channelData['webchat:sequence-id'], 4);
+  const settled = adapter.finishTurn();
+  assert.equal(settled[0].id, reasoning.id);
+  assert.equal(settled[0].entities[0].creativeWorkStatus, 'Published');
+});
+
+test('standard tool labels survive a clarification turn without carrying reasoning or leaking into a new conversation', () => {
+  const adapter = new NativeActivityAdapter(configuration({ showReasoning: true, showToolCalls: true }));
+  adapter.startTurn();
+  adapter.transform(standardPlan());
+  const started = adapter.transform(standardStep('DynamicPlanStepTriggered', { thought: 'Check the requested city.' }));
+  adapter.finishTurn();
+  adapter.startTurn();
+  const [resumed] = adapter.transform(standardStep('DynamicPlanStepBindUpdate', { arguments: 'PRIVATE_INPUT' }));
+  const [finished] = adapter.transform(standardStep('DynamicPlanStepFinished', { result: 'PRIVATE_RESULT' }));
+  assert.notEqual(resumed.id, started[1].id);
+  assert.equal(resumed.id, finished.id);
+  assert.equal(finished.entities[0].abstract, 'Get current weather');
+  assert.equal(finished.text, 'Finished');
+  assert.equal(adapter.finishTurn().length, 1);
+  assert.ok(!JSON.stringify([resumed, finished]).includes('PRIVATE_'));
+  const fresh = new NativeActivityAdapter(configuration({ showToolCalls: true }));
+  assert.equal(fresh.transform(standardStep('DynamicPlanStepFinished'))[0].entities[0].abstract, 'sample.CurrentWeather');
 });

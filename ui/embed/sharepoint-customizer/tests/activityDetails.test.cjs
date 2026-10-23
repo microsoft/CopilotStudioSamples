@@ -1,7 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { emptyActivityDetails, updateActivityDetails } = require('../temp/tests/components/Chat/activityDetails');
-const { thought, toolCall } = require('./fixtures/sdkActivities.cjs');
+const { thought, toolCall, standardPlan, standardStep } = require('./fixtures/sdkActivities.cjs');
 const tool = (valueType, value = {}) => ({ type: 'event', valueType, value: { taskDialogId: 'lookup', stepId: 'call1', ...value } });
 const visible = { showReasoning: true, showToolCalls: true };
 
@@ -79,15 +79,16 @@ test('entity-only stream metadata retains ordering and correlates the thought st
   assert.equal(state.entries[0].text, 'Check the list');
   assert.equal(state.entries[0].sequence, 2);
 });
-test('tool names and lifecycle are shown without arguments, outputs or thought payloads', () => {
+test('tool names and lifecycle exclude arguments and outputs while step reasoning has its own entry', () => {
   let state = updateActivityDetails(emptyActivityDetails(), tool('DynamicPlanReceived', {
     toolDefinitions: [{ schemaName: 'lookup', displayName: 'Look up a record' }]
   }), visible);
-  state = updateActivityDetails(state, tool('DynamicPlanStepTriggered', { thought: 'private', arguments: { secret: 'hidden' } }), visible);
+  state = updateActivityDetails(state, tool('DynamicPlanStepTriggered', { thought: 'Look up the requested record.', arguments: { secret: 'hidden' } }), visible);
   state = updateActivityDetails(state, tool('DynamicPlanStepFinished', { output: 'hidden' }), visible);
   state = updateActivityDetails(state, tool('DynamicPlanStepTriggered'), visible);
-  assert.equal(state.entries[0].text, 'Look up a record');
-  assert.equal(state.entries[0].status, 'finished');
+  assert.equal(state.entries.find(entry => entry.kind === 'tool').text, 'Look up a record');
+  assert.equal(state.entries.find(entry => entry.kind === 'tool').status, 'finished');
+  assert.equal(state.entries.find(entry => entry.kind === 'reasoning').text, 'Look up the requested record.');
   assert.ok(!JSON.stringify(state).includes('hidden'));
   assert.ok(!JSON.stringify(state).includes('private'));
 });
@@ -107,7 +108,7 @@ test('numeric step IDs preserve separate invocations of the same tool', () => {
   }
   state = updateActivityDetails(state, tool('DynamicPlanStepFinished', { stepId: 0 }), visible);
   assert.deepEqual(state.entries.map(({ id, status }) => ({ id, status })), [
-    { id: 'tool:0', status: 'finished' }, { id: 'tool:1', status: 'running' }
+    { id: 'tool:standard:["","0"]', status: 'finished' }, { id: 'tool:standard:["","1"]', status: 'running' }
   ]);
 });
 
@@ -116,4 +117,75 @@ test('unknown tool names cannot resolve to inherited object properties', () => {
     taskDialogId: 'toString'
   }), visible);
   assert.equal(state.entries[0].text, 'toString');
+});
+
+for (const showReasoning of [false, true]) {
+  for (const showToolCalls of [false, true]) {
+    test(`standard mapping is independent: reasoning=${showReasoning}, tools=${showToolCalls}`, () => {
+      const flags = { showReasoning, showToolCalls };
+      let state = emptyActivityDetails();
+      for (const activity of [
+        standardPlan(),
+        standardStep('DynamicPlanStepTriggered', { thought: 'Check the weather for the requested city.', state: 'inProgress' }),
+        standardStep('DynamicPlanStepBindUpdate', { arguments: { Location: 'PRIVATE_CITY' }, thought: 'PRIVATE_BIND_THOUGHT' }),
+        standardStep('DynamicPlanStepFinished', { result: 'PRIVATE_RESULT', thought: 'PRIVATE_FINISH_THOUGHT' })
+      ]) state = updateActivityDetails(state, activity, flags);
+      assert.equal(state.entries.filter(entry => entry.kind === 'reasoning').length, Number(showReasoning));
+      assert.equal(state.entries.filter(entry => entry.kind === 'tool').length, Number(showToolCalls));
+      if (showReasoning) assert.equal(state.entries.find(entry => entry.kind === 'reasoning').text, 'Check the weather for the requested city.');
+      if (showToolCalls) {
+        assert.equal(state.entries.find(entry => entry.kind === 'tool').text, 'Get current weather');
+        assert.equal(state.entries.find(entry => entry.kind === 'tool').status, 'finished');
+      }
+      assert.ok(!JSON.stringify(state).includes('PRIVATE_'));
+    });
+  }
+}
+
+test('standard step snapshots replace, deduplicate, and stay separate across steps and plans', () => {
+  let state = updateActivityDetails(emptyActivityDetails(), standardStep('DynamicPlanStepTriggered', { thought: 'Check Seattle.' }), visible);
+  const same = updateActivityDetails(state, standardStep('DynamicPlanStepTriggered', { thought: 'Check Seattle.' }), visible);
+  assert.strictEqual(same, state);
+  state = updateActivityDetails(state, standardStep('DynamicPlanStepTriggered', { thought: 'Check Seattle in metric units.' }), visible);
+  state = updateActivityDetails(state, standardStep('DynamicPlanStepTriggered', { stepId: 'second', thought: 'Check London.' }), visible);
+  state = updateActivityDetails(state, standardStep('DynamicPlanStepTriggered', { planIdentifier: 'another-plan', thought: 'Check Paris.' }), visible);
+  assert.deepEqual(state.entries.filter(entry => entry.kind === 'reasoning').map(entry => entry.text),
+    ['Check Seattle in metric units.', 'Check London.', 'Check Paris.']);
+  assert.equal(new Set(state.entries.map(entry => entry.id)).size, 6);
+});
+
+test('standard event names are accepted when valueType is absent, but arbitrary thought fields are not', () => {
+  const event = standardStep('DynamicPlanStepTriggered', { thought: 'Check the weather.' });
+  delete event.valueType;
+  const state = updateActivityDetails(emptyActivityDetails(), event, visible);
+  assert.equal(state.entries.length, 2);
+  for (const activity of [
+    { type: 'message', name: event.name, value: event.value },
+    { type: 'event', name: 'UnknownEvent', value: event.value },
+    standardStep('DynamicPlanStepTriggered', { thought: { text: 'PRIVATE_NESTED' } }),
+    standardStep('DynamicPlanStepTriggered', { thought: '   ' }),
+    standardStep('DynamicPlanStepTriggered', { thought: 'Uncorrelated', stepId: '', taskDialogId: '' })
+  ]) {
+    const next = updateActivityDetails(emptyActivityDetails(), activity, { showReasoning: true, showToolCalls: false });
+    assert.deepEqual(next.entries, []);
+  }
+});
+
+test('standard binding updates identify an ongoing tool step without exposing inputs or inventing completion', () => {
+  let state = updateActivityDetails(emptyActivityDetails(), standardPlan(), visible);
+  state = updateActivityDetails(state, standardStep('DynamicPlanStepBindUpdate', { arguments: { Location: 'PRIVATE_CITY' } }), visible);
+  assert.deepEqual(state.entries.map(({ kind, text, status }) => ({ kind, text, status })),
+    [{ kind: 'tool', text: 'Get current weather', status: 'running' }]);
+  state = updateActivityDetails(state, standardStep('DynamicPlanStepFinished'), visible);
+  const late = updateActivityDetails(state, standardStep('DynamicPlanStepBindUpdate'), visible);
+  assert.strictEqual(late, state);
+  assert.equal(state.entries[0].status, 'finished');
+});
+
+test('standard correlation keeps opaque plan and step identifiers distinct', () => {
+  let state = emptyActivityDetails();
+  for (const [planIdentifier, stepId] of [['a:b', 'c'], ['a', 'b:c'], ['plan', '\uD800']]) {
+    state = updateActivityDetails(state, standardStep('DynamicPlanStepTriggered', { planIdentifier, stepId }), visible);
+  }
+  assert.equal(new Set(state.entries.map(entry => entry.id)).size, 3);
 });

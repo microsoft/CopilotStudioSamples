@@ -33,4 +33,27 @@ function toolCall(status, { toolCallId = 'call', streamSequence = status === 'st
   };
 }
 
-module.exports = { thought, toolCall };
+// Standard-harness event envelopes observed on the published SDK route; values are synthetic.
+function standardPlan(value = {}) {
+  return {
+    type: 'event', name: 'DynamicPlanReceived', valueType: 'DynamicPlanReceived',
+    from: { id: 'bot', role: 'bot' },
+    value: {
+      planIdentifier: 'weather-plan', steps: ['sample.CurrentWeather'], isFinalPlan: false,
+      toolDefinitions: [{
+        schemaName: 'sample.CurrentWeather', displayName: 'Get current weather',
+        description: 'PRIVATE_DESCRIPTION', inputs: [{ name: 'PRIVATE_INPUT' }], outputs: [{ name: 'PRIVATE_OUTPUT' }]
+      }],
+      ...value
+    }
+  };
+}
+
+function standardStep(valueType, value = {}) {
+  return {
+    type: 'event', name: valueType, valueType, from: { id: 'bot', role: 'bot' },
+    value: { planIdentifier: 'weather-plan', stepId: 'weather-step', taskDialogId: 'sample.CurrentWeather', ...value }
+  };
+}
+
+module.exports = { thought, toolCall, standardPlan, standardStep };
