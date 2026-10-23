@@ -1,0 +1,14 @@
+{
+  "tenantId": "22222222-2222-4222-8222-222222222222",
+  "environmentId": "33333333-3333-4333-8333-333333333333",
+  "schemaName": "contoso_agent",
+  "agentTitle": "Team & \"Support\" <assistant> 'Équipe'",
+  "startConversation": false,
+  "showTyping": true,
+  "enableFileUpload": true,
+  "showReasoning": true,
+  "showToolCalls": false,
+  "starterPrompts": [
+    { "title": "Get started", "text": "How can you help R&D?" }
+  ]
+}

@@ -4,6 +4,17 @@
         Title="SidebarAgent"
         Location="ClientSideExtension.ApplicationCustomizer"
         ComponentId="4c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2"
-        Properties="">
+        Properties="{
+            &quot;appClientId&quot;: &quot;YOUR_APP_CLIENT_ID&quot;,
+            &quot;tenantId&quot;: &quot;YOUR_TENANT_ID&quot;,
+            &quot;environmentId&quot;: &quot;YOUR_ENVIRONMENT_ID&quot;,
+            &quot;schemaName&quot;: &quot;YOUR_AGENT_SCHEMA_NAME&quot;,
+            &quot;startConversation&quot;: false,
+            &quot;showTyping&quot;: true,
+            &quot;enableFileUpload&quot;: true,
+            &quot;showReasoning&quot;: false,
+            &quot;showToolCalls&quot;: false,
+            &quot;starterPrompts&quot;: [{ &quot;title&quot;: &quot;Get started&quot;, &quot;text&quot;: &quot;What can you help me with?&quot; }]
+        }">
     </ClientSideComponentInstance>
 </Elements>

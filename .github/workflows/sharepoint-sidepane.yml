@@ -1,0 +1,45 @@
+name: SharePoint sidepane
+
+on:
+  pull_request:
+    paths:
+      - 'ui/embed/sharepoint-customizer/**'
+      - '.github/workflows/sharepoint-sidepane.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'ui/embed/sharepoint-customizer/**'
+      - '.github/workflows/sharepoint-sidepane.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ui/embed/sharepoint-customizer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm test
+      - name: Build and inspect configured production package (no tenant access)
+        run: npm run deploy -- --site-url https://contoso.sharepoint.com/sites/team --app-client-id 11111111-1111-4111-8111-111111111111 --properties tests/fixtures/deployment.json --package-only
+      - name: Ensure tracked source was not modified
+        run: git diff --exit-code
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sidepane-${{ matrix.os }}
+          path: ui/embed/sharepoint-customizer/sharepoint/solution/sidebar-agent.sppkg
+          retention-days: 7

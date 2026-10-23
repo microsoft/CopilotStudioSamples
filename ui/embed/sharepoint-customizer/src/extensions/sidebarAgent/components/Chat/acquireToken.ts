@@ -1,89 +1,63 @@
-import { PublicClientApplication, InteractionRequiredAuthError } from '@azure/msal-browser';
+import { PublicClientApplication, InteractionRequiredAuthError, BrowserAuthError, BrowserAuthErrorCodes } from '@azure/msal-browser';
 
 export interface IAuthSettings {
   appClientId: string;
   tenantId: string;
   currentUserLogin?: string;
-  redirectUri?: string;  
+  redirectUri: string;
+  scopes: string[];
 }
 
-export async function acquireToken(settings: IAuthSettings): Promise<string | undefined> {
-  if (!settings?.appClientId || !settings?.tenantId) {
-    return undefined;
+export class SignInRequiredError extends Error {
+  constructor(public readonly cause?: InteractionRequiredAuthError | BrowserAuthError) {
+    super(cause?.message || 'Sign in to connect to your agent.');
+    this.name = 'SignInRequiredError';
   }
+}
 
-  console.log('using this as a redirect URI: ', settings.redirectUri || window.location.origin);
+const applications = new Map<string, Promise<PublicClientApplication>>();
 
-  const msalInstance = new PublicClientApplication({
-    auth: {
-      clientId: settings.appClientId,
-      authority: `https://login.microsoftonline.com/${settings.tenantId}`,
-      redirectUri: settings.redirectUri || window.location.origin  
-    },
-    cache: {
-      cacheLocation: "localStorage"
-    }
-  });
+function getApplication(settings: IAuthSettings): Promise<PublicClientApplication> {
+  const key = `${settings.appClientId}|${settings.tenantId}|${settings.redirectUri}`;
+  let application = applications.get(key);
+  if (!application) {
+    const instance = new PublicClientApplication({
+      auth: {
+        clientId: settings.appClientId,
+        authority: `https://login.microsoftonline.com/${settings.tenantId}`,
+        redirectUri: settings.redirectUri
+      },
+      cache: { cacheLocation: 'sessionStorage' }
+    });
+    application = instance.initialize().then(() => instance).catch(error => {
+      applications.delete(key);
+      throw error;
+    });
+    applications.set(key, application);
+  }
+  return application;
+}
 
-  await msalInstance.initialize();
-  const scopes = ['https://api.powerplatform.com/.default'];
-
+export async function acquireToken(settings: IAuthSettings, interactive = false): Promise<string> {
+  const instance = await getApplication(settings);
+  const accounts = instance.getAllAccounts();
+  const account = settings.currentUserLogin
+    ? accounts.find(candidate => candidate.username.toLowerCase() === settings.currentUserLogin?.toLowerCase())
+    : accounts.length === 1 ? accounts[0] : undefined;
+  const request = { scopes: settings.scopes, loginHint: settings.currentUserLogin };
+  if (interactive) return (await instance.acquireTokenPopup(request)).accessToken;
+  if (!account && !settings.currentUserLogin) throw new SignInRequiredError();
   try {
-    const accounts = await msalInstance.getAllAccounts();
-    let userAccount = null;
-
-    if (!accounts || accounts.length === 0) {
-      console.log("No users are signed in");
-    } else if (accounts.length > 1 && settings.currentUserLogin) {
-      userAccount = accounts.find(account => 
-        account.username.toLowerCase() === settings.currentUserLogin?.toLowerCase()
-      ) || null;
-    } else {
-      userAccount = accounts[0];
+    if (account) {
+      return (await instance.acquireTokenSilent({ ...request, account })).accessToken;
     }
-
-    if (userAccount) {
-      const accessTokenRequest = {
-        scopes: scopes,
-        account: userAccount
-      };
-
-      try {
-        const response = await msalInstance.acquireTokenSilent(accessTokenRequest);
-        console.log('Token acquired via acquireTokenSilent');
-        return response.accessToken; 
-      } catch (errorInternal) {
-        console.log('acquireTokenSilent failed:', errorInternal);
-        // Fall through to try SSO
-      }
+    return (await instance.ssoSilent(request)).accessToken;
+  } catch (error) {
+    if (error instanceof InteractionRequiredAuthError ||
+      (error instanceof BrowserAuthError && error.errorCode === BrowserAuthErrorCodes.monitorWindowTimeout)) {
+      console.warn('Copilot silent sign-in requires interaction:', error.errorCode);
+      throw new SignInRequiredError(error);
     }
-
-    // Only reach here if no account or acquireTokenSilent failed
-    const ssoRequest = {
-      scopes: scopes,
-      loginHint: settings.currentUserLogin
-    };
-
-    try {
-      const response = await msalInstance.ssoSilent(ssoRequest);
-      console.log('Token acquired via ssoSilent');
-      return response.accessToken;
-    } catch (silentError) {
-      console.log('ssoSilent failed:', silentError);
-      if (silentError instanceof InteractionRequiredAuthError) {
-        try {
-          const response = await msalInstance.loginPopup(ssoRequest); 
-          console.log('Token acquired via loginPopup');
-          return response.accessToken;
-        } catch (popupError) {
-          console.log('loginPopup failed:', popupError);
-          return undefined;
-        }
-      }
-      return undefined;
-    }
-  } catch (e) {
-    console.error('Token acquisition error', e);
-    return undefined;
+    throw error;
   }
 }

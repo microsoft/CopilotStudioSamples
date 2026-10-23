@@ -4,250 +4,312 @@ parent: Embed
 grand_parent: UI
 nav_order: 6
 ---
-# Copilot Studio Agent Side Panel for SharePoint
-![Copilot Studio Agent in SharePoint](./images/agent%20sidepanel.png)
+# Copilot Studio side panel for SharePoint
 
-## Summary
+Beta SDK dependency
+{: .label .label-yellow }
 
-This sample demonstrates how to integrate a Microsoft Copilot Studio agent into SharePoint using a SharePoint Framework (SPFx) Application Customizer. It leverages the ReactWebChat component with the [Fluent UI theme pack](https://github.com/microsoft/BotFramework-WebChat#experimental-fluent-ui-theme-pack) and the [Microsoft 365 Agents SDK for NodeJS/TypeScript](https://github.com/microsoft/Agents-for-js) to establish a secure connection with a Copilot Studio agent configured with ['Authenticate with Microsoft'](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#authenticate-with-microsoft).
-
-The key advantage of using the Microsoft 365 Agents SDK is its ability to connect to agents that support Microsoft authentication, which enables [tenant graph grounding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding) capabilities.
+Embed a Microsoft-authenticated Copilot Studio agent in a SharePoint Framework (SPFx) Application Customizer. The sample works with **both GHCP and standard harness agents**, using the Microsoft 365 Agents SDK and WebChat's Fluent composer for messages, local files, cards, and suggested replies.
 
 {: .important }
-> ⚠️ **This is an open-source reference sample only.**  
-> For production deployments, we strongly recommend using the [built-in SharePoint channel in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint#configure-the-sharepoint-channel). 
+> This is an open-source reference sample, not a production-supported SharePoint channel. For production deployments, consider the [built-in SharePoint channel](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint#configure-the-sharepoint-channel). Its capabilities differ from this custom SDK integration; this sample does not enable file uploads in the built-in channel.
 
-## Features of this sample
+{: .warning }
+> **This sample currently uses a beta SDK client.** Both `@microsoft/agents-copilotstudio-client` and `@microsoft/agents-activity` are pinned to `1.10.0-beta.7.g65f69dfa27`. These SDK dependencies are prerelease, so review their suitability before production use. WebChat and its Fluent theme use the released version `4.19.2`.
 
-- **Single Sign-On (SSO)**: Leverages the current user's SharePoint authentication for seamless agent access
-- **Sliding Panel UI**: Modern, responsive chat interface that slides in from the right side of the page
-- **Customizable Appearance**: Configure header color and agent title to match your branding
-- **New Conversation Support**: Users can start fresh conversations without leaving the page
-- **Fluent UI Styling**: Uses the Fluent UI theme pack for a native Microsoft 365 look and feel
-- **Tenant Graph Grounding**: Enables the agent to access and search Microsoft 365 content through [tenant graph grounding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding)
+## Screenshots
+
+The deployed side panel with an example SharePoint list-management agent. Select a screenshot to view it full size. Requester names are redacted in the list-results image.
+
+| Welcome and starters | Agent conversation | Agent activity and list results |
+|----------------------|--------------------|---------------------------------|
+| [<img src="./images/sidepane-welcome.png" alt="Side panel welcome screen with a starter card, attachment picker, refresh, and collapse controls" width="220">](./images/sidepane-welcome.png) | [<img src="./images/sidepane-conversation.png" alt="Agent replying to the starter prompt with its SharePoint list-management capabilities" width="220">](./images/sidepane-conversation.png) | [<img src="./images/sidepane-agent-activity.png" alt="Follow-up conversation showing collapsed agent activity and SharePoint list results, with requester names redacted" width="220">](./images/sidepane-agent-activity.png) |
+
+## Features
+
+- **Agent compatibility:** works with both GHCP and standard harness agents. Configure the environment ID and agent schema name; no harness-selection setting is needed.
+- **Microsoft sign-in:** try silent authentication with the current SharePoint user's account, then offer a **Sign in** button when interaction is required or the silent iframe times out.
+- **Clean Fluent panel:** responsive sizing, site theme integration, accessible controls, Escape/light-dismiss, and focus restoration.
+- **Choose the opening experience:** default to native Fluent starter cards without starting a conversation, or opt into the agent's conversation-start flow instead.
+- **Local attachments:** WebChat's native picker, drag-and-drop, clipboard files/images, multiple attachments, previews, and removal.
+- **Optional agent activity:** independently enable client-visible reasoning and tool activity. Both are hidden by default.
+- **Existing WebChat features:** Markdown, cards, suggested replies, typing, and streamed responses remain available.
+- **Launcher:** an icon-only Copilot Studio button opens the agent from SharePoint's supported Top placeholder, below the Microsoft 365 suite header. The sample does not inject elements into the suite header or override SharePoint's built-in Copilot button.
+- **Conversation lifecycle:** the single collapse chevron hides the panel while preserving the conversation; **New conversation** (the circular refresh arrow) clears its messages, pending files, and activity details, then follows the configured opening experience.
+
+There is no SharePoint/OneDrive picker, voice integration, or cross-page conversation persistence in this sample.
 
 ## Prerequisites
 
-Before you begin, ensure you have the following:
+- A published Copilot Studio agent accessible to the signed-in user, configured to [authenticate with Microsoft](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#authenticate-with-microsoft).
+- Access to create or use an Entra single-page application registration, and consent for delegated `CopilotStudio.Copilots.Invoke`.
+- A modern SharePoint site for local sideloading. An app catalog and deployment permissions are only needed for packaged installation.
+- Node.js **22.14 or later within v22**, npm, and the SPFx 1.21.1 toolchain.
+- For file analysis, an agent/runtime that accepts uploaded files. For standard-harness agents, enable **Settings > Generative AI > File processing capabilities > File uploads**.
+- For activity details, an agent that provides reasoning or tool activity to its users. Enabling a UI flag does not make an agent provide additional activity.
 
-1. **Published Copilot Studio Agent**
-   - Agent must be configured with ['Authenticate with Microsoft'](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#authenticate-with-microsoft) authentication
-   - Agent should be published and accessible
-   - Consider enabling [tenant graph grounding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding) for access to Microsoft 365 content
+## How it works
 
-2. **Azure Portal Access**
-   - Required for creating and configuring app registrations
-   - Permissions to create new app registrations in your Azure AD tenant
+The Application Customizer adds a Copilot Studio launcher to SharePoint's supported Top placeholder. Opening it displays a Fluent chat panel that follows the site's theme and signs users in with Microsoft.
 
-3. **SharePoint Administrator Access**
-   - Required to deploy the SPFx extension to the app catalog
+By default, the panel shows a welcome screen and starter cards; the agent conversation begins when the user sends a message. Set `startConversation: true` to use the agent's own welcome flow instead.
 
-4. **Development Environment**
-   - Node.js v22 (as per SPFx 1.21.1 requirements)
-   - npm or yarn package manager
-   - Git for cloning the repository
+Both GHCP and standard harness agents use the same panel and configuration. File attachments and optional reasoning/tool activity are available when supported by the configured agent. Collapsing the panel preserves the current conversation; **New conversation** clears it.
 
-## Technical Architecture
+The unmodified Copilot Studio SVG is from [Microsoft's official icon collection](https://learn.microsoft.com/en-us/power-platform/guidance/icons) and is included for this sample/training experience. Microsoft's separate icon usage terms apply; review them before reusing the logo in a production application.
 
-This solution uses:
-- **[Microsoft 365 Agents SDK for NodeJS/TypeScript](https://github.com/microsoft/Agents-for-js)**: Provides secure connection and authentication handling for Copilot Studio agents
-- **[BotFramework-WebChat with Fluent UI Theme](https://github.com/microsoft/BotFramework-WebChat#experimental-fluent-ui-theme-pack)**: Renders the chat interface with Microsoft 365 styling
-- **SharePoint Framework**: Enables deployment as a site-wide extension
-- **[Tenant Graph Grounding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding)**: Allows the agent to search and access Microsoft 365 content
+## Setup
 
-## Setup Instructions
+### 1. Configure Microsoft authentication
 
-### Step 1: Configure App Registration
-
-This step requires permissions to create application identities in your Azure tenant. For this sample, create a Native Client Application Identity (no secrets required):
-
-1. **Open Azure Portal**
-   - Navigate to [portal.azure.com](https://portal.azure.com)
-   - Go to **Azure Active Directory** (Entra ID)
-
-2. **Create a new App Registration**
-   - Click **App registrations** → **New registration**
-   - Provide a **Name** (e.g., "SharePoint Copilot Studio Agent")
-   - Choose **"Accounts in this organization directory only"**
-   - Under **Redirect URI**:
-     - Select **"Single-page application"** from the platform dropdown
-     - Enter your first SharePoint site URL without the trailing slash (e.g., `https://contoso.sharepoint.com/sites/mysite`)
-   - Click **Register**
-
-3. **Configure Authentication - Add SharePoint URLs**
-   - Go to **Authentication** in the Manage section
-   - Under **Single-page application**, add redirect URIs:
-     - `https://localhost:4321` (only if you plan to test locally - this is the default SPFx port)
-     - For each SharePoint site where you'll deploy the extension, add:
-       - The site URL **without** trailing slash (e.g., `https://contoso.sharepoint.com/sites/mysite`)
-   - Under **Implicit grant and hybrid flows**, ensure both checkboxes are **unchecked** (SPAs use PKCE flow)
-   - Click **Save**
-
-   **Example for multiple sites:**
-   ```
-   https://localhost:4321 (for local testing - default SPFx port)
-   https://contoso.sharepoint.com/sites/hr
-   https://contoso.sharepoint.com/sites/finance
-   https://contoso.sharepoint.com/sites/it
-   ```
-
-4. **Configure API Permissions**
-   - In your new application, go to **API Permissions** in the Manage section
-   - Click **Add Permission**
-   - In the side panel, click the **APIs my organization uses** tab
-   - Search for **"Power Platform API"** or use the GUID `8578e004-a5c6-46e7-913e-12f58912df43`
-   - Under **Delegated permissions**, expand **CopilotStudio** and check:
-     - `CopilotStudio.Copilots.Invoke`
-   - Click **Add Permissions**
-   - (Optional) Click **Grant admin consent** for your organization
-
-5. **Note Required Values**
-   - On the **Overview** page, copy and save:
-     - **Application (client) ID** (e.g., `12345678-1234-1234-1234-123456789012`)
-     - **Directory (tenant) ID** (e.g., `87654321-4321-4321-4321-210987654321`)
+1. In [Entra app registrations](https://portal.azure.com/), create or select an application for this sample. For a new registration, choose accounts in your organization. See [Register an application](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app) for the portal steps.
+2. Add a **Single-page application** redirect URI matching the SharePoint **site URL without a trailing slash**, for example `https://contoso.sharepoint.com/sites/my-site`.
+3. Add a redirect URI for each site where the extension will run. Do not enable implicit grant; MSAL uses authorization code with PKCE.
+4. Under **API permissions > Add a permission > APIs my organization uses**, find **Power Platform API** (`8578e004-a5c6-46e7-913e-12f58912df43`).
+5. Add delegated **CopilotStudio.Copilots.Invoke** and obtain consent as required by your tenant.
+6. Record the application/client ID and directory/tenant ID. **No client secret belongs in this application.**
 
 {: .note }
-> If you don't see "Power Platform API" in the list, you need to add it to your tenant first. See [Power Platform API Authentication](https://learn.microsoft.com/en-us/power-platform/admin/programmability-authentication) and follow Step 2 to add the API.
+> The redirect URI is the SharePoint site even during local sideloading. Serving scripts from `https://localhost:4321` does not make localhost the sign-in redirect. MSAL caches authentication in session storage. If silent sign-in cannot complete, select **Sign in** to open a popup and complete any required MFA. The popup is opened from your click, without repeating the failed silent iframe request.
 
-### Step 2: Get Copilot Studio Configuration
+If Power Platform API is missing from your tenant, see [Power Platform API authentication](https://learn.microsoft.com/en-us/power-platform/admin/programmability-authentication).
 
-1. Open your Copilot Studio environment
-2. Navigate to your published agent
-3. Ensure the agent is configured with ['Authenticate with Microsoft'](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#authenticate-with-microsoft)
-4. Optionally enable [tenant graph grounding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding) for Microsoft 365 content access
-5. Collect the required configuration values using one of these methods:
+### 2. Collect the agent settings
 
-   **Option A: Get Direct Connect URL (Recommended)**
-   - Go to **Channels** → **Web app**
-   - Under **Microsoft 365 Agents SDK**, copy the **Connection string**
-   - This will look like: `https://xxxxxxx.07.environment.api.powerplatform.com/...`
+In Copilot Studio, open the published agent's metadata and record its **environment ID** and **schema name**. Use the schema name, not the display name or agent GUID.
 
-   **Option B: Get Environment ID and Agent Identifier**
-   - Go to **Settings** → **Advanced** → **Metadata**
-   - Copy the following values:
-     - **Environment ID**
-     - **Schema name** (this is your Agent Identifier, e.g., `cr770_myAgent`)
+Use the environment ID and schema name for the normal configuration. Leave `directConnectUrl` unset unless you need the advanced connection override retained for existing deployments.
 
-### Step 3: Clone the Repository
+### 3. Install dependencies
 
 ```bash
 git clone https://github.com/microsoft/CopilotStudioSamples.git
 cd CopilotStudioSamples/ui/embed/sharepoint-customizer
+npm install
 ```
 
-### Step 4: Configure the Extension
+### 4. Create a local configuration
 
-1. Open `sharepoint/assets/elements.xml` in your editor
-2. Update the `ClientSideComponentProperties` with your values:
+Create `properties.local.json` in the sample directory. Files named `*.local.json` are gitignored.
 
-```xml
-ClientSideComponentProperties="{
-    &quot;appClientId&quot;: &quot;YOUR_APP_CLIENT_ID&quot;,
-    &quot;tenantId&quot;: &quot;YOUR_TENANT_ID&quot;,
-    &quot;environmentId&quot;: &quot;YOUR_ENVIRONMENT_ID&quot;,
-    &quot;agentIdentifier&quot;: &quot;YOUR_AGENT_IDENTIFIER&quot;,
-    &quot;directConnectUrl&quot;: &quot;YOUR_DIRECT_CONNECT_URL&quot;,
-    &quot;showTyping&quot;: true,
-    &quot;headerBackgroundColor&quot;: &quot;white&quot;,
-    &quot;agentTitle&quot;: &quot;Copilot Studio Agent&quot;
-}"
+```json
+{
+  "appClientId": "YOUR_APP_CLIENT_ID",
+  "tenantId": "YOUR_TENANT_ID",
+  "environmentId": "YOUR_ENVIRONMENT_ID",
+  "schemaName": "YOUR_AGENT_SCHEMA_NAME",
+  "agentTitle": "Team assistant",
+  "startConversation": false,
+  "showTyping": true,
+  "enableFileUpload": true,
+  "showReasoning": false,
+  "showToolCalls": false,
+  "starterPrompts": [
+    { "title": "Get started", "text": "What can you help me with?" }
+  ]
+}
 ```
 
-**Configuration Options:**
+| Property | Required | Description / default |
+|----------|----------|-----------------------|
+| `appClientId` | Yes | Entra SPA application ID |
+| `tenantId` | Yes | Directory/tenant ID |
+| `environmentId` | For the default connection | Power Platform environment ID |
+| `schemaName` | For the default connection | Agent schema name |
+| `agentIdentifier` | No | Legacy alias for `schemaName`; canonical `schemaName` takes precedence |
+| `directConnectUrl` | No | Advanced HTTPS connection override; leave unset for the normal configuration |
+| `agentTitle` | No | `Copilot Studio Agent` |
+| `headerBackgroundColor` | No | Optional launcher-bar CSS color override; otherwise follows the site theme |
+| `startConversation` | No | `false`: show the local welcome/starter cards and wait for the first submitted message. `true`: start the agent's conversation immediately and hide the local welcome/starter cards |
+| `showTyping` | No | `true`; ordinary typing is independent of reasoning/tool visibility |
+| `enableFileUpload` | No | `true` |
+| `showReasoning` | No | `false` |
+| `showToolCalls` | No | `false` |
+| `starterPrompts` | No | Array of `{ "title": "...", "text": "..." }`, used only when `startConversation` is `false`; defaults to the **Get started** card above. Use `[]` for a welcome screen without starter cards |
 
-| Property | Required | Description | Default |
-|----------|----------|-------------|---------|
-| `appClientId` | Yes | Your Azure AD app registration client ID | - |
-| `tenantId` | Yes | Your Azure AD tenant ID | - |
-| `environmentId` | Conditional | Copilot Studio environment ID (required if not using directConnectUrl) | - |
-| `agentIdentifier` | Conditional | Your agent's identifier (required if not using directConnectUrl) | - |
-| `directConnectUrl` | Conditional | Direct connection URL (use this OR environmentId + agentIdentifier) | - |
-| `showTyping` | No | Show typing indicators | `true` |
-| `headerBackgroundColor` | No | Header bar color (accepts any CSS color value) | `white` |
-| `agentTitle` | No | Display title for the agent | `"Copilot Studio Agent"` |
+Use JSON booleans, not strings such as `"false"`. Keep tokens, passwords, client secrets, and browser state out of the configuration.
+
+Starter prompts are public extension configuration, not system instructions. They are not automatically retrieved from the agent's authoring settings. Native cards put the configured text into the composer and focus it; they do not send a message until the user submits. The two opening modes are mutually exclusive: with `startConversation: true`, the agent's own welcome flow runs instead, and its messages and suggested replies render normally.
+
+## Sideload on a real SharePoint page
+
+Application Customizers must be tested on a **live modern SharePoint page**, not the local workbench. Debug sideloading does not require an app-catalog installation and does not create a persistent site customization.
+
+1. Trust the SPFx development certificate if it is not already trusted:
+
+   ```bash
+   npx gulp trust-dev-cert
+   ```
+
+2. Start the local HTTPS server and leave it running:
+
+   ```bash
+   npm run serve
+   ```
+
+3. Confirm `https://localhost:4321/temp/build/manifests.js` loads in the review browser. Resolve certificate/local-network permission prompts normally; do not disable browser security.
+4. Generate a debug URL using an actual modern page URL from your site:
+
+   ```bash
+   npm run sideload -- \
+     "https://contoso.sharepoint.com/sites/my-site/" \
+     properties.local.json
+   ```
+
+5. Open the generated URL in your signed-in browser and select **Load debug scripts**. Open the agent from the launcher.
+
+The helper preserves existing query parameters and encodes `customActions` safely. It uses this extension's manifest ID and omits any settings you did not supply. To use a different local port, configure the server and pass its manifest URL as the third argument.
+
+To end the review, leave the debug URL or close that tab and stop the development server. No app uninstall or persistent custom-action removal is necessary.
+
+### Review with Playwright
+
+Use a named, headed browser session and the generated debug URL:
+
+```bash
+playwright-cli -s=sharepoint-review open "<GENERATED_DEBUG_URL>" --browser msedge --headed --persistent
+playwright-cli -s=sharepoint-review snapshot
+```
+
+Complete sign-in/MFA yourself when required. To use an already signed-in Edge browser that supports remote debugging, enable **Allow remote debugging for this browser instance** at `edge://inspect/#remote-debugging`, then attach:
+
+```bash
+playwright-cli -s=sharepoint-review attach --cdp=msedge
+playwright-cli -s=sharepoint-review tab-new "<GENERATED_DEBUG_URL>"
+```
+
+Keep actions confined to the review tab. On completion, use `detach` for an attached browser; do not close someone else's browser.
+
+Review the default configuration first, then generate URLs with `showReasoning` and `showToolCalls` enabled independently. Check:
+
+- A reply and a follow-up prompt that retains context.
+- With the default `startConversation: false`, editable starter text and a conversation that begins only after the first submission.
+- With `startConversation: true`, an agent-supplied welcome message and no local starter cards.
+- A small, synthetic local document whose contents the agent can identify.
+- Picker, paste/drop, attachment removal, rejection of oversized/unsupported files, and attachment-only messages.
+- Reasoning/tool activity when supported, collapsed details, and no detail text when flags are disabled.
+- Long streamed replies: follow the latest text through completion, but preserve the reading position when the user deliberately scrolls up.
+- Close/reopen, **New conversation**, keyboard focus/Escape, narrow viewports, and error/reconnect behavior.
+
+An upload appearing in the transcript is **not** proof that the agent processed it. Likewise, a working Copilot Studio test pane does not prove the sideloaded SDK connection works. Keep screenshots and diagnostic metadata free of tokens, user identities, and private SharePoint content.
+
+## File input behavior
+
+The sample accepts DOCX, CSV, PDF, TXT, JPG/JPEG, PNG, WebP, and GIF filenames, with a **15 MiB (15 × 1024 × 1024 bytes)** individual-file cap. Empty files are rejected. The checks apply to picker, paste/drop, and outgoing attachments; invalid selections are removed with an explanation before sending.
+
+Files are sent directly in the authenticated conversation. They are not uploaded into a SharePoint library or a new storage service. If a local file cannot be read, the send is stopped and an error is shown.
 
 {: .note }
-> You must provide either `directConnectUrl` OR both `environmentId` and `agentIdentifier`.
+> This is a conservative client policy, not a guarantee that an agent can process every accepted file. Supported formats and processing limits can differ between agents. See [Allow file input from users](https://learn.microsoft.com/en-us/microsoft-copilot-studio/image-input-analysis).
 
-### Step 5: Test Locally (Optional)
+Do not upload sensitive files merely to test the sample. Earlier uploaded content may continue to count against the agent's conversation limits; start a new conversation when appropriate.
 
-Before building and deploying, you can test the extension locally:
+## Reasoning and tool visibility
 
-```bash
-# Install dependencies
-npm install
+**Agent activity** is supported for both GHCP and standard harness agents. It appears in a collapsible group, closed by default, and remains in the conversation after the response finishes.
 
-# Check if gulp is installed, if not, install it
-which gulp || npm install -g gulp-cli
-# On Windows, use: where gulp || npm install -g gulp-cli
+The two settings are independent and both default to `false`; no harness-selection setting is needed.
 
-# Serve the solution locally
-gulp serve --nobrowser
+| Setting | What it shows |
+|---------|---------------|
+| `showReasoning` | User-visible reasoning provided by the agent |
+| `showToolCalls` | Tool names and activity status provided by the agent |
+
+Only activity made available by the agent is shown. These settings do not expose hidden model reasoning, tool arguments, or raw tool results. The amount of detail varies by agent.
+
+Tools can pause for clarification or connector sign-in. A started step or connection card is not proof that an action completed successfully. Missing completion information is labeled, and failed responses show interrupted activity.
+
+Choose safe, read-only agent actions for review. Do not trigger a business-changing tool just to demonstrate the disclosure.
+
+## Automated deployment (Windows, macOS, Linux)
+
+Complete **Setup** above first. You need an **existing tenant app catalog**, permission to manage its apps, and permission to install apps/customize the target site. The deployment script uses the pinned local [CLI for Microsoft 365](https://pnp.github.io/cli-microsoft365/user-guide/connecting-microsoft-365/).
+
+**Two different identities:** `--app-client-id` is the existing **sidepane SPA registration** from Setup. The CLI uses a separate **deployment app/login**, with the SharePoint permissions and consent required by your chosen authentication method. Invocation consent for `CopilotStudio.Copilots.Invoke` does not grant SharePoint deployment permissions. Follow [Use your own CLI identity](https://pnp.github.io/cli-microsoft365/user-guide/using-own-identity/); the script does not create apps, change authentication, or grant permissions.
+
+1. Sign the local CLI in using your authorized deployment registration and an explicit tenant GUID. Skip this if the correct login is already active:
+
+   ```text
+   npm exec -- m365 login --authType deviceCode --appId DEPLOYER_CLIENT_ID --tenant YOUR_TENANT_ID
+   npm exec -- m365 status
+   npm exec -- m365 spo set --url https://contoso.sharepoint.com
+   npm exec -- m365 spo tenant appcatalogurl get
+   ```
+
+   Set the tenant's root SharePoint URL explicitly as shown; this avoids requiring an additional Graph `Sites.Read.All` permission for CLI setup.
+
+2. Use the returned catalog URL, the target **site URL** (not a page/debug URL), and your public `properties.local.json` settings:
+
+   ```text
+   npm run deploy -- --site-url https://contoso.sharepoint.com/sites/team --app-catalog-url https://contoso.sharepoint.com/sites/apps --app-client-id YOUR_APP_CLIENT_ID --properties properties.local.json
+   ```
+
+3. Open a normal modern page on that site, without sideload/debug parameters. Confirm one Copilot Studio launcher, sign in, and send a message and a follow-up. No localhost server is needed.
+
+The script validates settings and the current login/catalog/site, builds in an isolated temporary directory, XML-escapes the configuration, and checks the production package. It then uploads/enables the app in the catalog, installs it **only on the target site**, and verifies the installed version and one Web-scoped customizer with the requested properties. Its feature creates the initial registration; the script never adds a second custom action. Tracked templates and local settings are not modified.
+
+`--app-client-id` is required and overrides `appClientId` in the JSON file; you can omit that JSON property for deployment. The script prints the exact SPA redirect URI to register, but does not inspect or change Entra registrations. Output is `sharepoint/solution/sidebar-agent.sppkg`, with verified deployment metadata in `sharepoint/solution/deployment.local.json`. Both are gitignored. The package contains public configuration, not secrets.
+
+### Preview, package only, and updates
+
+Append `--dry-run` to validate inputs and print the plan **without building or contacting Microsoft 365**. It is not an authentication/permission check. Append `--package-only` to build and inspect the `.sppkg` without signing in or contacting SharePoint; `--app-catalog-url` is optional in both offline modes. For example:
+
+```text
+npm run deploy -- --site-url https://contoso.sharepoint.com/sites/team --app-client-id YOUR_APP_CLIENT_ID --properties properties.local.json --package-only
 ```
 
-After running `gulp serve`, navigate to the following URL (replace the values with your configuration):
+An identical package is reused on subsequent runs; an installed app is not installed again, and drifted site properties are updated on the existing action. For changed code or packaged configuration, increase **both** solution and feature versions in `config/package-solution.json`, then add `--replace` to authorize the catalog update. The script refuses downgrades and different content at the same version.
 
-{% raw %}
-```
-https://YOUR-TENANT.sharepoint.com/sites/YOUR-SITE/SitePages/Home.aspx?debugManifestsFile=https://localhost:4321/temp/build/manifests.js&loadSPFX=true&customActions={%224c6e29f2-7eee-4f9f-bbd2-20c8859d0ba2%22:{%22location%22:%22ClientSideExtension.ApplicationCustomizer%22,%22properties%22:{%22appClientId%22:%22YOUR_APP_CLIENT_ID%22,%22tenantId%22:%22YOUR_TENANT_ID%22,%22directConnectUrl%22:%22YOUR_DIRECT_CONNECT_URL%22,%22showTyping%22:true,%22headerBackgroundColor%22:%22white%22,%22agentTitle%22:%22Your%20Agent%20Title%22}}}
-```
-{% endraw %}
+An explicitly authorized upgrade can replace the original, older tenant-capable package if it was not deployed globally and no matching tenant-wide registration is active. The new package is still site-only. Active global deployment is never silently converted.
 
-- Replace `YOUR-TENANT`, `YOUR-SITE`, `YOUR_APP_CLIENT_ID`, `YOUR_TENANT_ID`, and `YOUR_DIRECT_CONNECT_URL` with your actual values
-- Ensure you've added `https://localhost:4321` to your app registration's redirect URIs if testing locally
+{: .warning }
+> A tenant catalog is shared. Replacing this solution can affect other installed sites, and its packaged settings become the defaults for future installations. `--replace` acknowledges that broader effect; it does not make the catalog update site-local. Do not run competing deployments or use replacement to configure unrelated sites blindly.
 
-### Step 6: Build and Package
+Existing tenant-wide, Site-scoped, duplicate, or standalone registrations must be resolved explicitly before this site-install workflow. Nothing is automatically removed. On failure, the script stops, lists completed remote operations, and leaves the package available for inspection; it does not uninstall apps or roll back a shared catalog. Correct the reported permissions/state issue and rerun, or use the manual path below. A successful metadata check still requires the browser conversation check in step 3.
 
-Once you've tested locally (or if you're ready to deploy directly):
+Run `npm run deploy -- --help` for all options.
 
-```bash
-# Build the solution
-gulp build
+## Manual deployment
 
-# Bundle the solution
-gulp bundle --ship
+This is the same supported site-install model, without CLI deployment authentication. Follow Microsoft's [Deploy an SPFx extension](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/extensions/get-started/serving-your-extension-from-sharepoint) and [Manage apps using the SharePoint Apps site](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog) for the SharePoint screens. This sample uses **SPFx 1.21.1/Gulp**, not the Heft commands shown for newer versions.
 
-# Package the solution
-gulp package-solution --ship
-```
+1. Complete **Setup**, including the runtime SPA registration, exact target-site redirect URI, delegated invocation permission, consent, and published-agent access.
+2. Replace placeholders in `sharepoint/assets/elements.xml` with your runtime app client ID, tenant ID, environment ID, and agent schema name. Set any UI flags you need. Keep JSON booleans unquoted and preserve XML escaping: `&quot;` for `"`, `&amp;` for `&`, `&lt;` for `<`, and `&gt;` for `>`. Do not put credentials in this file. Alternatively, use `--package-only` above to generate the configured package without editing XML.
+3. If you edited XML manually, build from the sample directory:
 
-This will create a `.sppkg` file in the `sharepoint/solution` folder.
+   ```text
+   npx gulp bundle --ship
+   npx gulp package-solution --ship
+   ```
 
-### Step 7: Deploy to SharePoint
+4. Upload `sharepoint/solution/sidebar-agent.sppkg` to your **existing tenant Apps site/app catalog**. Select **Only enable this app**, not **Enable this app and add it to all sites**.
+5. On the target SharePoint site, use **Site contents > New > App** to add the catalog app. Installation activates the package feature and registers the customizer; do **not** also register it manually.
+6. Open a normal modern page, confirm one launcher, sign in if prompted, and verify a reply and same-conversation follow-up without a development server.
 
-Upload the `.sppkg` file from `sharepoint/solution` to your SharePoint App Catalog. For detailed instructions on creating an app catalog, deploying apps, and adding them to sites, see [Add custom apps to SharePoint](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog#add-custom-apps).
+The default package requires site installation (`skipFeatureDeployment: false`) and includes only `elements.xml`. `ClientSideInstance.xml` is not packaged and must not be enabled alongside this site action. For upgrades, bump solution/feature versions together, replace the catalog package deliberately, and update the app on the target site. Existing custom-action properties may need an explicit update; the automated path performs that reconciliation.
+
+### Validation
+
+Run `npm test` for configuration, attachments, GHCP and standard harness agent support, and deployment regression tests; `npm run build` checks the SPFx development build. The **SharePoint sidepane** GitHub Actions workflow runs tests and actual production `--package-only` builds on Windows, macOS, and Linux with synthetic settings. It has no tenant credentials and does not deploy to SharePoint. Live site installation, authentication/consent, and agent responses must be verified separately in your tenant.
 
 ## Troubleshooting
 
-### "Unable to acquire token" error
+| Symptom | Check |
+|---------|-------|
+| Debug scripts do not load | Local server, trusted HTTPS certificate, actual manifest URL, debug-script/local-network prompts, and tenant restrictions |
+| Agent does not connect | Verify the environment ID and schema name; leave `directConnectUrl` unset for the normal configuration |
+| Agent is unavailable | Verify publication, sharing, tenant, delegated invocation permission, and service availability |
+| Sign-in/redirect failure | Register the exact SharePoint site redirect without a trailing slash, verify consent, and permit the interactive sign-in popup |
+| `AADSTS50011` | Add the exact **Redirect URI** shown in the panel to the indicated **Application ID** under **Authentication > Single-page application** in Entra. An unregistered URI can also leave an error inside the silent iframe and appear only as an MSAL timeout |
+| `monitor_window_timeout` during silent sign-in | Select **Sign in** to view Microsoft's interactive sign-in page and any detailed error. A timeout alone does not identify the cause. The panel preserves the full error text returned by MSAL and shows the client ID and redirect URI, but cannot read a cross-origin Microsoft error page that never redirects back. Do not relax iframe sandbox restrictions; see [MSAL timeout guidance](https://learn.microsoft.com/en-us/entra/msal/javascript/browser/errors#monitor_window_timeout) |
+| Passkey crashes in an automated browser | Use another tenant-approved sign-in method, or attach to a normally signed-in Edge instance; do not bypass MFA |
+| File appears but is not analyzed | Verify agent file-input settings, supported content/model/channel, and service-side limits |
+| No reasoning/tool details | Enable the correct flag and verify that the published agent provides that activity |
+| Response fails after sending | A request may already have reached the agent. **Reconnect** starts a new conversation; avoid blindly repeating operations with side effects |
 
-If you encounter this error:
-1. Open your browser's Developer Tools (F12)
-2. Go to the **Network** tab
-3. Look for failed authentication requests (usually to `login.microsoftonline.com`)
-4. Click on the failed requests to see detailed error messages
-5. Follow the authentication URLs that MSAL is attempting - the actual error details are often revealed in the response or redirect parameters
+## Resources
 
-Common causes:
-- Missing or incorrect redirect URIs in your app registration (check for trailing slashes!)
-- Incorrect permissions in the app registration (ensure `CopilotStudio.Copilots.Invoke` is granted)
-- Incorrect tenant ID or client ID
-- MSAL authentication flow being blocked by browser settings
-
-### "The redirect URI specified in the request does not match the redirect URIs configured for the application" error
-
-Check that the current SharePoint URL has been added as an allowed redirect URI for the provided app registration.
-
-## Additional Resources
-
-- [Built-in SharePoint Channel for Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint#configure-the-sharepoint-channel)
-- [Authenticate with Microsoft in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication#authenticate-with-microsoft)
-- [Tenant Graph Grounding in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding)
-- [Microsoft 365 Agents SDK for NodeJS/TypeScript](https://github.com/microsoft/Agents-for-js)
-- [BotFramework-WebChat with Fluent UI Theme](https://github.com/microsoft/BotFramework-WebChat#experimental-fluent-ui-theme-pack)
-- [Copilot Studio Documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/)
-- [SharePoint Framework Documentation](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/sharepoint-framework-overview)
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+- [Microsoft 365 Agents SDK for JavaScript](https://github.com/microsoft/Agents-for-js)
+- [Bot Framework WebChat](https://github.com/microsoft/BotFramework-WebChat)
+- [SPFx Application Customizer debugging](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/extensions/get-started/build-a-hello-world-extension#debug-your-application-customizer)
+- [Tenant graph grounding](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio#tenant-graph-grounding)
