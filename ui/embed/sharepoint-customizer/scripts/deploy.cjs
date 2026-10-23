@@ -126,7 +126,7 @@ function xmlUnescape(value) {
 function elementsXml(options) {
   return `<?xml version="1.0" encoding="utf-8"?>
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
-  <CustomAction Name="SidebarAgent" Title="SidebarAgent"
+  <CustomAction Title="SidebarAgent"
     Location="${LOCATION}" ClientSideComponentId="${options.componentId}"
     ClientSideComponentProperties="${xmlEscape(JSON.stringify(options.properties))}" />
 </Elements>
@@ -155,6 +155,7 @@ function inspectPackage(buffer, options) {
   if (/<ClientSideComponentInstance\b|SkipFeatureDeployment="true"/i.test(xml)) throw new Error('Package contains tenant-wide activation.');
   const actions = [...xml.matchAll(/<CustomAction\b[^>]*>/g)];
   if (actions.length !== 1) throw new Error('Package must contain exactly one customizer activation.');
+  if (/\sName="/.test(actions[0][0])) throw new Error('CustomAction Name is not supported by the SharePoint feature XML schema; use Title.');
   const properties = actions[0][0].match(/ClientSideComponentProperties="([^"]*)"/);
   if (!properties || !isDeepStrictEqual(JSON.parse(xmlUnescape(properties[1])), options.properties) ||
       !actions[0][0].includes(`ClientSideComponentId="${options.componentId}"`)) {
@@ -388,7 +389,26 @@ async function deploy(options, { command = cli, build = buildPackage, log = cons
       checkApp(value);
       return value.Deployed === true && value.CurrentVersionDeployed === true && value.AppCatalogVersion === options.version;
     }, 'catalog deployment', polling);
-    const getSiteApp = async () => checkApp(await request(`${options.siteUrl}/_api/web/tenantappcatalog/AvailableApps/GetById('${app.ID}')`));
+    const getSiteApp = async () => {
+      const state = checkApp(await request(`${options.siteUrl}/_api/web/tenantappcatalog/AvailableApps/GetById('${app.ID}')`));
+      if (state.InstalledVersion !== options.version) {
+        const instances = array(await command(['spo', 'app', 'instance', 'list', '--siteUrl', options.siteUrl]), 'site app instances');
+        for (const instance of instances.filter(value => String(value.ProductId).toLowerCase() === options.productId)) {
+          // AppTiles uses AppStatus: 6 = Initialized, 9 = Disabled (not AppInstanceStatus).
+          if (instance.AppStatus === 6 || instance.AppStatus === 9 || instance.AppStatus === 0) {
+            const instanceId = guid(instance.AppId, 'app instance ID');
+            const details = object(await command(['request', '--url',
+              `${options.siteUrl}/_api/web/GetAppInstanceById('${instanceId}')/GetErrorDetails()`,
+              '--method', 'post', '--accept', 'application/json;odata=nometadata']), 'installation errors');
+            const errors = array(details.value, 'installation errors');
+            if (errors.length) {
+              throw new Error(`SharePoint installation failed: ${errors.map(error => error.ExceptionMessage || error.ErrorDetail).join('\n')}`);
+            }
+          }
+        }
+      }
+      return state;
+    };
     let siteApp = await getSiteApp();
     if (siteApp.InstalledVersion && compareVersions(siteApp.InstalledVersion, options.version) > 0) throw new Error('Refusing to downgrade the site app.');
     if (!siteApp.InstalledVersion || compareVersions(siteApp.InstalledVersion, options.version) < 0) {

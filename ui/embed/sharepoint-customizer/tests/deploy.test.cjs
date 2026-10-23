@@ -12,6 +12,7 @@ const {
 const { validateProperties } = require('../scripts/properties.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
+const CURRENT_VERSION = require('../config/package-solution.json').solution.version;
 const CLIENT = '11111111-1111-4111-8111-111111111111';
 const CATALOG_ID = '44444444-4444-4444-8444-444444444444';
 const ACTION_ID = '55555555-5555-4555-8555-555555555555';
@@ -90,10 +91,16 @@ async function scenario(t, settings = {}) {
     if (name === 'spo tenant appcatalogurl get') return settings.catalog || CATALOG;
     if (name === 'spo tenant applicationcustomizer list') return settings.tenantActions || [];
     if (name.startsWith('spo customaction list')) return state.actions;
+    if (name.startsWith('spo app instance list')) {
+      return state.pendingInstall && settings.installFailure
+        ? [{ ProductId: config.productId, AppId: ACTION_ID, AppStatus: 6 }]
+        : [];
+    }
     if (name.startsWith('spo app list')) return state.app ? [state.app] : [];
     if (name.startsWith('request')) {
       const url = commandArgs[commandArgs.indexOf('--url') + 1];
       if (url.endsWith('/_api/web?$select=Url')) return { Url: SITE };
+      if (url.includes('/GetErrorDetails()')) return { value: [{ ExceptionMessage: 'Feature XML validation failed (fixture).' }] };
       if (url.includes('/Files?')) return { value: settings.files || [] };
       if (url.includes('/GetFileById(')) {
         await fs.writeFile(commandArgs[commandArgs.indexOf('--filePath') + 1], settings.remotePackage || buffer);
@@ -101,7 +108,7 @@ async function scenario(t, settings = {}) {
       }
       if (url.includes('/AvailableApps/GetById(')) {
         state.siteReads++;
-        if (state.pendingInstall && state.siteReads >= state.pendingInstall) {
+        if (state.pendingInstall && state.siteReads >= state.pendingInstall && !settings.installFailure) {
           state.installed = config.version;
           state.actions = [action(config)];
         }
@@ -195,9 +202,11 @@ test('XML/package inspection round-trips special characters and rejects bad cont
   assert.match(elementsXml(config), /&amp;/);
   assert.match(elementsXml(config), /&lt;/);
   assert.match(elementsXml(config), /&apos;/);
+  assert.doesNotMatch(elementsXml(config), /\sName="/);
   assert.equal(inspectPackage(archive(entries), config).entries, Object.keys(entries).length);
   const rejects = (changes, expected) => assert.throws(() => inspectPackage(archive({ ...entries, ...changes }), config), expected);
   rejects({ 'tenant.xml': '<ClientSideComponentInstance />' }, /tenant-wide/);
+  rejects({ [`${config.featureId}/elements.xml`]: elementsXml(config).replace('<CustomAction ', '<CustomAction Name="Unsupported" ') }, /Name is not supported/);
   rejects({ 'AppManifest.xml': '<App ProductID="wrong" Version="1.1.0.0"/>' }, /identity/);
   rejects({ [`${config.featureId}/elements.xml`]: elementsXml({ ...config, properties: { ...config.properties, showToolCalls: true } }) }, /properties/);
   rejects({ [`${config.featureId}/Extension.xml`]: entries[`${config.featureId}/Extension.xml`].replace('HTTPS://SPCLIENTSIDEASSETLIBRARY/', 'https://localhost:4321/') }, /localhost/);
@@ -318,7 +327,7 @@ test('first install uses the catalog ID, feature activation and verified asynchr
 });
 
 test('identical rerun does not upload, install or duplicate the customizer', async t => {
-  const fixture = await scenario(t, { existing: {}, installed: '1.1.0.0' });
+  const fixture = await scenario(t, { existing: {}, installed: CURRENT_VERSION });
   await fixture.run();
   assert.deepEqual(fixture.mutations(), []);
 });
@@ -326,7 +335,7 @@ test('identical rerun does not upload, install or duplicate the customizer', asy
 test('rerun updates only drifted site properties using one literal JSON argument', async t => {
   const config = await options([]);
   const fixture = await scenario(t, {
-    existing: {}, installed: '1.1.0.0',
+    existing: {}, installed: CURRENT_VERSION,
     actions: [action(config, { ClientSideComponentProperties: '{"old":"settings"}' })]
   });
   await fixture.run();
@@ -384,7 +393,7 @@ test('different content at the same version cannot be overwritten even with --re
   const config = await options([]);
   const entries = packageEntries(config);
   entries['ClientSideAssets/main.js'] = 'different code';
-  const fixture = await scenario(t, { existing: {}, installed: '1.1.0.0', remotePackage: archive(entries), options: { replace: true } });
+  const fixture = await scenario(t, { existing: {}, installed: CURRENT_VERSION, remotePackage: archive(entries), options: { replace: true } });
   await assert.rejects(fixture.run(), /same version/);
   assert.deepEqual(fixture.mutations(), []);
 });
@@ -412,6 +421,13 @@ test('failed install reports earlier mutations and does not write customizer pro
   await assert.rejects(fixture.run(), /stopped at "install site app".*403[\s\S]*uploaded package, deployed catalog package/);
   assert.ok(!fixture.calls.some(call => call.join(' ').startsWith('spo customaction set')));
   await assert.rejects(fs.access(path.join(path.dirname(fixture.config.packagePath), 'deployment.local.json')), { code: 'ENOENT' });
+});
+
+test('SharePoint feature activation errors are reported immediately rather than timing out', async t => {
+  const fixture = await scenario(t, { installFailure: true });
+  await assert.rejects(fixture.run(), /SharePoint installation failed: Feature XML validation failed/);
+  assert.ok(fixture.calls.some(call => call.includes('--method') && call.includes('post') && call.some(value => value.includes('/GetErrorDetails()'))));
+  assert.ok(!fixture.calls.some(call => call.join(' ').startsWith('spo customaction set')));
 });
 
 test('polling is bounded and does not swallow access/response errors', async () => {
