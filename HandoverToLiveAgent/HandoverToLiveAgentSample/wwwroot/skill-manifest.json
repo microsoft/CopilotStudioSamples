@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schemas.botframework.com/schemas/skills/skill-manifest-2.0.0.json",
+    "$id": "handoff-skill",
+    "name": "Handoff Skill",
+    "version": "1.0.0",
+    "description": "Handoff skill for Copilot Studio sample",
+    "publisherName": "Microsoft",
+    "copyright": "Copyright (c) Microsoft. All rights reserved.",
+    "license": "",
+    "tags": [
+        "handoff"
+    ],
+    "endpoints": [
+        {
+            "name": "default",
+            "protocol": "BotFrameworkV3",
+            "description": "Default endpoint for the Handoff Skill",
+            "endpointUrl": "https://<YOUR-TUNNEL-ID>-5001.euw.devtunnels.ms/api/messages",
+            "msAppId": "<YOUR-AGENT-APP-ID>",
+        }
+    ],
+    "activities": {
+        "sendMessage": {
+            "type": "message",
+            "description": "Sends a message to the Contoso Live Chat",
+            "value": {
+                "$ref": "#/definitions/messageInput"
+            }
+        },
+        "endConversation": {
+            "name": "endConversation",
+            "type": "event",
+            "description": "End a conversation with the Contoso Live Chat",
+            "value": {
+                "$ref": "#/definitions/endConversationInput"
+            }
+        },
+        "startConversation": {
+            "name": "startConversation",
+            "type": "event",
+            "description": "Start a conversation with the Contoso Live Chat",
+            "resultValue": {
+                "$ref": "#/definitions/startConversationOutput"
+            }
+        }
+    },
+    "definitions": {
+        "messageInput": {
+            "type": "object",
+            "properties": {
+                "LiveChatConversationId": {
+                    "type": "string"
+                },
+                "ProblemDescription": {
+                    "type": "string"
+                }
+            }
+        },
+        "endConversationInput": {
+            "type": "object",
+            "properties": {
+                "LiveChatConversationId": {
+                    "type": "string"
+                }
+            }
+        },
+        "startConversationOutput": {
+            "type": "object",
+            "properties": {
+                "LiveChatConversationId": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
