@@ -105,7 +105,7 @@ async function scenario(t, settings = {}) {
           state.installed = config.version;
           state.actions = [action(config)];
         }
-        return metadata(config, { InstalledVersion: state.installed });
+        return metadata(config, { ...state.app, InstalledVersion: state.installed });
       }
     }
     if (name.startsWith('spo app add')) {
@@ -343,6 +343,21 @@ test('explicit newer-version replacement uploads, deploys and upgrades only the 
   assert.deepEqual(writes.map(call => call.slice(0, 3).join(' ')), ['spo app add', 'spo app deploy', 'spo app upgrade']);
   assert.ok(writes[0].includes('--overwrite'));
   assert.equal(writes[2][writes[2].indexOf('--siteUrl') + 1], SITE);
+});
+
+test('explicit upgrade accepts an older unused tenant-capable package, not active tenant deployment', async t => {
+  const existing = {
+    AppCatalogVersion: '1.0.0.0', ContainsTenantWideExtension: true, IsPackageDefaultSkipFeatureDeployment: true
+  };
+  const fixture = await scenario(t, { existing, options: { replace: true } });
+  await fixture.run();
+  assert.deepEqual(fixture.mutations().map(call => call.slice(0, 3).join(' ')), ['spo app add', 'spo app deploy', 'spo app install']);
+  const active = await scenario(t, { existing: { ...existing, SkipDeploymentFeature: true }, options: { replace: true } });
+  await assert.rejects(active.run(), /activation scope/);
+  assert.deepEqual(active.mutations(), []);
+  const unapproved = await scenario(t, { existing });
+  await assert.rejects(unapproved.run(), /--replace/);
+  assert.deepEqual(unapproved.mutations(), []);
 });
 
 for (const [name, settings, error] of [

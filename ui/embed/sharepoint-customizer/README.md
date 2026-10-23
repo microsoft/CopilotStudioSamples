@@ -238,8 +238,11 @@ Complete **Setup** above first. You need an **existing tenant app catalog**, per
    ```text
    npm exec -- m365 login --authType deviceCode --appId DEPLOYER_CLIENT_ID --tenant YOUR_TENANT_ID
    npm exec -- m365 status
+   npm exec -- m365 spo set --url https://contoso.sharepoint.com
    npm exec -- m365 spo tenant appcatalogurl get
    ```
+
+   Set the tenant's root SharePoint URL explicitly as shown; this avoids needing Graph `Sites.Read.All` just for CLI host autodiscovery.
 
 2. Use the discovered catalog URL, the target **site URL** (not a page/debug URL), and your public `properties.local.json` settings:
 
@@ -262,6 +265,8 @@ npm run deploy -- --site-url https://contoso.sharepoint.com/sites/team --app-cli
 ```
 
 An identical package is reused on subsequent runs; an installed app is not installed again, and drifted site properties are updated on the existing action. For changed code or packaged configuration, increase **both** solution and feature versions in `config/package-solution.json`, then add `--replace` to authorize the catalog update. The script refuses downgrades and different content at the same version.
+
+An explicitly authorized upgrade can replace the original, older tenant-capable package if it was not deployed globally and no matching tenant-wide registration is active. The new package is still site-only. Active global deployment is never silently converted.
 
 {: .warning }
 > A tenant catalog is shared. Replacing this solution can affect other installed sites, and its packaged settings become the defaults for future installations. `--replace` acknowledges that broader effect; it does not make the catalog update site-local. Do not run competing deployments or use replacement to configure unrelated sites blindly.

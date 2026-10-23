@@ -297,11 +297,13 @@ async function deploy(options, { command = cli, build = buildPackage, log = cons
     if (matches.length > 1) throw new Error('Multiple catalog apps have the solution ProductId.');
     return matches[0];
   };
-  const checkApp = app => {
+  const checkApp = (app, allowLegacyDefaults = false) => {
     object(app, 'app metadata');
     guid(app.ID, 'catalog app ID');
-    if (String(app.ProductId).toLowerCase() !== options.productId || app.IsClientSideSolution !== true || app.ContainsTenantWideExtension !== false ||
-        app.SkipDeploymentFeature !== false || app.IsPackageDefaultSkipFeatureDeployment !== false) {
+    if (String(app.ProductId).toLowerCase() !== options.productId || app.IsClientSideSolution !== true ||
+        app.SkipDeploymentFeature !== false || typeof app.ContainsTenantWideExtension !== 'boolean' ||
+        typeof app.IsPackageDefaultSkipFeatureDeployment !== 'boolean' ||
+        (!allowLegacyDefaults && (app.ContainsTenantWideExtension || app.IsPackageDefaultSkipFeatureDeployment))) {
       throw new Error('Catalog app identity or activation scope conflicts with this site-only deployment.');
     }
     if (app.IsValidAppPackage !== true) throw new Error(`Invalid catalog package: ${app.ErrorMessage || 'SharePoint rejected the package'}`);
@@ -331,12 +333,13 @@ async function deploy(options, { command = cli, build = buildPackage, log = cons
     const initialActions = matchingActions(await getActions(), options);
     const existing = findApp(await getApps());
     if (existing) {
-      checkApp(existing);
       if (compareVersions(options.version, existing.AppCatalogVersion) < 0) throw new Error('Refusing to downgrade the catalog package.');
       if (compareVersions(options.version, existing.AppCatalogVersion) > 0 && !options.replace) {
         throw new Error('A catalog package already exists. Use --replace to authorize its upgrade; other installations can be affected.');
       }
-      const installed = checkApp(await request(`${options.siteUrl}/_api/web/tenantappcatalog/AvailableApps/GetById('${existing.ID}')`));
+      const replacingOlderPackage = options.replace && compareVersions(options.version, existing.AppCatalogVersion) > 0;
+      checkApp(existing, replacingOlderPackage);
+      const installed = checkApp(await request(`${options.siteUrl}/_api/web/tenantappcatalog/AvailableApps/GetById('${existing.ID}')`), replacingOlderPackage);
       if (installed.InstalledVersion && compareVersions(installed.InstalledVersion, options.version) > 0) throw new Error('Refusing to downgrade the site app.');
       if (initialActions.length && !installed.InstalledVersion) throw new Error('An orphaned customizer already exists without an installed app. Resolve it explicitly before installation.');
     } else {
