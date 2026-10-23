@@ -9,17 +9,25 @@ nav_order: 6
 Beta SDK dependency
 {: .label .label-yellow }
 
-Embed a Microsoft-authenticated Copilot Studio agent in a SharePoint Framework (SPFx) Application Customizer. The panel uses the Microsoft 365 Agents SDK to discover the agent's conversation endpoints and WebChat's Fluent composer for messages, local files, cards, and suggested replies.
+Embed a Microsoft-authenticated Copilot Studio agent in a SharePoint Framework (SPFx) Application Customizer. The sample works with **both GHCP and standard harness agents**, using the Microsoft 365 Agents SDK and WebChat's Fluent composer for messages, local files, cards, and suggested replies.
 
 {: .important }
 > This is an open-source reference sample, not a production-supported SharePoint channel. For production deployments, consider the [built-in SharePoint channel](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint#configure-the-sharepoint-channel). Its capabilities differ from this custom SDK integration; this sample does not enable file uploads in the built-in channel.
 
 {: .warning }
-> **This sample currently uses a beta SDK client.** Both `@microsoft/agents-copilotstudio-client` and `@microsoft/agents-activity` are pinned to `1.10.0-beta.7.g65f69dfa27`. The beta is required for endpoint discovery for now; stable SDK `1.9.1` does not contain discovery. These SDK dependencies are prerelease, so review their suitability before production use. WebChat and its Fluent theme use the released version `4.19.2`.
+> **This sample currently uses a beta SDK client.** Both `@microsoft/agents-copilotstudio-client` and `@microsoft/agents-activity` are pinned to `1.10.0-beta.7.g65f69dfa27`. These SDK dependencies are prerelease, so review their suitability before production use. WebChat and its Fluent theme use the released version `4.19.2`.
+
+## Screenshots
+
+The deployed side panel with an example SharePoint list-management agent. Select a screenshot to view it full size. Requester names are redacted in the list-results image.
+
+| Welcome and starters | Agent conversation | Agent activity and list results |
+|----------------------|--------------------|---------------------------------|
+| [<img src="./images/sidepane-welcome.png" alt="Side panel welcome screen with a starter card, attachment picker, refresh, and collapse controls" width="220">](./images/sidepane-welcome.png) | [<img src="./images/sidepane-conversation.png" alt="Agent replying to the starter prompt with its SharePoint list-management capabilities" width="220">](./images/sidepane-conversation.png) | [<img src="./images/sidepane-agent-activity.png" alt="Follow-up conversation showing collapsed agent activity and SharePoint list results, with requester names redacted" width="220">](./images/sidepane-agent-activity.png) |
 
 ## Features
 
-- **Discovery-first connection:** configure an environment ID and agent schema name; the SDK resolves the correct published conversation endpoints.
+- **Agent compatibility:** works with both GHCP and standard harness agents. Configure the environment ID and agent schema name; no harness-selection setting is needed.
 - **Microsoft sign-in:** try silent authentication with the current SharePoint user's account, then offer a **Sign in** button when interaction is required or the silent iframe times out.
 - **Clean Fluent panel:** responsive sizing, site theme integration, accessible controls, Escape/light-dismiss, and focus restoration.
 - **Choose the opening experience:** default to native Fluent starter cards without starting a conversation, or opt into the agent's conversation-start flow instead.
@@ -38,27 +46,17 @@ There is no SharePoint/OneDrive picker, voice integration, or cross-page convers
 - A modern SharePoint site for local sideloading. An app catalog and deployment permissions are only needed for packaged installation.
 - Node.js **22.14 or later within v22**, npm, and the SPFx 1.21.1 toolchain.
 - For file analysis, an agent/runtime that accepts uploaded files. For standard-harness agents, enable **Settings > Generative AI > File processing capabilities > File uploads**.
-- For activity details, a model/runtime that emits the supported client-visible activities described below. Enabling a UI flag does not enable server-side telemetry.
+- For activity details, an agent that provides reasoning or tool activity to its users. Enabling a UI flag does not make an agent provide additional activity.
 
-## Architecture
+## How it works
 
-The Application Customizer hosts a Fluent panel. It creates the chat only after the user opens it. MSAL acquires a Power Platform API token. By default, opening the panel does not start an agent conversation: the SDK discovers endpoints on the first submitted message through:
+The Application Customizer adds a Copilot Studio launcher to SharePoint's supported Top placeholder. Opening it displays a Fluent chat panel that follows the site's theme and signs users in with Microsoft.
 
-```text
-GET https://<environment-host>/copilotstudio/agents/<schemaName>/conversation-endpoints
-```
+By default, the panel shows a welcome screen and starter cards; the agent conversation begins when the user sends a message. Set `startConversation: true` to use the agent's own welcome flow instead.
 
-On the first submitted message, the adapter uses `startConversationStreaming(false)` to establish a conversation without firing the welcome event, then sends the message to its execute-turn endpoint. The create-conversation endpoint must not be treated as an execute-turn endpoint: it can return only a session ID and typing activity without processing a supplied message. Subsequent messages reuse the conversation.
-
-Setting `startConversation: true` instead performs discovery and starts the conversation on opening, without showing the sample's starter cards. The sample does not construct agentic-runtime routes or start a separate subscription connection. The SDK retains conversation IDs, including IDs returned only in response headers.
-
-A small adapter around `CopilotStudioWebChat.createConnection` validates local attachments before sending and normalizes two payload families: GHCP/agentic-loop `thought`/`toolCall` entities and standard-harness `DynamicPlan*` events. Both map to WebChat's native Schema.org `Message`/`HowTo` activities. WebChat's Fluent pre-chat and collapsible part-group components render the welcome screen, starter cards, and activity groups; there are no custom reasoning/tool React components or harness-selection settings. A shared incoming subscription replays activities so WebChat's startup and transcript subscriptions do not lose greetings. Only allowlisted reasoning text and tool labels/status are replayed; raw events, arguments, and results are not. Send acknowledgements do not end response monitoring: later response errors are still surfaced, and the composer stays disabled during file preparation and the response to prevent overlapping turns.
-
-The Fluent **copilot** variant and SharePoint theme colors provide the presentation. WebChat's style options are memoized across turn-state updates so response completion does not reset transcript scrolling; theme or upload-setting changes still refresh them. The sample retains released WebChat `4.19.2` and React `17`, compatible with this SPFx version.
+Both GHCP and standard harness agents use the same panel and configuration. File attachments and optional reasoning/tool activity are available when supported by the configured agent. Collapsing the panel preserves the current conversation; **New conversation** clears it.
 
 The unmodified Copilot Studio SVG is from [Microsoft's official icon collection](https://learn.microsoft.com/en-us/power-platform/guidance/icons) and is included for this sample/training experience. Microsoft's separate icon usage terms apply; review them before reusing the logo in a production application.
-
-`gulpfile.js` maps the SDK beta's Activity browser crypto shim to its **shipped JavaScript** file, because that beta's package mapping otherwise points SPFx at uncompiled TypeScript. No Node crypto polyfill or vendored SDK is required.
 
 ## Setup
 
@@ -80,7 +78,7 @@ If Power Platform API is missing from your tenant, see [Power Platform API authe
 
 In Copilot Studio, open the published agent's metadata and record its **environment ID** and **schema name**. Use the schema name, not the display name or agent GUID.
 
-The recommended configuration omits `directConnectUrl`. Supplying one explicitly bypasses SDK discovery, even when environment/schema values are also present. This override remains available for existing deployments.
+Use the environment ID and schema name for the normal configuration. Leave `directConnectUrl` unset unless you need the advanced connection override retained for existing deployments.
 
 ### 3. Install dependencies
 
@@ -116,10 +114,10 @@ Create `properties.local.json` in the sample directory. Files named `*.local.jso
 |----------|----------|-----------------------|
 | `appClientId` | Yes | Entra SPA application ID |
 | `tenantId` | Yes | Directory/tenant ID |
-| `environmentId` | For discovery | Power Platform environment ID |
-| `schemaName` | For discovery | Agent schema name |
+| `environmentId` | For the default connection | Power Platform environment ID |
+| `schemaName` | For the default connection | Agent schema name |
 | `agentIdentifier` | No | Legacy alias for `schemaName`; canonical `schemaName` takes precedence |
-| `directConnectUrl` | No | Explicit HTTPS connection URL; bypasses discovery |
+| `directConnectUrl` | No | Advanced HTTPS connection override; leave unset for the normal configuration |
 | `agentTitle` | No | `Copilot Studio Agent` |
 | `headerBackgroundColor` | No | Optional launcher-bar CSS color override; otherwise follows the site theme |
 | `startConversation` | No | `false`: show the local welcome/starter cards and wait for the first submitted message. `true`: start the agent's conversation immediately and hide the local welcome/starter cards |
@@ -184,12 +182,12 @@ Keep actions confined to the review tab. On completion, use `detach` for an atta
 
 Review the default configuration first, then generate URLs with `showReasoning` and `showToolCalls` enabled independently. Check:
 
-- Discovery and a follow-up prompt that retains context.
-- With the default `startConversation: false`, no conversation request until the first submission, editable starter text, and a follow-up that keeps the conversation ID.
+- A reply and a follow-up prompt that retains context.
+- With the default `startConversation: false`, editable starter text and a conversation that begins only after the first submission.
 - With `startConversation: true`, an agent-supplied welcome message and no local starter cards.
 - A small, synthetic local document whose contents the agent can identify.
 - Picker, paste/drop, attachment removal, rejection of oversized/unsupported files, and attachment-only messages.
-- Supported reasoning/tool events, collapsed details, and no detail text when flags are disabled.
+- Reasoning/tool activity when supported, collapsed details, and no detail text when flags are disabled.
 - Long streamed replies: follow the latest text through completion, but preserve the reading position when the user deliberately scrolls up.
 - Close/reopen, **New conversation**, keyboard focus/Escape, narrow viewports, and error/reconnect behavior.
 
@@ -199,34 +197,27 @@ An upload appearing in the transcript is **not** proof that the agent processed 
 
 The sample accepts DOCX, CSV, PDF, TXT, JPG/JPEG, PNG, WebP, and GIF filenames, with a **15 MiB (15 × 1024 × 1024 bytes)** individual-file cap. Empty files are rejected. The checks apply to picker, paste/drop, and outgoing attachments; invalid selections are removed with an explanation before sending.
 
-Files are sent directly in the authenticated conversation as data-URL attachments with their name and MIME type. They are not uploaded into a SharePoint library or a new storage service. Failure to read a local blob aborts the send instead of transmitting an unusable `blob:` URL.
+Files are sent directly in the authenticated conversation. They are not uploaded into a SharePoint library or a new storage service. If a local file cannot be read, the send is stopped and an error is shown.
 
 {: .note }
-> This is a conservative client policy, not a guarantee of service acceptance. Standard-harness documentation describes a 15 MB file limit, nonanimated GIFs only, PDF page/processed-size restrictions, and text-character limits. The service must still validate actual content, animation, protection, and model limits. Agentic-runtime support can differ. See [Allow file input from users](https://learn.microsoft.com/en-us/microsoft-copilot-studio/image-input-analysis).
+> This is a conservative client policy, not a guarantee that an agent can process every accepted file. Supported formats and processing limits can differ between agents. See [Allow file input from users](https://learn.microsoft.com/en-us/microsoft-copilot-studio/image-input-analysis).
 
 Do not upload sensitive files merely to test the sample. Earlier uploaded content may continue to count against the agent's conversation limits; start a new conversation when appropriate.
 
 ## Reasoning and tool visibility
 
-**Agent activity** uses WebChat's native collapsible part groups, closed by default. Steps update in place while the response runs and remain in the transcript after it finishes. Each turn has its own group; WebChat owns rendering, focus, status icons, and expansion.
+**Agent activity** is supported for both GHCP and standard harness agents. It appears in a collapsible group, closed by default, and remains in the conversation after the response finishes.
 
-The adapter selects the mapping from the incoming payload, not the agent's URL or display name. Both flags remain independent and default to `false`.
+The two settings are independent and both default to `false`; no harness-selection setting is needed.
 
-| Runtime payload | `showReasoning` | `showToolCalls` |
-|-----------------|-----------------|-----------------|
-| GHCP / agentic loop | `entities[].type: "thought"` uses the entity's `text` | `entities[].type: "toolCall"` uses its display name and started/completed/failed status |
-| Standard harness | `DynamicPlanStepTriggered.value.thought` becomes a per-step reasoning entry | `DynamicPlanReceived` provides names; `DynamicPlanStepTriggered` and `DynamicPlanStepBindUpdate` identify ongoing steps; `DynamicPlanStepFinished` finishes them |
+| Setting | What it shows |
+|---------|---------------|
+| `showReasoning` | User-visible reasoning provided by the agent |
+| `showToolCalls` | Tool names and activity status provided by the agent |
 
-- GHCP thought deltas append only for explicit `chunkType: "delta"`; replacement/cumulative snapshots replace. Thought chain/step identifiers keep separate thoughts apart, with the stream ID (or the initial activity ID) used when the chain ID is empty. `toolCallId` correlates tools even when multiple invocations share one stream.
-- Standard events use `valueType`, falling back to `name` when absent. Their top-level step `thought` is the planning explanation the published runtime sends to the client, not a token-by-token model reasoning stream. It is treated as a snapshot, keyed by plan and step; repeated updates replace rather than append. Tool display names survive clarification or connector-sign-in turns within the conversation.
-- Native Schema.org messages tagged `AnalysisMessage` also respect `showReasoning`. The adapter uses WebChat's [documented reasoning activity format](https://github.com/microsoft/BotFramework-WebChat/blob/v4.19.2/docs/CHAIN_OF_THOUGHTS.md); it does not request hidden model chain-of-thought or retrieve authoring-only traces.
-- `streamType: "informative"` alone is **not** evidence of reasoning. Tool notifications can use it too. Unclassified informative updates are omitted rather than guessed into a reasoning/tool entry.
-- Tool arguments, filled/hidden parameters, descriptions, results, and arbitrary nested `thought` fields are not displayed. Standard reasoning is read only from the top-level `value.thought` of the supported step-trigger event. Binding updates never expose their arguments.
-- Unknown events are not guessed into a tool call. A flag being on cannot make an agent emit missing events, and these event families are not guaranteed across all models/harnesses.
-- **Started** means tool-step start or binding activity was received; it does not prove that a connector has executed. **Finished** means a finish event was received, not necessarily that the operation succeeded.
-- The group completes when the turn finishes. Missing tool-finish events are explicitly labeled rather than invented; failed responses mark the group as interrupted.
+Only activity made available by the agent is shown. These settings do not expose hidden model reasoning, tool arguments, or raw tool results. The amount of detail varies by agent.
 
-Standard-harness plans can pause for clarification or a connector connection before executing a tool. A question or connection card is not evidence of tool completion. Regression tests cover both mappings and all four visibility combinations; verify successful connector execution separately in your environment.
+Tools can pause for clarification or connector sign-in. A started step or connection card is not proof that an action completed successfully. Missing completion information is labeled, and failed responses show interrupted activity.
 
 Choose safe, read-only agent actions for review. Do not trigger a business-changing tool just to demonstrate the disclosure.
 
@@ -245,9 +236,9 @@ Complete **Setup** above first. You need an **existing tenant app catalog**, per
    npm exec -- m365 spo tenant appcatalogurl get
    ```
 
-   Set the tenant's root SharePoint URL explicitly as shown; this avoids needing Graph `Sites.Read.All` just for CLI host autodiscovery.
+   Set the tenant's root SharePoint URL explicitly as shown; this avoids requiring an additional Graph `Sites.Read.All` permission for CLI setup.
 
-2. Use the discovered catalog URL, the target **site URL** (not a page/debug URL), and your public `properties.local.json` settings:
+2. Use the returned catalog URL, the target **site URL** (not a page/debug URL), and your public `properties.local.json` settings:
 
    ```text
    npm run deploy -- --site-url https://contoso.sharepoint.com/sites/team --app-catalog-url https://contoso.sharepoint.com/sites/apps --app-client-id YOUR_APP_CLIENT_ID --properties properties.local.json
@@ -299,21 +290,21 @@ The default package requires site installation (`skipFeatureDeployment: false`) 
 
 ### Validation
 
-Run `npm test` for configuration, attachment, dual-harness activity mapping, and deployment regression tests; `npm run build` checks the SPFx development build. The **SharePoint sidepane** GitHub Actions workflow runs tests and actual production `--package-only` builds on Windows, macOS, and Linux with synthetic settings. It has no tenant credentials and does not deploy to SharePoint. Live site installation, authentication/consent, and agent responses must be verified separately in your tenant.
+Run `npm test` for configuration, attachments, GHCP and standard harness agent support, and deployment regression tests; `npm run build` checks the SPFx development build. The **SharePoint sidepane** GitHub Actions workflow runs tests and actual production `--package-only` builds on Windows, macOS, and Linux with synthetic settings. It has no tenant credentials and does not deploy to SharePoint. Live site installation, authentication/consent, and agent responses must be verified separately in your tenant.
 
 ## Troubleshooting
 
 | Symptom | Check |
 |---------|-------|
 | Debug scripts do not load | Local server, trusted HTTPS certificate, actual manifest URL, debug-script/local-network prompts, and tenant restrictions |
-| No discovery request | Remove the explicit `directConnectUrl`; check environment ID and schema name |
-| Discovery fails | Agent publication/sharing, tenant, delegated invocation permission, service availability; the sample does not silently switch transports |
+| Agent does not connect | Verify the environment ID and schema name; leave `directConnectUrl` unset for the normal configuration |
+| Agent is unavailable | Verify publication, sharing, tenant, delegated invocation permission, and service availability |
 | Sign-in/redirect failure | Register the exact SharePoint site redirect without a trailing slash, verify consent, and permit the interactive sign-in popup |
 | `AADSTS50011` | Add the exact **Redirect URI** shown in the panel to the indicated **Application ID** under **Authentication > Single-page application** in Entra. An unregistered URI can also leave an error inside the silent iframe and appear only as an MSAL timeout |
 | `monitor_window_timeout` during silent sign-in | Select **Sign in** to view Microsoft's interactive sign-in page and any detailed error. A timeout alone does not identify the cause. The panel preserves the full error text returned by MSAL and shows the client ID and redirect URI, but cannot read a cross-origin Microsoft error page that never redirects back. Do not relax iframe sandbox restrictions; see [MSAL timeout guidance](https://learn.microsoft.com/en-us/entra/msal/javascript/browser/errors#monitor_window_timeout) |
 | Passkey crashes in an automated browser | Use another tenant-approved sign-in method, or attach to a normally signed-in Edge instance; do not bypass MFA |
 | File appears but is not analyzed | Verify agent file-input settings, supported content/model/channel, and service-side limits |
-| No reasoning/tool details | Enable the correct flag and verify that the published runtime actually sends a supported event family |
+| No reasoning/tool details | Enable the correct flag and verify that the published agent provides that activity |
 | Response fails after sending | A request may already have reached the agent. **Reconnect** starts a new conversation; avoid blindly repeating operations with side effects |
 
 ## Resources
