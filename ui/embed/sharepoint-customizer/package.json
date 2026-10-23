@@ -11,7 +11,8 @@
     "clean": "gulp clean",
     "test": "tsc -p tsconfig.test.json && node --test tests/*.test.cjs",
     "serve": "gulp serve --nobrowser",
-    "sideload": "node scripts/sideload.cjs"
+    "sideload": "node scripts/sideload.cjs",
+    "deploy": "node scripts/deploy.cjs"
   },
   "dependencies": {
     "@azure/msal-browser": "^4.13.1",
@@ -35,10 +36,12 @@
     "@microsoft/rush-stack-compiler-5.3": "0.1.0",
     "@microsoft/sp-build-web": "1.21.1",
     "@microsoft/sp-module-interfaces": "1.21.1",
+    "@pnp/cli-microsoft365": "11.5.0",
     "@rushstack/eslint-config": "4.0.1",
     "@types/webpack-env": "~1.15.2",
     "ajv": "^6.12.5",
     "eslint": "8.57.1",
+    "fflate": "0.8.2",
     "gulp": "4.0.2",
     "typescript": "~5.3.3"
   }

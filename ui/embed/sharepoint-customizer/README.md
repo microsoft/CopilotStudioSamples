@@ -61,7 +61,7 @@ The unmodified Copilot Studio SVG is from [Microsoft's official icon collection]
 
 ### 1. Configure Microsoft authentication
 
-1. In [Entra app registrations](https://portal.azure.com/), create or select an application for this sample. For a new registration, choose accounts in your organization.
+1. In [Entra app registrations](https://portal.azure.com/), create or select an application for this sample. For a new registration, choose accounts in your organization. See [Register an application](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app) for the portal steps.
 2. Add a **Single-page application** redirect URI matching the SharePoint **site URL without a trailing slash**, for example `https://contoso.sharepoint.com/sites/my-site`.
 3. Add a redirect URI for each site where the extension will run. Do not enable implicit grant; MSAL uses authorization code with PKCE.
 4. Under **API permissions > Add a permission > APIs my organization uses**, find **Power Platform API** (`8578e004-a5c6-46e7-913e-12f58912df43`).
@@ -87,7 +87,7 @@ cd CopilotStudioSamples/ui/embed/sharepoint-customizer
 npm install
 ```
 
-### 4. Create a local review configuration
+### 4. Create a local configuration
 
 Create `properties.local.json` in the sample directory. Files named `*.local.json` are gitignored.
 
@@ -227,18 +227,71 @@ Standard-harness plans can pause for clarification or a connector connection bef
 
 Choose safe, read-only agent actions for review. Do not trigger a business-changing tool just to demonstrate the disclosure.
 
-## Build and package
+## Automated deployment (Windows, macOS, Linux)
 
-```bash
-npm test
-npm run build
-npx gulp bundle --ship
-npx gulp package-solution --ship
+Complete **Setup** above first. You need an **existing tenant app catalog**, permission to manage its apps, and permission to install apps/customize the target site. The deployment script uses the pinned local [CLI for Microsoft 365](https://pnp.github.io/cli-microsoft365/user-guide/connecting-microsoft-365/).
+
+**Two different identities:** `--app-client-id` is the existing **sidepane SPA registration** from Setup. The CLI uses a separate **deployment app/login**, with the SharePoint permissions and consent required by your chosen authentication method. Invocation consent for `CopilotStudio.Copilots.Invoke` does not grant SharePoint deployment permissions. Follow [Use your own CLI identity](https://pnp.github.io/cli-microsoft365/user-guide/using-own-identity/); the script does not create apps, change authentication, or grant permissions.
+
+1. Sign the local CLI in using your authorized deployment registration and an explicit tenant GUID. Skip this if the correct login is already active:
+
+   ```text
+   npm exec -- m365 login --authType deviceCode --appId DEPLOYER_CLIENT_ID --tenant YOUR_TENANT_ID
+   npm exec -- m365 status
+   npm exec -- m365 spo tenant appcatalogurl get
+   ```
+
+2. Use the discovered catalog URL, the target **site URL** (not a page/debug URL), and your public `properties.local.json` settings:
+
+   ```text
+   npm run deploy -- --site-url https://contoso.sharepoint.com/sites/team --app-catalog-url https://contoso.sharepoint.com/sites/apps --app-client-id YOUR_APP_CLIENT_ID --properties properties.local.json
+   ```
+
+3. Open a normal modern page on that site, without sideload/debug parameters. Confirm one Copilot Studio launcher, sign in, and send a message and a follow-up. No localhost server is needed.
+
+The script validates settings and the current login/catalog/site, builds in an isolated temporary directory, XML-escapes the configuration, and checks the production package. It then uploads/enables the app in the catalog, installs it **only on the target site**, and verifies the installed version and one Web-scoped customizer with the requested properties. Its feature creates the initial registration; the script never adds a second custom action. Tracked templates and local settings are not modified.
+
+`--app-client-id` is required and overrides `appClientId` in the JSON file; you can omit that JSON property for deployment. The script prints the exact SPA redirect URI to register, but does not inspect or change Entra registrations. Output is `sharepoint/solution/sidebar-agent.sppkg`, with verified deployment metadata in `sharepoint/solution/deployment.local.json`. Both are gitignored. The package contains public configuration, not secrets.
+
+### Preview, package only, and updates
+
+Append `--dry-run` to validate inputs and print the plan **without building or contacting Microsoft 365**. It is not an authentication/permission check. Append `--package-only` to build and inspect the `.sppkg` without signing in or contacting SharePoint; `--app-catalog-url` is optional in both offline modes. For example:
+
+```text
+npm run deploy -- --site-url https://contoso.sharepoint.com/sites/team --app-client-id YOUR_APP_CLIENT_ID --properties properties.local.json --package-only
 ```
 
-The package is generated at `sharepoint/solution/sidebar-agent.sppkg`. Before packaged deployment, replace placeholders in `sharepoint/assets/elements.xml` (site custom action) and `sharepoint/assets/ClientSideInstance.xml` (tenant-wide extension instance) for the deployment method you use. Avoid registering both paths on the same site and producing duplicate launchers.
+An identical package is reused on subsequent runs; an installed app is not installed again, and drifted site properties are updated on the existing action. For changed code or packaged configuration, increase **both** solution and feature versions in `config/package-solution.json`, then add `--replace` to authorize the catalog update. The script refuses downgrades and different content at the same version.
 
-Upload the package to your app catalog only when ready for installation; local review does not require this step. See [Use the SharePoint app catalog](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog).
+{: .warning }
+> A tenant catalog is shared. Replacing this solution can affect other installed sites, and its packaged settings become the defaults for future installations. `--replace` acknowledges that broader effect; it does not make the catalog update site-local. Do not run competing deployments or use replacement to configure unrelated sites blindly.
+
+Existing tenant-wide, Site-scoped, duplicate, or standalone registrations must be resolved explicitly before this site-install workflow. Nothing is automatically removed. On failure, the script stops, lists completed remote operations, and leaves the package available for inspection; it does not uninstall apps or roll back a shared catalog. Correct the reported permissions/state issue and rerun, or use the manual path below. A successful metadata check still requires the browser conversation check in step 3.
+
+Run `npm run deploy -- --help` for all options.
+
+## Manual deployment
+
+This is the same supported site-install model, without CLI deployment authentication. Follow Microsoft's [Deploy an SPFx extension](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/extensions/get-started/serving-your-extension-from-sharepoint) and [Manage apps using the SharePoint Apps site](https://learn.microsoft.com/en-us/sharepoint/use-app-catalog) for the SharePoint screens. This sample uses **SPFx 1.21.1/Gulp**, not the Heft commands shown for newer versions.
+
+1. Complete **Setup**, including the runtime SPA registration, exact target-site redirect URI, delegated invocation permission, consent, and published-agent access.
+2. Replace placeholders in `sharepoint/assets/elements.xml` with your runtime app client ID, tenant ID, environment ID, and agent schema name. Set any UI flags you need. Keep JSON booleans unquoted and preserve XML escaping: `&quot;` for `"`, `&amp;` for `&`, `&lt;` for `<`, and `&gt;` for `>`. Do not put credentials in this file. Alternatively, use `--package-only` above to generate the configured package without editing XML.
+3. If you edited XML manually, build from the sample directory:
+
+   ```text
+   npx gulp bundle --ship
+   npx gulp package-solution --ship
+   ```
+
+4. Upload `sharepoint/solution/sidebar-agent.sppkg` to your **existing tenant Apps site/app catalog**. Select **Only enable this app**, not **Enable this app and add it to all sites**.
+5. On the target SharePoint site, use **Site contents > New > App** to add the catalog app. Installation activates the package feature and registers the customizer; do **not** also register it manually.
+6. Open a normal modern page, confirm one launcher, sign in if prompted, and verify a reply and same-conversation follow-up without a development server.
+
+The default package requires site installation (`skipFeatureDeployment: false`) and includes only `elements.xml`. `ClientSideInstance.xml` is not packaged and must not be enabled alongside this site action. For upgrades, bump solution/feature versions together, replace the catalog package deliberately, and update the app on the target site. Existing custom-action properties may need an explicit update; the automated path performs that reconciliation.
+
+### Validation
+
+Run `npm test` for configuration, attachment, dual-harness activity mapping, and deployment regression tests; `npm run build` checks the SPFx development build. The **SharePoint sidepane** GitHub Actions workflow runs tests and actual production `--package-only` builds on Windows, macOS, and Linux with synthetic settings. It has no tenant credentials and does not deploy to SharePoint. Live site installation, authentication/consent, and agent responses must be verified separately in your tenant.
 
 ## Troubleshooting
 

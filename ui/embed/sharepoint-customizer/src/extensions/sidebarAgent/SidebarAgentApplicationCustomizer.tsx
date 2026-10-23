@@ -9,9 +9,9 @@ import SidePanel from './components/SidePanel/SidePanel';
 import styles from './components/SidePanel/SidePanel.module.scss';
 import { ISidebarAgentApplicationCustomizerProperties, ISidebarAgentState } from './models/ISidebarAgentProperties';
 import { normalizeConfiguration } from './configuration';
+import copilotStudioIcon from './assets/copilot-studio.svg';
 
 const LOG_SOURCE = 'SidebarAgentApplicationCustomizer';
-const COPILOT_STUDIO_ICON: string = require('./assets/copilot-studio.svg');
 
 export class SidebarAgentComponent extends React.Component<
   { properties: ISidebarAgentApplicationCustomizerProperties; context: ApplicationCustomizerContext },
@@ -41,7 +41,7 @@ export class SidebarAgentComponent extends React.Component<
       <>
         <div className={styles.launcher} style={properties.headerBackgroundColor ? { backgroundColor: properties.headerBackgroundColor } : undefined}>
           <IconButton
-            onRenderIcon={() => <img src={COPILOT_STUDIO_ICON} width={24} height={24} alt="" />}
+            onRenderIcon={() => <img src={copilotStudioIcon} width={24} height={24} alt="" />}
             ariaLabel={`Open ${agentTitle}`}
             aria-expanded={isPanelOpen}
             aria-haspopup="dialog"
