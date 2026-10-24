@@ -16,3 +16,4 @@ MCP servers that provide tools and resources to Copilot Studio agents.
 | [pass-resources-as-inputs/](./pass-resources-as-inputs/) | Pass MCP resources as agent inputs |
 | [search-species-resources-typescript/](./search-species-resources-typescript/) | Species search MCP server in TypeScript |
 | [dynamic-mcp-routing-typescript/](./dynamic-mcp-routing-typescript/) | Dynamic routing to multiple MCP server instances via a Power Platform connector |
+| [jev-evidence-gate-typescript/](./jev-evidence-gate-typescript/) | Answer or abstain over a large document library: Azure AI Search candidates gated by TypeSafe Jev before the agent answers |

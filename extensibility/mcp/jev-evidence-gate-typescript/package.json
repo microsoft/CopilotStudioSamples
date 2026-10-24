@@ -1,0 +1,27 @@
+{
+  "name": "jev-evidence-gate-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Copilot Studio that gates retrieved passages with TypeSafe Jev before the agent answers",
+  "type": "module",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "tsx src/index.ts",
+    "ingest": "tsx scripts/ingest.ts",
+    "replay": "tsx scripts/replay.ts",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "@typesafe-ai/sdk": "^0.6.0",
+    "express": "^4.21.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
