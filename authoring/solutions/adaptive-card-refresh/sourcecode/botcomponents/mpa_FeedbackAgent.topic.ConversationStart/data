@@ -1,0 +1,42 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnConversationStart
+  id: main
+  actions:
+    - kind: SendActivity
+      id: sendMessage_M0LuhV
+      activity:
+        text:
+          - "Hi! This agent shows how to refresh an Adaptive Card after it is submitted in Teams. Pick an option below to try it."
+        speak:
+          - Hi! This agent shows how to refresh an Adaptive Card after it is submitted in Teams.
+
+    - kind: SendActivity
+      id: sendActivity_giqeBX
+      activity:
+        attachments:
+          - kind: AdaptiveCardTemplate
+            cardContent: |-
+              {
+                  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                  "type": "AdaptiveCard",
+                  "version": "1.5",
+                  "body": [
+                      {
+                          "type": "TextBlock",
+                          "size": "Medium",
+                          "weight": "Bolder",
+                          "text": "Feedback demo",
+                          "horizontalAlignment": "Center",
+                          "wrap": true,
+                          "style": "heading"
+                      }
+                  ],
+                  "actions": [
+                      {
+                          "type": "Action.Submit",
+                          "title": "Take a survey",
+                          "data": "Take a survey"
+                      }
+                  ]
+              }
