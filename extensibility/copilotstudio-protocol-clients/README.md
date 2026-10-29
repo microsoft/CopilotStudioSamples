@@ -1,7 +1,8 @@
 ---
-title: Copilot Studio MCP and A2A clients
-parent: Extensibility
-nav_order: 4
+title: Copilot Studio client
+parent: A2A Protocol
+grand_parent: Extensibility
+nav_order: 2
 ---
 # Chat with Copilot Studio over MCP and A2A
 
