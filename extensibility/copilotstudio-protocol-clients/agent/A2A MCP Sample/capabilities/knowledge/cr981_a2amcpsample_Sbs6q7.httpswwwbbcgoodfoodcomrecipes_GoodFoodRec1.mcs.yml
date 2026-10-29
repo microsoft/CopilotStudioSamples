@@ -1,0 +1,7 @@
+mcs.metadata:
+  componentName: https://www.bbcgoodfood.com/recipes
+  description: Pasta recipes and sauces including ragu, ingredient preparation, and practical everyday cooking guidance.
+kind: KnowledgeSourceConfiguration
+source:
+  kind: WebsiteKnowledgeSource
+  siteUrl: "https://www.bbcgoodfood.com/recipes"
