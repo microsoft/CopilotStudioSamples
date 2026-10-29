@@ -1,0 +1,10 @@
+<botcomponent schemaname="Default_FeedbackCollectionBotSettings_-tNhyH">
+  <componenttype>18</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Feedback</name>
+  <parentbotid>
+    <schemaname>cr981_a2amcpsample_Sbs6q7</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

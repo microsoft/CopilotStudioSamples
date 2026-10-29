@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr981_a2amcpsample_Sbs6q7.httpswwwkingarthurbakingcomrecipes_KabRecipes01">
+  <componenttype>16</componenttype>
+  <description>Tested pizza, fresh pasta, and bread recipes, with dough preparation, kneading, proofing, and baking techniques.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>https://www.kingarthurbaking.com/recipes</name>
+  <parentbotid>
+    <schemaname>cr981_a2amcpsample_Sbs6q7</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

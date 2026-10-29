@@ -1,0 +1,7 @@
+mcs.metadata:
+  componentName: https://ooni.com/blogs/recipes
+  description: Pizza dough, toppings, regional pizza styles, and recipes for cooking in a pizza oven.
+kind: KnowledgeSourceConfiguration
+source:
+  kind: WebsiteKnowledgeSource
+  siteUrl: "https://ooni.com/blogs/recipes"

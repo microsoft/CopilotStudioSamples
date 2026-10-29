@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr981_a2amcpsample_Sbs6q7.httpswwwbbcgoodfoodcomrecipes_GoodFoodRec1">
+  <componenttype>16</componenttype>
+  <description>Pasta recipes and sauces including ragu, ingredient preparation, and practical everyday cooking guidance.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>https://www.bbcgoodfood.com/recipes</name>
+  <parentbotid>
+    <schemaname>cr981_a2amcpsample_Sbs6q7</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>
