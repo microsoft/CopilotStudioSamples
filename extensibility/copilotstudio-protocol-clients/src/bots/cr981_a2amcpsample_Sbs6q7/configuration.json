@@ -1,0 +1,52 @@
+{
+  "$kind": "BotConfiguration",
+  "settings": {
+    "WorkIqAddedByDefault": false
+  },
+  "recognizer": {
+    "$kind": "CLICopilotRecognizer"
+  },
+  "agentSettings": {
+    "$kind": "AgentSettings",
+    "model": {
+      "$kind": "ModelConfig",
+      "series": "Auto"
+    },
+    "instructions": {
+      "$kind": "Instructions",
+      "segments": [
+        {
+          "$kind": "StaticSegment",
+          "value": "You are a friendly cooking assistant demonstrating Copilot Studio\u0027s\nA2A and MCP channels. Help with pizza recipes, pasta recipes and\nsauces, and bread baking. Give practical, concise advice tailored\nto the user\u0027s ingredients and available equipment.\n\nSearch the configured public recipe knowledge sources for relevant\nrecipes and techniques. Cite the source links you actually used.\nDo not claim a recipe or fact came from a source you did not retrieve.\nIf no relevant source is found, say so and distinguish general\ncooking advice from sourced information.\n\nWhen a user calls the meat sauce \u0022bolognese\u0022, gently correct them:\n\u0022Rag\u00F9, please!\u0022 Then answer their question helpfully. Make this\nbrief and good-humored, not a lecture or a refusal. Prefer rag\u00F9\nafterward, and recognize rag\u00F9 alla bolognese as a valid full name.\nDo not copy entire recipes verbatim; summarize in your own words\nand link to the original recipe.\n"
+        }
+      ]
+    },
+    "web": {
+      "$kind": "WebSettings",
+      "enableWebSearch": true
+    },
+    "a2A": {
+      "$kind": "A2ASettings",
+      "skills": [
+        {
+          "$kind": "A2ASkill",
+          "id": "c19120bd-418b-4b96-b23d-9b80b000c964",
+          "name": "Pizza Recipes",
+          "description": "Helps with pizza recipes, dough, toppings, styles, and cooking techniques."
+        },
+        {
+          "$kind": "A2ASkill",
+          "id": "76afc0de-25e8-4690-a1b1-d54b6654a10c",
+          "name": "Pasta Recipes",
+          "description": "Helps with fresh and dried pasta, sauces including ragu, and pairing pasta shapes with sauces."
+        },
+        {
+          "$kind": "A2ASkill",
+          "id": "b4496f61-d9e8-43df-ae46-3c01259f5f92",
+          "name": "Bread Baking",
+          "description": "Helps with yeast breads, kneading, proofing, and troubleshooting bread baking."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+[project]
+name = "copilotstudio-protocol-clients"
+version = "0.1.0"
+description = "Minimal official SDK clients for Copilot Studio MCP and A2A channels"
+requires-python = ">=3.11"
+dependencies = [
+    "a2a-sdk==1.2.3",
+    "httpx==0.28.1",
+    "httpx2>=2,<3",
+    "mcp==2.3.0",
+    "msal==1.39.0",
+    "msal-extensions>=1,<2",
+    "prompt-toolkit>=3,<4",
+    "python-dotenv>=1,<2",
+    "requests>=2.32,<3",
+]
+
+[project.optional-dependencies]
+dev = ["mypy>=1.15,<2", "PyYAML>=6,<7", "types-protobuf", "types-requests"]
+
+[tool.setuptools]
+py-modules = ["config", "auth", "console", "mcp_client", "mcp_output", "a2a_client", "a2a_output", "chat"]
+
+[tool.mypy]
+python_version = "3.11"
+check_untyped_defs = true
+disallow_untyped_defs = true
+files = ["config.py", "auth.py", "console.py", "mcp_client.py", "mcp_output.py", "a2a_client.py", "a2a_output.py", "chat.py"]
+
+[[tool.mypy.overrides]]
+module = ["msal", "msal.*", "msal_extensions", "msal_extensions.*"]
+ignore_missing_imports = true

@@ -1,0 +1,43 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.webChat {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+
+  > * { flex: 1; min-width: 0; }
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  padding: 24px;
+
+  p { max-width: 320px; text-align: center; }
+}
+
+.errorMessage {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.authDetails {
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+
+.reconnect {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}

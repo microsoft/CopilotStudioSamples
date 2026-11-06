@@ -1,95 +1,36 @@
-
-
 .sidePanel {
-  position: fixed;
-  top: 0;
-  right: -30vw;
-  width: 30vw;
-  height: 100vh;
-  background-color: white;
-  box-shadow: none;
-  transition: right 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
+  font-family: "Segoe UI", Aptos, Calibri, sans-serif;
 
-  &.open {
-    right: 0;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  @media (prefers-reduced-motion: reduce) {
+    &, * { animation-duration: 0s !important; transition-duration: 0s !important; }
   }
 }
 
-.chatContainer {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  // Use SharePoint theme colors for gradient
-  background: linear-gradient(135deg, 
-    "[theme:themeLighterAlt, default: #f3f2f1]" 0%, 
-    "[theme:themeLighter, default: #d2d0ce]" 100%);
-  padding: 20px;
-  gap: 16px;
-}
-
-.titleBar {
-  background: white;
-  border-radius: 12px;
-  padding: 16px 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+.header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 16px;
 }
 
 .title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: "[theme:bodyText, default: #323130]";
-}
-
-.buttonGroup {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.iconButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: "[theme:neutralSecondary, default: #605e5c]";
-  border-radius: 4px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: "[theme:neutralLighter, default: #f3f2f1]";
-    color: "[theme:neutralPrimary, default: #323130]";
-  }
-}
-
-.chatWrapper {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 999;
+.launcher {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 16px;
+  border-bottom: 1px solid "[theme:neutralLight, default: #edebe9]";
+  background: "[theme:bodyBackground, default: #ffffff]";
 }

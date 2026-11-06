@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr981_a2amcpsample_Sbs6q7.httpsoonicomblogsrecipes_OoniRecipes1">
+  <componenttype>16</componenttype>
+  <description>Pizza dough, toppings, regional pizza styles, and recipes for cooking in a pizza oven.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>https://ooni.com/blogs/recipes</name>
+  <parentbotid>
+    <schemaname>cr981_a2amcpsample_Sbs6q7</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

@@ -1,0 +1,11 @@
+.venv/
+.agent-dev/
+__pycache__/
+.mypy_cache/
+build/
+.env
+.env.*
+!.env.example
+agent/.config/
+agent/**/.mcs/
+*.egg-info/

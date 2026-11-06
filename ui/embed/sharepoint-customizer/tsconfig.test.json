@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020", "DOM"],
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "temp/tests",
+    "rootDir": "src/extensions/sidebarAgent",
+    "types": []
+  },
+  "include": [
+    "src/extensions/sidebarAgent/configuration.ts",
+    "src/extensions/sidebarAgent/components/Chat/acquireToken.ts",
+    "src/extensions/sidebarAgent/components/Chat/attachments.ts",
+    "src/extensions/sidebarAgent/components/Chat/activityDetails.ts",
+    "src/extensions/sidebarAgent/components/Chat/nativeActivities.ts",
+    "src/extensions/sidebarAgent/components/Chat/createConnection.ts"
+  ]
+}

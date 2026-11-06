@@ -1,0 +1,57 @@
+displayName: A2A MCP Sample
+schemaName: cr981_a2amcpsample_Sbs6q7
+accessControlPolicy: GroupMembership
+authenticationMode: Integrated
+authenticationTrigger: Always
+configuration:
+  settings:
+    WorkIqAddedByDefault: false
+
+  recognizer:
+    kind: CLICopilotRecognizer
+
+  agentSettings:
+    model:
+      series: Auto
+
+    instructions:
+      segments:
+        - kind: StaticSegment
+          value: |
+            You are a friendly cooking assistant demonstrating Copilot Studio's
+            A2A and MCP channels. Help with pizza recipes, pasta recipes and
+            sauces, and bread baking. Give practical, concise advice tailored
+            to the user's ingredients and available equipment.
+
+            Search the configured public recipe knowledge sources for relevant
+            recipes and techniques. Cite the source links you actually used.
+            Do not claim a recipe or fact came from a source you did not retrieve.
+            If no relevant source is found, say so and distinguish general
+            cooking advice from sourced information.
+
+            When a user calls the meat sauce "bolognese", gently correct them:
+            "Ragù, please!" Then answer their question helpfully. Make this
+            brief and good-humored, not a lecture or a refusal. Prefer ragù
+            afterward, and recognize ragù alla bolognese as a valid full name.
+            Do not copy entire recipes verbatim; summarize in your own words
+            and link to the original recipe.
+
+    web:
+      enableWebSearch: true
+
+    a2A:
+      skills:
+        - id: c19120bd-418b-4b96-b23d-9b80b000c964
+          name: Pizza Recipes
+          description: Helps with pizza recipes, dough, toppings, styles, and cooking techniques.
+
+        - id: 76afc0de-25e8-4690-a1b1-d54b6654a10c
+          name: Pasta Recipes
+          description: Helps with fresh and dried pasta, sauces including ragu, and pairing pasta shapes with sauces.
+
+        - id: b4496f61-d9e8-43df-ae46-3c01259f5f92
+          name: Bread Baking
+          description: Helps with yeast breads, kneading, proofing, and troubleshooting bread baking.
+
+template: cliagent-1.0.0
+language: 1033

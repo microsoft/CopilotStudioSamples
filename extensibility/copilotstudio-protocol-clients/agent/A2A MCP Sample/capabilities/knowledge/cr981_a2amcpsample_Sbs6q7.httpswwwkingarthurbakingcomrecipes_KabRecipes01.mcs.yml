@@ -1,0 +1,7 @@
+mcs.metadata:
+  componentName: https://www.kingarthurbaking.com/recipes
+  description: Tested pizza, fresh pasta, and bread recipes, with dough preparation, kneading, proofing, and baking techniques.
+kind: KnowledgeSourceConfiguration
+source:
+  kind: WebsiteKnowledgeSource
+  siteUrl: "https://www.kingarthurbaking.com/recipes"

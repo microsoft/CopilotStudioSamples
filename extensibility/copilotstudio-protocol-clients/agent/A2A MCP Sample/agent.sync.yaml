@@ -1,0 +1,3 @@
+﻿# Workspace layout marker (Sync overlay; generic YAML, never MCS-parsed).
+# Declares the on-disk layout version only; identity lives in settings.mcs.yml.
+layoutVersion: 1
