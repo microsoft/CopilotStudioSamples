@@ -1,0 +1,25 @@
+.webappignore
+.fx
+.deployment
+.localConfigs
+.notification.localstore.json
+.vscode
+*.js.map
+*.ts.map
+.git*
+.tsbuildinfo
+CHANGELOG.md
+readme.md
+local.settings.json
+test
+.DS_Store
+m365agents.yml
+m365agents.*.yml
+/env/
+/appPackage/
+/infra/
+/devTools/
+
+# Exclude build artifacts - Azure will build from source with Oryx
+/dist/
+/node_modules/

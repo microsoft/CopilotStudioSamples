@@ -14,6 +14,7 @@ Server-side implementations using the M365 Agents SDK to extend Copilot Studio a
 | Sample | Description |
 |--------|-------------|
 | [call-agent-connector/](./call-agent-connector/) | Azure Function connector for calling agents |
+| [m365-langgraph-mcs-tool/](./m365-langgraph-mcs-tool/) | LangGraph + Azure OpenAI agent (Teams / M365 Copilot) that calls a Copilot Studio agent as a tool with delegated SSO |
 | [multilingual-bot/](./multilingual-bot/) | Multilingual bot with automatic translation |
 | [relay-bot/](./relay-bot/) | Relay bot pattern implementation |
 | [Copilot Studio Client](./copilotstudio-client/) | Console app to consume an agent (.NET, Node, Python) — *M365 Agents SDK repo* |
