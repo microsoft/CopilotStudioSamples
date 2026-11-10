@@ -16,3 +16,4 @@ Build your own standalone chat frontend for Copilot Studio agents.
 | [assistant-ui/](./assistant-ui/) | React chat UI using the Assistant UI library |
 | [directline-js/](./directline-js/) | Custom chat UI using DirectLine API, no WebChat dependency |
 | [reasoning-display/](./reasoning-display/) | Display agent reasoning and citations |
+| [webchat-csat/](./webchat-csat/) | Intercept CSAT card with custom emoji rating component (WebChat) |
