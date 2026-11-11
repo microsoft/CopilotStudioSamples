@@ -1,26 +1,10 @@
 kind: AdaptiveDialog
 modelDescription: |-
-  Returns user's personal profile from Workday: identity, contact, and org info only.
-   
-  Fields: Name, Emp ID, DOB, Gender, Title, Organization, Manager, Location, Email, Phone, Home Address.
+  Retrieve the requesting user's own Workday profile information. Available fields include name, employee ID, date of birth, gender, title, organization, manager, location, email, phone, home address, and length of service. Always use this topic for the requesting user's employee ID or complete profile.
 
   DO NOT route here for: job level, grade, band, FTE, rehire date, exempt status, employment type, hire date
-   
-  For FULL PROFILE:
-  Heading = ""Your employee profile""
-  Intro = ""Here's what I found in Workday, an HR platform your company uses.""
-  Sections: Personal information, Role and work.
-   
-  For TENURE/POSITION:
-  Heading = ""Time in your position""
-  Intro = ""You've been in your current role as a [Position] for [LengthOfService].""
-  Sections: About your position
-   
-  Rules:
-  - Large heading, sentence case, section divider below
-  - Bold section headings, non-bold sub bullets
-  - Address in one row, intro after heading
-  - Only relevant fields unless full profile requested"
+
+  The topic formats explicit full-profile and employee-record requests with the required grouped layout. Preserve that response exactly: use the title "Your employee profile", then the sections "Personal information", "Hiring details", and "Role and work" in that order. Do not rename, merge, omit, summarize, or restyle those sections. For other requests, respond only with the profile fields the user requested. Keep a home address on one line. This topic retrieves only the requesting user's data; do not use it for another person's profile.
 beginDialog:
   kind: OnRecognizedIntent
   id: main
@@ -50,6 +34,45 @@ beginDialog:
       - Where do I work?
 
   actions:
+    - kind: SetVariable
+      id: setVariable_responseScope
+      displayName: Classify the requested profile scope
+      variable: Topic.ResponseScope
+      value: |-
+        =With(
+          {requestText: Lower(Coalesce(System.Activity.Text, ""))},
+          If(
+            Or(
+              "profile summary" in requestText,
+              "full profile" in requestText,
+              "complete profile" in requestText,
+              "employee record" in requestText,
+              "all profile" in requestText
+            ),
+            "full-profile",
+            If(
+              Or(
+                "tenure" in requestText,
+                "length of service" in requestText,
+                "how long" in requestText
+              ),
+              "tenure",
+              "field"
+            )
+          )
+        )
+
+    - kind: ConditionGroup
+      id: ensureWorkdayContext
+      conditions:
+        - id: ensureWorkdayContextWhenMissing
+          condition: =IsBlank(Global.ESS_UserContext_Employee_Id) || Global.ESS_UserContext_Employee_Id = """"""
+          actions:
+            - kind: BeginDialog
+              id: callWorkdayUserContext
+              displayName: Retrieve the current Workday user context
+              dialog: msdyn_copilotforemployeeselfservicedahr.topic.WorkdaySystemGetUserContextV2
+
     - kind: BeginDialog
       id: dZAI4Y
       displayName: Redirect to Workday Get Common Execution
@@ -64,6 +87,19 @@ beginDialog:
           errorResponse: Topic.errorResponse
           isSuccess: Topic.isSuccess
           workdayResponse: Topic.workdayResponse
+
+    - kind: ConditionGroup
+      id: conditionGroup_workdayRequestFailed
+      conditions:
+        - id: conditionItem_workdayRequestFailed
+          condition: =Topic.isSuccess = false
+          actions:
+            - kind: SendActivity
+              id: sendActivity_workdayRequestFailed
+              activity: I encountered an error retrieving your employee profile. Please try again later or contact HR support.
+
+            - kind: EndDialog
+              id: endDialog_workdayRequestFailed
 
     - kind: ParseValue
       id: fP9fKn
@@ -159,25 +195,25 @@ beginDialog:
       id: setVariable_ServiceDate
       displayName: Calculate service date values
       variable: Topic.serviceDateCalc
-      value: =DateValue(First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value)
+      value: =If(IsBlank(First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value), Blank(), DateValue(First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value))
 
     - kind: SetVariable
       id: setVariable_Years
       displayName: Calculate years
       variable: Topic.yearsOfService
-      value: =RoundDown(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months) / 12, 0)
+      value: =If(IsBlank(Topic.serviceDateCalc), Blank(), RoundDown(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months) / 12, 0))
 
     - kind: SetVariable
       id: setVariable_Months
       displayName: Calculate months
       variable: Topic.monthsOfService
-      value: =Mod(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), 12)
+      value: =If(IsBlank(Topic.serviceDateCalc), Blank(), Mod(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), 12))
 
     - kind: SetVariable
       id: setVariable_Days
       displayName: Calculate days
       variable: Topic.daysOfService
-      value: =DateDiff(DateAdd(Topic.serviceDateCalc, DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), TimeUnit.Months), Today(), TimeUnit.Days)
+      value: =If(IsBlank(Topic.serviceDateCalc), Blank(), DateDiff(DateAdd(Topic.serviceDateCalc, DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), TimeUnit.Months), Today(), TimeUnit.Days))
 
     - kind: SetVariable
       id: setVariable_LHTcFu
@@ -199,21 +235,134 @@ beginDialog:
             HomeEmail: First(Topic.parsedWorkdayResponse.HomeEmail).Value,
             HomePhone: First(Topic.parsedWorkdayResponse.HomePhone).Value,
             WorkPhone: First(Topic.parsedWorkdayResponse.WorkPhone).Value,
-            Status: If(First(Topic.parsedWorkdayResponse.Status).Value = "1", "Active", "Inactive"),
+            Status: If(IsBlank(First(Topic.parsedWorkdayResponse.Status).Value), Blank(), If(First(Topic.parsedWorkdayResponse.Status).Value = "1", "Active", "Inactive")),
             ContinuousServiceDate: First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value,
-            LengthOfService: 
+            LengthOfService: If(IsBlank(Topic.serviceDateCalc), Blank(),
                 If(Topic.yearsOfService > 0, Topic.yearsOfService & " year" & If(Topic.yearsOfService > 1, "s", "") & " ", "") &
                 If(Topic.monthsOfService > 0, Topic.monthsOfService & " month" & If(Topic.monthsOfService > 1, "s", "") & " ", "") &
-                Topic.daysOfService & " day" & If(Topic.daysOfService <> 1, "s", "")
+                Topic.daysOfService & " day" & If(Topic.daysOfService <> 1, "s", ""))
         }
 
-    - kind: SendActivity
-      id: sendActivity_0SDSlB
-      activity: |-
-        Here is your employee profile:
-        {Topic.finalizedData}
+    - kind: ConditionGroup
+      id: conditionGroup_profileNotFound
+      conditions:
+        - id: conditionItem_profileNotFound
+          condition: =IsBlank(Topic.finalizedData.Name) && IsBlank(Topic.finalizedData.EmployeeID) && IsBlank(Topic.finalizedData.BusinessTitle)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_profileNotFound
+              activity: I couldn't find employee profile information for you in Workday. Please contact HR support if you believe this information should be available.
+
+            - kind: EndDialog
+              id: endDialog_profileNotFound
+
+    - kind: ConditionGroup
+      id: conditionGroup_fullProfileResponse
+      conditions:
+        - id: conditionItem_fullProfileResponse
+          condition: =Lower(Substitute(Substitute(Trim(Topic.ResponseScope), " ", "-"), "_", "-")) = "full-profile"
+          actions:
+            - kind: SendActivity
+              id: sendActivity_fullProfileResponse
+              displayName: Send the full employee profile
+              activity:
+                attachments:
+                  - kind: AdaptiveCardTemplate
+                    cardContent: |-
+                      ={
+                        type: "AdaptiveCard",
+                        '$schema': "https://adaptivecards.io/schemas/adaptive-card.json",
+                        version: "1.5",
+                        body: [
+                          {
+                            type: "TextBlock",
+                            text: "Your employee profile",
+                            size: "Large",
+                            weight: "Bolder",
+                            wrap: true
+                          },
+                          {
+                            type: "TextBlock",
+                            text: "Here's what I found in Workday, an HR platform your company uses.",
+                            wrap: true,
+                            spacing: "Small"
+                          },
+                          {
+                            type: "TextBlock",
+                            text: "Personal information",
+                            weight: "Bolder",
+                            separator: true,
+                            spacing: "Medium",
+                            wrap: true
+                          },
+                          {
+                            type: "FactSet",
+                            facts: Filter(
+                              Table(
+                                {title: "Name", value: Topic.finalizedData.Name},
+                                {title: "Date of birth", value: Topic.finalizedData.DOB},
+                                {title: "Gender", value: Topic.finalizedData.Gender},
+                                {title: "Home address", value: Topic.finalizedData.HomeAddress},
+                                {title: "Home email", value: Topic.finalizedData.HomeEmail},
+                                {title: "Home phone", value: Topic.finalizedData.HomePhone}
+                              ),
+                              !IsBlank(value)
+                            )
+                          },
+                          {
+                            type: "TextBlock",
+                            text: "Hiring details",
+                            weight: "Bolder",
+                            separator: true,
+                            spacing: "Medium",
+                            wrap: true
+                          },
+                          {
+                            type: "FactSet",
+                            facts: Filter(
+                              Table(
+                                {title: "Employee ID", value: Topic.finalizedData.EmployeeID},
+                                {title: "Hire date", value: Topic.finalizedData.HireDate},
+                                {title: "Continuous service date", value: Topic.finalizedData.ContinuousServiceDate},
+                                {title: "Length of service", value: Topic.finalizedData.LengthOfService},
+                                {title: "Employment status", value: Topic.finalizedData.Status}
+                              ),
+                              !IsBlank(value)
+                            )
+                          },
+                          {
+                            type: "TextBlock",
+                            text: "Role and work",
+                            weight: "Bolder",
+                            separator: true,
+                            spacing: "Medium",
+                            wrap: true
+                          },
+                          {
+                            type: "FactSet",
+                            facts: Filter(
+                              Table(
+                                {title: "Business title", value: Topic.finalizedData.BusinessTitle},
+                                {title: "Organization", value: Topic.finalizedData.Organization},
+                                {title: "Manager", value: Topic.finalizedData.Manager},
+                                {title: "Location", value: Topic.finalizedData.Location},
+                                {title: "Work email", value: Topic.finalizedData.WorkEmail},
+                                {title: "Work phone", value: Topic.finalizedData.WorkPhone}
+                              ),
+                              !IsBlank(value)
+                            )
+                          }
+                        ]
+                      }
+
+            - kind: SetVariable
+              id: clearFullProfileOutput
+              displayName: Prevent the orchestrator from recomposing the full profile
+              variable: Topic.finalizedData
+              value: =Blank()
 
 inputType: {}
+
 outputType:
   properties:
     finalizedData:
