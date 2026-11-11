@@ -1,0 +1,11 @@
+<botcomponent schemaname="mpa_FeedbackAgent.topic.MultipleTopicsMatched">
+  <componenttype>9</componenttype>
+  <description>This system topic triggers when the copilot matches multiple Topics with the incoming message and needs to clarify which one should be triggered.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>Multiple Topics Matched</name>
+  <parentbotid>
+    <schemaname>mpa_FeedbackAgent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

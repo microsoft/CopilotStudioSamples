@@ -1,0 +1,10 @@
+<botcomponent schemaname="mpa_FeedbackAgent.topic.CardListenerV2">
+  <componenttype>9</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Card Listener</name>
+  <parentbotid>
+    <schemaname>mpa_FeedbackAgent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

@@ -14,6 +14,7 @@ Importable Power Platform solutions in PnP format. Each solution includes packag
 | Folder | Description |
 |--------|-------------|
 | [account-contact-lookup/](./account-contact-lookup/) | Multi-agent Dataverse account and contact lookup |
+| [adaptive-card-refresh/](./adaptive-card-refresh/) | Refresh/replace an Adaptive Card after submission in Teams (Universal Actions) |
 | [auto-detect-language/](./auto-detect-language/) | Automatically detect user language |
 | [dataverse-indexer/](./dataverse-indexer/) | Index Dataverse tables for agent knowledge |
 | [feedback-analyzer/](./feedback-analyzer/) | Analyze agent conversation feedback with MDA and workflows |

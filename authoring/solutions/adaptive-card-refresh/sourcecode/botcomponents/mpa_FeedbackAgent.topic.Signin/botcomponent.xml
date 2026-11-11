@@ -1,0 +1,11 @@
+<botcomponent schemaname="mpa_FeedbackAgent.topic.Signin">
+  <componenttype>9</componenttype>
+  <description>This system topic triggers when the copilot needs to sign in the user or require the user to sign in</description>
+  <iscustomizable>0</iscustomizable>
+  <name>Sign in </name>
+  <parentbotid>
+    <schemaname>mpa_FeedbackAgent</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>
