@@ -333,6 +333,9 @@ ASALocalRun/
 SharePointSSOComponent/package-lock.json
 SharePointSSOComponent/config/serve.json
 
+# macOS
+.DS_Store
+
 # Jekyll
 _site/
 .jekyll-cache/
