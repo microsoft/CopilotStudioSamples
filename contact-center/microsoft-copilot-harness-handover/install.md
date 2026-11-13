@@ -38,8 +38,8 @@ Import the **connector first**, then the **agent**. Microsoft documents this ord
 
 | Order | File in `solution/` | Contents |
 |---|---|---|
-| 1 | [CopilotStudioHandoverConnector_1_0_0_0.zip](https://github.com/microsoft/CopilotStudioSamples/raw/refs/heads/main/contact-center/microsoft-copilot-harness-handover/solution/CopilotStudioHandoverConnector_1_0_0_0.zip) | **Handover escalation** custom connector |
-| 2 | [CopilotStudioHandover_1_0_0_0.zip](https://github.com/microsoft/CopilotStudioSamples/raw/refs/heads/main/contact-center/microsoft-copilot-harness-handover/solution/CopilotStudioHandover_1_0_0_0.zip) | Copilot Studio agent, Escalate tool, scoped hook, workflow and connection reference |
+| 1 | [CopilotStudioHandoverConnector_1_0_0_0.zip](./solution/CopilotStudioHandoverConnector_1_0_0_0.zip?raw=true) | **Handover escalation** custom connector |
+| 2 | [CopilotStudioHandover_1_0_0_0.zip](./solution/CopilotStudioHandover_1_0_0_0.zip?raw=true) | Copilot Studio agent, Escalate tool, scoped hook, workflow and connection reference |
 
 For each package:
 
