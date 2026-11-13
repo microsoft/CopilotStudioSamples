@@ -20,7 +20,7 @@ description: Human handover for Copilot Studio agents of type Microsoft Copilot 
 This sample enables a **Copilot Studio agent of type Microsoft Copilot Harness** to hand a conversation to a **human support representative**, then resume with the context of that human conversation. It includes an Agents SDK relay, an escalation connector and maker hook, and a mock support chat app.
 
 {: .note }
-> This is an interim sample, not the final integration pattern. We expect better ways to populate a tool's conversation ID, and agents may support sending events in the future. **There is no current timeline for these improvements.**
+> This is an interim sample, not the final integration pattern. We expect better ways to share channel data with a Copilot Studio agent and receive it back through a webhook or other mechanisms, potentially including events. **There is no current timeline for these improvements.**
 
 ## Fastest path to deploy
 
