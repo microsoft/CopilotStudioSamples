@@ -1,0 +1,414 @@
+{
+  "properties": {
+    "connectionReferences": {},
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "event": {
+                  "title": "event",
+                  "type": "string",
+                  "description": "Always 'PreTool' for this hook. Useful when one flow handles more than one hook event.",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "timestamp": {
+                  "title": "timestamp",
+                  "type": "string",
+                  "description": "When the agent raised the event.",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "toolName": {
+                  "title": "toolName",
+                  "type": "string",
+                  "description": "Name of the tool the agent is about to call.",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "parameters": {
+                  "title": "parameters",
+                  "type": "object",
+                  "description": "The arguments the agent wants to pass to the tool.",
+                  "x-ms-dynamically-added": true
+                },
+                "metadata": {
+                  "title": "metadata",
+                  "type": "object",
+                  "description": "Context about the conversation, user, channel, and agent that Copilot Studio supplies with every hook. Expand it to use any field in your flow.",
+                  "x-ms-dynamically-added": true,
+                  "properties": {
+                    "conversationId": {
+                      "title": "conversationId",
+                      "type": "string",
+                      "description": "Unique ID of the current conversation."
+                    },
+                    "userId": {
+                      "title": "userId",
+                      "type": "string",
+                      "description": "ID of the user in the channel they're chatting on, such as their Microsoft Teams user ID. Use userAadObjectId to identify a signed-in user."
+                    },
+                    "userAadObjectId": {
+                      "title": "userAadObjectId",
+                      "type": "string",
+                      "description": "Microsoft Entra object ID of the signed-in user."
+                    },
+                    "userDisplayName": {
+                      "title": "userDisplayName",
+                      "type": "string",
+                      "description": "Display name of the signed-in user."
+                    },
+                    "channel": {
+                      "title": "channel",
+                      "type": "string",
+                      "description": "The channel the conversation is on, such as msteams."
+                    },
+                    "agentId": {
+                      "title": "agentId",
+                      "type": "string",
+                      "description": "Unique ID of the agent that raised the hook."
+                    },
+                    "agentName": {
+                      "title": "agentName",
+                      "type": "string",
+                      "description": "Display name of the agent that raised the hook."
+                    },
+                    "agentSchemaName": {
+                      "title": "agentSchemaName",
+                      "type": "string",
+                      "description": "Schema name of the agent that raised the hook."
+                    }
+                  }
+                }
+              },
+              "required": [
+                "event",
+                "timestamp",
+                "metadata"
+              ]
+            }
+          },
+          "metadata": {
+            "associatedData": {
+              "graph": {
+                "name": "Inject conversation ID",
+                "nodes": [
+                  {
+                    "id": "start-8d797313-b355-4927-9a31-690d1474e119",
+                    "name": "When an agent calls the flow",
+                    "type": "start",
+                    "version": 1,
+                    "position": {
+                      "x": 250,
+                      "y": 0
+                    },
+                    "data": {
+                      "config": {
+                        "triggerType": "connector",
+                        "connector": {
+                          "apiName": "Skills",
+                          "operationName": "When_an_agent_calls_the_flow",
+                          "inputs": {
+                            "schema": {
+                              "type": "object",
+                              "properties": {
+                                "event": {
+                                  "title": "event",
+                                  "type": "string",
+                                  "description": "Always 'PreTool' for this hook. Useful when one flow handles more than one hook event.",
+                                  "x-ms-content-hint": "TEXT",
+                                  "x-ms-dynamically-added": true
+                                },
+                                "timestamp": {
+                                  "title": "timestamp",
+                                  "type": "string",
+                                  "description": "When the agent raised the event.",
+                                  "x-ms-content-hint": "TEXT",
+                                  "x-ms-dynamically-added": true
+                                },
+                                "toolName": {
+                                  "title": "toolName",
+                                  "type": "string",
+                                  "description": "Name of the tool the agent is about to call.",
+                                  "x-ms-content-hint": "TEXT",
+                                  "x-ms-dynamically-added": true
+                                },
+                                "parameters": {
+                                  "title": "parameters",
+                                  "type": "object",
+                                  "description": "The arguments the agent wants to pass to the tool.",
+                                  "x-ms-dynamically-added": true
+                                },
+                                "metadata": {
+                                  "title": "metadata",
+                                  "type": "object",
+                                  "description": "Context about the conversation, user, channel, and agent that Copilot Studio supplies with every hook. Expand it to use any field in your flow.",
+                                  "x-ms-dynamically-added": true,
+                                  "properties": {
+                                    "conversationId": {
+                                      "title": "conversationId",
+                                      "type": "string",
+                                      "description": "Unique ID of the current conversation."
+                                    },
+                                    "userId": {
+                                      "title": "userId",
+                                      "type": "string",
+                                      "description": "ID of the user in the channel they're chatting on, such as their Microsoft Teams user ID. Use userAadObjectId to identify a signed-in user."
+                                    },
+                                    "userAadObjectId": {
+                                      "title": "userAadObjectId",
+                                      "type": "string",
+                                      "description": "Microsoft Entra object ID of the signed-in user."
+                                    },
+                                    "userDisplayName": {
+                                      "title": "userDisplayName",
+                                      "type": "string",
+                                      "description": "Display name of the signed-in user."
+                                    },
+                                    "channel": {
+                                      "title": "channel",
+                                      "type": "string",
+                                      "description": "The channel the conversation is on, such as msteams."
+                                    },
+                                    "agentId": {
+                                      "title": "agentId",
+                                      "type": "string",
+                                      "description": "Unique ID of the agent that raised the hook."
+                                    },
+                                    "agentName": {
+                                      "title": "agentName",
+                                      "type": "string",
+                                      "description": "Display name of the agent that raised the hook."
+                                    },
+                                    "agentSchemaName": {
+                                      "title": "agentSchemaName",
+                                      "type": "string",
+                                      "description": "Schema name of the agent that raised the hook."
+                                    }
+                                  }
+                                }
+                              },
+                              "required": [
+                                "event",
+                                "timestamp",
+                                "metadata"
+                              ]
+                            }
+                          },
+                          "displayName": "When an agent calls the flow",
+                          "kind": "Skills"
+                        }
+                      },
+                      "outcomes": [
+                        {
+                          "id": "default",
+                          "label": "Default",
+                          "outcomeSchema": {
+                            "type": "object",
+                            "properties": {},
+                            "required": []
+                          }
+                        }
+                      ]
+                    },
+                    "measured": {
+                      "width": 261,
+                      "height": 66
+                    }
+                  },
+                  {
+                    "id": "builtinFunction-c40afde4-a552-4e75-8b5a-4f597c3cf7cc",
+                    "name": "Respond to the agent",
+                    "type": "builtinFunction",
+                    "version": 1,
+                    "position": {
+                      "x": 600,
+                      "y": 0
+                    },
+                    "data": {
+                      "config": {
+                        "operationId": "response",
+                        "operationName": "response",
+                        "displayName": "Respond to the agent",
+                        "category": "request",
+                        "categoryDisplayName": "Request",
+                        "iconUri": "",
+                        "brandColor": "",
+                        "parameters": {
+                          "schema": {
+                            "type": "object",
+                            "properties": {
+                              "permissionDecision": {
+                                "title": "permissionDecision",
+                                "type": "string",
+                                "description": "Set to 'deny' to block the tool call. Leave empty to allow it.",
+                                "x-ms-content-hint": "TEXT",
+                                "x-ms-dynamically-added": true
+                              },
+                              "permissionDecisionReason": {
+                                "title": "permissionDecisionReason",
+                                "type": "string",
+                                "description": "Why the call was blocked. Only used when denying.",
+                                "x-ms-content-hint": "TEXT",
+                                "x-ms-dynamically-added": true
+                              },
+                              "modifiedParameters": {
+                                "title": "modifiedParameters",
+                                "type": "object",
+                                "description": "Replacement arguments for the tool call. Leave empty to keep the original.",
+                                "x-ms-dynamically-added": true
+                              },
+                              "additionalContext": {
+                                "title": "additionalContext",
+                                "type": "string",
+                                "description": "Extra text passed to the model alongside the tool call.",
+                                "x-ms-content-hint": "TEXT",
+                                "x-ms-dynamically-added": true
+                              },
+                              "suppressOutput": {
+                                "title": "suppressOutput",
+                                "type": "boolean",
+                                "description": "Set to true to hide this tool's output from the user.",
+                                "x-ms-dynamically-added": true
+                              }
+                            },
+                            "additionalProperties": {}
+                          },
+                          "body": {
+                            "modifiedParameters": "@union(\n  triggerOutputs()?['body/parameters'],\n  json(concat(\n    '{\"body\":',\n    string(union(\n      triggerOutputs()?['body/parameters/body'],\n      json(concat(\n        '{\"conversationId\":\"',\n        triggerOutputs()?['body/metadata/conversationId'],\n        '\"}'\n      ))\n    )),\n    '}'\n  ))\n)"
+                          }
+                        },
+                        "description": "Respond to the calling agent with typed outputs.",
+                        "kind": "Skills"
+                      },
+                      "outcomes": [
+                        {
+                          "id": "default",
+                          "label": "Default",
+                          "outcomeSchema": {
+                            "type": "object",
+                            "description": "Function output"
+                          }
+                        }
+                      ]
+                    },
+                    "measured": {
+                      "width": 240,
+                      "height": 66
+                    },
+                    "selected": true
+                  }
+                ],
+                "edges": [
+                  {
+                    "id": "e_start-8d797313-b355-4927-9a31-690d1474e119__builtinFunction-c40afde4-a552-4e75-8b5a-4f597c3cf7cc",
+                    "source": "start-8d797313-b355-4927-9a31-690d1474e119",
+                    "target": "builtinFunction-c40afde4-a552-4e75-8b5a-4f597c3cf7cc"
+                  }
+                ],
+                "connectionReferences": {},
+                "parameters": {
+                  "$authentication": {
+                    "type": "SecureObject",
+                    "defaultValue": {}
+                  },
+                  "$connections": {
+                    "type": "Object",
+                    "defaultValue": {}
+                  }
+                }
+              },
+              "nodeActionMapping": {
+                "builtinFunction-c40afde4-a552-4e75-8b5a-4f597c3cf7cc": [
+                  "Respond_to_the_agent"
+                ]
+              },
+              "canvasOrientation": "horizontal"
+            }
+          }
+        }
+      },
+      "actions": {
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "permissionDecision": {
+                  "title": "permissionDecision",
+                  "type": "string",
+                  "description": "Set to 'deny' to block the tool call. Leave empty to allow it.",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "permissionDecisionReason": {
+                  "title": "permissionDecisionReason",
+                  "type": "string",
+                  "description": "Why the call was blocked. Only used when denying.",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "modifiedParameters": {
+                  "title": "modifiedParameters",
+                  "type": "object",
+                  "description": "Replacement arguments for the tool call. Leave empty to keep the original.",
+                  "x-ms-dynamically-added": true
+                },
+                "additionalContext": {
+                  "title": "additionalContext",
+                  "type": "string",
+                  "description": "Extra text passed to the model alongside the tool call.",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "suppressOutput": {
+                  "title": "suppressOutput",
+                  "type": "boolean",
+                  "description": "Set to true to hide this tool's output from the user.",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "modifiedParameters": "@union(\n  triggerOutputs()?['body/parameters'],\n  json(concat(\n    '{\"body\":',\n    string(union(\n      triggerOutputs()?['body/parameters/body'],\n      json(concat(\n        '{\"conversationId\":\"',\n        triggerOutputs()?['body/metadata/conversationId'],\n        '\"}'\n      ))\n    )),\n    '}'\n  ))\n)"
+            }
+          },
+          "metadata": {
+            "description": "Respond to the agent",
+            "nodeId": "builtinFunction-c40afde4-a552-4e75-8b5a-4f597c3cf7cc"
+          }
+        }
+      },
+      "outputs": {},
+      "metadata": {
+        "telemetryMetadata": {
+          "creationSource": "WorkflowDesigner",
+          "modifiedSources": "WorkflowDesigner"
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

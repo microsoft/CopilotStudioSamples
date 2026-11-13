@@ -1,0 +1,11 @@
+kind: AgentHook
+event:
+  kind: PreToolHookEvent
+  filteredTools:
+    - cpshnd_handover.tool.Escalate
+
+action:
+  kind: WorkflowHookAction
+  workflowId: d6ce279f-4015-4e8a-bdd6-78e0e68f0f46
+
+failureMode: Stop

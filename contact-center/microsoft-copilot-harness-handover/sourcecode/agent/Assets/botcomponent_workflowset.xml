@@ -1,0 +1,5 @@
+<botcomponent_workflowset>
+  <botcomponent_workflow botcomponentid.schemaname="cpshnd_handover.hook.InjectConversationId" workflowid.workflowid="d6ce279f-4015-4e8a-bdd6-78e0e68f0f46">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_workflow>
+</botcomponent_workflowset>

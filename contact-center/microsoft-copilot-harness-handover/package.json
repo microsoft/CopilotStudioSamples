@@ -1,0 +1,47 @@
+{
+  "name": "microsoft-copilot-harness-handover",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "local": "node scripts/local.mjs",
+    "test": "tsx --test test/relay.test.ts test/streaming.test.ts test/scripts.test.mjs test/support.test.mjs test/connector.test.mjs",
+    "test:atk": "node --test test/atk.test.mjs",
+    "doctor": "node scripts/setup.mjs doctor",
+    "configure": "node scripts/setup.mjs configure",
+    "connector": "node scripts/connector.mjs",
+    "provision": "node scripts/setup.mjs provision",
+    "deploy": "node scripts/setup.mjs deploy",
+    "atk:provision": "atk provision --env dev --interactive false",
+    "atk:deploy": "atk deploy --env dev --interactive false",
+    "atk:provision:local": "atk provision --env local --interactive false",
+    "atk:deploy:local": "atk deploy --env local --interactive false",
+    "install:teams": "node scripts/setup.mjs install",
+    "package:teams": "node scripts/setup.mjs package",
+    "test:smoke": "node scripts/setup.mjs smoke"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.14.1",
+    "@azure/storage-blob": "^12.29.1",
+    "@microsoft/agents-activity": "1.10.1",
+    "@microsoft/agents-copilotstudio-client": "1.10.1",
+    "@microsoft/agents-hosting": "1.10.1",
+    "@microsoft/agents-hosting-express": "1.10.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "cross-spawn": "^7.0.6",
+    "fflate": "^0.8.2",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "yaml": "^2.8.0"
+  }
+}

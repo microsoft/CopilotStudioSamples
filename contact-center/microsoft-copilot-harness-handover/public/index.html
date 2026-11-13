@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contoso support</title><link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body data-page="customer">
+  <header><a class="brand" href="/">Contoso support</a><a href="/support.html" target="_blank" rel="noopener">Open support desk</a></header>
+  <main class="customer-layout">
+    <aside><h1>One conversation.<br>Someone to help.</h1><p>Start with the assistant. Ask for a human whenever you need one. Your conversation stays with you.</p>
+      <div class="explanation"><strong>Try the handover</strong><p>Say “talk to a human”, open the support desk, claim the chat, and reply. Return it to the assistant to see the transcript handed back.</p></div>
+      <button id="start" type="button">Start a conversation</button><p class="muted" id="environment"></p>
+    </aside>
+    <section class="conversation" aria-label="Customer conversation">
+      <div class="conversation-heading"><h2>Your conversation</h2><span id="status" role="status">Not started</span></div>
+      <p class="correlation" id="correlation"></p>
+      <div id="history" role="log" aria-live="polite"><p class="empty">Start a conversation to send your first message.</p></div>
+      <p id="error" role="alert"></p>
+      <form id="compose"><label for="message">Message</label><div class="compose-row"><textarea id="message" rows="2" maxlength="4000" required disabled></textarea><button id="send" disabled>Send</button></div></form>
+    </section>
+  </main>
+</body>
+</html>

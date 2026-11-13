@@ -1,0 +1,84 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Handover escalation",
+    "version": "1.0",
+    "description": "Hand over a Copilot Studio conversation to a mock human support console. Demo only: no authentication."
+  },
+  "host": "relay.example.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "security": [],
+  "paths": {
+    "/api/escalate": {
+      "post": {
+        "operationId": "Escalate",
+        "summary": "Transfer this conversation to a human support representative",
+        "description": "Call when the customer requests human support. A scoped PreTool maker hook MUST override conversationId using metadata.conversationId. This demonstration has no webhook authentication; add connector and webhook authentication before production use.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "reason",
+                "summary"
+              ],
+              "properties": {
+                "reason": {
+                  "type": "string",
+                  "maxLength": 1000
+                },
+                "summary": {
+                  "type": "string",
+                  "maxLength": 4000
+                },
+                "conversationId": {
+                  "type": "string",
+                  "description": "Overwritten by the maker hook from metadata.conversationId. Never infer this value."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Accepted human queue",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "handoverId": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Explicit failure; do not claim handover succeeded",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support desk | Copilot Studio handover</title>
+  <link rel="stylesheet" href="/style.css"><script type="module" src="/support.js"></script>
+</head>
+<body class="support-desk">
+  <header class="desk-bar">
+    <a class="brand" href="/">Contoso <span>support desk</span></a>
+    <span class="desk-purpose">Human support, without losing the conversation</span>
+    <div class="connection-tools"><span id="connection" role="status">Connecting...</span><button id="refresh" class="quiet-button" type="button">Refresh</button></div>
+  </header>
+  <p id="global-error" role="alert"></p>
+  <main class="workbench">
+    <aside class="queue-panel" aria-label="Conversation queue">
+      <div class="queue-header"><h1>Conversations</h1><p>Keep several chats open. Each has its own draft.</p></div>
+      <label class="sr-only" for="search">Search conversations</label><input id="search" type="search" placeholder="Search subject or chat ID">
+      <div class="queue-filters" aria-label="Filter conversations">
+        <button data-filter="active" aria-pressed="true" type="button">All active</button>
+        <button data-filter="waiting" aria-pressed="false" type="button">Waiting <span id="queue-count">0</span></button>
+        <button data-filter="mine" aria-pressed="false" type="button">Mine <span id="mine-count">0</span></button>
+        <button data-filter="returned" aria-pressed="false" type="button">Returned</button>
+      </div>
+      <div id="inbox" aria-label="Conversations"><p class="queue-empty">Connecting to the support queue...</p></div>
+      <p class="queue-footer">No sign-in. All visitors share this mock operator and can read every chat. Synthetic data only.</p>
+    </aside>
+    <section class="chat-workspace" aria-label="Open conversations">
+      <div id="chat-tabs" class="chat-tabs" role="tablist" aria-label="Open chats"></div>
+      <div id="desk-empty" class="desk-empty">
+        <div class="continuity-mark" aria-hidden="true"><span>Assistant</span><span>Human support</span><span>Same conversation</span></div>
+        <h2>Make room for a human.</h2><p>Choose a waiting conversation to get started. Open more chats as you work; drafts and unread messages stay with the right customer.</p>
+        <button id="next-chat" type="button">Open a waiting chat</button>
+      </div>
+      <section id="chat-panel" class="chat-panel" role="tabpanel" hidden>
+        <div class="chat-heading"><div><div class="chat-title-line"><h2 id="title"></h2><span id="status" class="state-chip"></span></div><p id="subject"></p><span id="ownership"></span></div>
+          <div class="chat-actions"><button id="claim" type="button">Claim chat</button><button id="close" class="secondary" type="button">Return to assistant</button></div>
+        </div>
+        <details class="conversation-details"><summary>Conversation details</summary><dl><dt>Relay session</dt><dd id="relay-id"></dd><dt>Studio conversation</dt><dd id="studio-id"></dd><dt>Escalation reason</dt><dd id="reason"></dd></dl></details>
+        <div id="history" class="desk-history" role="log" aria-live="polite" aria-label="Conversation transcript" tabindex="0"></div>
+        <p id="chat-error" role="alert"></p>
+        <form id="compose" class="desk-composer"><label for="message">Reply to customer</label><textarea id="message" rows="3" maxlength="4000" placeholder="Write a reply for this conversation..." aria-describedby="compose-hint chat-error" required disabled></textarea>
+          <div class="composer-footer"><span id="compose-hint"></span><button id="send" disabled>Send reply</button></div>
+        </form>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

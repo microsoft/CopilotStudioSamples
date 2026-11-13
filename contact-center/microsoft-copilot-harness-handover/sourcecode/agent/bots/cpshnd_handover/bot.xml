@@ -1,0 +1,11 @@
+<bot schemaname="cpshnd_handover">
+  <agentlifecycle>0</agentlifecycle>
+  <authenticationmode>2</authenticationmode>
+  <authenticationtrigger>1</authenticationtrigger>
+  <iscustomizable>0</iscustomizable>
+  <language>1033</language>
+  <name>Copilot Studio Handover Sample</name>
+  <runtimeprovider>0</runtimeprovider>
+  <template>cliagent-1.0.0</template>
+  <timezoneruleversionnumber>4</timezoneruleversionnumber>
+</bot>

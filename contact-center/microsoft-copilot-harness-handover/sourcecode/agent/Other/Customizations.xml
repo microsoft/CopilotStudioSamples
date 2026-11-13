@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26111.129" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26111.00134">
+  <Entities />
+  <Roles />
+  <Workflows />
+  <FieldSecurityProfiles />
+  <Templates />
+  <EntityMaps />
+  <EntityRelationships />
+  <OrganizationSettings />
+  <optionsets />
+  <CustomControls />
+  <EntityDataProviders />
+  <connectionreferences>
+    <connectionreference connectionreferencelogicalname="cpshnd_handover_escalation">
+      <connectionreferencedisplayname>cpshnd_handover_escalation</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_cpshnd-5fhandover-20escalation-5fd6bad79415dd6646</connectorid>
+      <customconnectorid>
+        <connectorid>2e14cf50-4f6b-4763-91c4-032ce60c020d</connectorid>
+      </customconnectorid>
+      <iscustomizable>0</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+  </connectionreferences>
+  <Languages>
+    <Language>1033</Language>
+  </Languages>
+</ImportExportXml>

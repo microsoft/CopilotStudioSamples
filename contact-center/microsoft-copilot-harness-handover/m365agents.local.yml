@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://aka.ms/teams-toolkit/v1.12/yaml.schema.json
+version: v1.12
+environmentFolderPath: ./env
+
+# Start npm run local first. These bounded stages reuse its callback-only tunnel;
+# they do not launch a server that would keep an ATK lifecycle running forever.
+provision:
+  - uses: script
+    name: Reconcile the local target using its existing HTTPS tunnel
+    with:
+      run: node scripts/setup.mjs provision --target local --approve-identity --approve-azure
+
+deploy:
+  - uses: script
+    name: Verify the local target and update its escalation connector and package
+    with:
+      run: node scripts/setup.mjs deploy --target local --approve-azure --approve-connector

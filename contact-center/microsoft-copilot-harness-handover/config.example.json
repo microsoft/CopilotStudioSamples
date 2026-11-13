@@ -1,0 +1,20 @@
+{
+  "tenantId": "YOUR_TRAINING_TENANT_GUID",
+  "subscriptionId": "YOUR_AZURE_SUBSCRIPTION_GUID",
+  "environmentId": "YOUR_POWER_PLATFORM_ENVIRONMENT_GUID",
+  "schemaName": "cpshnd_handover",
+  "appName": "your-unique-handover",
+  "displayName": "Contoso handover",
+  "appVersion": "1.0.1",
+  "teamsAppIds": {},
+  "resourceGroup": "copilot-handover-sample",
+  "location": "eastus",
+  "botClientId": "YOUR_LOCAL_BOT_APP_GUID",
+  "oauthClientId": "YOUR_DELEGATED_OAUTH_APP_GUID",
+  "oauthServiceProviderId": "c00b44ab-5e16-c44c-af26-2fd5bc55eb18",
+  "federatedCredentialId": "YOUR_BOT_SERVICE_FEDERATED_CREDENTIAL_GUID",
+  "developerName": "Your organization",
+  "websiteUrl": "https://your-organization.example",
+  "privacyUrl": "https://your-organization.example/privacy",
+  "termsOfUseUrl": "https://your-organization.example/terms"
+}

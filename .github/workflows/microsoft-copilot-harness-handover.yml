@@ -1,0 +1,30 @@
+name: Microsoft Copilot Harness handover
+on:
+  pull_request:
+    paths:
+      - contact-center/microsoft-copilot-harness-handover/**
+      - .github/workflows/microsoft-copilot-harness-handover.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sample:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: contact-center/microsoft-copilot-harness-handover
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: contact-center/microsoft-copilot-harness-handover/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm exec --yes --package=@microsoft/m365agentstoolkit-cli@1.1.19 -- npm run test:atk

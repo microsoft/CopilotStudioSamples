@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://aka.ms/teams-toolkit/v1.12/yaml.schema.json
+version: v1.12
+environmentFolderPath: ./env
+
+provision:
+  - uses: script
+    name: Reconcile sample-owned identities and Azure infrastructure
+    with:
+      run: node scripts/setup.mjs provision --target azure --approve-identity
+        --approve-azure
+
+deploy:
+  - uses: script
+    name: Deploy relay, verify callbacks, and update the Azure escalation connector
+    with:
+      run: node scripts/setup.mjs deploy --target azure --approve-azure
+        --approve-connector
+projectId: 493a32b3-ee54-4e57-b56e-bd0322d06ea7
+
+# No publish lifecycle: Studio publication, tenant catalog publication and sharing
+# are not implied by provisioning/deploying this demonstration.

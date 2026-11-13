@@ -1,0 +1,11 @@
+<botcomponent schemaname="cpshnd_handover.tool.Escalate">
+  <componenttype>9</componenttype>
+  <description>Transfer the conversation to a human support representative. The scoped PreTool maker hook supplies the authoritative Copilot Studio conversation ID.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>Escalate</name>
+  <parentbotid>
+    <schemaname>cpshnd_handover</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

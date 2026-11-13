@@ -1,0 +1,10 @@
+<botcomponent schemaname="cpshnd_handover.settings.Feedback">
+  <componenttype>18</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Feedback</name>
+  <parentbotid>
+    <schemaname>cpshnd_handover</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

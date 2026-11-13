@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Connector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <connectorid>2e14cf50-4f6b-4763-91c4-032ce60c020d</connectorid>
+  <description></description>
+  <displayname>Handover escalation</displayname>
+  <iconbrandcolor>#175DAD</iconbrandcolor>
+  <name>cpshnd_handoverescalation</name>
+  <connectortype>1</connectortype>
+  <openapidefinition>/Connector/cpshnd_handoverescalation_openapidefinition.json</openapidefinition>
+  <connectionparameters>/Connector/cpshnd_handoverescalation_connectionparameters.json</connectionparameters>
+  <policytemplateinstances>/Connector/cpshnd_handoverescalation_policytemplateinstances.json</policytemplateinstances>
+</Connector>

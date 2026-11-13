@@ -1,0 +1,12 @@
+node_modules/
+!package-lock.json
+dist/
+.env
+.local/
+env/*.user
+appPackage/build/
+agent/.config/
+agent/**/.mcs/
+agent/**/.config/
+infra/main.json
+infra/local.json

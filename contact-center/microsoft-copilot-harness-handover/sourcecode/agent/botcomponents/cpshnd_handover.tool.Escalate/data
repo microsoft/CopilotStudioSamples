@@ -1,0 +1,5 @@
+kind: ConnectorTool
+authMode: Invoker
+connectionReference: cpshnd_handover_escalation
+connectorId: /providers/Microsoft.PowerApps/apis/shared_cpshnd-5fhandover-20escalation-5fd6bad79415dd6646
+operationId: Escalate

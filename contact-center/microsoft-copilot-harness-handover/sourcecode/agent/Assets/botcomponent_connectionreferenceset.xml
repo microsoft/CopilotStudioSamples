@@ -1,0 +1,5 @@
+<botcomponent_connectionreferenceset>
+  <botcomponent_connectionreference botcomponentid.schemaname="cpshnd_handover.tool.Escalate" connectionreferenceid.connectionreferencelogicalname="cpshnd_handover_escalation">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_connectionreference>
+</botcomponent_connectionreferenceset>
