@@ -5,7 +5,7 @@ search_exclude: false
 ---
 # Install the live agent handover sample
 
-[Back to the overview](./)
+[Back to the overview](../)
 
 Set up the Copilot Studio agent, deploy the relay, and test handover in Teams. Choose one hosting option:
 
@@ -16,7 +16,7 @@ Set up the Copilot Studio agent, deploy the relay, and test handover in Teams. C
 | State | Local file; one relay process | Azure Blob Storage |
 
 {: .caution }
-> Demo only. Use synthetic data. The escalation webhook and support console have no authentication. See the [production-hardening notes](./#notes).
+> Demo only. Use synthetic data. The escalation webhook and support console have no authentication. See the [production-hardening notes](../#notes).
 
 ## Prerequisites
 

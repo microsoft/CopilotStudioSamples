@@ -35,7 +35,7 @@ Use the **local relay + tunnel** with Teams.
 - Dev tunnels CLI, signed in.
 - A Copilot Studio environment with the **Microsoft Copilot Harness** agent type and maker hooks enabled, and permission to import solutions.
 
-Use the **same test tenant** for Azure, Copilot Studio, ATK and Teams. See the [installation guide](./install#prerequisites) for CLI installation and sign-in details.
+Use the **same test tenant** for Azure, Copilot Studio, ATK and Teams. See the [installation guide](./install/#prerequisites) for CLI installation and sign-in details.
 
 ### 1. Import the solutions
 
@@ -44,7 +44,7 @@ In [Power Apps](https://make.powerapps.com), select your target environment and 
 1. [Connector package](https://raw.githubusercontent.com/microsoft/CopilotStudioSamples/0e30f16208113364b33c0fed7a581dceb1a9d3dd/contact-center/microsoft-copilot-harness-handover/solution/CopilotStudioHandoverConnector_1_0_0_0.zip).
 2. [Agent package](https://raw.githubusercontent.com/microsoft/CopilotStudioSamples/0e30f16208113364b33c0fed7a581dceb1a9d3dd/contact-center/microsoft-copilot-harness-handover/solution/CopilotStudioHandover_1_0_0_0.zip), selecting or creating the connector's **No authentication** connection when prompted.
 
-Two solutions are required because the [connector must be imported before its connection reference](https://learn.microsoft.com/en-us/connectors/custom-connectors/customconnectorssolutions#known-limitations). The agent package includes the Escalate tool and scoped PreTool maker hook. The unpacked solutions are in `sourcecode/`. See the [import steps](./install#1-import-the-solutions).
+Two solutions are required because the [connector must be imported before its connection reference](https://learn.microsoft.com/en-us/connectors/custom-connectors/customconnectorssolutions#known-limitations). The agent package includes the Escalate tool and scoped PreTool maker hook. The unpacked solutions are in `sourcecode/`. See the [import steps](./install/#1-import-the-solutions).
 
 The imported Copilot Studio agent's **schema name is `cpshnd_handover`**.
 
@@ -137,4 +137,4 @@ The sequence shows assistant support, human handover and the assistant resuming 
 
 ## Installation details
 
-See the [detailed installation guide](./install) for solution import, connector host configuration, authentication, deployment options and troubleshooting.
+See the [detailed installation guide](./install/) for solution import, connector host configuration, authentication, deployment options and troubleshooting.
