@@ -38,8 +38,8 @@ Import the **connector first**, then the **agent**. Microsoft documents this ord
 
 | Order | File in `solution/` | Contents |
 |---|---|---|
-| 1 | [CopilotStudioHandoverConnector_1_0_0_0.zip](./solution/CopilotStudioHandoverConnector_1_0_0_0.zip?raw=true) | **Handover escalation** custom connector |
-| 2 | [CopilotStudioHandover_1_0_0_0.zip](./solution/CopilotStudioHandover_1_0_0_0.zip?raw=true) | Copilot Studio agent, Escalate tool, scoped hook, workflow and connection reference |
+| 1 | [CopilotStudioHandoverConnector_1_0_0_0.zip](https://raw.githubusercontent.com/microsoft/CopilotStudioSamples/0e30f16208113364b33c0fed7a581dceb1a9d3dd/contact-center/microsoft-copilot-harness-handover/solution/CopilotStudioHandoverConnector_1_0_0_0.zip) | **Handover escalation** custom connector |
+| 2 | [CopilotStudioHandover_1_0_0_0.zip](https://raw.githubusercontent.com/microsoft/CopilotStudioSamples/0e30f16208113364b33c0fed7a581dceb1a9d3dd/contact-center/microsoft-copilot-harness-handover/solution/CopilotStudioHandover_1_0_0_0.zip) | Copilot Studio agent, Escalate tool, scoped hook, workflow and connection reference |
 
 For each package:
 
@@ -199,6 +199,8 @@ The exploded solution source is in `sourcecode/connector/` and `sourcecode/agent
 pac solution pack --folder sourcecode/connector --zipfile solution/CopilotStudioHandoverConnector_1_0_0_0.zip --packagetype Unmanaged
 pac solution pack --folder sourcecode/agent --zipfile solution/CopilotStudioHandover_1_0_0_0.zip --packagetype Unmanaged
 ```
+
+The download links are pinned to the packaged version's commit. Update them when publishing rebuilt packages.
 
 ## Stop and clean up
 
