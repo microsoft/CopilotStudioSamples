@@ -19,3 +19,4 @@ Server-side implementations using the M365 Agents SDK to extend Copilot Studio a
 | [Copilot Studio Client](./copilotstudio-client/) | Console app to consume an agent (.NET, Node, Python) — *M365 Agents SDK repo* |
 | [Copilot Studio Skill](./copilotstudio-skill/) | Call an echo bot from a skill (.NET, Node, Python) — *M365 Agents SDK repo* |
 | [Multi-Agent](./multiagent/) | Multiple AgentApplication instances in one host (.NET) — *M365 Agents SDK repo* |
+| [WhatsApp Relay](./whatsapp-relay/) | Connect Meta WhatsApp to a GitHub Copilot harness agent with delegated user sign-in |
