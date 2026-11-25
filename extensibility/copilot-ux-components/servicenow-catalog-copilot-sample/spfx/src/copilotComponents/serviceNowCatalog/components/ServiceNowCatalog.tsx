@@ -52,6 +52,12 @@ export default function ServiceNowCatalog(props: IServiceNowCatalogProps): React
   const [view, setView] = React.useState<View>(
     initialItemSysId ? { kind: 'form', sysId: initialItemSysId, title: '', fromList: false } : { kind: 'list' }
   );
+  // Kept in sync with `view` immediately, so late async callbacks see the active view.
+  const viewRef = React.useRef<View>(view);
+  const showView = React.useCallback((next: View): void => {
+    viewRef.current = next;
+    setView(next);
+  }, []);
   const [listVisited, setListVisited] = React.useState<boolean>(!initialItemSysId);
   const lastListContext = React.useRef<string>('');
 
@@ -87,19 +93,22 @@ export default function ServiceNowCatalog(props: IServiceNowCatalogProps): React
         '. The user can select an item to open its request form.' +
         (lines.length > 0 ? `\nVisible items:\n${lines.join('\n')}` : '');
       lastListContext.current = text;
-      publishContext(text);
+      // The grid stays mounted behind the form; only publish list context while the list is visible.
+      if (viewRef.current.kind === 'list') {
+        publishContext(text);
+      }
     },
     [publishContext]
   );
 
   const handleSelect = React.useCallback(
     (item: ICatalogItem): void => {
-      setView({ kind: 'form', sysId: item.sysId, title: item.title, fromList: true });
+      showView({ kind: 'form', sysId: item.sysId, title: item.title, fromList: true });
       if (!isFullscreen) {
         onRequestDisplayMode('fullscreen').catch(() => undefined);
       }
     },
-    [isFullscreen, onRequestDisplayMode]
+    [isFullscreen, onRequestDisplayMode, showView]
   );
 
   const handleLoaded = React.useCallback(
@@ -117,27 +126,28 @@ export default function ServiceNowCatalog(props: IServiceNowCatalogProps): React
 
   const handleSubmitted = React.useCallback(
     (item: ISnCatalogItemDetails, result: ISubmitResult): void => {
-      setView((current: View) => ({
+      const current: View = viewRef.current;
+      showView({
         kind: 'done',
         title: item.name,
         result,
         fromList: current.kind === 'form' ? current.fromList : false
-      }));
+      });
       publishContext(
         `The user submitted a ServiceNow request for "${item.name}". ServiceNow created ${result.number || 'a record'} ` +
           `in table ${result.table || 'unknown'} (sys_id ${result.sysId}). Link: ${result.portalUrl}`
       );
     },
-    [publishContext]
+    [publishContext, showView]
   );
 
   const backToList = React.useCallback((): void => {
     setListVisited(true);
-    setView({ kind: 'list' });
+    showView({ kind: 'list' });
     if (lastListContext.current) {
       publishContext(lastListContext.current);
     }
-  }, [publishContext]);
+  }, [publishContext, showView]);
 
   const openLink = React.useCallback(
     (url: string): void => {

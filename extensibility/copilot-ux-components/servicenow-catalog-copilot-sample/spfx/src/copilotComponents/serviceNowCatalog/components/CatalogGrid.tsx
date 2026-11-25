@@ -66,10 +66,20 @@ export function CatalogGrid(props: ICatalogGridProps): React.ReactElement {
     setQuery(initialQuery);
   }, [initialQuery]);
 
+  // Incremented for every new search; pending "Load more" responses from an older search are ignored.
+  const searchGeneration = React.useRef<number>(0);
+  const itemsRef = React.useRef<ICatalogItem[]>([]);
+  const updateItems = React.useCallback((next: ICatalogItem[]): void => {
+    itemsRef.current = next;
+    setItems(next);
+  }, []);
+
   React.useEffect(() => {
     let cancelled: boolean = false;
+    searchGeneration.current++;
     setState({ status: 'loading' });
-    setItems([]);
+    setLoadingMore(false);
+    updateItems([]);
     setPossibleMatches([]);
 
     searchService.search(query, 0).then(
@@ -77,7 +87,7 @@ export function CatalogGrid(props: ICatalogGridProps): React.ReactElement {
         if (cancelled) {
           return;
         }
-        setItems(page.items);
+        updateItems(page.items);
         setTotal(page.total);
         setHasMore(page.moreResultsAvailable);
         setPossibleMatches(page.possibleMatches ?? []);
@@ -97,30 +107,39 @@ export function CatalogGrid(props: ICatalogGridProps): React.ReactElement {
     return () => {
       cancelled = true;
     };
-  }, [searchService, query, strings, onResults]);
+  }, [searchService, query, strings, onResults, updateItems]);
 
   const loadMore = React.useCallback(async (): Promise<void> => {
+    const generation: number = searchGeneration.current;
     setLoadingMore(true);
     try {
-      const page: ICatalogSearchPage = await searchService.search(query, items.length);
-      const merged: ICatalogItem[] = [...items, ...page.items.filter((i) => !items.some((e) => e.sysId === i.sysId))];
-      setItems(merged);
+      const page: ICatalogSearchPage = await searchService.search(query, itemsRef.current.length);
+      if (generation !== searchGeneration.current) {
+        return;
+      }
+      const current: ICatalogItem[] = itemsRef.current;
+      const merged: ICatalogItem[] = [...current, ...page.items.filter((i) => !current.some((e) => e.sysId === i.sysId))];
+      updateItems(merged);
       setHasMore(page.moreResultsAvailable && page.items.length > 0);
       onResults(query, merged, page.total);
     } catch (error) {
-      setState({ status: 'error', message: toErrorMessage(error, strings.GenericError) });
+      if (generation === searchGeneration.current) {
+        setState({ status: 'error', message: toErrorMessage(error, strings.GenericError) });
+      }
     } finally {
-      setLoadingMore(false);
+      if (generation === searchGeneration.current) {
+        setLoadingMore(false);
+      }
     }
-  }, [searchService, query, items, strings, onResults]);
+  }, [searchService, query, strings, onResults, updateItems]);
 
   const showPossibleMatches = React.useCallback((): void => {
     const merged: ICatalogItem[] = [...items, ...possibleMatches];
-    setItems(merged);
+    updateItems(merged);
     setTotal(merged.length);
     setPossibleMatches([]);
     onResults(query, merged, merged.length);
-  }, [items, possibleMatches, query, onResults]);
+  }, [items, possibleMatches, query, onResults, updateItems]);
 
   const submitSearch = (event?: React.FormEvent): void => {
     event?.preventDefault();
