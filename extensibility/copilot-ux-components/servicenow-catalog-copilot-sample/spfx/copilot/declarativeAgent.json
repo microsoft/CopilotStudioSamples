@@ -1,0 +1,41 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.8/schema.json",
+  "version": "v1.8",
+  "name": "ServiceNow Catalog",
+  "description": "Find items in the ServiceNow service catalog and submit requests without leaving Copilot.",
+  "instructions": "$[file('instruction.txt')]",
+  "capabilities": [
+    {
+      "name": "GraphConnectors",
+      "connections": [
+        {
+          "connection_id": "YOUR_CONNECTOR_CONNECTION_ID"
+        }
+      ]
+    }
+  ],
+  "conversation_starters": [
+    {
+      "title": "Find Adobe software",
+      "text": "Show me Adobe software in the catalog"
+    },
+    {
+      "title": "Request Adobe Acrobat Pro",
+      "text": "I need Adobe Acrobat Pro"
+    },
+    {
+      "title": "Browse the catalog",
+      "text": "What can I request from the service catalog?"
+    },
+    {
+      "title": "Request Adobe Creative Cloud",
+      "text": "Request Adobe Creative Cloud for me"
+    }
+  ],
+  "actions": [
+    {
+      "id": "serviceNowCatalogAction",
+      "file": "ai-plugin.json"
+    }
+  ]
+}

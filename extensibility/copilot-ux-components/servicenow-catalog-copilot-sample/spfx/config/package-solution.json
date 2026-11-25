@@ -1,0 +1,49 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "servicenow-catalog-copilot-client-side-solution",
+    "id": "947f5edf-b09c-4634-9a3c-c03619d906c6",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "webApiPermissionRequests": [
+      {
+        "resource": "ServiceNow Catalog Copilot API",
+        "scope": "user_impersonation"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "ExternalItem.Read.All"
+      }
+    ],
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.24.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "Search the ServiceNow catalog and submit requests from Microsoft 365 Copilot"
+      },
+      "longDescription": {
+        "default": "Copilot UX component and declarative agent that searches the ServiceNow Catalog Copilot connector, shows matching items in a grid and submits item request forms to ServiceNow with the signed-in user's Microsoft Entra ID token."
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "servicenow-catalog-copilot Feature",
+        "description": "The feature that activates elements of the servicenow-catalog-copilot solution.",
+        "id": "3fd6395a-c2a8-4035-bef9-fede8fae7228",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/servicenow-catalog-copilot.sppkg"
+  }
+}
