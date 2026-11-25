@@ -1,0 +1,9 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.4/schema.json",
+  "schema_version": "v2.4",
+  "namespace": "serviceNowCatalog",
+  "name_for_human": "ServiceNow Catalog",
+  "description_for_human": "Search the ServiceNow catalog and request items",
+  "description_for_model": "Shows an interactive ServiceNow service catalog grid where the user selects an item and submits its request form to ServiceNow. Always use it instead of listing catalog items in text when the answer is a set of catalog items, for example 'what video editing software is available?', 'which laptops can I order?' or 'I need design tools'. Answer questions about one item's details in text.",
+  "contact_email": "publisher@contoso.com"
+}

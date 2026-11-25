@@ -1,0 +1,25 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-component-manifest.schema.json",
+  "id": "6ef59b0e-65e4-48d9-87ae-3c03a8bdae16",
+  "alias": "ServiceNowCatalogCopilotComponent",
+  "componentType": "CopilotComponent",
+  "copilotType": "Ux",
+  "version": "*",
+  "manifestVersion": 2,
+
+  "capabilities": {
+    "availableDisplayModes": ["inline", "fullscreen"]
+  },
+
+  "tools": [
+    {
+      "name": "ServiceNowCatalogTool",
+      "description": {
+        "default": "Shows an interactive ServiceNow service catalog: a grid of catalog items (title, description, Select button) that match what the user is looking for. Selecting an item opens that item's request form, which the user fills in and submits to ServiceNow. Always use it, instead of listing items in text, whenever the answer is a set of catalog items: questions such as 'what/which ... are available', 'do we have', 'list', 'show me', 'I need', and any request to find, browse, order or request software, hardware, access or services. Don't use it for questions about one item's details or how something works."
+      },
+      "propertiesSchema": {
+        "id": "$../../../lib/copilotComponents/serviceNowCatalog/ServiceNowCatalogCopilotComponentProperties.js:default;"
+      }
+    }
+  ]
+}
