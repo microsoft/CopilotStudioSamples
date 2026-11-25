@@ -1,3 +1,9 @@
+---
+title: ServiceNow Catalog Sample
+parent: Copilot UX Components
+grand_parent: Extensibility
+nav_order: 1
+---
 # ServiceNow catalog in Microsoft 365 Copilot
 
 A declarative agent with a **SharePoint Framework (SPFx) Copilot UX component**. Users ask Copilot for something ("I need video editing software"), and the agent does the rest:
