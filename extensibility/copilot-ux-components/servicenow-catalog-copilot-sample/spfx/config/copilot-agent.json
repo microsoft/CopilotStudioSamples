@@ -1,0 +1,16 @@
+{
+  "$schema": "../node_modules/@microsoft/spfx-heft-plugins/lib-commonjs/plugins/copilotAgentPlugin/copilot-agent.schema.json",
+  "agents": [
+    {
+      "name": {
+        "default": "ServiceNow Catalog"
+      },
+      "description": {
+        "default": "Find items in the ServiceNow service catalog and submit requests without leaving Copilot."
+      },
+      "components": [
+        "6ef59b0e-65e4-48d9-87ae-3c03a8bdae16"
+      ]
+    }
+  ]
+}

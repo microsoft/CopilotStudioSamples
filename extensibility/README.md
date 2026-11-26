@@ -15,4 +15,5 @@ Extend Copilot Studio agents with external protocols and the M365 Agents SDK.
 |--------|-------------|
 | [a2a/](./a2a/) | Agent-to-Agent (A2A) protocol samples |
 | [agents-sdk/](./agents-sdk/) | M365 Agents SDK samples |
+| [copilot-ux-components/](./copilot-ux-components/) | Interactive Copilot UX component samples (SPFx) |
 | [mcp/](./mcp/) | Model Context Protocol (MCP) server samples |
