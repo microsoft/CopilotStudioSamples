@@ -1,24 +1,28 @@
 kind: AdaptiveDialog
+inputs:
+  - kind: AutomaticTaskInput
+    propertyName: ResponseScope
+    description: |-
+      Classify what profile response the user explicitly requested.
+      Use "full-profile" only when the user asks for their complete profile, employee profile summary, full employee record, or all profile details.
+      Use "tenure" when the user asks how long they have worked for the company or how long they have been in their current position.
+      Use "field" for a request about one or more specific profile fields, or when the scope is uncertain.
+      Return exactly one of these values: "full-profile", "tenure", or "field".
+    entity: StringPrebuiltEntity
+    shouldPromptUser: false
+    inputSettings:
+      repeatCount: 0
+      defaultValue: field
+
 modelDescription: |-
-  Available fields: Name, Emp ID, DOB, Gender, Title, Organization, Manager, Location, Hire Date, Email, Phone, Home Address, Employment Status
-  For FULL PROFILE: 
-  Heading = "Your employee profile"
-  Introduction = "Here's what I found in Workday, an HR platform your company uses." 
-  Sections: Personal information, Hiring details, Role and work.
+  Retrieve the requesting user's own Workday profile information. Available fields include name, employee ID, date of birth, gender, title, organization, manager, location, hire date, email, phone, home address, employment status, and length of service.
 
-  For TENURE/POSITION: 
-  Heading = "Time in your position"
-  Introduction = "You've been in your current role as a [Position] for [LengthOfService]. I pulled this from Workday, an HR platform your company uses."
-  Sections: "About your position"
+  ResponseScope controls the response:
+  - "full-profile": the topic sends the complete profile directly in the required grouped format. Do not add another answer.
+  - "tenure": respond only with the requested position or length-of-service information. Use the heading "Time in your position", followed by "You've been in your current role as a [Position] for [LengthOfService]. I pulled this from Workday, an HR platform your company uses.", and the section "About your position".
+  - "field": respond only with the profile fields the user requested.
 
-  Common Rules ALWAYS FOLLOW: 
-  - Add large sized heading with sentence case, add section line divider BELOW it
-  - ALWAYS include bold sections headings as mentioned above & add non-bold sub bullets under each
-  - ADDRESS IN ONE ROW
-  - Introduction right after heading
-  - Answer only based on what the user explicitly asks
-  - Include only relevant fields, not the full profile unless requested
-  - Double check if rules are followed, fix if not
+  Do not return the complete profile unless ResponseScope is "full-profile". Keep a home address on one line. This topic retrieves only the requesting user's data; do not use it for another person's profile.
 beginDialog:
   kind: OnRecognizedIntent
   id: main
@@ -48,6 +52,17 @@ beginDialog:
       - Where do I work?
 
   actions:
+    - kind: ConditionGroup
+      id: ensureWorkdayContext
+      conditions:
+        - id: ensureWorkdayContextWhenMissing
+          condition: =IsBlank(Global.ESS_UserContext_Employee_Id) || Global.ESS_UserContext_Employee_Id = """"""
+          actions:
+            - kind: BeginDialog
+              id: callWorkdayUserContext
+              displayName: Retrieve the current Workday user context
+              dialog: msdyn_copilotforemployeeselfservicehr.topic.WorkdaySystemGetUserContextV2
+
     - kind: BeginDialog
       id: dZAI4Y
       displayName: Redirect to Workday Get Common Execution
@@ -62,6 +77,19 @@ beginDialog:
           errorResponse: Topic.errorResponse
           isSuccess: Topic.isSuccess
           workdayResponse: Topic.workdayResponse
+
+    - kind: ConditionGroup
+      id: conditionGroup_workdayRequestFailed
+      conditions:
+        - id: conditionItem_workdayRequestFailed
+          condition: =Topic.isSuccess = false
+          actions:
+            - kind: SendActivity
+              id: sendActivity_workdayRequestFailed
+              activity: I encountered an error retrieving your employee profile. Please try again later or contact HR support.
+
+            - kind: EndDialog
+              id: endDialog_workdayRequestFailed
 
     - kind: ParseValue
       id: fP9fKn
@@ -157,25 +185,25 @@ beginDialog:
       id: setVariable_ServiceDate
       displayName: Calculate service date values
       variable: Topic.serviceDateCalc
-      value: =DateValue(First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value)
+      value: =If(IsBlank(First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value), Blank(), DateValue(First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value))
 
     - kind: SetVariable
       id: setVariable_Years
       displayName: Calculate years
       variable: Topic.yearsOfService
-      value: =RoundDown(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months) / 12, 0)
+      value: =If(IsBlank(Topic.serviceDateCalc), Blank(), RoundDown(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months) / 12, 0))
 
     - kind: SetVariable
       id: setVariable_Months
       displayName: Calculate months
       variable: Topic.monthsOfService
-      value: =Mod(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), 12)
+      value: =If(IsBlank(Topic.serviceDateCalc), Blank(), Mod(DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), 12))
 
     - kind: SetVariable
       id: setVariable_Days
       displayName: Calculate days
       variable: Topic.daysOfService
-      value: =DateDiff(DateAdd(Topic.serviceDateCalc, DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), TimeUnit.Months), Today(), TimeUnit.Days)
+      value: =If(IsBlank(Topic.serviceDateCalc), Blank(), DateDiff(DateAdd(Topic.serviceDateCalc, DateDiff(Topic.serviceDateCalc, Today(), TimeUnit.Months), TimeUnit.Months), Today(), TimeUnit.Days))
 
     - kind: SetVariable
       id: setVariable_LHTcFu
@@ -197,15 +225,103 @@ beginDialog:
             HomeEmail: First(Topic.parsedWorkdayResponse.HomeEmail).Value,
             HomePhone: First(Topic.parsedWorkdayResponse.HomePhone).Value,
             WorkPhone: First(Topic.parsedWorkdayResponse.WorkPhone).Value,
-            Status: If(First(Topic.parsedWorkdayResponse.Status).Value = "1", "Active", "Inactive"),
+            Status: If(IsBlank(First(Topic.parsedWorkdayResponse.Status).Value), Blank(), If(First(Topic.parsedWorkdayResponse.Status).Value = "1", "Active", "Inactive")),
             ContinuousServiceDate: First(Topic.parsedWorkdayResponse.ContinuousServiceDate).Value,
-            LengthOfService: 
+            LengthOfService: If(IsBlank(Topic.serviceDateCalc), Blank(),
                 If(Topic.yearsOfService > 0, Topic.yearsOfService & " year" & If(Topic.yearsOfService > 1, "s", "") & " ", "") &
                 If(Topic.monthsOfService > 0, Topic.monthsOfService & " month" & If(Topic.monthsOfService > 1, "s", "") & " ", "") &
-                Topic.daysOfService & " day" & If(Topic.daysOfService <> 1, "s", "")
+                Topic.daysOfService & " day" & If(Topic.daysOfService <> 1, "s", ""))
         }
 
-inputType: {}
+    - kind: ConditionGroup
+      id: conditionGroup_profileNotFound
+      conditions:
+        - id: conditionItem_profileNotFound
+          condition: =IsBlank(Topic.finalizedData.Name) && IsBlank(Topic.finalizedData.EmployeeID) && IsBlank(Topic.finalizedData.BusinessTitle)
+          actions:
+            - kind: SendActivity
+              id: sendActivity_profileNotFound
+              activity: I couldn't find employee profile information for you in Workday. Please contact HR support if you believe this information should be available.
+
+            - kind: EndDialog
+              id: endDialog_profileNotFound
+
+    - kind: ConditionGroup
+      id: conditionGroup_fullProfileResponse
+      conditions:
+        - id: conditionItem_fullProfileResponse
+          condition: =Lower(Substitute(Substitute(Trim(Topic.ResponseScope), " ", "-"), "_", "-")) = "full-profile"
+          actions:
+            - kind: SetVariable
+              id: setVariable_personalInformation
+              displayName: Format personal information
+              variable: Topic.personalInformation
+              value: |-
+                =Concatenate(
+                  If(IsBlank(Topic.finalizedData.Name), "", "- Name: " & Topic.finalizedData.Name & Char(10)),
+                  If(IsBlank(Topic.finalizedData.DOB), "", "- Date of birth: " & Topic.finalizedData.DOB & Char(10)),
+                  If(IsBlank(Topic.finalizedData.Gender), "", "- Gender: " & Topic.finalizedData.Gender & Char(10)),
+                  If(IsBlank(Topic.finalizedData.HomeAddress), "", "- Home address: " & Topic.finalizedData.HomeAddress & Char(10)),
+                  If(IsBlank(Topic.finalizedData.HomeEmail), "", "- Home email: " & Topic.finalizedData.HomeEmail & Char(10)),
+                  If(IsBlank(Topic.finalizedData.HomePhone), "", "- Home phone: " & Topic.finalizedData.HomePhone & Char(10))
+                )
+
+            - kind: SetVariable
+              id: setVariable_hiringDetails
+              displayName: Format hiring details
+              variable: Topic.hiringDetails
+              value: |-
+                =Concatenate(
+                  If(IsBlank(Topic.finalizedData.EmployeeID), "", "- Employee ID: " & Topic.finalizedData.EmployeeID & Char(10)),
+                  If(IsBlank(Topic.finalizedData.HireDate), "", "- Hire date: " & Topic.finalizedData.HireDate & Char(10)),
+                  If(IsBlank(Topic.finalizedData.ContinuousServiceDate), "", "- Continuous service date: " & Topic.finalizedData.ContinuousServiceDate & Char(10)),
+                  If(IsBlank(Topic.finalizedData.LengthOfService), "", "- Length of service: " & Topic.finalizedData.LengthOfService & Char(10)),
+                  If(IsBlank(Topic.finalizedData.Status), "", "- Employment status: " & Topic.finalizedData.Status & Char(10))
+                )
+
+            - kind: SetVariable
+              id: setVariable_roleAndWork
+              displayName: Format role and work
+              variable: Topic.roleAndWork
+              value: |-
+                =Concatenate(
+                  If(IsBlank(Topic.finalizedData.BusinessTitle), "", "- Business title: " & Topic.finalizedData.BusinessTitle & Char(10)),
+                  If(IsBlank(Topic.finalizedData.Organization), "", "- Organization: " & Topic.finalizedData.Organization & Char(10)),
+                  If(IsBlank(Topic.finalizedData.Manager), "", "- Manager: " & Topic.finalizedData.Manager & Char(10)),
+                  If(IsBlank(Topic.finalizedData.Location), "", "- Location: " & Topic.finalizedData.Location & Char(10)),
+                  If(IsBlank(Topic.finalizedData.WorkEmail), "", "- Work email: " & Topic.finalizedData.WorkEmail & Char(10)),
+                  If(IsBlank(Topic.finalizedData.WorkPhone), "", "- Work phone: " & Topic.finalizedData.WorkPhone)
+                )
+
+            - kind: SetVariable
+              id: setVariable_fullProfileResponse
+              displayName: Format the full employee profile
+              variable: Topic.fullProfileResponse
+              value: |-
+                =Concatenate(
+                  "# Your employee profile", Char(10),
+                  "Here's what I found in Workday, an HR platform your company uses.", Char(10), Char(10),
+                  "---", Char(10), Char(10),
+                  If(IsBlank(Trim(Topic.personalInformation)), "", "**Personal information**" & Char(10) & Topic.personalInformation & Char(10)),
+                  If(IsBlank(Trim(Topic.hiringDetails)), "", "**Hiring details**" & Char(10) & Topic.hiringDetails & Char(10)),
+                  If(IsBlank(Trim(Topic.roleAndWork)), "", "**Role and work**" & Char(10) & Topic.roleAndWork)
+                )
+
+            - kind: SendActivity
+              id: sendActivity_fullProfileResponse
+              displayName: Send the full employee profile
+              activity: "{Topic.fullProfileResponse}"
+
+            - kind: CancelAllDialogs
+              id: cancelAllDialogs_fullProfileResponse
+
+inputType:
+  properties:
+    ResponseScope:
+      displayName: ResponseScope
+      description: The response scope selected from the user's request.
+      type: String
+
 outputType:
   properties:
     finalizedData:
