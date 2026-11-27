@@ -20,5 +20,6 @@ Plug a Copilot Studio chat agent into an existing platform.
 | [servicenow-widget/](./servicenow-widget/) | Floating chat widget for ServiceNow Service Portal |
 | [sharepoint-customizer/](./sharepoint-customizer/) | Fluent SharePoint side panel for GHCP and standard harness agents, with SSO, local files, and optional agent activity |
 | [typeahead-suggestions/](./typeahead-suggestions/) | Typeahead suggestions for WebChat |
+| [zendesk-widget/](./zendesk-widget/) | Floating chat widget for Zendesk Help Center |
 | [WebChat React](../custom-ui/webchat-react/) | WebChat React client with auth (Node) — *M365 Agents SDK repo* |
 | [Web Client](../custom-ui/webclient/) | Web client with auth (Node) — *M365 Agents SDK repo* |
