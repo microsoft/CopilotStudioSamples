@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "resourceBaseName": {
+        "value": "bot${{RESOURCE_SUFFIX}}"
+      },
+      "botDisplayName": {
+        "value": "AzureAgentToM365ATK${{APP_NAME_SUFFIX}}"
+      },
+      "webAppSKU": {
+        "value": "B1"
+      },
+      "botServiceSku": {
+        "value": "F0"
+      },
+      "enableAppInsights": {
+        "value": true
+      },
+      "mcsEnvironmentId": {
+        "value": "${{MCS_ENVIRONMENT_ID}}"
+      },
+      "mcsSchemaName": {
+        "value": "${{MCS_SCHEMA_NAME}}"
+      },
+      "azureOpenAiEndpoint": {
+        "value": "${{AZURE_OPENAI_ENDPOINT}}"
+      },
+      "azureOpenAiDeployment": {
+        "value": "${{AZURE_OPENAI_DEPLOYMENT}}"
+      },
+      "azureOpenAiApiKey": {
+        "value": "${{SECRET_AZURE_OPENAI_API_KEY}}"
+      }
+    }
+  }
